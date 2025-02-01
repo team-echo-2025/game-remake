@@ -37,6 +37,7 @@ export default {
             patterns: [
                 { from: 'public/assets', to: 'assets' }, // copy assets folder
                 { from: 'public/globals.css', to: 'globals.css' }, // copy assets folder
+                { from: 'public/favicon.ico', to: 'favicon.ico' }, // copy assets folder
             ],
         }),
     ],
