@@ -20,7 +20,7 @@ World Codes:
 */
 
 export default class Menu implements GameObject {
-    private imgLogo!: p5.Image; // The logo will be assigned before use in preload()
+    private imgBackground!: p5.Image; // The logo will be assigned in preload()
     private MENU = 0;
     private WORLD = 0;
     private DIFFICULTY = 0;
@@ -29,7 +29,7 @@ export default class Menu implements GameObject {
     constructor(private p: p5) {}
 
     preload(): void {
-        this.imgLogo = this.p.loadImage('/logo.png');
+        this.imgBackground = this.p.loadImage('/background.png');
     }
 
     setup(): void {
@@ -41,7 +41,7 @@ export default class Menu implements GameObject {
             this.clickCooldown--;
         }
 
-        this.p.background(this.imgLogo);
+        this.p.background(this.imgBackground);
 
         switch (this.MENU) {
             case 0:
@@ -66,7 +66,7 @@ export default class Menu implements GameObject {
                 this.p.text('Character Customization', this.p.width / 2, this.p.height / 2);
                 break;
             case 99:
-                // Game starts
+                // No longer in a menu
                 break;
         }
     }
@@ -77,7 +77,7 @@ export default class Menu implements GameObject {
         let buttonX = this.p.width / 2;
 
         switch (this.MENU) {
-            case 0: // Main Menu
+            case 0: // Main menu
                 if (this.p.mouseX > buttonX - 100 && this.p.mouseX < buttonX + 100) {
                     if (this.p.mouseY > this.p.height / 2 - 37 && this.p.mouseY < this.p.height / 2 + 37) {
                         this.MENU = 1; // Play (goes to world select)
@@ -104,7 +104,7 @@ export default class Menu implements GameObject {
                 } 
                 break;
 
-            case 2: // Difficulty Select
+            case 2: // Difficulty select
                 if (this.p.mouseX > buttonX - 100 && this.p.mouseX < buttonX + 100) {
                     if (this.p.mouseY > this.p.height / 2 - 37 && this.p.mouseY < this.p.height / 2 + 37) {
                         this.MENU = 99;
@@ -134,7 +134,7 @@ export default class Menu implements GameObject {
         this.MENU = menu;
     }
 
-    // Return the current difficulty
+    // Return the seelcted difficulty
     getDiff(): number {
         return this.DIFFICULTY;
     }
@@ -152,7 +152,7 @@ export default class Menu implements GameObject {
         let buttonWidth = 200;
         let buttonHeight = 75;
 
-        // Play Button
+        // Play button
         this.p.fill(0);
         this.p.rect(buttonX, buttonY, buttonWidth, buttonHeight);
         this.p.fill(255);
@@ -160,14 +160,14 @@ export default class Menu implements GameObject {
         this.p.textAlign(this.p.CENTER, this.p.CENTER);
         this.p.text('PLAY', buttonX, buttonY);
 
-        // Settings Button
+        // Settings button
         this.p.fill(0);
         this.p.rect(buttonX, buttonY + 100, buttonWidth, buttonHeight);
         this.p.fill(255);
         this.p.textSize(26);
         this.p.text('SETTINGS', buttonX, buttonY + 100);
 
-        // Customize Button
+        // Customize button
         this.p.fill(0);
         this.p.rect(buttonX, buttonY + 200, buttonWidth, buttonHeight);
         this.p.fill(255);
