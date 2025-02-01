@@ -9,7 +9,6 @@ npm install
 To run:
 
 ```bash
-npm run index.ts
+npm run start
 ```
 
-This project was created using `npm init` in bun v1.2.0. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
