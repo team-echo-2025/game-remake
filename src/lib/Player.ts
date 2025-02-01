@@ -4,9 +4,9 @@ import GameObject from './GameObject';
 export default class Payer implements GameObject {
     player: any;
     pressed_keys: any = {};
+    x: number = 0;
+    y: number = 0;
     setup(p: p5): void {
-        p.background(135, 206, 235);
-        this.player = p.square(0, 0, 100, 0, 0);
     }
 
     keyPressed(e: KeyboardEvent): void {
@@ -19,8 +19,20 @@ export default class Payer implements GameObject {
     }
 
     draw(p: p5): void {
-        if (this.pressed_keys['a']) {
-            console.log('hello')
+        p.background(135, 206, 235);
+        if (this.pressed_keys['w']) {
+            this.y -= 1;
         }
+        if (this.pressed_keys['a']) {
+            this.x -= 1;
+        }
+        if (this.pressed_keys['s']) {
+            this.y += 1;
+        }
+        if (this.pressed_keys['d']) {
+            this.x += 1;
+        }
+        p.fill(255, 0, 0);
+        p.circle(this.x, this.y, 30);
     }
 }
