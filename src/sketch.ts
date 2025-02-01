@@ -1,10 +1,15 @@
 import p5 from 'p5';
 import Player from './lib/Player';
-const player = new Player();
+let player: Player;
 const sketch = (p: p5) => {
+    p.preload = () => {
+        player = new Player(p)
+        player.preload();
+    };
+
     p.setup = () => {
-        p.createCanvas(window.innerWidth, window.innerHeight);
-        player.setup(p);
+        p.createCanvas(window.innerWidth, window.innerHeight, 'webgl');
+        player.setup();
     };
 
     p.keyPressed = (e: KeyboardEvent) => {
@@ -16,7 +21,8 @@ const sketch = (p: p5) => {
     };
 
     p.draw = () => {
-        player.draw(p);
+        p.background(135, 206, 235);
+        player.draw();
     };
 };
 
