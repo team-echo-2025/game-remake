@@ -7,7 +7,7 @@ const player = new Player();
 
 const sketch = (p: p5) => {
     p.preload = () => {
-        //imgLogo = p.loadImage('logo.png');
+        imgLogo = p.loadImage('/logo.png');
     };
 
     p.setup = () => {
@@ -31,7 +31,7 @@ const sketch = (p: p5) => {
     };
 
     p.draw = () => {
-        //p.background(imgLogo);
+        p.background(imgLogo);
 
         if (MENU === 0) {
             drawMainMenu(p);
@@ -60,8 +60,6 @@ const sketch = (p: p5) => {
     p.mouseClicked = () => {
         if (MENU === 0) {
             let buttonX = p.width / 2;
-            let buttonWidth = 200;
-            let buttonHeight = 75;
 
             if (p.mouseX > buttonX - 100 && p.mouseX < buttonX + 100) {
                 if (p.mouseY > p.height / 2 - 37 && p.mouseY < p.height / 2 + 37) {
@@ -76,7 +74,6 @@ const sketch = (p: p5) => {
     };
 };
 
-// **Helper function to draw the main menu**
 function drawMainMenu(p: p5) {
     p.textFont('Courier New');
 
