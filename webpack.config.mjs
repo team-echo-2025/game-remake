@@ -1,5 +1,7 @@
 // webpack.config.mjs (ESM style)
 import path from 'path';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
 
 export default {
     mode: 'development',
@@ -26,4 +28,16 @@ export default {
         },
         port: 8080,
     },
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: 'public/index.html', // use your existing index
+            inject: false
+        }),
+        new CopyWebpackPlugin({
+            patterns: [
+                { from: 'public/assets', to: 'assets' }, // copy assets folder
+                { from: 'public/globals.css', to: 'globals.css' }, // copy assets folder
+            ],
+        }),
+    ],
 };
