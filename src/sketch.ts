@@ -8,8 +8,12 @@ const sketch = (p: p5) => {
     };
 
     p.keyPressed = (e: KeyboardEvent) => {
-        console.log(e)
-    }
+        player.keyPressed(e);
+    };
+
+    p.keyReleased = (e: KeyboardEvent) => {
+        player.keyReleased(e);
+    };
 
     p.draw = () => {
         player.draw(p);
