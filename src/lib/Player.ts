@@ -1,4 +1,4 @@
-import p5, { Camera, Image } from 'p5';
+import p5, { Image } from 'p5';
 import GameObject from './GameObject';
 
 export default class Payer implements GameObject {
@@ -13,7 +13,6 @@ export default class Payer implements GameObject {
     start_anim_time: number = 0;
     moving: boolean = false;
     p: p5;
-    cam: Camera | undefined;
     constructor(p: p5) {
         this.p = p;
     }
@@ -23,9 +22,6 @@ export default class Payer implements GameObject {
     }
 
     setup(): void {
-        this.cam = this.p.createCamera();
-        this.cam.ortho();
-        this.p.setCamera(this.cam);
         for (let i = 0; i < 8; i++) {
             this.frames.push(this.#get_row(i));
         }
@@ -75,6 +71,5 @@ export default class Payer implements GameObject {
         }
         this.p.circle(0, 0, 10);
         this.p.image(this.frames[this.anim_row][this.anim_index], this.x, this.y);
-        this.cam?.lookAt(this.x, this.y, 1);
     }
 }
