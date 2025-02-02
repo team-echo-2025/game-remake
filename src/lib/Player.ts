@@ -1,7 +1,7 @@
 import p5, { Image } from 'p5';
 import GameObject from './GameObject';
 
-export default class Payer implements GameObject {
+export default class Player implements GameObject {
     player: any;
     pressed_keys: any = {};
     spritesheet: Image = new Image(0, 0);
@@ -13,6 +13,12 @@ export default class Payer implements GameObject {
     start_anim_time: number = 0;
     moving: boolean = false;
     p: p5;
+    forwardKey: string = 'w';
+    leftKey: string = 'a';
+    backKey: string = 's';
+    rightKey: string = 'd';
+    // For when we have webgl working
+    // cam: any;
     constructor(p: p5) {
         this.p = p;
     }
@@ -25,6 +31,10 @@ export default class Payer implements GameObject {
         for (let i = 0; i < 8; i++) {
             this.frames.push(this.#get_row(i));
         }
+        // webgl
+        // this.cam = this.p.createCamera();
+        // this.cam.ortho();
+        // this.p.setCamera(this.cam);
     }
 
     #get_row = (row: number) => {
@@ -49,27 +59,29 @@ export default class Payer implements GameObject {
             this.start_anim_time = this.p.millis();
             this.anim_index = (this.anim_index + 1) % 6;
         }
-        if (this.pressed_keys['w']) {
+        if (this.pressed_keys[this.forwardKey]) {
             this.anim_row = 5;
             this.moving = true;
             this.y -= 1;
         }
-        if (this.pressed_keys['a']) {
+        if (this.pressed_keys[this.leftKey]) {
             this.anim_row = 7;
             this.x -= 1;
             this.moving = true;
         }
-        if (this.pressed_keys['s']) {
+        if (this.pressed_keys[this.backKey]) {
             this.anim_row = 4;
             this.y += 1;
             this.moving = true;
         }
-        if (this.pressed_keys['d']) {
+        if (this.pressed_keys[this.rightKey]) {
             this.anim_row = 6;
             this.x += 1;
             this.moving = true;
         }
         this.p.circle(0, 0, 10);
         this.p.image(this.frames[this.anim_row][this.anim_index], this.x, this.y);
+        // webgl
+        // this.cam?.lookAt(this.x, this.y, 1);
     }
 }
