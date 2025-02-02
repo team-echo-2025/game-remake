@@ -1,9 +1,11 @@
 import p5 from 'p5';
 import Player from './lib/Player';
 import Menu from './lib/MainMenu';
+import {Howl} from 'howler';
 
 let menu: Menu;
 let player: Player;
+
 
 const sketch = (p: p5) => {
     p.preload = () => {
@@ -14,6 +16,18 @@ const sketch = (p: p5) => {
     };
 
     p.setup = () => {
+        const sound = new Howl({
+            src: "assets/background_music.mp3"
+        })
+        sound.play();
+        document.addEventListener("onmute", (e: any)=>{
+            console.log(e.detail)
+            if (e.detail.mute) {
+                sound.pause();
+            } else {
+                sound.play();
+            }
+        });
         p.createCanvas(window.innerWidth, window.innerHeight);
         menu.setup();
         player.setup();
@@ -32,7 +46,7 @@ const sketch = (p: p5) => {
 
     p.draw = () => {
         p.background(135, 206, 235);
-        menu.draw(); // Draw the main meun
+        menu.draw(); // Draw the main menu
 
         if (menu.getMenuState() === 99) { // 99 means user isn't in a menu (see MainMenu.ts comments)
             player.draw();
