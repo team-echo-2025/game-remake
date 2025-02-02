@@ -1,7 +1,7 @@
 import p5, { Image } from 'p5';
 import GameObject from './GameObject';
 
-export default class Payer implements GameObject {
+export default class Player implements GameObject {
     player: any;
     pressed_keys: any = {};
     spritesheet: Image = new Image(0, 0);
