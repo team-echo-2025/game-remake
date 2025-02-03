@@ -75,16 +75,18 @@ export default class Menu implements GameObject {
                 else if (buttonClicked(100)) { this.menuState = 2; this.world = 0; }
                 else if (buttonClicked(200)) { this.menuState = 2; this.world = 0; }
                 break;
-            case 2: // Difficulty select
+            case 2: // Difficulty select menu
                 if (buttonClicked(0)) { this.menuState = 99; this.difficulty = 0; }
                 else if (buttonClicked(100)) { this.menuState = 99; this.difficulty = 1; }
                 else if (buttonClicked(200)) { this.menuState = 99; this.difficulty = 2; }
                 break;
-            case 3: // Settings
+            case 3: // Settings menu
                 if (buttonClicked(0)) this.handleMute();
                 else if (buttonClicked(100)) this.menuState = 6;
                 else if (buttonClicked(200)) this.menuState = 0;
                 break;
+            case 6: //Keybinds menu
+                if (buttonClicked(300)) this.menuState = 3;
         }
     }
 
@@ -137,6 +139,7 @@ export default class Menu implements GameObject {
         this.drawButton('DOWN: S', 0);
         this.drawButton('LEFT: A', 100);
         this.drawButton('RIGHT: D', 200);
+        this.drawButton('BACK', 300);
     }
 
     private drawButton(label: string, yOffset: number): void {
