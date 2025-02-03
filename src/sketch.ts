@@ -19,7 +19,7 @@ const sketch = (p: p5) => {
         const sound = new Howl({
             src: "assets/background_music.mp3"
         })
-        sound.play();
+        sound.play(); sound.loop();
         document.addEventListener("onmute", (e: any)=>{
             console.log(e.detail)
             if (e.detail.mute) {
