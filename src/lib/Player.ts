@@ -55,6 +55,7 @@ export default class Player implements GameObject {
     }
 
     draw(): void {
+        this.p.background(135, 206, 235);
         if (this.moving && this.p.millis() - this.start_anim_time > 100) {
             this.start_anim_time = this.p.millis();
             this.anim_index = (this.anim_index + 1) % 6;
@@ -79,7 +80,6 @@ export default class Player implements GameObject {
             this.x += 1;
             this.moving = true;
         }
-        this.p.circle(0, 0, 10);
         this.p.image(this.frames[this.anim_row][this.anim_index], this.x, this.y);
         // webgl
         // this.cam?.lookAt(this.x, this.y, 1);
