@@ -1,33 +1,25 @@
 import p5 from 'p5';
 import Player from './lib/Player';
 import Menu from './lib/MainMenu';
-import {Howl} from 'howler';
+import MusicManager from './lib/MusicManager';
 
 let menu: Menu;
 let player: Player;
+let background_music: MusicManager;
 
 
 const sketch = (p: p5) => {
     p.preload = () => {
         menu = new Menu(p);
         player = new Player(p);
+        background_music = new MusicManager("assets/background_music.mp3", "onmute");
         menu.preload();
         player.preload();
+        background_music.preload();
     };
 
     p.setup = () => {
-        const sound = new Howl({
-            src: "assets/background_music.mp3"
-        })
-        sound.play(); sound.loop();
-        document.addEventListener("onmute", (e: any)=>{
-            console.log(e.detail)
-            if (e.detail.mute) {
-                sound.pause();
-            } else {
-                sound.play();
-            }
-        });
+        background_music.setup();
         p.createCanvas(window.innerWidth, window.innerHeight);
         menu.setup();
         player.setup();
