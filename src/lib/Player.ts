@@ -1,10 +1,11 @@
-import p5, { Image } from 'p5';
+import { Image } from 'p5';
 import GameObject from './GameObject';
+import Scene from './Scene';
 
 export default class Player implements GameObject {
     player: any;
     pressed_keys: any = {};
-    spritesheet: Image = new Image(0, 0);
+    spritesheet?: Image;
     frames: Image[][] = [];
     x: number = 0;
     y: number = 0;
@@ -12,52 +13,60 @@ export default class Player implements GameObject {
     anim_row: number = 6;
     start_anim_time: number = 0;
     moving: boolean = false;
-    p: p5;
+    scene: Scene;
     forwardKey: string = 'w';
     leftKey: string = 'a';
     backKey: string = 's';
     rightKey: string = 'd';
-    // For when we have webgl working
-    // cam: any;
-    constructor(p: p5) {
-        this.p = p;
+    constructor(scene: Scene) {
+        this.scene = scene;
     }
 
-    preload(): void {
-        this.spritesheet = this.p.loadImage('assets/player.png');
+    async preload(): Promise<void> {
+        await new Promise((resolve, reject) => {
+            this.spritesheet = this.scene.p5.loadImage('assets/player.png', (_: Image) => {
+                resolve(true);
+            }, (err) => reject(err));
+        })
     }
 
     setup(): void {
-        for (let i = 0; i < 8; i++) {
-            this.frames.push(this.#get_row(i));
-        }
-        // webgl
-        // this.cam = this.p.createCamera();
-        // this.cam.ortho();
-        // this.p.setCamera(this.cam);
+        this.#setup_frames(this.spritesheet);
     }
 
-    #get_row = (row: number) => {
+    #setup_frames(spritesheet?: Image) {
+        if (!spritesheet) {
+            return
+        }
+        for (let i = 0; i < 8; i++) {
+            this.frames.push(this.#get_row(i, spritesheet));
+        }
+    }
+
+    #get_row = (row: number, spritesheet?: Image) => {
+        if (!spritesheet) {
+            return []
+        }
         const _sprites: Image[] = []
         for (let j = 0; j < 8; j++) {
-            _sprites.push(this.spritesheet.get(64 * j, 64 * row, 64, 64));
+            _sprites.push(spritesheet.get(64 * j, 64 * row, 64, 64));
         }
         return _sprites;
     }
 
     keyPressed(e: KeyboardEvent): void {
-        this.pressed_keys[e.key] = true;
+        this.pressed_keys[e?.key] = true;
     }
 
     keyReleased(e: KeyboardEvent): void {
-        this.pressed_keys[e.key] = false;
+        this.pressed_keys[e?.key] = false;
         this.moving = false;
     }
 
     draw(): void {
-        this.p.background(135, 206, 235);
-        if (this.moving && this.p.millis() - this.start_anim_time > 100) {
-            this.start_anim_time = this.p.millis();
+        this.scene.p5.background(135, 206, 235);
+        if (this.moving && this.scene.p5.millis() - this.start_anim_time > 100) {
+            this.start_anim_time = this.scene.p5.millis();
             this.anim_index = (this.anim_index + 1) % 6;
         }
         if (this.pressed_keys[this.forwardKey]) {
@@ -80,8 +89,8 @@ export default class Player implements GameObject {
             this.x += 1;
             this.moving = true;
         }
-        this.p.image(this.frames[this.anim_row][this.anim_index], this.x, this.y);
-        // webgl
-        // this.cam?.lookAt(this.x, this.y, 1);
+        if (this.frames.length > 0 && this.frames[0].length > 0) {
+            this.scene.p5.image(this.frames[this.anim_row][this.anim_index], this.x, this.y);
+        }
     }
 }
