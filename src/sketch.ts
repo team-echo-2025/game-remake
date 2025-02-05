@@ -1,53 +1,38 @@
 import p5 from 'p5';
-import Player from './lib/Player';
-import Menu from './lib/MainMenu';
-import MusicManager from './lib/MusicManager';
-
-let menu: Menu;
-let player: Player;
-let background_music: MusicManager;
-
+import SceneManager from './lib/SceneManager';
+import MenuScene from './scenes/MenuScene';
+import PlayScene from './scenes/PlayScene';
+import LoadingScene from './scenes/LoadingScene';
 
 const sketch = (p: p5) => {
+    const scene_manager = new SceneManager(p, [MenuScene, PlayScene], LoadingScene);
     p.preload = () => {
-        menu = new Menu(p);
-        player = new Player(p);
-        background_music = new MusicManager("assets/background_music.mp3", "onmute");
-        menu.preload();
-        player.preload();
-        background_music.preload();
+        scene_manager.preload();
     };
 
     p.setup = () => {
-        background_music.setup();
-        p.createCanvas(window.innerWidth, window.innerHeight);
-        menu.setup();
-        player.setup();
+        p.createCanvas(window.innerWidth, window.innerHeight, 'webgl');
+        p.ortho();
+        p.smooth()
+        scene_manager.setup();
     };
 
     p.keyPressed = (e: KeyboardEvent) => {
-        if (e.key === "Escape") { // When ESC is pressed...
-            menu.setMenuState(0); // ...return to main menu
-        }
-        player.keyPressed(e);
+        scene_manager.keyPressed(e);
     };
 
     p.keyReleased = (e: KeyboardEvent) => {
-        player.keyReleased(e);
+        scene_manager.keyReleased(e);
+    };
+
+    p.mouseClicked = (e: MouseEvent) => {
+        scene_manager.mouseClicked(e);
     };
 
     p.draw = () => {
-        p.background(135, 206, 235);
-        menu.draw(); // Draw the main menu
-
-        if (menu.getMenuState() === 99) { // 99 means user isn't in a menu (see MainMenu.ts comments)
-            player.draw();
-        }
-    };
-
-    p.mouseClicked = () => {
-        menu.mouseClicked();
+        p.background(255);
+        scene_manager.draw();
     };
 };
 
-const game = new p5(sketch, document.getElementById('p5-canvas') as HTMLElement);
+new p5(sketch, document.getElementById('p5-canvas') as HTMLElement);
