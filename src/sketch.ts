@@ -2,10 +2,11 @@ import p5 from 'p5';
 import SceneManager from './lib/SceneManager';
 import MenuScene from './scenes/MenuScene';
 import PlayScene from './scenes/PlayScene';
+import JKDevScene from './scenes/JKDevScene';
 import LoadingScene from './scenes/LoadingScene';
 
 const sketch = (p: p5) => {
-    const scene_manager = new SceneManager(p, [MenuScene, PlayScene], LoadingScene);
+    const scene_manager = new SceneManager(p, [MenuScene, JKDevScene, PlayScene], LoadingScene);
     p.preload = () => {
         scene_manager.preload();
     };

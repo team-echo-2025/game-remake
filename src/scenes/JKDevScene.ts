@@ -1,20 +1,20 @@
 import Scene from "../lib/Scene";
 import Button from "../lib/ui/Button";
 
-export default class MenuScene extends Scene {
+export default class JKDevScene extends Scene {
     button1: Button;
     button2: Button;
     constructor() {
-        super("menu-scene");
+        super("jkdev-scene");
         this.button1 = new Button({
-            label: "Play!",
+            label: "Test",
             scene: this,
             callback: () => { this.start("play-scene") }
         })
         this.button2 = new Button({
-            label: "Test!",
+            label: "Test",
             scene: this,
-            callback: () => { this.start("jkdev-scene") }
+            callback: () => { this.start("play-scene") }
         })
     }
 
@@ -27,6 +27,6 @@ export default class MenuScene extends Scene {
         this.button1.x = 0;
         this.button1.y = 0;
         this.button2.x = 0;
-        this.button2.y = 100;
+        this.button2.y = -100;
     }
 }
