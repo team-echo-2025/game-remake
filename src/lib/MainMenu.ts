@@ -1,5 +1,6 @@
-import p5 from 'p5';
+import p5, { Font, Image } from 'p5';
 import GameObject from './GameObject';
+import Scene from './Scene';
 
 /*
 Menu Codes:
@@ -30,21 +31,32 @@ export default class Menu implements GameObject {
     private world = 0;
     private difficulty = 0;
 
-    constructor(private p: p5) {}
+    constructor(private scene: Scene) { }
 
-    preload(): void {
-        this.font = this.p.loadFont('assets/fonts/jersey.ttf');
-        this.imgBackground = this.p.loadImage('/assets/background.png');
-        this.imgButton = this.p.loadImage('/assets/Button_Flesh.png');
+    async preload(): Promise<any> {
+        await new Promise((resolve, reject) => {
+            this.font = this.scene.p5.loadFont('assets/fonts/jersey.ttf', (font: Font) => resolve(font), () => reject('Failed to load font'));
+        }).catch(console.error);
+
+        await new Promise((resolve, reject) => {
+            this.imgBackground = this.scene.p5.loadImage('/assets/background.png', (img: Image) => resolve(img), () => reject('Failed to load background'));
+        }).catch(console.error);
+
+        await new Promise((resolve, reject) => {
+            this.imgButton = this.scene.p5.loadImage('/assets/Button_Flesh.png', (img: Image) => resolve(img), () => reject('Failed to load button'));
+        }).catch(console.error);
+        this.imgButton.width = 350;
+        this.imgButton.height = this.imgButton.width / 4;
     }
 
     setup(): void {
-        this.p.rectMode(this.p.CENTER);
+        this.scene.p5.textFont(this.font)
+        this.scene.p5.rectMode(this.scene.p5.CENTER);
         window.addEventListener('keydown', (e) => this.toggleMute(e));
     }
 
     draw(): void {
-        this.p.background(this.imgBackground);
+        this.scene.p5.image(this.imgBackground, -this.scene.p5.width / 2, -this.scene.p5.height / 2, this.scene.p5.width, this.scene.p5.height);
         switch (this.menuState) {
             case 0: this.drawMainMenu(); break;
             case 1: this.drawWorldSelect(); break;
@@ -57,12 +69,12 @@ export default class Menu implements GameObject {
 
     mouseClicked(): void {
 
-        let buttonX = this.p.width / 2;
-        let buttonY = this.p.height / 2;
+        let buttonX = this.scene.p5.width / 2;
+        let buttonY = this.scene.p5.height / 2;
 
-        const buttonClicked = (yOffset: number) => 
-            this.p.mouseX > buttonX - 100 && this.p.mouseX < buttonX + 100 &&
-            this.p.mouseY > buttonY + yOffset - 37 && this.p.mouseY < buttonY + yOffset + 37;
+        const buttonClicked = (yOffset: number) =>
+            this.scene.p5.mouseX > buttonX - 100 && this.scene.p5.mouseX < buttonX + 100 &&
+            this.scene.p5.mouseY > buttonY + yOffset - 37 && this.scene.p5.mouseY < buttonY + yOffset + 37;
 
         switch (this.menuState) {
             case 0: // Main menu
@@ -89,47 +101,51 @@ export default class Menu implements GameObject {
     }
 
     private drawMainMenu(): void {
-        this.p.textFont(this.font);
-        this.p.fill(255);
-        this.p.textSize(200);
-        this.p.text('Exit Paradox', this.p.width / 2, (this.p.height / 2) - 200);
+        this.scene.p5.textFont(this.font);
+        this.scene.p5.fill(255);
+        this.scene.p5.textSize(200);
+        this.scene.p5.text('Exit Paradox', 0, - 200);
         this.drawButton('PLAY', 0);
         this.drawButton('SETTINGS', 100);
         this.drawButton('CUSTOMIZE', 200);
     }
 
     private drawWorldSelect(): void {
-        this.p.fill(255);
-        this.p.textSize(200);
-        this.p.text('Exit Paradox', this.p.width / 2, (this.p.height / 2) - 200);
+        this.scene.p5.textFont(this.font);
+        this.scene.p5.fill(255);
+        this.scene.p5.textSize(200);
+        this.scene.p5.text('Exit Paradox', 0, - 200);
         this.drawButton('WORLD 1', 0);
         this.drawButton('WORLD 2', 100);
         this.drawButton('WORLD 3', 200);
     }
 
     private drawDifficultySelect(): void {
-        this.p.fill(255);
-        this.p.textSize(200);
-        this.p.text('Exit Paradox', this.p.width / 2, (this.p.height / 2) - 200);
+        this.scene.p5.textFont(this.font);
+        this.scene.p5.fill(255);
+        this.scene.p5.textSize(200);
+        this.scene.p5.text('Exit Paradox', 0, - 200);
         this.drawButton('EASY', 0);
         this.drawButton('NORMAL', 100);
         this.drawButton('HARD', 200);
     }
 
     private drawSettingsMenu(): void {
-        this.p.fill(255);
-        this.p.textSize(200);
-        this.p.text('Exit Paradox', this.p.width / 2, (this.p.height / 2) - 200);
+        this.scene.p5.textFont(this.font);
+        this.scene.p5.fill(255);
+        this.scene.p5.textSize(200);
+        this.scene.p5.text('Exit Paradox', 0, - 200);
         this.drawButton(`MUTE: ${this.mute ? 'ON' : 'OFF'}`, 0);
         this.drawButton('KEYBINDS', 100);
         this.drawButton('BACK', 200);
     }
 
     private drawCustomization(): void {
-        this.p.background(135, 206, 235);
-        this.p.fill(0);
-        this.p.textSize(50);
-        this.p.text('Character Customization', this.p.width / 2, this.p.height / 2);
+        this.scene.p5.textFont(this.font);
+        this.scene.p5.background(135, 206, 235);
+        this.scene.p5.fill(0);
+        this.scene.p5.textSize(50);
+        this.scene.p5.text('Character Customization', this.scene.p5.width / 2, this.scene.p5.height / 2);
     }
 
     private drawKeybinds(): void {
@@ -140,16 +156,18 @@ export default class Menu implements GameObject {
     }
 
     private drawButton(label: string, yOffset: number): void {
-        let buttonX = this.p.width / 2;
-        let buttonY = this.p.height / 2 + yOffset;
-        let buttonWidth = 200;
-        let buttonHeight = 75;
+        let buttonX = this.scene.p5.width / 2;
+        let buttonY = this.scene.p5.height / 2 + yOffset;
 
-        this.p.image(this.imgButton, (this.p.width / 2) - 100, this.p.height / 2 + yOffset - 75 / 2 + 10, 200, 75);
-        this.p.fill(255);
-        this.p.textSize(25);
-        this.p.textAlign(this.p.CENTER, this.p.CENTER);
-        this.p.text(label, buttonX, buttonY);
+        this.scene.p5.textFont(this.font);
+        //const img = this.scene.p5.image(this.imgButton, -this.imgButton.width / 2, +yOffset + this.imgButton.height / 2);
+        const button = this.scene.p5.createButton(label, "1")
+        button.style(`background-image`, `url(${this.imgButton})`)
+        button.position(buttonX, buttonY);
+        this.scene.p5.fill(255);
+        this.scene.p5.textSize(25);
+        this.scene.p5.textAlign(this.scene.p5.CENTER, this.scene.p5.CENTER);
+        this.scene.p5.text(label, buttonX, buttonY);
     }
 
     private toggleMute(e: KeyboardEvent): void {
@@ -160,11 +178,11 @@ export default class Menu implements GameObject {
 
     private handleMute() {
         this.mute = !this.mute;
-            document.dispatchEvent(new CustomEvent("onmute", {
-                detail: {
-                    mute: this.mute
-                }
-            }))
+        document.dispatchEvent(new CustomEvent("onmute", {
+            detail: {
+                mute: this.mute
+            }
+        }))
     }
 
     getMenuState(): number { return this.menuState; }

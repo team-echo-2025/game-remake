@@ -1,9 +1,9 @@
-import p5 from "p5";
-
 export default interface GameObject {
-    setup(p: p5): void;
-    draw(p: p5): void;
-    preload(p: p5): void;
+    setup(): void;
+    draw(): void;
+    preload(): Promise<any>;
     keyPressed?(e: KeyboardEvent): void;
     keyReleased?(e: KeyboardEvent): void;
+    mouseClicked?(e: MouseEvent): void;
+    onDestroy?(): void;
 }
