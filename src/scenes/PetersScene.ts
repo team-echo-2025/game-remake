@@ -9,6 +9,6 @@ export default class PetersScene extends Scene {
     }
     draw(): void {
         this.p5.square(20, 20 , 20, 20);
-    }
+    } 
 
 }
