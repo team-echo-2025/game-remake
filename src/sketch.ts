@@ -3,9 +3,10 @@ import SceneManager from './lib/SceneManager';
 import MenuScene from './scenes/MenuScene';
 import PlayScene from './scenes/PlayScene';
 import LoadingScene from './scenes/LoadingScene';
+import KDDevScene from './scenes/KDDevScene';
 
 const sketch = (p: p5) => {
-    const scene_manager = new SceneManager(p, [MenuScene, PlayScene], LoadingScene);
+    const scene_manager = new SceneManager(p, [MenuScene, PlayScene,KDDevScene ], LoadingScene);
     p.preload = () => {
         scene_manager.preload();
     };
