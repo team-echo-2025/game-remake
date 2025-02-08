@@ -2,12 +2,14 @@ import p5 from 'p5';
 import SceneManager from './lib/SceneManager';
 import MenuScene from './scenes/MenuScene';
 import PlayScene from './scenes/PlayScene';
+import WorldScene from './scenes/WorldSelectScene';
+import DifficultyScene from './scenes/DifficultySelectScene';
 import LoadingScene from './scenes/LoadingScene';
 import SettingsScene from "./scenes/SettingsScene"
 import KeybindsScene from './scenes/KeybindsScene';
 
 const sketch = (p: p5) => {
-    const scene_manager = new SceneManager(p, [MenuScene, PlayScene, SettingsScene, KeybindsScene], LoadingScene);
+    const scene_manager = new SceneManager(p, [MenuScene, PlayScene, SettingsScene, KeybindsScene, WorldScene, DifficultyScene], LoadingScene);
     p.preload = () => {
         scene_manager.preload();
     };

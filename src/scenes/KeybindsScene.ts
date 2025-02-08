@@ -26,7 +26,7 @@ export default class KeybindsScene extends Scene {
             callback: () => { this.start("character-scene") }
         })
         this.buttonD = new Button({
-            label: "Left: D",
+            label: "Right: D",
             scene: this,
             callback: () => { this.start("setting-scene") }
         })
