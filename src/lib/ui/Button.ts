@@ -17,8 +17,8 @@ export default class Button implements GameObject {
     private scene: Scene;
     private font!: Font;
     private font_path: string = "assets/fonts/jersey.ttf";
-    private width: number = 0;
-    private height: number = 0;
+    private _width: number = 0;
+    private _height: number = 0;
     private padding_x: number = 40;
     private padding_y: number = 20;
     private callback?: (e: MouseEvent) => void;
@@ -39,6 +39,22 @@ export default class Button implements GameObject {
         return this._y;
     }
 
+    get width() {
+        return this._width;
+    }
+
+    set width(w: number) {
+        this._width = w;
+    }
+
+    get height() {
+        return this._height;
+    }
+
+    set height(h: number) {
+        this._height = h;
+    }
+
     constructor(props: ButtonProps) {
         this.font_size = props.font_size ?? this.font_size;
         this.scene = props.scene;
@@ -56,8 +72,8 @@ export default class Button implements GameObject {
     setup(): void {
         this.scene.p5.textFont(this.font);
         this.scene.p5.textSize(this.font_size);
-        this.width = this.scene.p5.textWidth(this.label) + this.padding_x;
-        this.height = this.scene.p5.textAscent() + this.scene.p5.textDescent() + this.padding_y;
+        this._width = this.scene.p5.textWidth(this.label) + this.padding_x;
+        this._height = this.scene.p5.textAscent() + this.scene.p5.textDescent() + this.padding_y;
     }
 
     draw(): void {
@@ -71,7 +87,7 @@ export default class Button implements GameObject {
         this.scene.p5.textFont(this.font);
         this.scene.p5.textSize(this.font_size);
         this.scene.p5.fill(255);
-        this.scene.p5.rect(this._x, this._y, this.width, this.height, 10);
+        this.scene.p5.rect(this._x, this._y, this._width, this._height, 10);
         this.scene.p5.fill(0);
         this.scene.p5.text(this.label, this._x, this._y - this.font_size / 6);
         this.scene.p5.pop();
@@ -80,10 +96,10 @@ export default class Button implements GameObject {
     mouseClicked(e: any): void {
         const x = this.scene.p5.mouseX - this.scene.p5.width / 2;
         const y = this.scene.p5.mouseY - this.scene.p5.height / 2;
-        const min_x = this._x - this.width / 2;
-        const max_x = this._x + this.width / 2;
-        const min_y = this._y - this.height / 2;
-        const max_y = this._y + this.height / 2;
+        const min_x = this._x - this._width / 2;
+        const max_x = this._x + this._width / 2;
+        const min_y = this._y - this._height / 2;
+        const max_y = this._y + this._height / 2;
         if (x > min_x && x < max_x && y > min_y && y < max_y) {
             this.callback?.(e);
         }
