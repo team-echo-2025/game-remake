@@ -12,7 +12,7 @@ export type ButtonProps = Readonly<{
 export default class Button implements GameObject {
     private _x: number = 0;
     private _y: number = 0;
-    public label: string;
+    private _label: string;
     private font_size: number = 24;
     private scene: Scene;
     private font!: Font;
@@ -39,11 +39,19 @@ export default class Button implements GameObject {
         return this._y;
     }
 
+    set label(label: string) {
+        this._label = label;
+    }
+
+    get label() {
+        return this._label;
+    }
+
     constructor(props: ButtonProps) {
         this.font_size = props.font_size ?? this.font_size;
         this.scene = props.scene;
         this.font_path = props.font_path ?? this.font_path;
-        this.label = props.label;
+        this._label = props.label;
         this.callback = props.callback;
     }
 
@@ -56,7 +64,7 @@ export default class Button implements GameObject {
     setup(): void {
         this.scene.p5.textFont(this.font);
         this.scene.p5.textSize(this.font_size);
-        this.width = this.scene.p5.textWidth(this.label) + this.padding_x;
+        this.width = this.scene.p5.textWidth(this._label) + this.padding_x;
         this.height = this.scene.p5.textAscent() + this.scene.p5.textDescent() + this.padding_y;
     }
 
@@ -73,7 +81,7 @@ export default class Button implements GameObject {
         this.scene.p5.fill(255);
         this.scene.p5.rect(this._x, this._y, this.width, this.height, 10);
         this.scene.p5.fill(0);
-        this.scene.p5.text(this.label, this._x, this._y - this.font_size / 6);
+        this.scene.p5.text(this._label, this._x, this._y - this.font_size / 6);
         this.scene.p5.pop();
     }
 
