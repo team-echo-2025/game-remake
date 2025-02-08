@@ -12,7 +12,7 @@ export type ButtonProps = Readonly<{
 export default class Button implements GameObject {
     private _x: number = 0;
     private _y: number = 0;
-    private label: string;
+    public label: string;
     private font_size: number = 24;
     private scene: Scene;
     private font!: Font;
