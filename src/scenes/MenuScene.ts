@@ -1,10 +1,13 @@
+import { Page, PageManager } from "../lib/PageManager";
 import Scene from "../lib/Scene";
 import Button from "../lib/ui/Button";
+import MenuPage from "../pages/MenuPage";
 
 export default class MenuScene extends Scene {
     button1: Button;
     button2: Button;
     button3: Button;
+    pManager: PageManager;
     constructor() {
         super("menu-scene");
         this.button1 = new Button({
@@ -23,12 +26,14 @@ export default class MenuScene extends Scene {
             scene: this,
             callback: () => { this.start("character-scene") }
         })
+        this.pManager = new PageManager([new MenuPage()], this);
     }
     
     onStart(): void {
-        this.add(this.button1);
-        this.add(this.button2);
-        this.add(this.button3);
+        // this.add(this.button1);
+        // this.add(this.button2);
+        // this.add(this.button3);
+        this.add(this.pManager);
     }
     
     draw() {

@@ -2,45 +2,64 @@ import Scene from "../lib/Scene";
 import Button from "../lib/ui/Button";
 
 export default class SettingsScene extends Scene {
-    button1: Button;
-    button2: Button;
-    button3: Button;
+    buttonMute: Button;
+    buttonKeybinds: Button;
+    buttonBack: Button;
+    private isMuted = false;
+
     constructor() {
-        super("setting-scene"); //sets name for scene
-        this.button1 = new Button({
-                    label: "Mute",
-                    scene: this,
-                    callback: () => { this.start("play-scene") }
-                })
-                this.button2 = new Button({
-                    label: "Keybinds",
-                    scene: this,
-                    callback: () => { this.start("keybinds-scene") }
-                })
-                
-                this.button3 = new Button({
-                    label: "Back",
-                    scene: this,
-                    callback: () => { this.start("menu-scene") }
-                })
-            }
-            
-            onStart(): void {
-                this.add(this.button1);
-                this.add(this.button2);
-                this.add(this.button3);
-            }
-            
-            draw() {
-                // this.button1.x = this.p5.mouseX - this.p5.width / 2;
-                // this.button1.y = this.p5.mouseY - this.p5.height / 2;
-        
-                this.button1.x = 0;
-                this.button1.y = -100;
-                this.button2.x = 0;
-                this.button2.y = 0;
-                this.button3.x = 0;
-                this.button3.y = 100;
-                
-            }
+        super("setting-scene");
+
+        this.buttonMute = new Button({
+            label: "Mute: OFF",
+            scene: this,
+            callback: () => this.toggleMute()
+        });
+
+        this.buttonKeybinds = new Button({
+            label: "Keybinds",
+            scene: this,
+            callback: () => this.start("keybinds-scene")
+        });
+
+        this.buttonBack = new Button({
+            label: "Back",
+            scene: this,
+            callback: () => this.start("menu-scene")
+        });
+
+        // Listen for mute event updates
+        document.addEventListener("onmute", (event: Event) => {
+            const muteEvent = event as CustomEvent;
+            this.isMuted = muteEvent.detail.mute;
+            this.updateMuteLabel();
+        });
+    }
+
+    onStart(): void {
+        this.add(this.buttonMute);
+        this.add(this.buttonKeybinds);
+        this.add(this.buttonBack);
+    }
+
+    draw(): void {
+        this.buttonMute.x = 0;
+        this.buttonMute.y = -100;
+        this.buttonKeybinds.x = 0;
+        this.buttonKeybinds.y = 0;
+        this.buttonBack.x = 0;
+        this.buttonBack.y = 100;
+    }
+
+    private toggleMute(): void {
+        this.isMuted = !this.isMuted;
+        document.dispatchEvent(new CustomEvent("onmute", {
+            detail: { mute: this.isMuted }
+        }));
+        this.updateMuteLabel();
+    }
+
+    private updateMuteLabel(): void {
+        this.buttonMute.label = `Mute: ${this.isMuted ? "ON" : "OFF"}`;
+    }
 }
