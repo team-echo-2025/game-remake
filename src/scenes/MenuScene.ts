@@ -8,7 +8,7 @@ export default class MenuScene extends Scene {
         this.button1 = new Button({
             label: "Play!",
             scene: this,
-            callback: () => { this.start("play-scene") }
+            callback: () => { this.start("world-scene") }
         })
     }
 
