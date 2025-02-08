@@ -45,6 +45,7 @@ export default class KDDevScene extends Scene {
         this.add(this.play_music_button);
         this.add(this.stop_music_button);
         this.add(this.mute_music_button);
+        this.add(this.background_music);
     }
 
     preload(): Promise<any> {
