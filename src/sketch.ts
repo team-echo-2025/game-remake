@@ -5,7 +5,7 @@ import PlayScene from './scenes/PlayScene';
 import LoadingScene from './scenes/LoadingScene';
 
 const sketch = (p: p5) => {
-    const scene_manager = new SceneManager(p, [MenuScene, PlayScene], LoadingScene);
+    const scene_manager = new SceneManager(p, [PlayScene, MenuScene, PlayScene], LoadingScene);
     p.preload = () => {
         scene_manager.preload();
     };

@@ -19,4 +19,8 @@ export default class PlayScene extends Scene {
         this.add(this.player);
         this.add(this.button1);
     }
+    setup(): void {
+        this.button1.x = -this.p5.width / 2 + this.button1.width / 2 + 10;
+        this.button1.y = -this.p5.height / 2 + this.button1.height / 2 + 10;
+    }
 }
