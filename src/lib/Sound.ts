@@ -28,11 +28,16 @@ export default class Sound implements GameObject{
     toggleMute(): boolean{
         return this.muted = !this.muted;
     }
+    onDestroy(): void {
+        this.sound.stop();
+        this.sound.unload();
+    }
     // functions to be called in scene \/
     mute(): void{
         this.sound.mute(this.toggleMute());
     }
     play(): void{
+        if(this.sound.playing()) return;
         this.sound.play();
     }
     loop(): void{
@@ -41,5 +46,4 @@ export default class Sound implements GameObject{
     stop(): void{
         this.sound.stop();
     }
-
 }
