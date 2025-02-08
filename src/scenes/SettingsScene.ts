@@ -5,12 +5,13 @@ export default class SettingsScene extends Scene {
     button1: Button;
     button2: Button;
     button3: Button;
+    private isMuted: boolean = false;
     constructor() {
         super("setting-scene"); //sets name for scene
         this.button1 = new Button({
                     label: "Mute",
                     scene: this,
-                    callback: () => { this.start("play-scene") }
+                    callback: () => this.handleMute()
                 })
                 this.button2 = new Button({
                     label: "Keybinds",
@@ -23,7 +24,9 @@ export default class SettingsScene extends Scene {
                     scene: this,
                     callback: () => { this.start("menu-scene") }
                 })
+                document.addEventListener("keydown", (e) => this.toggleMute(e));
             }
+            
             
             onStart(): void {
                 this.add(this.button1);
@@ -42,5 +45,21 @@ export default class SettingsScene extends Scene {
                 this.button3.x = 0;
                 this.button3.y = 100;
                 
+            }
+            private toggleMute(e: KeyboardEvent): void {
+                if (e.key.toLowerCase() === 'm') {
+                    this.handleMute();
+                }
+            }
+        
+            private handleMute(): void {
+                this.isMuted = !this.isMuted; // Toggle mute state
+                document.dispatchEvent(new CustomEvent("onmute", {
+                    detail: { mute: this.isMuted }
+                }));
+                localStorage.setItem("muted", this.isMuted + "")
+        
+                // Update button label dynamically
+                this.button1.label = this.isMuted ? "Unmute" : "Mute";
             }
 }
