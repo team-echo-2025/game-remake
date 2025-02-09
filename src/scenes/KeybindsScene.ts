@@ -1,6 +1,5 @@
 import Scene from "../lib/Scene";
 import Button from "../lib/ui/Button";
-import Player from "../lib/Player";
 
 export default class KeybindsScene extends Scene {
     buttonW: Button;
@@ -8,35 +7,31 @@ export default class KeybindsScene extends Scene {
     buttonS: Button;
     buttonD: Button;
     buttonBack: Button;
-    player: Player;
 
     constructor() {
         super("keybinds-scene");
-
         // Create the player object
-        this.player = new Player(this);
-
         // Create buttons for changing key bindings
         this.buttonW = new Button({
-            label: `Up: ${this.player.forwardKey.toUpperCase()}`,
+            label: `Up: ${localStorage.getItem("forward")?.toUpperCase()??"W"}`,
             scene: this,
             callback: () => this.changeKeybind('forward')
         });
 
         this.buttonA = new Button({
-            label: `Left: ${this.player.leftKey.toUpperCase()}`,
+            label: `Left: ${localStorage.getItem("left")?.toUpperCase()??"A"}`,
             scene: this,
             callback: () => this.changeKeybind('left')
         });
 
         this.buttonS = new Button({
-            label: `Down: ${this.player.downKey.toUpperCase()}`,
+            label: `Down: ${localStorage.getItem("down")?.toUpperCase()??"S"}`,
             scene: this,
-            callback: () => this.changeKeybind('back')
+            callback: () => this.changeKeybind('down')
         });
 
         this.buttonD = new Button({
-            label: `Right: ${this.player.rightKey.toUpperCase()}`,
+            label: `Right: ${localStorage.getItem("right")?.toUpperCase()??"D"}`,
             scene: this,
             callback: () => this.changeKeybind('right')
         });
@@ -49,24 +44,20 @@ export default class KeybindsScene extends Scene {
     }
 
     // Method to handle keybind changes
-    changeKeybind(direction: 'forward' | 'left' | 'back' | 'right') {
+    changeKeybind(direction: 'forward' | 'left' | 'down' | 'right') {
         // Prompt the user for a new key and update the player's keybindings
         const newKey = prompt(`Press a new key for ${direction}:`);
         if (newKey) {
             if (direction === 'forward') {
-                this.player.forwardKey = newKey.toLowerCase();
                 this.buttonW.label = `Up: ${newKey.toUpperCase()}`;
                 localStorage.setItem("forward", newKey.toLowerCase());
             } else if (direction === 'left') {
-                this.player.leftKey = newKey.toLowerCase();
                 this.buttonA.label = `Left: ${newKey.toUpperCase()}`;
                 localStorage.setItem("left", newKey.toLowerCase());
-            } else if (direction === 'back') {
-                this.player.downKey = newKey.toLowerCase();
+            } else if (direction === 'down') {
                 this.buttonS.label = `Down: ${newKey.toUpperCase()}`;
                 localStorage.setItem("down", newKey.toLowerCase());
             } else if (direction === 'right') {
-                this.player.rightKey = newKey.toLowerCase();
                 this.buttonD.label = `Right: ${newKey.toUpperCase()}`;
                 localStorage.setItem("right", newKey.toLowerCase());
             }
