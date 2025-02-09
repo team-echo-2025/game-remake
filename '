@@ -32,11 +32,9 @@ export default class PageManager implements GameObject {
     async preload(): Promise<void> {
         // const preloadPromises = Array.from(this.pages.values()).map(page => page.preload());
         // await Promise.all(preloadPromises);
-        const to_load = []
         for (let page of this.pages.values()) {
-            to_load.push(page.preload());
+            await page.preload();
         }
-        await Promise.all(to_load);
     }
 
     setup(): void {

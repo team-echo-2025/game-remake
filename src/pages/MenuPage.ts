@@ -1,28 +1,22 @@
-import { Page } from "../lib/PageManager";
-import Button from "../lib/ui/Button";
+import Page from "../lib/Page";
+import ButtonTest from "../lib/ui/ButtonTest";
 
-// import Button from "button"
 export default class MenuPage extends Page {
-    keybinds!: Button;
+    keybinds!: ButtonTest;
     constructor() {
         super("menu-page")
     }
-    async preload(): Promise<void> {
-        this.keybinds = new Button({
-            label: "Keybinds",
-            scene: this.scene,
-            font_size: 50,
-            callback: () => { this.set_page("keybinds-page"); }
-        });
-        await this.keybinds.preload();
+    preload(): any {
+        this.scene.loadFont('jersey', 'assets/fonts/jersey.ttf')
     }
     setup(): void {
-        this.keybinds.setup();
-    }
-    draw(): void {
-        this.keybinds.draw();
-    }
-    mouseClicked(e: MouseEvent) {
-        this.keybinds.mouseClicked(e)
+        this.keybinds = this.scene.add_new.button({
+            label: "test",
+            font_key: 'jersey',
+            callback: () => {
+                this.scene.remove(this.keybinds);
+                this.set_page("keybinds-page");
+            }
+        })
     }
 }

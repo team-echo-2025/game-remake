@@ -1,6 +1,7 @@
 import Page from "../lib/Page";
 import ButtonTest from "../lib/ui/ButtonTest";
 
+// import Button from "button"
 export default class KeybindsPage extends Page {
     menu!: ButtonTest;
     sign: number = 1;
