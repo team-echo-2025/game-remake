@@ -2,64 +2,64 @@ import Scene from "../lib/Scene";
 import Button from "../lib/ui/Button";
 
 export default class SettingsScene extends Scene {
-    buttonMute: Button;
-    buttonKeybinds: Button;
-    buttonBack: Button;
-    private isMuted = false;
-
+    button1: Button;
+    button2: Button;
+    button3: Button;
+    private isMuted: boolean = false;
     constructor() {
-        super("setting-scene");
-
-        this.buttonMute = new Button({
-            label: "Mute: OFF",
+        super("setting-scene"); //sets name for scene
+        this.button1 = new Button({
+            label: "Mute",
             scene: this,
-            callback: () => this.toggleMute()
-        });
-
-        this.buttonKeybinds = new Button({
+            callback: () => this.handleMute()
+        })
+        this.button2 = new Button({
             label: "Keybinds",
             scene: this,
-            callback: () => this.start("keybinds-scene")
-        });
+            callback: () => { this.start("keybinds-scene") }
+        })
 
-        this.buttonBack = new Button({
+        this.button3 = new Button({
             label: "Back",
             scene: this,
-            callback: () => this.start("menu-scene")
-        });
-
-        // Listen for mute event updates
-        document.addEventListener("onmute", (event: Event) => {
-            const muteEvent = event as CustomEvent;
-            this.isMuted = muteEvent.detail.mute;
-            this.updateMuteLabel();
-        });
+            callback: () => { this.start("menu-scene") }
+        })
+        document.addEventListener("keydown", (e) => this.toggleMute(e));
     }
+
 
     onStart(): void {
-        this.add(this.buttonMute);
-        this.add(this.buttonKeybinds);
-        this.add(this.buttonBack);
+        this.add(this.button1);
+        this.add(this.button2);
+        this.add(this.button3);
     }
 
-    draw(): void {
-        this.buttonMute.x = 0;
-        this.buttonMute.y = -100;
-        this.buttonKeybinds.x = 0;
-        this.buttonKeybinds.y = 0;
-        this.buttonBack.x = 0;
-        this.buttonBack.y = 100;
+    draw() {
+        // this.button1.x = this.p5.mouseX - this.p5.width / 2;
+        // this.button1.y = this.p5.mouseY - this.p5.height / 2;
+
+        this.button1.x = 0;
+        this.button1.y = -100;
+        this.button2.x = 0;
+        this.button2.y = 0;
+        this.button3.x = 0;
+        this.button3.y = 100;
+
+    }
+    private toggleMute(e: KeyboardEvent): void {
+        if (e.key.toLowerCase() === 'm') {
+            this.handleMute();
+        }
     }
 
-    private toggleMute(): void {
-        this.isMuted = !this.isMuted;
+    private handleMute(): void {
+        this.isMuted = !this.isMuted; // Toggle mute state
         document.dispatchEvent(new CustomEvent("onmute", {
             detail: { mute: this.isMuted }
         }));
-        this.updateMuteLabel();
-    }
+        localStorage.setItem("muted", this.isMuted + "")
 
-    private updateMuteLabel(): void {
-        this.buttonMute.label = `Mute: ${this.isMuted ? "ON" : "OFF"}`;
+        // Update button label dynamically
+        this.button1.label = this.isMuted ? "Unmute" : "Mute";
     }
 }

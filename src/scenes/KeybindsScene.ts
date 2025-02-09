@@ -1,6 +1,5 @@
 import Scene from "../lib/Scene";
 import Button from "../lib/ui/Button";
-import Player from "../lib/Player";
 
 export default class KeybindsScene extends Scene {
     buttonW: Button;
@@ -8,37 +7,42 @@ export default class KeybindsScene extends Scene {
     buttonS: Button;
     buttonD: Button;
     buttonBack: Button;
-    player: Player;
+    private pressed_keys: Record<string, boolean> = {};
+    private keybinds: Record<string, string> = {
+        forward: localStorage.getItem("forward") || "w",
+        left: localStorage.getItem("left") || "a",
+        down: localStorage.getItem("down") || "s",
+        right: localStorage.getItem("right") || "d"
+    };
+    private waitingForKey: string | null = null;
 
     constructor() {
         super("keybinds-scene");
+        window.addEventListener("keydown", this.keyPressed.bind(this));
+        window.addEventListener("keyup", this.keyReleased.bind(this));
 
-        // Create the player object
-        this.player = new Player(this);
-
-        // Create buttons for changing key bindings
         this.buttonW = new Button({
-            label: `Up: ${this.player.forwardKey.toUpperCase()}`,
+            label: `Up: ${this.keybinds.forward.toUpperCase()}`,
             scene: this,
-            callback: () => this.changeKeybind('forward')
+            callback: () => this.setKeybindChange('forward')
         });
 
         this.buttonA = new Button({
-            label: `Left: ${this.player.leftKey.toUpperCase()}`,
+            label: `Left: ${this.keybinds.left.toUpperCase()}`,
             scene: this,
-            callback: () => this.changeKeybind('left')
+            callback: () => this.setKeybindChange('left')
         });
 
         this.buttonS = new Button({
-            label: `Down: ${this.player.downKey.toUpperCase()}`,
+            label: `Down: ${this.keybinds.down.toUpperCase()}`,
             scene: this,
-            callback: () => this.changeKeybind('back')
+            callback: () => this.setKeybindChange('down')
         });
 
         this.buttonD = new Button({
-            label: `Right: ${this.player.rightKey.toUpperCase()}`,
+            label: `Right: ${this.keybinds.right.toUpperCase()}`,
             scene: this,
-            callback: () => this.changeKeybind('right')
+            callback: () => this.setKeybindChange('right')
         });
 
         this.buttonBack = new Button({
@@ -48,29 +52,33 @@ export default class KeybindsScene extends Scene {
         });
     }
 
-    // Method to handle keybind changes
-    changeKeybind(direction: 'forward' | 'left' | 'back' | 'right') {
-        // Prompt the user for a new key and update the player's keybindings
-        const newKey = prompt(`Press a new key for ${direction}:`);
-        if (newKey) {
-            if (direction === 'forward') {
-                this.player.forwardKey = newKey.toLowerCase();
-                this.buttonW.label = `Up: ${newKey.toUpperCase()}`;
-                localStorage.setItem("forward", newKey.toLowerCase());
-            } else if (direction === 'left') {
-                this.player.leftKey = newKey.toLowerCase();
-                this.buttonA.label = `Left: ${newKey.toUpperCase()}`;
-                localStorage.setItem("left", newKey.toLowerCase());
-            } else if (direction === 'back') {
-                this.player.downKey = newKey.toLowerCase();
-                this.buttonS.label = `Down: ${newKey.toUpperCase()}`;
-                localStorage.setItem("down", newKey.toLowerCase());
-            } else if (direction === 'right') {
-                this.player.rightKey = newKey.toLowerCase();
-                this.buttonD.label = `Right: ${newKey.toUpperCase()}`;
-                localStorage.setItem("right", newKey.toLowerCase());
-            }
+    keyPressed(e: KeyboardEvent): void {
+        if (this.waitingForKey) {
+            this.keybinds[this.waitingForKey] = e.key.toLowerCase();
+            localStorage.setItem(this.waitingForKey, e.key.toLowerCase());
+            this.updateButtonLabels();
+            this.waitingForKey = null;
+        } else {
+            const key = Object.keys(this.keybinds).find(k => this.keybinds[k] === e.key.toLowerCase());
+            if (key) this.pressed_keys[key] = true;
         }
+    }
+
+    keyReleased(e: KeyboardEvent): void {
+        const key = Object.keys(this.keybinds).find(k => this.keybinds[k] === e.key.toLowerCase());
+        if (key) this.pressed_keys[key] = false;
+    }
+
+    setKeybindChange(direction: 'forward' | 'left' | 'down' | 'right') {
+        this.waitingForKey = direction;
+        alert(`Press a new key for ${direction}`);
+    }
+
+    updateButtonLabels(): void {
+        this.buttonW.label = `Up: ${this.keybinds.forward.toUpperCase()}`;
+        this.buttonA.label = `Left: ${this.keybinds.left.toUpperCase()}`;
+        this.buttonS.label = `Down: ${this.keybinds.down.toUpperCase()}`;
+        this.buttonD.label = `Right: ${this.keybinds.right.toUpperCase()}`;
     }
 
     onStart(): void {
@@ -82,7 +90,6 @@ export default class KeybindsScene extends Scene {
     }
 
     draw() {
-        // Position buttons
         this.buttonW.x = 0;
         this.buttonW.y = -200;
         this.buttonA.x = 0;
