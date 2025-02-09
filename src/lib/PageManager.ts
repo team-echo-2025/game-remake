@@ -9,11 +9,14 @@ class Page implements GameObject {
 
     constructor(name: string) {
         this.name = name;
-        
+
     }
 
     async preload(): Promise<void> {
         // load assets
+    }
+    onStart() {
+        console.log("heelllo")
     }
 
     setup(): void {
@@ -25,11 +28,14 @@ class Page implements GameObject {
     }
 
     set_page(page_name: string): void {
+        console.log(page_name)
         if (this.page_manager) {
             this.page_manager.set_page(page_name);
         } else {
             console.error("PageManager not set for", this.name);
         }
+    }
+    mouseClicked(e: MouseEvent): void {
     }
 }
 
@@ -52,8 +58,8 @@ class PageManager implements GameObject {
     set_page(page_name: string): void {
         const page = this.pages.get(page_name);
         if (page) {
+            console.log(page)
             this.current_page = page;
-            this.current_page.setup();
         } else {
             console.error(`Page "${page_name}" not found.`);
         }
@@ -62,17 +68,26 @@ class PageManager implements GameObject {
     async preload(): Promise<void> {
         // const preloadPromises = Array.from(this.pages.values()).map(page => page.preload());
         // await Promise.all(preloadPromises);
-        for(let page of this.pages.values()){
+        for (let page of this.pages.values()) {
             await page.preload();
         }
     }
 
     setup(): void {
-        this.current_page?.setup();
+        for (let page of this.pages.values()) {
+            page.setup();
+        }
     }
 
     draw(): void {
         this.current_page?.draw();
     }
+
+    onStart(): void {
+        this.current_page?.onStart();
+    }
+    mouseClicked(e: MouseEvent): void {
+        this.current_page?.mouseClicked(e);
+    }
 }
-export {Page, PageManager}
+export { Page, PageManager }
