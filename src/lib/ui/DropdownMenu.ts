@@ -30,8 +30,8 @@ export default class DropdownMenu extends Button{
             const oldCallback = button.callback;
             //this.callbacks.push(button.callback);
             const newCallback = (e: MouseEvent)=>{
+                this.menuOpen = false;
                 oldCallback(e);
-                this.toggleMenu();
             };
             button.callback = newCallback
         }
@@ -50,8 +50,8 @@ export default class DropdownMenu extends Button{
         for(const button of this.buttons){
             button.onDestroy();
         }
-        super.onDestroy();
         this.menuOpen = false;
+        super.onDestroy();
     }
     async preload(): Promise<any> {
         const to_load = [super.preload()]
