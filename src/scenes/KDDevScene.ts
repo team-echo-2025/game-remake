@@ -1,7 +1,8 @@
 import Player from "../lib/Player";
 import Scene from "../lib/Scene";
-import Button from "../lib/ui/Button";
+import Button, { ButtonProps } from "../lib/ui/Button";
 import Sound from "../lib/Sound";
+import DropdownMenu from "../lib/ui/DropdownMenu";
 
 export default class KDDevScene extends Scene {
     player: Player;
@@ -10,6 +11,7 @@ export default class KDDevScene extends Scene {
     stop_music_button: Button;
     mute_music_button: Button;
     background_music: Sound;
+    dropMenu: DropdownMenu;
     constructor() {
         super("kd-dev-scene");
         this.return_button = new Button({
@@ -38,6 +40,33 @@ export default class KDDevScene extends Scene {
         })
         this.background_music = new Sound("assets/background_music.mp3");
         this.player = new Player(this);
+
+        const button1:ButtonProps = {
+            label: "test",
+            scene: this,
+            font_size: 50,
+            callback: () => {}
+        };
+        const button2:ButtonProps = {
+            ...button1, 
+            callback: () => { this.start("menu-scene") },
+            label: "Im so tired"
+        }
+        const button3:ButtonProps = {
+            ...button1, 
+            label: "nice throbber mate"
+        }
+
+        this.dropMenu = new DropdownMenu({
+            label: "Show Dev Scenes",
+            scene: this,
+            font_size: 50,
+            buttons:[
+                button1,
+                button2,
+                button3
+            ]
+        })
     }
     onStart(): void {
         this.add(this.player);
@@ -46,6 +75,7 @@ export default class KDDevScene extends Scene {
         this.add(this.stop_music_button);
         this.add(this.mute_music_button);
         this.add(this.background_music);
+        this.add(this.dropMenu)
     }
 
     preload(): Promise<any> {
@@ -55,16 +85,20 @@ export default class KDDevScene extends Scene {
 
     
     setup(): void {
-    }
-
-    draw() {
         this.return_button.x = -300//this.p5.mouseX - this.p5.width / 2;
-        this.return_button.y = -200//this.p5.mouseY - this.p5.height / 2;
+        this.return_button.y = 200//this.p5.mouseY - this.p5.height / 2;
         this.play_music_button.x = 300
         this.play_music_button.y = -300
         this.stop_music_button.x = 300
         this.stop_music_button.y = -200
         this.mute_music_button.x = 300
         this.mute_music_button.y = -100
+        this.dropMenu.y= -200
+        this.dropMenu.x= -200
+    }
+
+    draw() {
+        
+        
     }
 }
