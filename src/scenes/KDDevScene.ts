@@ -42,7 +42,7 @@ export default class KDDevScene extends Scene {
         this.player = new Player(this);
 
         const button1:ButtonProps = {
-            label: "test",
+            label: "test nothing",
             scene: this,
             font_size: 50,
             callback: () => {}
@@ -50,11 +50,11 @@ export default class KDDevScene extends Scene {
         const button2:ButtonProps = {
             ...button1, 
             callback: () => { this.start("menu-scene") },
-            label: "Im so tired"
+            label: "to menu"
         }
         const button3:ButtonProps = {
             ...button1, 
-            label: "nice throbber mate"
+            label: "this big massive button does nothing"
         }
 
         this.dropMenu = new DropdownMenu({
