@@ -51,6 +51,7 @@ export default class DropdownMenu extends Button{
             button.onDestroy();
         }
         super.onDestroy();
+        this.menuOpen = false;
     }
     async preload(): Promise<any> {
         const to_load = [super.preload()]
