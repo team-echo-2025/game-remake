@@ -1,11 +1,15 @@
+import PageManager from "../lib/PageManager";
 import Scene from "../lib/Scene";
 import Button from "../lib/ui/Button";
+import KeybindsPage from "../pages/KeybindsPage";
+import MenuPage from "../pages/MenuPage";
 
 export default class MenuScene extends Scene {
     button1: Button;
     KDbutton: Button;
     button2: Button;
     button3: Button;
+    pManager: PageManager;
     constructor() {
         super("menu-scene");
         this.button1 = new Button({
@@ -18,26 +22,31 @@ export default class MenuScene extends Scene {
             scene: this,
             callback: () => { this.start("setting-scene") }
         })
-        
+
         this.button3 = new Button({
             label: "Character Customization",
             scene: this,
             callback: () => { this.start("character-scene") }
         })
+        this.pManager = new PageManager([new MenuPage(), new KeybindsPage()], this);
         this.KDbutton = new Button({
             label: "KD DEV",
             scene: this,
             callback: () => { this.start("kd-dev-scene") }
         })
+        this.add(this.pManager);
     }
-    
+
+    async preload(): Promise<any> {
+    }
+
     onStart(): void {
-        this.add(this.button1);
-        this.add(this.KDbutton);
-        this.add(this.button2);
-        this.add(this.button3);
+        // this.add(this.button1);
+        // this.add(this.button2);
+        // this.add(this.button3);
+        //this.add(this.KDbutton);
     }
-    
+
     draw() {
         this.button1.x = 2//this.p5.mouseX - this.p5.width / 2;
         this.button1.y = 2//this.p5.mouseY - this.p5.height / 2;
@@ -52,6 +61,6 @@ export default class MenuScene extends Scene {
         this.button2.y = 0;
         this.button3.x = 0;
         this.button3.y = 100;
-        
+
     }
 }
