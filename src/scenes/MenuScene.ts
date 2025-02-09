@@ -1,4 +1,4 @@
-import { Page, PageManager } from "../lib/PageManager";
+import PageManager from "../lib/PageManager";
 import Scene from "../lib/Scene";
 import Button from "../lib/ui/Button";
 import KeybindsPage from "../pages/KeybindsPage";
@@ -34,6 +34,10 @@ export default class MenuScene extends Scene {
             scene: this,
             callback: () => { this.start("kd-dev-scene") }
         })
+        this.add(this.pManager);
+    }
+
+    async preload(): Promise<any> {
     }
 
     onStart(): void {
@@ -41,7 +45,6 @@ export default class MenuScene extends Scene {
         // this.add(this.button2);
         // this.add(this.button3);
         //this.add(this.KDbutton);
-        this.add(this.pManager);
     }
 
     draw() {

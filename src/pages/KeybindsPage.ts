@@ -1,28 +1,32 @@
-import { Page } from "../lib/PageManager";
-import Button from "../lib/ui/Button";
+import Page from "../lib/Page";
+import ButtonTest from "../lib/ui/ButtonTest";
 
-// import Button from "button"
 export default class KeybindsPage extends Page {
-    menu!: Button;
+    menu!: ButtonTest;
+    sign: number = 1;
     constructor() {
         super("keybinds-page")
     }
-    async preload(): Promise<void> {
-        this.menu = new Button({
-            label: "Menu",
-            scene: this.scene,
-            font_size: 50,
-            callback: () => { this.set_page("menu-page"); }
-        });
-        await this.menu.preload();
+    preload(): any {
+        this.scene.loadFont('jersey', 'assets/fonts/jersey.ttf')
     }
     setup(): void {
-        this.menu.setup();
+        this.menu = this.scene.add_new.button({
+            font_key: "jersey",
+            label: "Menu",
+            font_size: 50,
+            callback: () => {
+                this.scene.remove(this.menu);
+                this.set_page("menu-page");
+            }
+        });
     }
     draw(): void {
-        this.menu.draw();
-    }
-    mouseClicked(e: MouseEvent) {
-        this.menu.mouseClicked(e)
+        if (this.menu.x > this.scene.p5.width / 2) {
+            this.sign = -1;
+        } else if (this.menu.x < -this.scene.p5.width / 2) {
+            this.sign = 1;
+        }
+        this.menu.x += 10 * this.sign;
     }
 }

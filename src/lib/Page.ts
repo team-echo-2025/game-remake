@@ -13,8 +13,6 @@ export default class Page implements GameObject {
 
     async preload(): Promise<void> { }
 
-    onStart() { }
-
     setup(): void { }
 
     draw(): void { }

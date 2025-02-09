@@ -25,17 +25,17 @@ export default class SceneManager implements GameObject {
         const new_scene = this.scenes.values().next().value!;
         this.loading_scene.onStart()
         new Promise(async (res) => {
-            await this.loading_scene.preload_objects()
             await this.loading_scene.preload()
+            await this.loading_scene.preload_objects()
             res(true);
         }).then(() => {
-            this.loading_scene?.setup_objects();
             this.loading_scene?.setup();
+            this.loading_scene?.setup_objects();
         });
         new_scene.start(new_scene.name);
     }
 
-    start(name: string) {
+    async start(name: string) {
         const new_scene = this.scenes.get(name);
         if (!new_scene) {
             throw Error(`Scene: ${name} does not exist.`);
@@ -45,17 +45,13 @@ export default class SceneManager implements GameObject {
         }
         this.current_scene = this.loading_scene;
         new_scene.onStart();
-        new Promise(async (res) => {
-            await new_scene.preload_objects()
-            await new_scene.preload()
-            res(true);
-        }).then(() => {
-            new_scene?.setup_objects();
-            new_scene?.setup();
-            setTimeout(() => {
-                this.current_scene = new_scene;
-            }, 500)
-        });
+        await new_scene.preload()
+        await new_scene.preload_objects()
+        new_scene?.setup();
+        new_scene?.setup_objects();
+        setTimeout(() => {
+            this.current_scene = new_scene;
+        }, 500)
     }
 
     async preload(): Promise<any> { }
