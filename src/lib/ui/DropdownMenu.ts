@@ -1,87 +1,66 @@
-import p5, { Font } from "p5";
-import GameObject from "../GameObject";
-import Scene from "../Scene";
-import Button, {ButtonProps} from "./Button";
+import ButtonTest, { ButtonTestProps } from "./ButtonTest";
 
-export type DropdownMenuProps = ButtonProps&Readonly<{
-    buttons: ButtonProps[];
+export type DropdownMenuProps = ButtonTestProps & Readonly<{
+    buttons: ButtonTestProps[];
 }>;
-export default class DropdownMenu extends Button{
-    private buttons: Button[] = [];
+export default class DropdownMenu extends ButtonTest {
+    private buttons: ButtonTest[] = [];
+    private button_props: ButtonTestProps[];
     private menuOpen: boolean = false;
 
-    set x(x: number){
+    set x(x: number) {
         this._x = x;
         console.log("this._x")
         this.positionChildren();
     }
-    set y(y: number){
+    set y(y: number) {
         this._y = y;
         console.log("this._y", this._y)
         this.positionChildren();
     }
 
-    constructor(props: DropdownMenuProps){
+    constructor(props: DropdownMenuProps) {
         super(props);
+        console.log(props.buttons)
         this._callback = this.toggleMenu;
-        for(let i = 0; i<props.buttons.length; i++){
-            const button = new Button(props.buttons[i])
-            this.buttons.push(button);
-            const oldCallback = button.callback;
-            //this.callbacks.push(button.callback);
-            const newCallback = (e: MouseEvent)=>{
-                this.menuOpen = false;
-                oldCallback(e);
-            };
-            button.callback = newCallback
-        }
+        this.menuOpen = false;
+        console.log("herentaeirsn")
+        this.button_props = props.buttons;
     }
 
-    positionChildren(): void{
-        for(let i = 0; i<this.buttons.length; i++){
+    positionChildren(): void {
+        for (let i = 0; i < this.buttons.length; i++) {
             const button = this.buttons[i];
-            console.log(button.height);
-            console.log(this._y);
-            button.y = this._y + this.height +(i*button.height);//newButton._height 
-            button.x = this._x - this.width/2 + button.width/2
+            button.y = this._y + this.height + (i * button.height);//newButton._height 
+            button.x = this._x - this.width / 2 + button.width / 2
         }
     }
     onDestroy(): void {
-        for(const button of this.buttons){
+        for (const button of this.buttons) {
             button.onDestroy();
         }
         this.menuOpen = false;
         super.onDestroy();
     }
-    async preload(): Promise<any> {
-        const to_load = [super.preload()]
-        for (const button of this.buttons) {
-            to_load.push(button.preload());
-        }
-        await Promise.all(to_load);
-    }
     setup(): void {
         super.setup();
-        for(const button of this.buttons){
-            button.setup();
+        for (let i = 0; i < this.button_props.length; i++) {
+            const button = this.scene.add_new.button(this.button_props[i])
+            button.hidden = true;
+            this.buttons.push(button);
+            const oldCallback = button.callback;
+            const newCallback = (e: MouseEvent) => {
+                this.toggleMenu()
+                oldCallback(e);
+            };
+            button.callback = newCallback
         }
     }
-    draw(): void {
-        super.draw();
-        if(this.menuOpen)
-            for (const button of this.buttons) {
-                button.draw();
-            }
-    }
-    toggleMenu(): void{
+    toggleMenu(): void {
         this.menuOpen = !this.menuOpen;
-    }
-    mouseClicked(e: any): void {
-        super.mouseClicked(e);
-        for(const button of this.buttons){
-            const clicked = button.mouseClicked(e);
+        for (let button of this.buttons) {
+            button.hidden = !this.menuOpen;
         }
-            
     }
 }
 

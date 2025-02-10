@@ -1,16 +1,18 @@
 import Scene from "../lib/Scene";
-import Button from "../lib/ui/Button";
+import ButtonTest from "../lib/ui/ButtonTest";
 
 export default class LoadingScene extends Scene {
-    loading_button: Button;
+    loading_button!: ButtonTest;
     constructor() {
         super('loading-scene');
-        this.loading_button = new Button({
-            label: "Loading...",
-            scene: this,
-        })
     }
-    onStart(): void {
-        this.add(this.loading_button);
+    preload(): any {
+        this.loadFont('jersey', 'assets/fonts/jersey.ttf')
+    }
+    setup(): void {
+        this.loading_button = this.add_new.button({
+            label: "Loading...",
+            font_key: 'jersey',
+        })
     }
 }
