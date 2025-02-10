@@ -12,46 +12,50 @@ export default class MenuPage extends Page {
     preload(): any {
         this.scene.loadFont('jersey', 'assets/fonts/jersey.ttf')
     }
+    cleanup() {
+        this.scene.remove(this.play);
+        this.scene.remove(this.carCuz);
+        this.scene.remove(this.KDbutton);
+        this.scene.remove(this.setting);
+    }
     setup(): void {
         this.play = this.scene.add_new.button({
             label: "Play!",
             font_key: 'jersey',
             callback: () => {
-                this.scene.remove(this.play);
-                this.set_page("play-page");
+                this.cleanup()
+                this.set_page('world-select-page')
             }
         })
+        this.play.x = 0;
+        this.play.y = -100;
         this.setting = this.scene.add_new.button({
             label: "Settings",
             font_key: 'jersey',
             callback: () => {
-                this.scene.remove(this.setting);
-                this.set_page("setting-page");
+                this.cleanup();
+                this.set_page("settings-page");
             }
         })
+        this.setting.x = 0;
+        this.setting.y = 0;
         this.carCuz = this.scene.add_new.button({
             label: "Character Customization",
             font_key: 'jersey',
             callback: () => {
-                this.scene.remove(this.carCuz);
-                this.set_page("setting-page");
+                this.cleanup();
+                this.set_page("settings-page");
             }
         })
-    }
-    draw() {
-        this.play.x = 2//this.p5.mouseX - this.p5.width / 2;
-        this.play.y = 2//this.p5.mouseY - this.p5.height / 2;
-        this.KDbutton.x = 300
-        this.KDbutton.y = 300
-        // this.play.x = this.p5.mouseX - this.p5.width / 2;
-        // this.play.y = this.p5.mouseY - this.p5.height / 2;
-
-        this.play.x = 0;
-        this.play.y = -100;
-        this.setting.x = 0;
-        this.setting.y = 0;
         this.carCuz.x = 0;
         this.carCuz.y = 100;
-
+        this.KDbutton = this.scene.add_new.button({
+            label: "KD DEV",
+            font_key: "jersey",
+            callback: () => { this.scene.start("kd-dev-scene") }
+        })
+        this.KDbutton.x = 300
+        this.KDbutton.y = 300
     }
 }
+

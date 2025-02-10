@@ -1,4 +1,6 @@
 export default interface GameObject {
+    id?: number;
+    hidden?: boolean;
     setup(): void;
     draw(): void;
     preload(): Promise<any>;

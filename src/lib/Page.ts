@@ -28,4 +28,8 @@ export default class Page implements GameObject {
     mouseClicked(_: MouseEvent): void { }
 
     onDestroy(): void { }
+
+    keyPressed(e: KeyboardEvent): void { }
+
+    keyReleased(e: KeyboardEvent): void { }
 }

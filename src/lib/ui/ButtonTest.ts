@@ -9,6 +9,7 @@ export type ButtonTestProps = Readonly<{
     font_size?: number;
 }>;
 export default class ButtonTest implements GameObject {
+    hidden: boolean = false;
     protected _x: number = 0;
     protected _y: number = 0;
     private _label: string;
@@ -109,6 +110,7 @@ export default class ButtonTest implements GameObject {
     }
 
     mouseClicked(e: any): void {
+        if (this.hidden) return;
         const x = this._scene.p5.mouseX - this._scene.p5.width / 2;
         const y = this._scene.p5.mouseY - this._scene.p5.height / 2;
         const min_x = this._x - this._width / 2;
@@ -116,6 +118,7 @@ export default class ButtonTest implements GameObject {
         const min_y = this._y - this._height / 2;
         const max_y = this._y + this._height / 2;
         if (x > min_x && x < max_x && y > min_y && y < max_y) {
+            console.log(this.label)
             this._callback?.(e);
         }
     }
