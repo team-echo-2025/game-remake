@@ -22,8 +22,8 @@ export default class PageManager implements GameObject {
     set_page(page_name: string): void {
         const page = this.pages.get(page_name);
         if (page) {
+            page.setup();
             this.current_page = page;
-            this.current_page.setup();
         } else {
             console.error(`Page "${page_name}" not found.`);
         }
@@ -40,7 +40,7 @@ export default class PageManager implements GameObject {
     }
 
     setup(): void {
-        this.current_page?.setup()
+        this.current_page?.setup();
     }
 
     draw(): void {
@@ -49,6 +49,14 @@ export default class PageManager implements GameObject {
 
     mouseClicked(e: MouseEvent): void {
         this.current_page?.mouseClicked(e);
+    }
+
+    keyPressed(e: KeyboardEvent): void {
+        this.current_page?.keyPressed(e);
+    }
+
+    keyReleased(e: KeyboardEvent): void {
+        this.current_page?.keyReleased(e);
     }
 
     onDestroy(): void { }
