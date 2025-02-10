@@ -64,10 +64,13 @@ export default class Scene implements GameObject {
     }
 
     remove(object: GameObject) {
-        const index = this.objects.indexOf(object)
-        if (index >= 0) {
-            this.objects.splice(index, 1);
-        }
+        this.objects = this.objects.filter(obj => {
+            if (obj === object) {
+                obj.onDestroy?.();
+                return false;
+            }
+            return true;
+        });
     }
 
     async preload(): Promise<any> { }
@@ -92,7 +95,9 @@ export default class Scene implements GameObject {
     draw(): void { }
     draw_objects(): void {
         for (const obj of this.objects) {
-            obj.draw();
+            if (!obj.hidden) {
+                obj.draw();
+            }
         }
     }
 
