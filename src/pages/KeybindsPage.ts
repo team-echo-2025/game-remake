@@ -84,6 +84,10 @@ export default class KeybindsPage extends Page {
             const key = Object.keys(this.keybinds).find(k => this.keybinds[k] === e.key.toLowerCase());
             if (key) this.pressed_keys[key] = true;
         }
+        if (e.key === "Escape") { // When ESC is pressed...
+            this.cleanup();
+            this.set_page("menu-page"); // ...return to main menu
+        }
     }
 
     keyReleased(e: KeyboardEvent): void {

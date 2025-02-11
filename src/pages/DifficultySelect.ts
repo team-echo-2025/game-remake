@@ -53,6 +53,12 @@ export default class DifficultyPage extends Page {
                 this.set_page("world-select-page");
             }
         })
+        this.keyPressed = (e: KeyboardEvent) => {
+            if (e.key === "Escape") { // When ESC is pressed...
+                this.cleanup();
+                this.set_page("menu-page"); // ...return to main menu
+            }
+        };
         this.back.y = 200;
     }
 }

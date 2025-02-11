@@ -7,6 +7,11 @@ export default class PlayScene extends Scene {
         super("play-scene");
         this.player = new Player(this);
     }
+    keyPressed = (e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+            this.start("menu-scene");
+        }
+    };
     onStart(): void {
         this.add(this.player);
     }
