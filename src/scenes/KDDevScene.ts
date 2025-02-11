@@ -89,4 +89,9 @@ export default class KDDevScene extends Scene {
         this.dropMenu.y = -200
         this.dropMenu.x = -200
     }
+    keyPressed = (e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+            this.start("menu-scene");
+        }
+    };
 }

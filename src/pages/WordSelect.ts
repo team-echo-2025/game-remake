@@ -55,6 +55,14 @@ export default class WorldSelectPage extends Page {
                 this.set_page("menu-page");
             }
         })
+
+        this.keyPressed = (e: KeyboardEvent) => {
+            if (e.key === "Escape") { // When ESC is pressed...
+                this.cleanup();
+                this.set_page("menu-page"); // ...return to main menu
+            }
+        };
+
         this.w3.y = 100;
         this.back.y = 200;
     }
