@@ -49,6 +49,13 @@ export default class SettingPage extends Page {
         this.back.y = 100;
     }
 
+    keyPressed = (e: KeyboardEvent) => {
+        if (e.key === "Escape") { // When ESC is pressed...
+            this.cleanup();
+            this.set_page("menu-page"); // ...return to main menu
+        }
+    };
+
     private handleMute(): void {
         this.isMuted = !this.isMuted; // Toggle mute state
         document.dispatchEvent(new CustomEvent("onmute", {
