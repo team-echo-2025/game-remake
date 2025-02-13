@@ -16,7 +16,7 @@ export default class Player implements GameObject {
     scene: Scene;
     forwardKey: string = 'w';
     leftKey: string = 'a';
-    backKey: string = 's';
+    downKey: string = 's';
     rightKey: string = 'd';
     constructor(scene: Scene) {
         this.scene = scene;
@@ -28,14 +28,10 @@ export default class Player implements GameObject {
                 resolve(true);
             }, (err) => reject(err));
         })
-<<<<<<< Updated upstream
-=======
         this.forwardKey = localStorage.getItem("forward") ?? 'w';
         this.leftKey = localStorage.getItem("left") ?? 'a';
         this.downKey = localStorage.getItem("down") ?? 's';
         this.rightKey = localStorage.getItem("right") ?? 'd';
-
->>>>>>> Stashed changes
     }
 
     setup(): void {
@@ -87,7 +83,7 @@ export default class Player implements GameObject {
             this.x -= 1;
             this.moving = true;
         }
-        if (this.pressed_keys[this.backKey]) {
+        if (this.pressed_keys[this.downKey]) {
             this.anim_row = 4;
             this.y += 1;
             this.moving = true;
@@ -102,7 +98,4 @@ export default class Player implements GameObject {
         }
     }
 }
-<<<<<<< Updated upstream
-=======
 //make event to let player know keybind changed, and needs re-read
->>>>>>> Stashed changes

@@ -10,18 +10,18 @@ export type ButtonProps = Readonly<{
     font_size?: number;
 }>;
 export default class Button implements GameObject {
-    private _x: number = 0;
-    private _y: number = 0;
-    private label: string;
+    protected _x: number = 0;
+    protected _y: number = 0;
+    private _label: string;
     private font_size: number = 24;
     private scene: Scene;
     private font!: Font;
     private font_path: string = "assets/fonts/jersey.ttf";
-    private _width: number = 0;
-    private _height: number = 0;
+    protected _width: number = 0;
+    protected _height: number = 0;
     private padding_x: number = 40;
     private padding_y: number = 20;
-    private callback?: (e: MouseEvent) => void;
+    protected _callback?: (e: MouseEvent) => void;
 
     set x(x: number) {
         this._x = x;
@@ -39,28 +39,40 @@ export default class Button implements GameObject {
         return this._y;
     }
 
-    get width() {
-        return this._width;
+    set label(label: string) {
+        this._label = label;
     }
 
-    set width(w: number) {
-        this._width = w;
+    get label() {
+        return this._label;
     }
-
+    set height(_height: number) {
+        this._height = _height;
+    }
     get height() {
         return this._height;
     }
-
-    set height(h: number) {
-        this._height = h;
+    set width(_width: number) {
+        this._width = _width;
+    }
+    get width() {
+        return this._width;
+    }
+    set callback(_callback: (e: MouseEvent) => void) {
+        this._callback = _callback;
+    }
+    get callback() {
+        if (this._callback)
+            return this?._callback;
+        return (): void => { };
     }
 
     constructor(props: ButtonProps) {
         this.font_size = props.font_size ?? this.font_size;
         this.scene = props.scene;
         this.font_path = props.font_path ?? this.font_path;
-        this.label = props.label;
-        this.callback = props.callback;
+        this._label = props.label;
+        this._callback = props.callback;
     }
 
     async preload(): Promise<any> {
@@ -72,7 +84,7 @@ export default class Button implements GameObject {
     setup(): void {
         this.scene.p5.textFont(this.font);
         this.scene.p5.textSize(this.font_size);
-        this._width = this.scene.p5.textWidth(this.label) + this.padding_x;
+        this._width = this.scene.p5.textWidth(this._label) + this.padding_x;
         this._height = this.scene.p5.textAscent() + this.scene.p5.textDescent() + this.padding_y;
     }
 
@@ -89,7 +101,7 @@ export default class Button implements GameObject {
         this.scene.p5.fill(255);
         this.scene.p5.rect(this._x, this._y, this._width, this._height, 10);
         this.scene.p5.fill(0);
-        this.scene.p5.text(this.label, this._x, this._y - this.font_size / 6);
+        this.scene.p5.text(this._label, this._x, this._y - this.font_size / 6);
         this.scene.p5.pop();
     }
 
@@ -101,7 +113,7 @@ export default class Button implements GameObject {
         const min_y = this._y - this._height / 2;
         const max_y = this._y + this._height / 2;
         if (x > min_x && x < max_x && y > min_y && y < max_y) {
-            this.callback?.(e);
+            this._callback?.(e);
         }
     }
     onDestroy(): void {
