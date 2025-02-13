@@ -1,9 +1,11 @@
 import Player from "../lib/Player";
 import Scene from "../lib/Scene";
 import Button from "../lib/ui/Button";
+import Tilemap from "../lib/Tilemap";
 
 export default class PlayScene extends Scene {
-    player: Player
+    player: Player;
+    tilemap: Tilemap;
     button1: Button;
     constructor() {
         super("play-scene");
@@ -14,6 +16,7 @@ export default class PlayScene extends Scene {
             callback: () => { this.start("menu-scene") }
         })
         this.player = new Player(this);
+        this.tilemap = new Tilemap(this);
     }
     onStart(): void {
         this.add(this.player);
@@ -22,5 +25,6 @@ export default class PlayScene extends Scene {
     setup(): void {
         this.button1.x = -this.p5.width / 2 + this.button1.width / 2 + 10;
         this.button1.y = -this.p5.height / 2 + this.button1.height / 2 + 10;
+        this.add(this.tilemap);
     }
 }

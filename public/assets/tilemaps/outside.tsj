@@ -1,0 +1,14 @@
+{ "columns":176,
+ "image":"modernexteriors-win\/Modern_Exteriors_48x48\/Modern_Exteriors_Complete_Tileset_48x48.png",
+ "imageheight":18912,
+ "imagewidth":8448,
+ "margin":0,
+ "name":"outside",
+ "spacing":0,
+ "tilecount":69344,
+ "tiledversion":"1.11.2",
+ "tileheight":48,
+ "tilewidth":48,
+ "type":"tileset",
+ "version":"1.10"
+}
