@@ -1,12 +1,16 @@
 import p5, { Font, Image } from "p5";
 import GameObject from "./GameObject";
 import SceneManager from "./SceneManager";
+import GameObjectFactory from "./GameObjectFactory";
 
 export default class Scene implements GameObject {
     private _name: string;
     private _scene_manager!: SceneManager;
     protected p!: p5;
     private objects: GameObject[] = [];
+    private game_object_factory: GameObjectFactory;
+    private assets: Map<string, any> = new Map();
+    private preloads: Promise<any>[] = []
 
     set p5(p: p5) {
         this.p = p;
@@ -28,6 +32,7 @@ export default class Scene implements GameObject {
         if (name.length <= 0) {
             throw new Error("Scene name not specified.");
         }
+        this.game_object_factory = new GameObjectFactory(this);
         this._name = name;
     }
 
@@ -93,6 +98,9 @@ export default class Scene implements GameObject {
         for (const obj of this.objects) {
             to_load.push(obj.preload());
         }
+        for (const pre of this.preloads) {
+            to_load.push(pre);
+        }
         await Promise.all(to_load);
     }
 
@@ -106,7 +114,9 @@ export default class Scene implements GameObject {
     draw(): void { }
     draw_objects(): void {
         for (const obj of this.objects) {
-            obj.draw();
+            if (!obj.hidden) {
+                obj.draw();
+            }
         }
     }
 

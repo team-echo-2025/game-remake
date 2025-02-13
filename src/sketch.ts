@@ -3,17 +3,19 @@ import SceneManager from './lib/SceneManager';
 import MenuScene from './scenes/MenuScene';
 import PlayScene from './scenes/PlayScene';
 import LoadingScene from './scenes/LoadingScene';
+import KDDevScene from './scenes/KDDevScene';
 
 const sketch = (p: p5) => {
-    const scene_manager = new SceneManager(p, [PlayScene, MenuScene, PlayScene], LoadingScene);
+    const scene_manager = new SceneManager(p, [MenuScene, PlayScene, KDDevScene], LoadingScene);
+
     p.preload = () => {
-        scene_manager.preload();
+        scene_manager.preload();  // Ensure other scene preloads are also executed
     };
 
     p.setup = () => {
-        p.createCanvas(window.innerWidth, window.innerHeight, 'webgl');
-        p.ortho();
-        p.smooth()
+        p.createCanvas(window.innerWidth, window.innerHeight, p.WEBGL);  // Use WebGL renderer
+        p.ortho();  // Set orthographic projection
+        p.smooth();
         scene_manager.setup();
     };
 
@@ -30,7 +32,8 @@ const sketch = (p: p5) => {
     };
 
     p.draw = () => {
-        p.background(255);
+
+        // Draw the current scene
         scene_manager.draw();
     };
 };
