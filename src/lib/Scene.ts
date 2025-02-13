@@ -1,4 +1,4 @@
-import p5 from "p5";
+import p5, { Font, Image } from "p5";
 import GameObject from "./GameObject";
 import SceneManager from "./SceneManager";
 
@@ -37,6 +37,54 @@ export default class Scene implements GameObject {
 
     add(object: GameObject) {
         this.objects.push(object);
+    }
+
+    get_asset = (key: string) => {
+        return this.assets.get(key);
+    }
+
+    get add_new() {
+        return this.game_object_factory;
+    }
+
+    loadFont = (key: string, path: string) => {
+        const font = new Promise<Font>((res) => {
+            this.p5.loadFont(path, (font: Font) => {
+                this.assets.set(key, font);
+                res(font);
+            })
+        })
+        this.preloads.push(font);
+    }
+
+    loadImage = (key: string, path: string) => {
+        const image = new Promise<Image>((res) => {
+            this.p5.loadImage(path, (img: Image) => {
+                this.assets.set(key, img);
+                res(img);
+            })
+        })
+        this.preloads.push(image);
+    }
+
+    loadJSON = (key: string, path: string) => {
+        const json = new Promise<Object>((res) => {
+            this.p5.loadJSON(path, (jsn: Object) => {
+                this.assets.set(key, jsn);
+                res(jsn);
+            })
+        })
+        this.preloads.push(json);
+    }
+
+    remove(object: GameObject) {
+        this.objects = this.objects.filter(obj => {
+            if (obj === object) {
+                obj.onDestroy?.();
+                return false;
+            }
+            return true;
+        });
     }
 
     async preload(): Promise<any> { }
