@@ -31,18 +31,18 @@ export default class SceneManager implements GameObject {
         }).then(() => {
             this.loading_scene?.setup_objects();
             this.loading_scene?.setup();
+            this.start(new_scene.name);
         });
-        new_scene.start(new_scene.name);
     }
 
     async start(name: string) {
-        console.log("SCEENE TO START: ", name)
         const new_scene = this.scenes.get(name);
         if (!new_scene) {
             throw Error(`Scene: ${name} does not exist.`);
         }
         if (this.current_scene) {
             this.current_scene.onStop();
+            this.current_scene.onStop_objects();
         }
         this.current_scene = this.loading_scene;
         new_scene.onStart();
@@ -51,7 +51,6 @@ export default class SceneManager implements GameObject {
         new_scene?.setup_objects();
         new_scene?.setup();
         this.current_scene = new_scene;
-        console.log(this.current_scene)
     }
 
     async preload(): Promise<any> { }

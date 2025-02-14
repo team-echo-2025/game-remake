@@ -32,7 +32,6 @@ const sketch = (p: p5) => {
     };
 
     p.draw = () => {
-
         // Draw the current scene
         scene_manager.draw();
     };
