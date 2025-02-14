@@ -22,8 +22,6 @@ export default class PlayScene extends Scene {
     setup(): void {
         this.tilemap = this.add_new.tilemap({
             tilemap_key: "tilemap",
-            x: -this.p5.width / 2,
-            y: -this.p5.height / 2
         })
     }
 
