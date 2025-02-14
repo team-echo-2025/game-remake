@@ -2,10 +2,10 @@ import Page from "../lib/Page";
 import ButtonTest from "../lib/ui/ButtonTest";
 
 export default class MenuPage extends Page {
-    play!: ButtonTest;
-    setting!: ButtonTest;
-    carCuz!: ButtonTest;
-    KDbutton!: ButtonTest;
+    play?: ButtonTest;
+    setting?: ButtonTest;
+    carCuz?: ButtonTest;
+    KDbutton?: ButtonTest;
     constructor() {
         super("menu-page")
     }
@@ -13,10 +13,10 @@ export default class MenuPage extends Page {
         this.scene.loadFont('jersey', 'assets/fonts/jersey.ttf')
     }
     cleanup() {
-        this.scene.remove(this.play);
-        this.scene.remove(this.carCuz);
-        this.scene.remove(this.KDbutton);
-        this.scene.remove(this.setting);
+        this.play && this.scene.remove(this.play);
+        this.carCuz && this.scene.remove(this.carCuz);
+        this.KDbutton && this.scene.remove(this.KDbutton);
+        this.setting && this.scene.remove(this.setting);
     }
     setup(): void {
         this.play = this.scene.add_new.button({

@@ -15,4 +15,7 @@ export default class LoadingScene extends Scene {
             font_key: 'jersey',
         })
     }
+    draw(): void {
+        this.p5.background(255);
+    }
 }

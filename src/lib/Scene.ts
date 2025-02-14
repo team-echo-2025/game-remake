@@ -1,4 +1,4 @@
-import p5, { Font, Image } from "p5";
+import p5, { Font, Image, XML } from "p5";
 import GameObject from "./GameObject";
 import SceneManager from "./SceneManager";
 import GameObjectFactory from "./GameObjectFactory";
@@ -82,6 +82,64 @@ export default class Scene implements GameObject {
         this.preloads.push(json);
     }
 
+    loadXML = (key: string, path: string) => {
+        const xml = new Promise<XML>((res) => {
+            this.p5.loadXML(path, (xml: XML) => {
+                this.assets.set(key, xml);
+                res(xml);
+            })
+        })
+        this.preloads.push(xml);
+    }
+
+    loadTilemap = (key: string, path: string) => {
+        const xml = new Promise<XML>((res) => {
+            this.p5.loadXML(path, async (xml: XML) => {
+                this.assets.set(key, xml);
+                const to_load = []
+                for (let item of xml.getChildren()) {
+                    const name = item.getName()
+                    if (name == 'tileset') {
+                        const source = item.getString("source")
+                        const container = path.substring(0, path.lastIndexOf("/") + 1);
+                        if (source) {
+                            to_load.push(this.loadTileset(`${key}/${source}`, `${container}/${source}`));
+                        } else {
+                            throw new Error(`Cannot find tileset file.`);
+                        }
+                    }
+                }
+                await Promise.all(to_load);
+                res(xml);
+            })
+        })
+        this.preloads.push(xml);
+    }
+
+    loadTileset = async (key: string, path: string) => {
+        await new Promise<XML>((res) => {
+            this.p5.loadXML(path, async (xml: XML) => {
+                this.assets.set(key, xml);
+                const to_load = []
+                for (let item of xml.getChildren()) {
+                    const name = item.getName();
+                    if (name == "image") {
+                        const container = path.substring(0, path.lastIndexOf("/") + 1);
+                        const source = item.getString("source");
+                        to_load.push(new Promise<void>((res2) => {
+                            this.p5.loadImage(`${container}/${source}`, (img: Image) => {
+                                this.assets.set(`${key}/${source}`, img);
+                                res2()
+                            });
+                        }))
+                    }
+                }
+                await Promise.all(to_load);
+                res(xml);
+            })
+        })
+    }
+
     remove(object: GameObject) {
         this.objects = this.objects.filter(obj => {
             if (obj === object) {
@@ -141,11 +199,13 @@ export default class Scene implements GameObject {
         }
     }
 
-    onStop() {
+    onStop() { }
+    onStop_objects() {
         for (const obj of this.objects) {
             obj.onDestroy?.();
         }
-        this.objects.length = 0;
+        this.objects = [];
+        this.assets = new Map();
     }
 
     onStart() { }

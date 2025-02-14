@@ -1,15 +1,30 @@
 import Player from "../lib/Player";
 import Scene from "../lib/Scene";
-import Tilemap from "../lib/Tilemap";
+import Tilemap from "../lib/tilemap/Tilemap";
 
 export default class PlayScene extends Scene {
-    player: Player;
-    tilemap: Tilemap;
+    player?: Player;
+    tilemap?: Tilemap;
 
     constructor() {
         super("play-scene");
+    }
+
+    onStart(): void {
         this.player = new Player(this);
-        this.tilemap = new Tilemap(this);
+        this.add(this.player);
+    }
+
+    preload(): any {
+        this.loadTilemap("tilemap", "assets/tilemaps/first-tilemap/outside.tmx")
+    }
+
+    setup(): void {
+        this.tilemap = this.add_new.tilemap({
+            tilemap_key: "tilemap",
+            x: -this.p5.width / 2,
+            y: -this.p5.height / 2
+        })
     }
 
     keyPressed = (e: KeyboardEvent) => {
@@ -18,11 +33,8 @@ export default class PlayScene extends Scene {
         }
     };
 
-    onStart(): void {
-        this.add(this.player);
-    }
-
-    setup(): void {
-        this.add(this.tilemap);
+    onStop(): void {
+        this.player = undefined;
+        this.tilemap = undefined;
     }
 }
