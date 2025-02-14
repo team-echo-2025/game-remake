@@ -42,6 +42,21 @@ export default class Scene implements GameObject {
 
     add(object: GameObject) {
         this.objects.push(object);
+        this.objects.sort((obj1, obj2) => {
+            if (!obj1.zIndex && obj2.zIndex) {
+                return -1
+            } else if (!obj2.zIndex && obj1.zIndex) {
+                return 1
+            } else if (!obj2.zIndex && !obj1.zIndex) {
+                return 0;
+            } else if (obj1.zIndex == obj2.zIndex) {
+                return 0;
+            } else if (obj1.zIndex! > obj2.zIndex!) {
+                return 1
+            } else {
+                return -1
+            }
+        })
     }
 
     get_asset = (key: string) => {

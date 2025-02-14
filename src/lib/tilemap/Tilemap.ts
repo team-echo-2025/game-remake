@@ -1,4 +1,4 @@
-import { XML } from "p5";
+import { Graphics, XML } from "p5";
 import GameObject from "../GameObject";
 import Scene from "../Scene";
 import Tileset from "./Tileset";
@@ -11,6 +11,7 @@ export type TilemapProps = Readonly<{
 }>
 
 export default class Tilemap implements GameObject {
+    zIndex?: number = -100;
     private _scene!: Scene;
     private tilemap_key: string;
     private tilemap!: XML;
@@ -22,6 +23,7 @@ export default class Tilemap implements GameObject {
     private _tileheight!: number;
     private _x: number;
     private _y: number;
+    buffer!: Graphics;
 
     get x() {
         return this._x;
@@ -61,14 +63,14 @@ export default class Tilemap implements GameObject {
 
     set scene(scene: Scene) {
         this._scene = scene;
-        this._tilesets = [];
-        this.layers = [];
     }
 
     constructor(props: TilemapProps) {
         this.tilemap_key = props.tilemap_key;
         this._x = props.x ?? 0;
         this._y = props.y ?? 0;
+        this._tilesets = [];
+        this.layers = [];
     }
 
     async preload(): Promise<any> { }
@@ -79,6 +81,7 @@ export default class Tilemap implements GameObject {
         this._tileheight = this.tilemap.getNum('tileheight')
         this._width = this.tilemap.getNum('width')
         this._height = this.tilemap.getNum('height')
+        this.buffer = this._scene.p5.createGraphics(this._width * this._tilewidth, this._height * this.tileheight, this._scene.p5.WEBGL);
         for (let item of this.tilemap!.getChildren()) {
             const name = item.getName();
             if (name == "tileset") {
@@ -98,8 +101,6 @@ export default class Tilemap implements GameObject {
     }
 
     draw(): void {
-        for (let layer of this.layers) {
-            layer.draw();
-        }
+        this._scene.p5.image(this.buffer, -800, -800)
     }
 }

@@ -19,6 +19,8 @@ export default class TLayer implements GameObject {
     private width!: number;
     private height!: number;
     private chunks: TLayerChunk[];
+    private offsetx!: number;
+    private offsety!: number;
     private _x: number = 0;
     private _y: number = 0;
     private tilemap: Tilemap;
@@ -55,6 +57,8 @@ export default class TLayer implements GameObject {
         this.name = this.layer.getString("name");
         this.width = this.layer.getNum("width");
         this.height = this.layer.getNum("height");
+        this.offsetx = this.layer.getNum("offsetx");
+        this.offsety = this.layer.getNum("offsety");
         const children = this.layer.getChildren();
         if (children.length != 1) {
             console.log(children)
@@ -83,8 +87,8 @@ export default class TLayer implements GameObject {
                     const tilex = x * tilewidth + chunk.x * tilewidth;
                     const tiley = y * tileheight + chunk.y * tileheight;
                     const tile = new Tile({
-                        x: tilex + this._x,
-                        y: tiley + this._y,
+                        x: this._x + tilex - this.scene.p5.width / 2 + this.offsetx,
+                        y: this._y + tiley + this.offsety,
                         scene: this.scene,
                         image: tile_data.image.get(tile_data.x, tile_data.y, tile_data.width, tile_data.height)
                     })
@@ -92,11 +96,14 @@ export default class TLayer implements GameObject {
                 }
             }
         }
+        for (let tile of this._tiles) {
+            this.tilemap.buffer.image(tile.image, tile.x, tile.y);
+        }
     }
 
     draw(): void {
-        for (let tile of this._tiles) {
-            this.scene.p5.image(tile.image, tile.x, tile.y);
-        }
+        //for (let tile of this._tiles) {
+        //    this.scene.p5.image(tile.image, tile.x, tile.y);
+        //}
     }
 }

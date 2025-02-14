@@ -36,6 +36,7 @@ export default class GameObjectFactory {
 
     tilemap = (props: TilemapProps): Tilemap => {
         const _tilemap = new Tilemap(props);
+        console.log(this.scene)
         _tilemap.scene = this.scene;
         this.scene.add(_tilemap);
         _tilemap.setup();
