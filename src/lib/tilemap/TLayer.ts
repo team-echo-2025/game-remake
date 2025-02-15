@@ -87,8 +87,8 @@ export default class TLayer implements GameObject {
                     const tilex = x * tilewidth + chunk.x * tilewidth;
                     const tiley = y * tileheight + chunk.y * tileheight;
                     const tile = new Tile({
-                        x: this._x + tilex - this.scene.p5.width / 2 + this.offsetx,
-                        y: this._y + tiley + this.offsety,
+                        x: tilex + this.offsetx,
+                        y: tiley + this.offsety,
                         scene: this.scene,
                         image: tile_data.image.get(tile_data.x, tile_data.y, tile_data.width, tile_data.height)
                     })
@@ -97,7 +97,7 @@ export default class TLayer implements GameObject {
             }
         }
         for (let tile of this._tiles) {
-            this.tilemap.buffer.image(tile.image, tile.x, tile.y);
+            this.tilemap.buffer.image(tile.image, tile.x - this.tilemap.buffer.width / 2, tile.y - this.tilemap.buffer.height / 2);
         }
     }
 

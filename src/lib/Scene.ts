@@ -2,6 +2,7 @@ import p5, { Font, Image, XML } from "p5";
 import GameObject from "./GameObject";
 import SceneManager from "./SceneManager";
 import GameObjectFactory from "./GameObjectFactory";
+import Camera from "./Camera";
 
 export default class Scene implements GameObject {
     private _name: string;
@@ -11,6 +12,12 @@ export default class Scene implements GameObject {
     private game_object_factory: GameObjectFactory;
     private assets: Map<string, any> = new Map();
     private preloads: Promise<any>[] = []
+    private _camera: Camera;
+
+    get camera() {
+        return this._camera;
+    }
+
 
     set p5(p: p5) {
         this.p = p;
@@ -33,6 +40,7 @@ export default class Scene implements GameObject {
             throw new Error("Scene name not specified.");
         }
         this.game_object_factory = new GameObjectFactory(this);
+        this._camera = new Camera(this);
         this._name = name;
     }
 
