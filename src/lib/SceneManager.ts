@@ -22,9 +22,10 @@ export default class SceneManager implements GameObject {
             scene_instance.scene_manager = this;
             this.scenes.set(scene_instance.name, scene_instance);
         }
+
         const new_scene = this.scenes.values().next().value!;
-        this.loading_scene.onStart()
         new Promise(async (res) => {
+            this.loading_scene.onStart()
             await this.loading_scene.preload()
             await this.loading_scene.preload_objects()
             res(true);
