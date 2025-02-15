@@ -2,7 +2,7 @@ import Page from "../../lib/Page";
 import ButtonTest from "../../lib/ui/ButtonTest";
 
 export default class TestPuzzle extends Page {
-    puzzleStart!: ButtonTest;
+    returnButton!: ButtonTest;
     constructor() {
         super("test-puzzle-page")
     }
@@ -10,16 +10,18 @@ export default class TestPuzzle extends Page {
         this.scene.loadFont('jersey', 'assets/fonts/jersey.ttf')
     }
     cleanup() {
-        this.scene.remove(this.puzzleStart);
+        this.scene.remove(this.returnButton);
     }
     setup(): void {
-        this.puzzleStart = this.scene.add_new.button({
+        this.returnButton = this.scene.add_new.button({
             label: "This Should Return You To The Play Scene",
             font_key: 'jersey',
             callback: () => {
                 this.cleanup()
+                this.set_page('test-puzzle-overlay-page')
             }
         })
+        this.returnButton.y = -100;
     }
 }
 
