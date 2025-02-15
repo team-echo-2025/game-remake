@@ -21,6 +21,7 @@ export default class TestPuzzleOverlay extends Page {
                 this.set_page('test-puzzle-page')
             }
         })
+        this.puzzleStart.y = -100;
     }
 }
 
