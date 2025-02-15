@@ -3,33 +3,28 @@ import Scene from "../lib/Scene";
 import Button from "../lib/ui/Button";
 import PageManager from "../lib/PageManager";
 import TestPuzzleOverlay from "../pages/TestPuzzleOverlay";
-import TestPuzzle from "../pages/TestPuzzlePage";
+import AccessCircuit from "../puzzles/AccessCircuit/AccessCircuit"
 
 export default class PlayScene extends Scene {
     player: Player;
-    pManager: PageManager;
+    accessPuzzle!: AccessCircuit;
     constructor() {
         super("play-scene");
         this.player = new Player(this);
-        this.pManager = new PageManager([
-            new TestPuzzleOverlay(),
-            new TestPuzzle()
-        ], this);
+        this.accessPuzzle = new AccessCircuit(this);
     }
     // We may want this to be a pause menu eventually
     keyPressed = (e: KeyboardEvent) => {
         if (e.key === "Escape") {
             this.start("menu-scene");
         }
-        this.pManager.keyPressed(e);
     };
     async preload(): Promise<any> {
-        await this.pManager.preload();
     }
     setup(): void {
-        this.pManager.setup();
     }
     onStart(): void {
         this.add(this.player);
+        this.add(this.accessPuzzle);
     }
 }

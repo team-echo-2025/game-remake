@@ -14,8 +14,9 @@ export default class Puzzle implements GameObject {
     puzzle!: Page;
     state!: PuzzleState;
 
-    constructor() {
+    constructor(scene: Scene) {
         this.state = PuzzleState.notStarted;
+        this.scene = scene;
     }
 
     async preload(): Promise<void> { }
