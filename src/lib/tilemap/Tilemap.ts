@@ -82,6 +82,7 @@ export default class Tilemap implements GameObject {
         this._width = this.tilemap.getNum('width')
         this._height = this.tilemap.getNum('height')
         this.buffer = this._scene.p5.createGraphics(this._width * this._tilewidth, this._height * this.tileheight, this._scene.p5.WEBGL);
+        console.log(this.width, this.tilemap.getChildren())
         for (let item of this.tilemap!.getChildren()) {
             const name = item.getName();
             if (name == "tileset") {
@@ -101,6 +102,7 @@ export default class Tilemap implements GameObject {
     }
 
     draw(): void {
-        this._scene.p5.image(this.buffer, -800, -800)
+        this.buffer.translate(this._scene.camera.x, this._scene.camera.y)
+        this._scene.p5.image(this.buffer, this.x - this._scene.p5.width / 2, this.y - this._scene.p5.height / 2);
     }
 }

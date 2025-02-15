@@ -94,8 +94,9 @@ export default class Player implements GameObject {
             this.moving = true;
         }
         if (this.frames.length > 0 && this.frames[0].length > 0) {
-            this.scene.p5.image(this.frames[this.anim_row][this.anim_index], this.x, this.y);
+            this.scene.p5.image(this.frames[this.anim_row][this.anim_index], this.x, this.y, 64 * 1.5, 64 * 1.5);
         }
+        this.scene.camera.lookAt(this.x, this.y)
     }
 }
 //make event to let player know keybind changed, and needs re-read

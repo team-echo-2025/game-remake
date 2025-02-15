@@ -59,8 +59,11 @@ export default class SceneManager implements GameObject {
     setup(): void { }
 
     draw(): void {
+        this.current_scene?.p5.push()
+        this.current_scene?.camera.apply_transformation();
         this.current_scene?.draw();
         this.current_scene?.draw_objects();
+        this.current_scene?.p5.pop()
     }
 
     keyPressed(e: KeyboardEvent): void {
