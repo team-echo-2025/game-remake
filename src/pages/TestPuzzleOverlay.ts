@@ -1,5 +1,5 @@
-import Page from "../../lib/Page";
-import ButtonTest from "../../lib/ui/ButtonTest";
+import Page from "../lib/Page";
+import ButtonTest from "../lib/ui/ButtonTest";
 
 export default class TestPuzzleOverlay extends Page {
     puzzleStart!: ButtonTest;

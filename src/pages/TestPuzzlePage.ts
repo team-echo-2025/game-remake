@@ -1,13 +1,18 @@
-import Page from "../../lib/Page";
-import ButtonTest from "../../lib/ui/ButtonTest";
+import Page from "../lib/Page";
+import ButtonTest from "../lib/ui/ButtonTest";
+import Puzzle from "../lib/Puzzle";
+import TestPuzzle from "../puzzles/TestPuzzle"
 
-export default class TestPuzzle extends Page {
+export default class TestPuzzlePage extends Page {
     returnButton!: ButtonTest;
+    puzzle!: TestPuzzle;
     constructor() {
         super("test-puzzle-page")
+        this.puzzle = new TestPuzzle();
     }
     preload(): any {
         this.scene.loadFont('jersey', 'assets/fonts/jersey.ttf')
+        this.scene.add(this.puzzle)
     }
     cleanup() {
         this.scene.remove(this.returnButton);
