@@ -1,4 +1,4 @@
-import { Image } from 'p5';
+import { Camera, Image } from 'p5';
 import GameObject from './GameObject';
 import Scene from './Scene';
 
