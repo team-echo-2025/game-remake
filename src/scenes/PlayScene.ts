@@ -2,8 +2,8 @@ import Player from "../lib/Player";
 import Scene from "../lib/Scene";
 import Button from "../lib/ui/Button";
 import PageManager from "../lib/PageManager";
-import TestPuzzleOverlay from "../pages/puzzles/TestPuzzleOverlay";
-import TestPuzzle from "../pages/puzzles/TestPuzzle";
+import TestPuzzleOverlay from "../pages/TestPuzzleOverlay";
+import TestPuzzle from "../pages/TestPuzzlePage";
 
 export default class PlayScene extends Scene {
     player: Player;
@@ -21,6 +21,7 @@ export default class PlayScene extends Scene {
         if (e.key === "Escape") {
             this.start("menu-scene");
         }
+        this.pManager.keyPressed(e);
     };
     async preload(): Promise<any> {
         await this.pManager.preload();
