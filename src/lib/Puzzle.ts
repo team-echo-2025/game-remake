@@ -13,6 +13,7 @@ export default class Puzzle implements GameObject {
     scene!: Scene;
     puzzle!: Page;
     state!: PuzzleState;
+    static difficulty: string;
 
     constructor(scene: Scene) {
         this.state = PuzzleState.notStarted;
@@ -51,5 +52,9 @@ export default class Puzzle implements GameObject {
 
     notStarted(): boolean {
         return this.state == PuzzleState.notStarted;
+    }
+
+    setDifficulty(difficulty: string): void {
+        Puzzle.difficulty = difficulty;
     }
 }

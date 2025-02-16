@@ -18,6 +18,8 @@ export default class CreditsPage extends Page {
         this.scene.remove(this.howlButton);
     }
     setup(): void {
+        this.scene.p5.createCanvas(this.scene.p5.windowWidth, this.scene.p5.windowHeight);
+        this.scene.p5.rectMode(this.scene.p5.CENTER);
         this.backButton = this.scene.add_new.button({
             label: "Back",
             font_key: 'jersey',
@@ -49,6 +51,15 @@ export default class CreditsPage extends Page {
         this.howlButton.y = 200;
     }
     draw(): void {
+        // Background
+        let rectWidth = 400;
+        let rectHeight = 600;
+
+        let rectX = 0;
+        let rectY = -50;
+        this.page_manager.scene.p5.fill(255, 255, 255, 150);
+        this.page_manager.scene.p5.rect(rectX, rectY, rectWidth, rectHeight);
+
         // Member title
         this.page_manager.scene.p5.fill(0);
         this.page_manager.scene.p5.textAlign(this.page_manager.scene.p5.CENTER, this.page_manager.scene.p5.CENTER);
