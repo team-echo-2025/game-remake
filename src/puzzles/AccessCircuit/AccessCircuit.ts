@@ -35,11 +35,36 @@ export default class AccessCircuit extends Puzzle {
     draw_base() {
 
     }
-    draw_header() { }
+    draw_header() {
+        let p5 = this.scene.p5;
+    
+        // Dimensions
+        let headerWidth = p5.width / 3; // Same as body width
+        let rectHeight = p5.height / 2; // Body height
+        let headerHeight = rectHeight / 4; // 1/4 of body height
+    
+        // Positioning: Move the header slightly higher above the body
+        let headerX = 0;
+        let headerY = -this.scene.p5.height / 3 - -headerHeight / 3;
+    
+        // Draw header background
+        p5.fill(0);
+        p5.stroke(255);
+        p5.rect(headerX, headerY, headerWidth, headerHeight);
+    
+        // Add text
+        p5.fill(255);
+        p5.noStroke();
+        p5.textAlign(p5.CENTER, p5.CENTER);
+        p5.textSize(50);
+        p5.text("Access Circuit", headerX, headerY - headerHeight / 8);
+    
+            
+    }
     draw_body() {
         let rectWidth = this.scene.p5.width / 3;
         let rectHeight = this.scene.p5.height / 2;
-
+        
         let rectX = 0;
         let rectY = 0;
 
@@ -73,6 +98,10 @@ export default class AccessCircuit extends Puzzle {
         p5.stroke(255);
         p5.rect(footerX, footerY, footerWidth, footerHeight);
         //Box 2
+        p5.fill(255);
+        p5.noStroke();
+        p5.rect(footerX, footerY*1.16, footerWidth*.75, footerHeight/3);
+        
         // p5.fill(255);
         // p5.stroke(0,0,255);
         // p5.rect(footerX, footerY*.6, footerWidth*4, footerHeight/3);
@@ -150,10 +179,10 @@ export default class AccessCircuit extends Puzzle {
         let circleDiameter = rectWidth / (columns + 1) * 0.4   // 40% of vertical spacing
         let paddingX = rectWidth / (columns + 1);
         let paddingY = rectHeight / (rows + 1);
-
+        
         let startX = rectX - rectWidth / 2 + paddingX;
         let startY = rectY - rectHeight / 2 + paddingY;
-
+        
         for (let i = 0; i < rows; i++) {
             this.board.push([]);
             for (let j = 0; j < columns; j++) {
