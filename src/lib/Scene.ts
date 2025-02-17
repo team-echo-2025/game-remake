@@ -211,6 +211,18 @@ export default class Scene implements GameObject {
             obj.mouseClicked?.(e);
         }
     }
+    mousePressed(_: MouseEvent): void { }
+    mousePressed_objects(e: MouseEvent): void {
+        for (const obj of this.objects) {
+            obj.mousePressed?.(e);
+        }
+    }
+    mouseReleased(_: MouseEvent): void { }
+    mouseReleased_objects(e: MouseEvent): void {
+        for (const obj of this.objects) {
+            obj.mouseReleased?.(e);
+        }
+    }
 
     onStop() { }
     onStop_objects() {

@@ -1,13 +1,16 @@
 import Page from "../lib/Page";
 import ButtonTest from "../lib/ui/ButtonTest";
+import Puzzle from "../lib/Puzzle"
 
 export default class DifficultyPage extends Page {
     easy!: ButtonTest;
     medium!: ButtonTest;
     hard!: ButtonTest;
     back!: ButtonTest;
+    set_difficulty!: Puzzle;
     constructor() {
         super("difficulty-page")
+        this.set_difficulty = new Puzzle(this.scene);
     }
     preload(): any {
         this.scene.loadFont('jersey', 'assets/fonts/jersey.ttf')
@@ -25,6 +28,7 @@ export default class DifficultyPage extends Page {
             callback: () => {
                 this.cleanup()
                 this.scene.start("play-scene");
+                this.setDifficulty("easy");
             }
         })
         this.easy.y = -100;
@@ -34,6 +38,7 @@ export default class DifficultyPage extends Page {
             callback: () => {
                 this.cleanup()
                 this.scene.start("play-scene");
+                this.setDifficulty("normal");
             }
         })
         this.hard = this.scene.add_new.button({
@@ -42,6 +47,7 @@ export default class DifficultyPage extends Page {
             callback: () => {
                 this.cleanup()
                 this.scene.start("play-scene");
+                this.setDifficulty("hard");
             }
         })
         this.hard.y = 100;
@@ -60,5 +66,9 @@ export default class DifficultyPage extends Page {
             }
         };
         this.back.y = 200;
+    }
+    setDifficulty(difficulty: string) {
+        console.log(difficulty);
+        this.set_difficulty.setDifficulty(difficulty);
     }
 }

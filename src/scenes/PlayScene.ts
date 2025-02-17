@@ -1,10 +1,12 @@
 import Player from "../lib/Player";
 import Scene from "../lib/Scene";
+import AccessCircuit from "../puzzles/AccessCircuit/AccessCircuit";
 import Tilemap from "../lib/tilemap/Tilemap";
 
 export default class PlayScene extends Scene {
     player?: Player;
     tilemap?: Tilemap;
+    aCircuit!: AccessCircuit;
 
     constructor() {
         super("play-scene");
@@ -13,6 +15,8 @@ export default class PlayScene extends Scene {
     onStart(): void {
         this.player = new Player(this);
         this.add(this.player);
+        this.aCircuit = new AccessCircuit(this);
+        this.add(this.aCircuit);
     }
 
     preload(): any {
@@ -25,6 +29,7 @@ export default class PlayScene extends Scene {
         })
     }
 
+    // We may want this to be a pause menu eventually
     keyPressed = (e: KeyboardEvent) => {
         if (e.key === "Escape") {
             this.start("menu-scene");
