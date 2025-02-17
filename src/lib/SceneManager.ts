@@ -7,12 +7,14 @@ export default class SceneManager implements GameObject {
     private current_scene?: Scene;
     private loading_scene: Scene;
     private scenes: Map<string, Scene>;
+    public difficulty: string;
     constructor(p: p5, scenes: (new (name: string) => Scene)[], LoadingScene: new (name: string) => Scene) {
         this.scenes = new Map<string, Scene>();
         this.loading_scene = new LoadingScene(LoadingScene.name);
         this.loading_scene.p5 = p;
         this.loading_scene.scene_manager = this;
         this.p = p;
+        this.difficulty = "easy"; // default difficulty
         if (scenes.length <= 0) {
             throw new Error("No scenes specified.");
         }
@@ -76,5 +78,13 @@ export default class SceneManager implements GameObject {
     mouseClicked(e: MouseEvent): void {
         this.current_scene?.mouseClicked_objects(e);
         this.current_scene?.mouseClicked(e);
+    }
+    mousePressed(e: MouseEvent): void {
+        this.current_scene?.mousePressed_objects(e);
+        this.current_scene?.mousePressed(e);
+    }
+    mouseReleased(e: MouseEvent): void {
+        this.current_scene?.mouseReleased_objects(e);
+        this.current_scene?.mouseReleased(e);
     }
 }

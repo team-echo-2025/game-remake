@@ -32,6 +32,14 @@ const sketch = (p: p5) => {
         scene_manager.mouseClicked(e);
     };
 
+    p.mousePressed = (e: MouseEvent) => {
+        scene_manager.mousePressed(e);
+    };
+
+    p.mouseReleased = (e: MouseEvent) => {
+        scene_manager.mouseReleased(e);
+    };
+
     p.draw = () => {
 
         // Draw the current scene
