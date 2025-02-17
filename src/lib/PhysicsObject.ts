@@ -7,6 +7,7 @@ export type PhysicsObjectProps = Readonly<{
     width: number;
     height: number;
     mass: number;
+    isMoveable: boolean;
     scene: any;
 }>;
 
@@ -17,6 +18,7 @@ export default class PhysicsObject implements GameObject {
     height: number;
     velocity: { x: number; y: number } = { x: 0, y: 0 };
     mass: number;
+    isMoveable: boolean;
     zIndex?: number = 1;
     private static readonly PLAYER_SIZE = 64; // Default player size
     scene: any; // Reference to the scene for drawing
@@ -27,6 +29,7 @@ export default class PhysicsObject implements GameObject {
         this.width = props.width;
         this.height = props.height;
         this.mass = props.mass;
+        this.isMoveable = props.isMoveable;
         this.scene = props.scene;
     }
 
@@ -84,7 +87,7 @@ export default class PhysicsObject implements GameObject {
                     if (player.direction.y < 0) player.y = objBottom;
                     player.direction.y = 0; // Stop movement in Y
                 }
-                player.moving = false;
+                //player.moving = false;
             }
         }
     }
