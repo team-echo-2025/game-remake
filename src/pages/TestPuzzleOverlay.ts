@@ -7,6 +7,7 @@ export default class TestPuzzleOverlay extends Page {
         super("test-puzzle-overlay-page")
     }
     preload(): any {
+        this.scene.physics.debug = true
         this.scene.loadFont('jersey', 'assets/fonts/jersey.ttf')
     }
     cleanup() {

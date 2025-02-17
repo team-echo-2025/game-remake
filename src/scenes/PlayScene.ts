@@ -15,8 +15,9 @@ export default class PlayScene extends Scene {
     }
 
     onStart(): void {
+        this.physics.debug = false;
         this.player = new Player(this);
-        this.add(this.player);
+        this.physics.addObject(this.player);
         this.aCircuit = new AccessCircuit(this);
         this.aCircuit.hidden = true;
         this.add(this.aCircuit);

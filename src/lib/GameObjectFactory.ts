@@ -4,7 +4,6 @@ import Scene from "./Scene";
 import Tilemap, { TilemapProps } from "./tilemap/Tilemap";
 import ButtonTest, { ButtonTestProps } from "./ui/ButtonTest";
 import DropdownMenu, { DropdownMenuProps } from "./ui/DropdownMenu";
-import PhysicsObject, { PhysicsObjectProps } from "./PhysicsObject";
 
 export default class GameObjectFactory {
     private scene: Scene;
@@ -42,13 +41,5 @@ export default class GameObjectFactory {
         this.scene.add(_tilemap);
         _tilemap.setup();
         return _tilemap;
-    }
-
-    physics_object = (props: PhysicsObjectProps): PhysicsObject => {
-        const _physicsObject = new PhysicsObject(props);
-        _physicsObject.scene = this.scene;
-        this.scene.add(_physicsObject);
-        _physicsObject.setup();
-        return _physicsObject;
     }
 }

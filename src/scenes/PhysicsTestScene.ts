@@ -1,10 +1,25 @@
+import PhysicsObject from "../lib/physics/PhysicsObject";
 import Player from "../lib/Player";
 import Scene from "../lib/Scene";
-import PhysicsObject from "../lib/PhysicsObject";
+class TestObject extends PhysicsObject {
+    private scene: Scene;
+    constructor(scene: Scene) {
+        super({
+            width: 64,
+            height: 64,
+            mass: 0,
+        })
+        this.scene = scene;
+    }
+    draw(): void {
+        this.scene.p5.fill(0);
+        this.scene.p5.rect(0, 0, 64, 64);
+    }
 
+}
 export default class PhysicsTestScene extends Scene {
     player?: Player;
-    physicalObject?: PhysicsObject;
+    testObj?: TestObject;
 
     constructor() {
         super("physics-scene");
@@ -12,29 +27,25 @@ export default class PhysicsTestScene extends Scene {
 
     onStart(): void {
         this.player = new Player(this);
-        this.add(this.player);
+        this.player.x = -100;
+        this.physics.addObject(this.player);
+        this.testObj = new TestObject(this);
+        this.physics.addObject(this.testObj);
     }
 
-    setup() : void
-    {
-        this.physicalObject = this.add_new.physics_object
-        ({
-            x: 200,
-            y: 0,
-            width: 100,
-            height: 100,
-            mass: 1,
-            isMoveable: false,
-            scene: this
-        })
-    }
+    setup(): void { }
 
     preload(): any {
         console.log("begin preload of Physics scene");
     }
 
-    onStop()
-    {
+    keyPressed(e: KeyboardEvent): void {
+        if (e.key == "Escape") {
+            this.start('menu-scene');
+        }
+    }
+
+    onStop() {
         this.player = undefined;
     }
 }
