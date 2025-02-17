@@ -65,6 +65,8 @@ export default class SceneManager implements GameObject {
         this.current_scene?.camera.apply_transformation();
         this.current_scene?.draw();
         this.current_scene?.draw_objects();
+        this.current_scene?.update();
+        this.current_scene?.update_objects();
         this.current_scene?.p5.pop()
     }
 

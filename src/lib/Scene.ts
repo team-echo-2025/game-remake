@@ -3,16 +3,22 @@ import GameObject from "./GameObject";
 import SceneManager from "./SceneManager";
 import GameObjectFactory from "./GameObjectFactory";
 import Camera from "./Camera";
+import WorldPhysics from "./physics/WorldPhysics";
 
 export default class Scene implements GameObject {
     private _name: string;
     private _scene_manager!: SceneManager;
     protected p!: p5;
-    objects: GameObject[] = [];
+    private objects: GameObject[] = [];
     private game_object_factory: GameObjectFactory;
+    private _physics: WorldPhysics;
     private assets: Map<string, any> = new Map();
     private preloads: Promise<any>[] = []
     private _camera: Camera;
+
+    get physics() {
+        return this._physics;
+    }
 
     get camera() {
         return this._camera;
@@ -42,6 +48,8 @@ export default class Scene implements GameObject {
         this.game_object_factory = new GameObjectFactory(this);
         this._camera = new Camera(this);
         this._name = name;
+        this._physics = new WorldPhysics();
+        this._physics.scene = this;
     }
 
     start(name: string) {
@@ -167,7 +175,7 @@ export default class Scene implements GameObject {
     async preload_objects(): Promise<any> {
         const to_load = []
         for (const obj of this.objects) {
-            to_load.push(obj.preload());
+            obj.preload && to_load.push(obj.preload());
         }
         for (const pre of this.preloads) {
             to_load.push(pre);
@@ -178,7 +186,14 @@ export default class Scene implements GameObject {
     setup(): void { }
     setup_objects(): void {
         for (const obj of this.objects) {
-            obj.setup();
+            obj.setup && obj.setup();
+        }
+    }
+
+    update(): void { }
+    update_objects(): void {
+        this._physics.update();
+        for (const obj of this.objects) {
         }
     }
 
@@ -186,7 +201,7 @@ export default class Scene implements GameObject {
     draw_objects(): void {
         for (const obj of this.objects) {
             if (!obj.hidden) {
-                obj.draw();
+                obj.draw && obj.draw();
             }
         }
     }
@@ -226,6 +241,7 @@ export default class Scene implements GameObject {
 
     onStop() { }
     onStop_objects() {
+        this._physics.onDestroy();
         for (const obj of this.objects) {
             obj.onDestroy?.();
         }
