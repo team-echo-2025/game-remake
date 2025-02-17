@@ -79,4 +79,12 @@ export default class SceneManager implements GameObject {
         this.current_scene?.mouseClicked_objects(e);
         this.current_scene?.mouseClicked(e);
     }
+    mousePressed(e: MouseEvent): void {
+        this.current_scene?.mousePressed_objects(e);
+        this.current_scene?.mousePressed(e);
+    }
+    mouseReleased(e: MouseEvent): void {
+        this.current_scene?.mouseReleased_objects(e);
+        this.current_scene?.mouseReleased(e);
+    }
 }
