@@ -10,6 +10,7 @@ export enum PuzzleState {
 }
 
 export default class Puzzle implements GameObject {
+    hidden?: boolean = false;
     scene!: Scene;
     puzzle!: Page;
     state!: PuzzleState;
@@ -34,7 +35,7 @@ export default class Puzzle implements GameObject {
 
     keyReleased(e: KeyboardEvent): void { }
 
-    checkSolution(args: any): boolean { 
+    checkSolution(args: any): boolean {
         throw new Error("Not implemented");
     }
 
