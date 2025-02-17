@@ -8,6 +8,7 @@ type RGB = Readonly<{
     b: number;
 }>
 export default class AccessCircuit extends Puzzle {
+    zIndex = 1000;
     board: Cell[][] = [];
     colors: RGB[] = [
         { r: 0, g: 76, b: 84 },
