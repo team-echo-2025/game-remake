@@ -15,6 +15,7 @@ export default class PhysicsObject implements GameObject {
     velocity: { x: number; y: number } = { x: 0, y: 0 };
     mass: number;
     offset: { x: number; y: number };
+    invMass: number;
     get x() {
         return this._x;
     }
@@ -28,12 +29,14 @@ export default class PhysicsObject implements GameObject {
         this._y = y;
     }
 
+
     constructor(props: PhysicsObjectProps) {
         this._x = 0;
         this._y = 0;
         this.width = props.width;
         this.height = props.height;
         this.mass = props.mass;
+        this.invMass = 1 / this.mass;
         this.offset = props.offset ?? { x: 0, y: 0 };
     }
 
@@ -41,8 +44,9 @@ export default class PhysicsObject implements GameObject {
     async preload(): Promise<void> { }
     draw(): void { }
     update(): void { }
-    onCollide(): void { }
     onDestroy(): void { }
+    onCollide(_: GameObject): void { }
+
 
 //draw(): void {
 //    if (this.scene) {
@@ -96,6 +100,7 @@ export default class PhysicsObject implements GameObject {
 //                player.direction.y = 0; // Stop movement in Y
 //            }
 //            //player.moving = false;
+//            player.moving = false;
 //        }
 //    }
 //}
