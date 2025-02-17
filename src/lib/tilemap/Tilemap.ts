@@ -102,7 +102,6 @@ export default class Tilemap implements GameObject {
     }
 
     draw(): void {
-        this.buffer.translate(this._scene.camera.x, this._scene.camera.y)
         this._scene.p5.image(this.buffer, this.x - this._scene.p5.width / 2, this.y - this._scene.p5.height / 2);
     }
 }
