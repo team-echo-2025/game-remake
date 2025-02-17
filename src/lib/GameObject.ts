@@ -1,5 +1,5 @@
 export default interface GameObject {
-    id?: number;
+    zIndex?: number;
     hidden?: boolean;
     setup(): void;
     draw(): void;
