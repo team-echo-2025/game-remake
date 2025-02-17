@@ -8,7 +8,7 @@ export default class Scene implements GameObject {
     private _name: string;
     private _scene_manager!: SceneManager;
     protected p!: p5;
-    private objects: GameObject[] = [];
+    objects: GameObject[] = [];
     private game_object_factory: GameObjectFactory;
     private assets: Map<string, any> = new Map();
     private preloads: Promise<any>[] = []
