@@ -6,6 +6,7 @@ import KeybindsPage from "../pages/KeybindsPage";
 import MenuPage from "../pages/MenuPage";
 import SettingPage from "../pages/SettingsPage";
 import WorldSelectPage from "../pages/WordSelect";
+import CreditsPage from "../pages/CreditsPage";
 
 export default class MenuScene extends Scene {
     pManager: PageManager;
@@ -18,6 +19,7 @@ export default class MenuScene extends Scene {
             new SettingPage(),
             new WorldSelectPage(),
             new DifficultyPage(),
+            new CreditsPage(),
         ], this);
     }
     async preload(): Promise<any> {
@@ -47,11 +49,9 @@ export default class MenuScene extends Scene {
         this.pManager.keyReleased(e)
     }
     keyPressed(e: KeyboardEvent): void {
-        this.pManager.keyPressed(e)
+        this.pManager.keyPressed(e);
     }
     mouseClicked(e: MouseEvent): void {
         this.pManager.mouseClicked(e)
     }
-    
-    
 }

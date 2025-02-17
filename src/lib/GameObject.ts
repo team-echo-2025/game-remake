@@ -7,5 +7,7 @@ export default interface GameObject {
     keyPressed?(e: KeyboardEvent): void;
     keyReleased?(e: KeyboardEvent): void;
     mouseClicked?(e: MouseEvent): void;
+    mousePressed?(e: MouseEvent): void;
+    mouseReleased?(e: MouseEvent): void;
     onDestroy?(): void;
 }
