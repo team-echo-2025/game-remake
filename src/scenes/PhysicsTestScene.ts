@@ -24,6 +24,7 @@ export default class PhysicsTestScene extends Scene {
             width: 100,
             height: 100,
             mass: 1,
+            isMoveable: false,
             scene: this
         })
     }
