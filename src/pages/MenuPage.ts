@@ -7,6 +7,8 @@ export default class MenuPage extends Page {
     carCuz!: ButtonTest;
     KDbutton!: ButtonTest;
     credits!: ButtonTest;
+    physicsTest!: ButtonTest;
+
     constructor() {
         super("menu-page")
     }
@@ -19,6 +21,7 @@ export default class MenuPage extends Page {
         this.scene.remove(this.KDbutton);
         this.scene.remove(this.setting);
         this.scene.remove(this.credits);
+        this.scene.remove(this.physicsTest);
     }
     setup(): void {
         this.play = this.scene.add_new.button({
@@ -71,5 +74,17 @@ export default class MenuPage extends Page {
         })
         this.credits.x = -300
         this.credits.y = 300
+        this.physicsTest = this.scene.add_new.button
+        ({
+            label: "Physics",
+            font_key: "jersey",
+            callback: () =>
+            {
+                this.cleanup();
+                this.scene.start("physics-scene");
+            }
+        })
+        this.physicsTest.x = 150
+        this.physicsTest.y = 300
     }
 }
