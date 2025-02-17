@@ -1,8 +1,9 @@
-import { Image } from 'p5';
+import { Camera, Image } from 'p5';
 import GameObject from './GameObject';
 import Scene from './Scene';
 
 export default class Player implements GameObject {
+    zIndex?: number = 100;
     player: any;
     pressed_keys: any = {};
     spritesheet?: Image;
@@ -32,7 +33,6 @@ export default class Player implements GameObject {
         this.leftKey = localStorage.getItem("left") ?? 'a';
         this.downKey = localStorage.getItem("down") ?? 's';
         this.rightKey = localStorage.getItem("right") ?? 'd';
-        
     }
 
     setup(): void {
@@ -69,7 +69,6 @@ export default class Player implements GameObject {
     }
 
     draw(): void {
-        this.scene.p5.background(135, 206, 235);
         if (this.moving && this.scene.p5.millis() - this.start_anim_time > 100) {
             this.start_anim_time = this.scene.p5.millis();
             this.anim_index = (this.anim_index + 1) % 6;
@@ -95,8 +94,9 @@ export default class Player implements GameObject {
             this.moving = true;
         }
         if (this.frames.length > 0 && this.frames[0].length > 0) {
-            this.scene.p5.image(this.frames[this.anim_row][this.anim_index], this.x, this.y);
+            this.scene.p5.image(this.frames[this.anim_row][this.anim_index], this.x, this.y, 64 * 1.5, 64 * 1.5);
         }
+        this.scene.camera.lookAt(this.x, this.y)
     }
 }
 //make event to let player know keybind changed, and needs re-read

@@ -8,6 +8,7 @@ type RGB = Readonly<{
     b: number;
 }>
 export default class AccessCircuit extends Puzzle {
+    zIndex = 1000;
     board: Cell[][] = [];
     colors: RGB[] = [
         { r: 0, g: 76, b: 84 },
@@ -96,7 +97,8 @@ export default class AccessCircuit extends Puzzle {
         const y = this.scene.p5.mouseY - this.scene.p5.height / 2;
         let found = false;
         if (this.dragging) {
-            for (let row of this.board) {
+            if (this.current_row < this.board.length) {
+                const row = this.board[this.current_row];
                 for (let i = 0; i < row.length; i++) {
                     const cell = row[i];
                     const radius = cell.circleDiameter / 2
@@ -112,10 +114,24 @@ export default class AccessCircuit extends Puzzle {
                         cell.placeBall(this.dragging);
                         if (this.dragging.color == this.solution[i]) {
                             cell.state = CellState.CORRECT;
-                        } else if (this.solution.some(item => item == this.dragging?.color)) {
-                            cell.state = CellState.WRONG_POSITION;
+                            //} else if (this.solution.some(item => item == this.dragging?.color)) {
                         } else {
-                            cell.state = CellState.INCORRECT;
+                            let solution_count = 0;
+                            let filled_positions = 0;
+                            for (let i = 0; i < row.length; i++) {
+                                if (this.dragging.color == this.solution[i]) {
+                                    solution_count++;
+                                }
+                                if (this.dragging.color == row[i].contains?.color) {
+                                    filled_positions++;
+                                }
+                            }
+                            console.log(filled_positions, solution_count)
+                            if (solution_count > 0 && filled_positions <= solution_count) {
+                                cell.state = CellState.WRONG_POSITION;
+                            } else {
+                                cell.state = CellState.INCORRECT;
+                            }
                         }
                         this.balls.push(this.dragging);
                         found = true;

@@ -62,9 +62,9 @@ export default class Button implements GameObject {
         this._callback = _callback;
     }
     get callback() {
-        if(this._callback)
+        if (this._callback)
             return this?._callback;
-        return ():void=>{};
+        return (): void => { };
     }
 
     constructor(props: ButtonProps) {

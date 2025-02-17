@@ -24,27 +24,28 @@ export default class SceneManager implements GameObject {
             scene_instance.scene_manager = this;
             this.scenes.set(scene_instance.name, scene_instance);
         }
+
         const new_scene = this.scenes.values().next().value!;
-        this.loading_scene.onStart()
         new Promise(async (res) => {
+            this.loading_scene.onStart()
             await this.loading_scene.preload()
             await this.loading_scene.preload_objects()
             res(true);
         }).then(() => {
             this.loading_scene?.setup_objects();
             this.loading_scene?.setup();
+            this.start(new_scene.name);
         });
-        new_scene.start(new_scene.name);
     }
 
     async start(name: string) {
-        console.log("SCEENE TO START: ", name)
         const new_scene = this.scenes.get(name);
         if (!new_scene) {
             throw Error(`Scene: ${name} does not exist.`);
         }
         if (this.current_scene) {
             this.current_scene.onStop();
+            this.current_scene.onStop_objects();
         }
         this.current_scene = this.loading_scene;
         new_scene.onStart();
@@ -53,7 +54,6 @@ export default class SceneManager implements GameObject {
         new_scene?.setup_objects();
         new_scene?.setup();
         this.current_scene = new_scene;
-        console.log(this.current_scene)
     }
 
     async preload(): Promise<any> { }
@@ -61,8 +61,11 @@ export default class SceneManager implements GameObject {
     setup(): void { }
 
     draw(): void {
+        this.current_scene?.p5.push()
+        this.current_scene?.camera.apply_transformation();
         this.current_scene?.draw();
         this.current_scene?.draw_objects();
+        this.current_scene?.p5.pop()
     }
 
     keyPressed(e: KeyboardEvent): void {

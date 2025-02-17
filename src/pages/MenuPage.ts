@@ -54,7 +54,10 @@ export default class MenuPage extends Page {
         this.KDbutton = this.scene.add_new.button({
             label: "KD DEV",
             font_key: "jersey",
-            callback: () => { this.scene.start("kd-dev-scene") }
+            callback: () => {
+                this.cleanup()
+                this.scene.start("kd-dev-scene")
+            }
         })
         this.KDbutton.x = 300
         this.KDbutton.y = 300

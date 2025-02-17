@@ -1,6 +1,7 @@
 import Page from "./Page";
 import PageManager from "./PageManager";
 import Scene from "./Scene";
+import Tilemap, { TilemapProps } from "./tilemap/Tilemap";
 import ButtonTest, { ButtonTestProps } from "./ui/ButtonTest";
 import DropdownMenu, { DropdownMenuProps } from "./ui/DropdownMenu";
 
@@ -31,5 +32,14 @@ export default class GameObjectFactory {
         this.scene.add(_button);
         _button.setup();
         return _button;
+    }
+
+    tilemap = (props: TilemapProps): Tilemap => {
+        const _tilemap = new Tilemap(props);
+        console.log(this.scene)
+        _tilemap.scene = this.scene;
+        this.scene.add(_tilemap);
+        _tilemap.setup();
+        return _tilemap;
     }
 }

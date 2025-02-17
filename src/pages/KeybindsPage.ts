@@ -77,7 +77,7 @@ export default class KeybindsPage extends Page {
     keyPressed(e: KeyboardEvent): void {
         if (this.waitingForKey) {
             this.keybinds[this.waitingForKey] = e.key.toLowerCase();
-            localStorage.setItem(this.waitingForKey, e.key.toLowerCase());
+            localStorage.setItem(this.waitingForKey, e.key);
             this.updateButtonLabels();
             this.waitingForKey = null;
         } else {
