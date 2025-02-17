@@ -1,6 +1,7 @@
 import { Camera, Image } from 'p5';
 import GameObject from './GameObject';
 import Scene from './Scene';
+import PhysicsObject from "./PhysicsObject";
 
 export default class Player implements GameObject {
     zIndex?: number = 100;
@@ -89,6 +90,20 @@ export default class Player implements GameObject {
 
     draw(): void {
         this.updateDirection();
+
+        let nextX = this.x + this.direction.x;
+        let nextY = this.y + this.direction.y;
+
+        // Check for collisions BEFORE updating the position
+        this.scene.objects.forEach((obj: GameObject) => {
+            if (obj instanceof PhysicsObject) {
+                obj.preventPlayerPass(this);
+            }
+        });
+
+        // Now update position if movement is still allowed
+        if (this.direction.x !== 0) this.x = nextX;
+        if (this.direction.y !== 0) this.y = nextY;
 
         if (this.moving && this.scene.p5.millis() - this.start_anim_time > 100) {
             this.start_anim_time = this.scene.p5.millis();
