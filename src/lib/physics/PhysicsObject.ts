@@ -1,38 +1,50 @@
 import GameObject from '../GameObject';
 
 export type PhysicsObjectProps = Readonly<{
-    x: number;
-    y: number;
+    offset?: { x: number, y: number };
     width: number;
     height: number;
     mass: number;
-    scene: any;
 }>;
 
 export default class PhysicsObject implements GameObject {
-    zIndex?: number = 0;
-    x: number;
-    y: number;
+    private _x: number;
+    private _y: number;
     width: number;
     height: number;
     velocity: { x: number; y: number } = { x: 0, y: 0 };
     mass: number;
+    offset: { x: number; y: number };
     invMass: number;
-    scene: any; // Reference to the scene for drawing
+    get x() {
+        return this._x;
+    }
+    set x(x: number) {
+        this._x = x;
+    }
+    get y() {
+        return this._y;
+    }
+    set y(y: number) {
+        this._y = y;
+    }
+
 
     constructor(props: PhysicsObjectProps) {
-        this.x = props.x;
-        this.y = props.y;
+        this._x = 0;
+        this._y = 0;
         this.width = props.width;
         this.height = props.height;
         this.mass = props.mass;
-        this.scene = props.scene;
         this.invMass = 1 / this.mass;
+        this.offset = props.offset ?? { x: 0, y: 0 };
     }
 
     setup(): void { }
     async preload(): Promise<void> { }
     draw(): void { }
+    update(): void { }
+    onDestroy(): void { }
     onCollide(_: GameObject): void { }
 
 
@@ -87,6 +99,7 @@ export default class PhysicsObject implements GameObject {
 //                if (player.direction.y < 0) player.y = objBottom;
 //                player.direction.y = 0; // Stop movement in Y
 //            }
+//            //player.moving = false;
 //            player.moving = false;
 //        }
 //    }
