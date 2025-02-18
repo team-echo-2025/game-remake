@@ -32,6 +32,9 @@ export default class Sound implements GameObject{
         this.sound.stop();
         this.sound.unload();
     }
+    updateVolume(flt: number){//volume should be between 0.0 and 1.0
+        this.sound.volume(flt);
+    }
     // functions to be called in scene \/
     mute(): void{
         this.sound.mute(this.toggleMute());
