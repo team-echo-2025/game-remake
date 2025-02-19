@@ -5,11 +5,12 @@ import PlayScene from './scenes/PlayScene';
 import LoadingScene from './scenes/LoadingScene';
 import KDDevScene from './scenes/KDDevScene';
 import PhysicsTestScene from "./scenes/PhysicsTestScene";
+import PuzzleDevScene from "./scenes/PuzzleDevScene";
 
 let scene_manager: SceneManager;
 const sketch = (p: p5) => {
     p.preload = () => {
-        scene_manager = new SceneManager(p, [MenuScene, PlayScene, KDDevScene, PhysicsTestScene], LoadingScene);
+        scene_manager = new SceneManager(p, [MenuScene, PlayScene, KDDevScene, PhysicsTestScene, PuzzleDevScene], LoadingScene);
         scene_manager.preload();
     };
 
