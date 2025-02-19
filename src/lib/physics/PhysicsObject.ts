@@ -19,7 +19,10 @@ export default class PhysicsObject implements GameObject {
     setup(): void { }
     async preload(): Promise<void> { }
     draw(): void { }
-    update(): void { }
+    update(dt: number): void {
+        this.body.x += this.body.velocity.x * dt / 1000;
+        this.body.y += this.body.velocity.y * dt / 1000;
+    }
     onDestroy(): void { }
     onCollide(_: GameObject): void { }
 }

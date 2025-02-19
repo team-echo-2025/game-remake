@@ -3,16 +3,18 @@ import { Vector2D } from "../types/Physics";
 import { CollisionResult } from "./CollisionResult";
 import DynamicQuadTree from "./DynamicQuadTree";
 import PhysicsObject from "./PhysicsObject";
-import QuadTree from "./QuadTree";
 import { RectangleProps } from "./Rectangle";
 import RigidBody from "./RigidBody";
 
 export default class WorldPhysics {
     private physic_objects: PhysicsObject[];
     private quad_tree?: DynamicQuadTree;
-    private quad_capacity: number = 10;
+    private quad_capacity: number = 8;
     private _scene!: Scene;
     private _debug: boolean = true;
+
+    private accumulator: number = 0;
+    private fixedTimeStep: number = 1 / 60; // seconds
 
     set scene(scene: Scene) {
         this._scene = scene;
@@ -30,8 +32,8 @@ export default class WorldPhysics {
         const quad_rect: RectangleProps = {
             x: 0,
             y: 0,
-            w: 2000,
-            h: 2000,
+            w: window.innerWidth,
+            h: window.innerHeight,
         }
         this.quad_tree = new DynamicQuadTree(quad_rect, this.quad_capacity);
     }
@@ -51,8 +53,8 @@ export default class WorldPhysics {
         const distY = b.y - a.y;
 
         // Calculate the combined half-widths and half-heights
-        const sumHalfWidth = a.box.halfw + b.box.halfw;
-        const sumHalfHeight = a.box.halfh + b.box.halfh;
+        const sumHalfWidth = a.halfWidth + b.halfWidth;
+        const sumHalfHeight = a.halfHeight + b.halfHeight;
 
         // Check for no overlap on X or Y
         if (Math.abs(distX) > sumHalfWidth) return undefined;  // no collision on X
@@ -233,41 +235,53 @@ export default class WorldPhysics {
     }
 
     update() {
-        // sweep for objects, and find pairs using quad tree
-        this.sweep();
-        for (let i = 0; i < this.physic_objects.length; i++) {
-            const a = this.physic_objects[i];
-            if (this._debug) {
+        if (!this.quad_tree) return;
+        const dtSec = this._scene.p5.deltaTime / 1000;
+        this.accumulator += dtSec;
+        while (this.accumulator >= this.fixedTimeStep) {
+            this.quad_tree.clear();
+            for (const obj of this.physic_objects) {
+                obj.update(this.fixedTimeStep * 1000)
+                this.apply_ground_friction(obj.body, 0.2, this.fixedTimeStep * 1000);
+                this.quad_tree.insert({ rect: obj.body, data: obj });
+            }
+            for (const obj of this.physic_objects) {
+                const candidates = this.quad_tree.query(obj.body);
+                for (const candidate of candidates) {
+                    if (candidate.data.body == obj.body) continue;
+                    // acurate detection
+                    const collision_data = this.check_collision(obj.body, candidate.data.body);
+                    if (collision_data) {
+                        this.resolve_collision(collision_data);
+                    }
+
+                }
+            }
+            this.accumulator -= this.fixedTimeStep;
+        }
+        if (this._debug) {
+            for (const obj of this.physic_objects) {
                 this._scene.p5.rectMode("center");
                 this._scene.p5.stroke(255, 0, 0);
                 this._scene.p5.noFill();
-                this._scene.p5.rect(a.body.x, a.body.y, a.body.w, a.body.h);
-            }
-        }
-    }
-    sweep() {
-        if (!this.quad_tree) return;
-        this.quad_tree.clear();
-        for (const obj of this.physic_objects) {
-            this.quad_tree.insert({ x: obj.body.x, y: obj.body.y, data: obj });
-        }
-        this.quad_tree.debug_draw(this._scene);
-        for (const obj of this.physic_objects) {
-            obj.body.x += obj.body.velocity.x * this._scene.p5.deltaTime / 1000;
-            obj.body.y += obj.body.velocity.y * this._scene.p5.deltaTime / 1000;
-            this.apply_ground_friction(obj.body, 0.2, this._scene.p5.deltaTime);
-            const candidates = this.quad_tree.query(obj.body);
-            for (const candidate of candidates) {
-                if (candidate.data.body == obj.body) continue;
-                // acurate detection
-                const collision_data = this.check_collision(obj.body, candidate.data.body);
-                if (collision_data) {
-                    this.resolve_collision(collision_data);
-                }
+                this._scene.p5.rect(obj.body.x, obj.body.y, obj.body.w, obj.body.h);
+                const speed = Math.sqrt(obj.body.velocity.x ** 2 + obj.body.velocity.y ** 2);
+                const normX = speed === 0 ? 0 : obj.body.velocity.x / speed;
+                const normY = speed === 0 ? 0 : obj.body.velocity.y / speed;
+                const magnitude = 50;
+                this._scene.p5.line(
+                    obj.body.x,
+                    obj.body.y,
+                    obj.body.x + normX * magnitude,
+                    obj.body.y + normY * magnitude
+                );
 
             }
+            this._scene.p5.stroke(0);
+            this.quad_tree.debug_draw(this._scene);
         }
     }
+
     onDestroy() {
         for (const obj of this.physic_objects) {
             obj.onDestroy();

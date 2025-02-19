@@ -23,7 +23,7 @@ export default class Player extends PhysicsObject {
     private leftKey: string = 'a';
     private downKey: string = 's';
     private rightKey: string = 'd';
-    private speed: number = 100;
+    private speed: number = 1000;
     private launch_delay_start = 0;
     private scale: number = 1.5;
     private width: number = 64 * this.scale;
@@ -51,6 +51,7 @@ export default class Player extends PhysicsObject {
 
     setup(): void {
         this.#setup_frames(this.spritesheet);
+        this.scene.camera.follow(this.body);
     }
 
     #setup_frames(spritesheet?: Image) {
@@ -122,11 +123,11 @@ export default class Player extends PhysicsObject {
                 const ny = dy / length;
                 const launchSpeed = 500;
                 const obj = new TestObject(this.scene);
-                obj.body.w = Math.random() * (100 - 5) + 5;
-                obj.body.h = Math.random() * (100 - 5) + 5;
+                obj.body.w = Math.random() * (200 - 5) + 5;
+                obj.body.h = Math.random() * (200 - 5) + 5;
                 obj.body.x = this.body.x + nx * 100;
                 obj.body.y = this.body.y + ny * 100;
-                obj.body.mass = obj.body.w * obj.body.h
+                obj.body.mass = obj.body.w * obj.body.h + 1000;
                 obj.body.velocity.x = nx * launchSpeed;
                 obj.body.velocity.y = ny * launchSpeed;
                 this.scene.physics.addObject(obj);
@@ -165,7 +166,6 @@ export default class Player extends PhysicsObject {
         this.scene.p5.fill(0);
         this.scene.p5.text("X: " + Math.round(this.body.x) + " Y: " + Math.round(this.body.y), this.scene.camera.x - this.scene.p5.width / 2 + 20, this.scene.camera.y - this.scene.p5.height / 2 + 20);
         this.scene.p5.text("MouseX: " + Math.round(this.scene.p5.mouseX + this.scene.camera.x - this.scene.p5.width / 2) + " MouseY: " + Math.round(this.scene.p5.mouseY + this.scene.camera.y - this.scene.p5.height / 2), this.scene.camera.x - this.scene.p5.width / 2 + 20, this.scene.camera.y - this.scene.p5.height / 2 + 40);
-        this.scene.camera.lookAt(this.body.x, this.body.y);
         this.scene.p5.pop();
     }
 }

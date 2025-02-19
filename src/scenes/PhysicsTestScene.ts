@@ -40,13 +40,13 @@ export default class PhysicsTestScene extends Scene {
         this.physics.addObject(this.player);
         this.testObj = new TestObject(this);
         this.physics.addObject(this.testObj);
-        return
-        for (let i = 0; i < 1000; i++) {
+        const obj_count = 1000;
+        for (let i = 0; i < obj_count; i++) {
             const obj = new TestObject(this);
             obj.body.w = Math.random() * (100 - 50) + 50;
             obj.body.h = Math.random() * (100 - 50) + 50;
-            obj.body.x = Math.random() * 200;
-            obj.body.y = Math.random() * 200;
+            obj.body.x = Math.random() * obj_count - Math.random() * obj_count;
+            obj.body.y = Math.random() * obj_count - Math.random() * obj_count;
             this.physics.addObject(obj);
         }
     }

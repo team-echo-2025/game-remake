@@ -1,3 +1,5 @@
+import Rectangle from "../physics/Rectangle";
+
 export type BoundingBox = {
     halfw: number;
     halfh: number;
@@ -9,7 +11,6 @@ export type Vector2D = {
 }
 
 export type Point = {
-    x: number;
-    y: number;
+    rect: Rectangle;
     data?: any;
 }
