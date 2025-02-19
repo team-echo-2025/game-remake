@@ -139,10 +139,16 @@ export default class PuzzleDevScene extends Scene {
     };
 
     setDifficulty(difficulty: string) {
-        console.log(difficulty);
-        this.set_difficulty.setDifficulty(difficulty);
+        console.log(`Changing difficulty to: ${difficulty}`);
+    
+        this.set_difficulty.setDifficulty(difficulty);  // Ensure global difficulty is updated
+    
+        // Update difficulty for all puzzles (even if hidden)
+        this.aCircuit.setDifficulty(difficulty);
+        this.bSlide.setDifficulty(difficulty);
+        this.lightsOn.setDifficulty(difficulty);
     }
-
+    
     changeButtonVisibility(): void {
         this.easy.hidden = !this.easy.hidden;
         this.normal.hidden = !this.normal.hidden;

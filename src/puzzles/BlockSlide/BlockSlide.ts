@@ -127,6 +127,11 @@ export default class BlockSlide extends Puzzle {
             }
         }
     }    
+    setDifficulty(difficulty: string): void {
+        Puzzle.difficulty = difficulty;
+        console.log(`Block Slide: Difficulty changed to ${Puzzle.difficulty}`);
+        this.setup();  // Restart puzzle
+    }
 
     draw_footer(): void {
         let p5 = this.scene.p5;
