@@ -21,10 +21,10 @@ export default class QuadTree extends Rectangle {
     }
 
     update_root_bounds() {
-        this.minx = this.x - this.box.halfw;
-        this.maxx = this.x + this.box.halfw;
-        this.miny = this.y - this.box.halfh;
-        this.maxy = this.y + this.box.halfh;
+        this.minx = this.x - this.halfWidth;
+        this.maxx = this.x + this.halfWidth;
+        this.miny = this.y - this.halfHeight;
+        this.maxy = this.y + this.halfHeight;
     }
 
     insert(point: Point): boolean {
@@ -52,19 +52,31 @@ export default class QuadTree extends Rectangle {
     subdivide() {
         const halfW = this.w / 2;
         const halfH = this.h / 2;
+        const quarterW = this.w / 4;
+        const quarterH = this.h / 4;
         this.subdivided = true;
 
-        // For top-left coordinates, each quadrant's top-left corner is computed directly.
-        this.northwest = new QuadTree({ x: this.x, y: this.y, w: halfW, h: halfH }, this.capacity);
-        this.northeast = new QuadTree({ x: this.x + halfW, y: this.y, w: halfW, h: halfH }, this.capacity);
-        this.southwest = new QuadTree({ x: this.x, y: this.y + halfH, w: halfW, h: halfH }, this.capacity);
-        this.southeast = new QuadTree({ x: this.x + halfW, y: this.y + halfH, w: halfW, h: halfH }, this.capacity);
+        this.northwest = new QuadTree(
+            { x: this.x - quarterW, y: this.y - quarterH, w: halfW, h: halfH },
+            this.capacity
+        );
+        this.northeast = new QuadTree(
+            { x: this.x + quarterW, y: this.y - quarterH, w: halfW, h: halfH },
+            this.capacity
+        );
+        this.southwest = new QuadTree(
+            { x: this.x - quarterW, y: this.y + quarterH, w: halfW, h: halfH },
+            this.capacity
+        );
+        this.southeast = new QuadTree(
+            { x: this.x + quarterW, y: this.y + quarterH, w: halfW, h: halfH },
+            this.capacity
+        );
 
         const oldPoints = this.points;
         this.points = [];  // clear parent points
 
         for (const p of oldPoints) {
-            // Try each child once. If none accept it, keep it in the parent.
             if (!this.northwest.insert(p) &&
                 !this.northeast.insert(p) &&
                 !this.southwest.insert(p) &&
@@ -80,7 +92,7 @@ export default class QuadTree extends Rectangle {
         }
 
         for (const point of this.points) {
-            if (range.containsPoint(point)) {
+            if (range.intersects(point.rect)) {
                 intersecting_points.push(point);
             }
         }
@@ -97,7 +109,7 @@ export default class QuadTree extends Rectangle {
 
     debug_draw(scene: Scene) {
         scene.p5.noFill();
-        scene.p5.rectMode("corner")
+        scene.p5.rectMode("center")
         scene.p5.rect(this.x, this.y, this.w, this.h);
         if (this.subdivided) {
             this.northeast!.debug_draw(scene);

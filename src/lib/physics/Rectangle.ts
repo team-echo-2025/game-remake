@@ -1,4 +1,4 @@
-import { BoundingBox, Vector2D } from "../types/Physics";
+import { Point } from "../types/Physics";
 
 export type RectangleProps = Readonly<{
     x: number;
@@ -6,80 +6,60 @@ export type RectangleProps = Readonly<{
     w: number;
     h: number;
 }>
-
 export default class Rectangle {
-    box!: BoundingBox;
     private _x: number;
     private _y: number;
-    private _w: number;
-    private _h: number;
-    get w() {
-        return this._w;
-    }
-    get h() {
-        return this._h;
-    }
-    get x() {
-        return this._x;
-    }
-    get y() {
-        return this._y;
-    }
-    set w(w: number) {
-        this._w = w;
-        this.update_bounds();
-    }
-    set h(h: number) {
-        this._h = h;
-        this.update_bounds();
-    }
-    set x(x: number) {
-        this._x = x;
-    }
-    set y(y: number) {
-        this._y = y;
-    }
+    private _width: number;
+    private _height: number;
 
     constructor({ x, y, w, h }: RectangleProps) {
         this._x = x;
         this._y = y;
-        this._w = w;
-        this._h = h;
-        this.update_bounds();
+        this._width = w;
+        this._height = h;
     }
 
-    update_bounds() {
-        this.box = {
-            halfh: this._h / 2,
-            halfw: this._w / 2,
-        }
+    // Get the center coordinates.
+    get x() { return this._x; }
+    set x(x: number) {
+        this._x = x;
+    }
+    get y() { return this._y; }
+    set y(y: number) {
+        this._y = y;
     }
 
-    containsPoint(point: Vector2D): boolean {
-        return (
-            point.x >= this.x - this.w &&
-            point.x <= this.x + this.w &&
-            point.y >= this.y - this.h &&
-            point.y <= this.y + this.h
-        );
+    // Get full dimensions.
+    get w() { return this._width; }
+    set w(w: number) {
+        this._width = w;
+    }
+    get h() { return this._height; }
+    set h(h: number) {
+        this._height = h;
     }
 
-    containsPointTL(point: Vector2D): boolean {
-        return (
-            point.x >= this.x &&
-            point.x <= this.x + this.w &&
-            point.y >= this.y &&
-            point.y <= this.y + this.h
-        );
+    // Compute half-extents explicitly.
+    get halfWidth() { return this._width / 2; }
+    get halfHeight() { return this._height / 2; }
+
+    // Compute the boundaries.
+    get left() { return this._x - this.halfWidth; }
+    get right() { return this._x + this.halfWidth; }
+    get top() { return this._y - this.halfHeight; }
+    get bottom() { return this._y + this.halfHeight; }
+
+    containsPoint(point: Point): boolean {
+        return point.rect.x >= this.left &&
+            point.rect.x <= this.right &&
+            point.rect.y >= this.top &&
+            point.rect.y <= this.bottom;
     }
 
-
-    intersects(range: Rectangle): boolean {
-        return !(
-            range.x - range.w > this.x + this.w ||
-            range.x + range.w < this.x - this.w ||
-            range.y - range.h > this.y + this.h ||
-            range.y + range.h < this.y - this.h
-        );
+    intersects(other: Rectangle): boolean {
+        return !(other.left > this.right ||
+            other.right < this.left ||
+            other.top > this.bottom ||
+            other.bottom < this.top);
     }
 }

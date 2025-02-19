@@ -2,7 +2,7 @@ export default interface GameObject {
     zIndex?: number;
     hidden?: boolean;
     setup?(): void;
-    update?(): void;
+    update?(dt: number): void;
     draw?(): void;
     preload?(): Promise<any>;
     keyPressed?(e: KeyboardEvent): void;
