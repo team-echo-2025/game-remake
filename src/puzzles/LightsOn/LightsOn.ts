@@ -114,6 +114,12 @@ export default class LightsOn extends Puzzle {
 
     mousePressed(): void {
         let p5 = this.scene.p5;
+        
+        if (this.solved()) {
+            this.scene.start("puzzle-dev-scene");
+            return;
+        }
+        
         let col = Math.floor((p5.mouseX - p5.width / 2 + this.boardSize / 2) / this.tileSize);
         let row = Math.floor((p5.mouseY - p5.height / 2 + this.boardSize / 2) / this.tileSize);
         
@@ -124,6 +130,7 @@ export default class LightsOn extends Puzzle {
             this.lastClicked = { row, col };
             this.toggleTile(row, col, true);
         }
+        
     }
 
     toggleTile(row: number, col: number, checkWin: boolean = true): void {
@@ -150,11 +157,6 @@ export default class LightsOn extends Puzzle {
         }
     }
 
-    solvePuzzle(): void {
-        this.grid = Array.from({ length: this.gridSize }, () => Array(this.gridSize).fill(false));
-        this.state = PuzzleState.completed;
-    }
-    
     checkWin(): boolean {
         return this.grid.every(row => row.every(tile => tile));
     }
