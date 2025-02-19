@@ -1,20 +1,15 @@
 import Scene from "../Scene";
 import { Vector2D } from "../types/Physics";
 import { CollisionResult } from "./CollisionResult";
+import DynamicQuadTree from "./DynamicQuadTree";
 import PhysicsObject from "./PhysicsObject";
 import QuadTree from "./QuadTree";
 import { RectangleProps } from "./Rectangle";
 import RigidBody from "./RigidBody";
 
-const quad_rect: RectangleProps = {
-    x: 0,
-    y: 0,
-    w: window.innerWidth,
-    h: window.innerHeight,
-}
 export default class WorldPhysics {
     private physic_objects: PhysicsObject[];
-    private quad_tree: QuadTree;
+    private quad_tree?: DynamicQuadTree;
     private quad_capacity: number = 10;
     private _scene!: Scene;
     private _debug: boolean = true;
@@ -29,11 +24,19 @@ export default class WorldPhysics {
 
     constructor() {
         this.physic_objects = [];
-        this.quad_tree = new QuadTree(quad_rect, this.quad_capacity);
+    }
+
+    setup() {
+        const quad_rect: RectangleProps = {
+            x: 0,
+            y: 0,
+            w: 2000,
+            h: 2000,
+        }
+        this.quad_tree = new DynamicQuadTree(quad_rect, this.quad_capacity);
     }
 
     addObject(object: PhysicsObject) {
-        console.log(object)
         this._scene.add(object);
         this.physic_objects.push(object);
     }
@@ -235,6 +238,7 @@ export default class WorldPhysics {
         for (let i = 0; i < this.physic_objects.length; i++) {
             const a = this.physic_objects[i];
             if (this._debug) {
+                this._scene.p5.rectMode("center");
                 this._scene.p5.stroke(255, 0, 0);
                 this._scene.p5.noFill();
                 this._scene.p5.rect(a.body.x, a.body.y, a.body.w, a.body.h);
@@ -242,6 +246,7 @@ export default class WorldPhysics {
         }
     }
     sweep() {
+        if (!this.quad_tree) return;
         this.quad_tree.clear();
         for (const obj of this.physic_objects) {
             this.quad_tree.insert({ x: obj.body.x, y: obj.body.y, data: obj });
@@ -268,6 +273,6 @@ export default class WorldPhysics {
             obj.onDestroy();
         }
         this.physic_objects = [];
-        this.quad_tree = new QuadTree(quad_rect, this.quad_capacity);
+        this.quad_tree = undefined;
     }
 }
