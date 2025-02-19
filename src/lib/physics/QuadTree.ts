@@ -27,41 +27,11 @@ export default class QuadTree extends Rectangle {
         this.maxy = this.y + this.box.halfh;
     }
 
-
-    expand_to_fit(point: Point): void {
-        // Keep doubling until the point is in bounds
-        while (point.x < this.x - this.box.halfw) {
-            this.w *= 2;
-            this.update_bounds();
-        }
-        while (point.x > this.x + this.box.halfw) {
-            this.w *= 2;
-            this.update_bounds();
-        }
-        while (point.y < this.y - this.box.halfh) {
-            this.h *= 2;
-            this.update_bounds();
-        }
-        while (point.y > this.y + this.box.halfh) {
-            this.h *= 2;
-            this.update_bounds();
-        }
-    }
-
     insert(point: Point): boolean {
         if (!this.containsPoint(point)) {
-            this.expand_to_fit(point);
+            return false
         }
-
         if (this.points.length < this.capacity && !this.subdivided) {
-            if (point.x < this.x - this.box.halfw || point.x > this.x + this.box.halfw) {
-                this.w *= 2;
-                this.update_root_bounds();
-            }
-            if (point.y < this.y - this.box.halfh || point.y > this.y + this.box.halfh) {
-                this.h *= 2;
-                this.update_root_bounds();
-            }
             this.points.push(point);
             return true;
         }
@@ -75,26 +45,30 @@ export default class QuadTree extends Rectangle {
         if (this.southeast?.insert(point)) return true
         if (this.southwest?.insert(point)) return true
 
+        console.error("Here")
         return false;
     }
 
     subdivide() {
-        const section_width = this.w / 2;
-        const section_height = this.h / 2;
+        const halfW = this.w / 2;
+        const halfH = this.h / 2;
         this.subdivided = true;
-        this.northwest = new QuadTree({ x: this.x - section_width / 2, y: this.y - section_height / 2, w: section_width, h: section_height }, this.capacity);
-        this.northeast = new QuadTree({ x: this.x + section_width / 2, y: this.y - section_height / 2, w: section_width, h: section_height }, this.capacity);
-        this.southwest = new QuadTree({ x: this.x - section_width / 2, y: this.y + section_height / 2, w: section_width, h: section_height }, this.capacity);
-        this.southeast = new QuadTree({ x: this.x + section_width / 2, y: this.y + section_height / 2, w: section_width, h: section_height }, this.capacity);
+
+        // For top-left coordinates, each quadrant's top-left corner is computed directly.
+        this.northwest = new QuadTree({ x: this.x, y: this.y, w: halfW, h: halfH }, this.capacity);
+        this.northeast = new QuadTree({ x: this.x + halfW, y: this.y, w: halfW, h: halfH }, this.capacity);
+        this.southwest = new QuadTree({ x: this.x, y: this.y + halfH, w: halfW, h: halfH }, this.capacity);
+        this.southeast = new QuadTree({ x: this.x + halfW, y: this.y + halfH, w: halfW, h: halfH }, this.capacity);
+
         const oldPoints = this.points;
-        this.points = [];  // clear parent
+        this.points = [];  // clear parent points
+
         for (const p of oldPoints) {
-            // Try each child once:
+            // Try each child once. If none accept it, keep it in the parent.
             if (!this.northwest.insert(p) &&
                 !this.northeast.insert(p) &&
                 !this.southwest.insert(p) &&
                 !this.southeast.insert(p)) {
-                // If somehow it doesn’t fit in children, keep in parent
                 this.points.push(p);
             }
         }
@@ -123,15 +97,16 @@ export default class QuadTree extends Rectangle {
 
     debug_draw(scene: Scene) {
         scene.p5.noFill();
-        scene.p5.rectMode("center")
+        scene.p5.rectMode("corner")
         scene.p5.rect(this.x, this.y, this.w, this.h);
         if (this.subdivided) {
-            this.northeast?.debug_draw(scene);
-            this.northwest?.debug_draw(scene);
-            this.southeast?.debug_draw(scene);
-            this.southwest?.debug_draw(scene);
+            this.northeast!.debug_draw(scene);
+            this.northwest!.debug_draw(scene);
+            this.southeast!.debug_draw(scene);
+            this.southwest!.debug_draw(scene);
         }
     }
+
     clear(): void {
         this.points = [];
         if (this.subdivided) {

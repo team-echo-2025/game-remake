@@ -29,7 +29,7 @@ export default class Player extends PhysicsObject {
     private width: number = 64 * this.scale;
     private height: number = 64 * this.scale;
     constructor(scene: Scene) {
-        super({ width: 32, height: 24, mass: 50 * 50, });
+        super({ width: 24, height: 24, mass: 50 * 50, });
         this.scene = scene;
         this.direction = {
             x: 0,
@@ -146,7 +146,7 @@ export default class Player extends PhysicsObject {
             this.anim_index = (this.anim_index + 1) % 6;
         }
         if (this.frames.length > 0 && this.frames[0].length > 0) {
-            this.scene.p5.image(this.frames[this.anim_row][this.anim_index], this.body.x - this.width / 2, this.body.y - this.height / 1.5, this.width, this.height);
+            this.scene.p5.image(this.frames[this.anim_row][this.anim_index], this.body.x - this.width / 2, this.body.y - this.height / 1.8, this.width, this.height);
         }
         if (this.pressed_keys[this.forwardKey]) {
             this.anim_row = 5;

@@ -189,6 +189,7 @@ export default class Scene implements GameObject {
 
     setup(): void { }
     setup_objects(): void {
+        this._physics.setup();
         for (const obj of this.objects) {
             obj.setup && obj.setup();
         }
