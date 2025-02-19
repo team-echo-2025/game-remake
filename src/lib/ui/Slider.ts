@@ -66,6 +66,8 @@ export default class Slider implements GameObject {
     }
     preload(): any {
     }
-
+    onDestroy(): void {
+        this._slider.remove();
+    }
 
 }
