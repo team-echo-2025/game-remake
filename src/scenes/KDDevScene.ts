@@ -18,7 +18,7 @@ export default class KDDevScene extends Scene {
         this.player = new Player(this);
     }
     onStart(): void {
-        this.add(this.player)
+        this.physics.addObject(this.player)
         this.add(this.background_music);
     }
 

@@ -1,128 +1,265 @@
 import Scene from "../Scene";
+import { Vector2D } from "../types/Physics";
+import { CollisionResult } from "./CollisionResult";
 import PhysicsObject from "./PhysicsObject";
+import QuadTree from "./QuadTree";
+import { RectangleProps } from "./Rectangle";
+import RigidBody from "./RigidBody";
 
+const quad_rect: RectangleProps = {
+    x: 0,
+    y: 0,
+    w: window.innerWidth,
+    h: window.innerHeight,
+}
 export default class WorldPhysics {
     private physic_objects: PhysicsObject[];
+    private quad_tree: QuadTree;
+    private quad_capacity: number = 10;
     private _scene!: Scene;
     private _debug: boolean = true;
+
     set scene(scene: Scene) {
         this._scene = scene;
     }
+
     set debug(debug: boolean) {
         this._debug = debug;
     }
+
     constructor() {
         this.physic_objects = [];
+        this.quad_tree = new QuadTree(quad_rect, this.quad_capacity);
     }
+
     addObject(object: PhysicsObject) {
-        this.physic_objects.push(object);
+        console.log(object)
         this._scene.add(object);
+        this.physic_objects.push(object);
     }
 
-    resolveAABBOverlap(a: PhysicsObject, b: PhysicsObject) {
-        // Amount that a intrudes into b on each axis:
-        const overlapX1 = (a.x + a.width) - b.x;            // if a is left, this is how far right edge extends into b
-        const overlapX2 = (b.x + b.width) - a.x;            // if b is left, how far b’s right edge extends into a
-        // We'll pick a negative or positive value for X so we know which side to push
-        let pushX;
-        if (overlapX1 < overlapX2) {
-            // a is to the left of b, so we push a left
-            pushX = -overlapX1;
+    /**
+     * Check collision between two AABB bodies.
+     * Returns a CollisionResult if overlapping, otherwise undefined.
+     */
+    check_collision(a: RigidBody, b: RigidBody): CollisionResult | undefined {
+        // Calculate distance between centers
+        const distX = b.x - a.x;
+        const distY = b.y - a.y;
+
+        // Calculate the combined half-widths and half-heights
+        const sumHalfWidth = a.box.halfw + b.box.halfw;
+        const sumHalfHeight = a.box.halfh + b.box.halfh;
+
+        // Check for no overlap on X or Y
+        if (Math.abs(distX) > sumHalfWidth) return undefined;  // no collision on X
+        if (Math.abs(distY) > sumHalfHeight) return undefined; // no collision on Y
+
+        // There is overlap. Now compute penetration depths along each axis
+        const overlapX = sumHalfWidth - Math.abs(distX);
+        const overlapY = sumHalfHeight - Math.abs(distY);
+
+        // We want to push the objects out along the axis of *least* penetration
+        let normal: Vector2D = { x: 0, y: 0 };
+        let penetration = 0;
+
+        if (overlapX < overlapY) {
+            // Collide along X axis
+            penetration = overlapX;
+            // Normal direction depends on the sign of distX
+            normal.x = distX > 0 ? 1 : -1;
+            normal.y = 0;
         } else {
-            // b is to the left of a, so we push a right
-            pushX = overlapX2;
+            // Collide along Y axis
+            penetration = overlapY;
+            normal.x = 0;
+            normal.y = distY > 0 ? 1 : -1;
         }
 
-        // Same logic for Y:
-        const overlapY1 = (a.y + a.height) - b.y;
-        const overlapY2 = (b.y + b.height) - a.y;
-        let pushY;
-        if (overlapY1 < overlapY2) {
-            pushY = -overlapY1;
-        } else {
-            pushY = overlapY2;
+        // Convert normal to a unit vector
+        const length = Math.sqrt(normal.x * normal.x + normal.y * normal.y);
+        normal.x /= length;
+        normal.y /= length;
+
+        const result: CollisionResult = {
+            a,
+            b,
+            normal,
+            penetration,
+            contactPoints: []
+        };
+
+        return result;
+    }
+
+    /**
+     * Resolves collision by adjusting positions and velocities.
+     */
+    resolve_collision(collision: CollisionResult) {
+        const { a, b, normal, penetration } = collision;
+
+        // ------------------------------------
+        // 1) Positional Correction
+        // ------------------------------------
+        const invMassA = (a.mass === Infinity) ? 0 : (1 / a.mass);
+        const invMassB = (b.mass === Infinity) ? 0 : (1 / b.mass);
+        const invMassSum = invMassA + invMassB;
+
+        if (invMassSum > 0) {
+            // Distribute the correction based on inverse mass
+            const movePerInvMass = penetration / invMassSum;
+
+            // Move 'a' opposite the normal
+            if (invMassA > 0) {
+                a.x -= normal.x * movePerInvMass * invMassA;
+                a.y -= normal.y * movePerInvMass * invMassA;
+            }
+            // Move 'b' along the normal
+            if (invMassB > 0) {
+                b.x += normal.x * movePerInvMass * invMassB;
+                b.y += normal.y * movePerInvMass * invMassB;
+            }
         }
 
-        if (Math.abs(pushX) < Math.abs(pushY)) {
-            // Overlap is smaller along X axis
-            a.x += pushX / 2;
-            b.x -= pushX / 2;
+        // ------------------------------------
+        // 2) Normal (Bounce) Impulse
+        // ------------------------------------
+        // Compute relative velocity
+        let rvx = b.velocity.x - a.velocity.x;
+        let rvy = b.velocity.y - a.velocity.y;
 
-            // Zero out or reverse velocities along X
-            a.velocity.x = 0;
-            b.velocity.x = 0;
-        } else {
-            // Overlap is smaller along Y axis
-            a.y += pushY / 2;
-            b.y -= pushY / 2;
+        // Relative speed along the collision normal
+        let velAlongNormal = rvx * normal.x + rvy * normal.y;
 
-            a.velocity.y = 0;
-            b.velocity.y = 0;
+        // If they're separating, no normal impulse needed
+        if (velAlongNormal > 0) {
+            return;
+        }
+
+        // Combine restitution
+        const e = Math.min(a.restitution, b.restitution);
+
+        // Normal impulse scalar
+        //   jn = -(1 + e) * v_rel_dot_normal / (invMassSum)
+        const jn = -(1 + e) * velAlongNormal / invMassSum;
+
+        // Apply impulse along normal
+        const impulseX = jn * normal.x;
+        const impulseY = jn * normal.y;
+
+        if (invMassA > 0) {
+            a.velocity.x -= impulseX * invMassA;
+            a.velocity.y -= impulseY * invMassA;
+        }
+        if (invMassB > 0) {
+            b.velocity.x += impulseX * invMassB;
+            b.velocity.y += impulseY * invMassB;
+        }
+
+        // We'll need this normal impulse magnitude to clamp friction
+        const normalImpulseMag = Math.abs(jn);
+
+        // ------------------------------------
+        // 3) Friction Impulse
+        // ------------------------------------
+        // Recompute relative velocity after normal impulse
+        rvx = b.velocity.x - a.velocity.x;
+        rvy = b.velocity.y - a.velocity.y;
+
+        // Build a 'tangent' vector
+        // A quick perpendicular to (nx, ny) in 2D is (ny, -nx)
+        let tx = normal.y;
+        let ty = -normal.x;
+
+        // Project relative velocity onto tangent
+        const relVelTangent = rvx * tx + rvy * ty;
+
+        if (Math.abs(relVelTangent) < 1e-6) {
+            // No tangential motion => no friction impulse needed
+            return;
+        }
+
+        // Now we want a unit tangent
+        const tLen = Math.sqrt(tx * tx + ty * ty);
+        tx /= tLen;
+        ty /= tLen;
+
+        // Combined friction factor (e.g. min or average)
+        const combinedFriction = Math.sqrt(a.friction * b.friction);
+        // Alternatively: 
+        //   const combinedFriction = 0.5 * (a.friction + b.friction);
+        //   const combinedFriction = Math.sqrt(a.friction * b.friction);
+
+        // Tangential impulse magnitude
+        //   jt = - (v_rel_dot_tangent) / (invMassSum)
+        let jt = -relVelTangent / invMassSum;
+
+        // Coulomb's law: friction <= mu * normalImpulse
+        // so we clamp jt
+        const maxFriction = normalImpulseMag * combinedFriction;
+        if (jt > maxFriction) jt = maxFriction;
+        else if (jt < -maxFriction) jt = -maxFriction;
+
+        // Apply friction impulse
+        const fx = jt * tx;
+        const fy = jt * ty;
+
+        if (invMassA > 0) {
+            a.velocity.x -= fx * invMassA;
+            a.velocity.y -= fy * invMassA;
+        }
+        if (invMassB > 0) {
+            b.velocity.x += fx * invMassB;
+            b.velocity.y += fy * invMassB;
         }
     }
 
+    apply_ground_friction(body: RigidBody, frictionVal: number, dt: number) {
+        // frictionVal is something like "1.0" which means we remove 1 unit of speed per second
+        const speed = Math.sqrt(body.velocity.x ** 2 + body.velocity.y ** 2);
+        if (speed > 0) {
+            // We'll reduce speed by frictionVal * dt, but not below 0
+            let newSpeed = speed - frictionVal * dt;
+            if (newSpeed < 0) newSpeed = 0;
 
-    checkCollision(a: PhysicsObject, b: PhysicsObject): boolean {
-        return (
-            a.x < b.x + a.width &&
-            a.x + a.width > b.x &&
-            a.y < b.y + a.height &&
-            a.y + a.height > b.y
-        );
+            // Keep direction, scale magnitude
+            const scale = newSpeed / speed;
+            body.velocity.x *= scale;
+            body.velocity.y *= scale;
+        }
     }
+
     update() {
-        // Move each object by velocity (even if velocity=0, they'll just stay put)
-        for (let i = 0; i < this.physic_objects.length; i++) {
-            const a = this.physic_objects[i];
-            a.x += a.velocity.x;
-            a.y += a.velocity.y;
-        }
-
-        // Now do collisions for all pairs
+        // sweep for objects, and find pairs using quad tree
+        this.sweep();
         for (let i = 0; i < this.physic_objects.length; i++) {
             const a = this.physic_objects[i];
             if (this._debug) {
                 this._scene.p5.stroke(255, 0, 0);
                 this._scene.p5.noFill();
-                this._scene.p5.rect(a.x, a.y, a.width, a.height);
+                this._scene.p5.rect(a.body.x, a.body.y, a.body.w, a.body.h);
             }
-            for (let j = i + 1; j < this.physic_objects.length; j++) {
-                const b = this.physic_objects[j];
-                if (!this.checkCollision(a, b)) return;
-
-                const nextX = a.x + a.velocity.x;
-                const nextY = a.y + a.velocity.y;
-
-                const aRight = nextX + a.width;
-                const aLeft = nextX;
-                const aTop = nextY;
-                const aBottom = nextY + a.height;
-
-                const objRight = b.x + b.width;
-                const objLeft = b.x;
-                const objTop = b.y;
-                const objBottom = b.y + b.height;
-
-                if (aRight > objLeft && aLeft < objRight) {
-                    if (aBottom > objTop && aTop < objBottom) {
-                        // Determine which side is being collided with
-                        const overlapX = Math.min(aRight - objLeft, objRight - aLeft);
-                        const overlapY = Math.min(aBottom - objTop, objBottom - aTop);
-
-                        if (overlapX < overlapY) {
-                            // Horizontal collision
-                            if (a.velocity.x > 0) a.x = objLeft - a.width;
-                            if (a.velocity.x < 0) a.x = objRight;
-                            a.velocity.x = 0; // Stop movement in X
-                        } else {
-                            // Vertical collision
-                            if (a.velocity.y > 0) a.y = objTop - a.height;
-                            if (a.velocity.y < 0) a.y = objBottom;
-                            a.velocity.y = 0; // Stop movement in Y
-                        }
-                        //a.moving = false;
-                    }
+        }
+    }
+    sweep() {
+        this.quad_tree.clear();
+        for (const obj of this.physic_objects) {
+            this.quad_tree.insert({ x: obj.body.x, y: obj.body.y, data: obj });
+        }
+        this.quad_tree.debug_draw(this._scene);
+        for (const obj of this.physic_objects) {
+            obj.body.x += obj.body.velocity.x * this._scene.p5.deltaTime / 1000;
+            obj.body.y += obj.body.velocity.y * this._scene.p5.deltaTime / 1000;
+            this.apply_ground_friction(obj.body, 0.2, this._scene.p5.deltaTime);
+            const candidates = this.quad_tree.query(obj.body);
+            for (const candidate of candidates) {
+                if (candidate.data.body == obj.body) continue;
+                // acurate detection
+                const collision_data = this.check_collision(obj.body, candidate.data.body);
+                if (collision_data) {
+                    this.resolve_collision(collision_data);
                 }
+
             }
         }
     }
@@ -131,5 +268,6 @@ export default class WorldPhysics {
             obj.onDestroy();
         }
         this.physic_objects = [];
+        this.quad_tree = new QuadTree(quad_rect, this.quad_capacity);
     }
 }
