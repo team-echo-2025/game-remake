@@ -2,6 +2,7 @@ import Scene from "../lib/Scene";
 import ButtonTest from "../lib/ui/ButtonTest";
 import AccessCircuit from "../puzzles/AccessCircuit/AccessCircuit";
 import BlockSlide from "../puzzles/BlockSlide/BlockSlide";
+import LightsOn from "../puzzles/LightsOn/LightsOn";
 import Puzzle from "../lib/Puzzle"
 
 export default class PuzzleDevScene extends Scene {
@@ -10,8 +11,10 @@ export default class PuzzleDevScene extends Scene {
     hard!: ButtonTest;
     aCircuit!: AccessCircuit;
     bSlide!: BlockSlide;
+    lightsOn!: LightsOn;
     aCircuitButton!: ButtonTest;
     bSlideButton!: ButtonTest;
+    lightsOnButton!: ButtonTest;
     bSlideSolveButton!: ButtonTest;
     set_difficulty!: Puzzle;
 
@@ -24,10 +27,15 @@ export default class PuzzleDevScene extends Scene {
         this.physics.debug = false;
         this.aCircuit = new AccessCircuit(this);
         this.bSlide = new BlockSlide(this);
+        this.lightsOn = new LightsOn(this);
+        
         this.aCircuit.hidden = true;
-        this.bSlide.hidden = true
+        this.bSlide.hidden = true;
+        this.lightsOn.hidden = true;
+        
         this.add(this.aCircuit);
         this.add(this.bSlide);
+        this.add(this.lightsOn);
     }
 
     preload(): any {
@@ -45,6 +53,7 @@ export default class PuzzleDevScene extends Scene {
         })
         this.easy.y = -100;
         this.easy.x = -200;
+        
         this.normal = this.add_new.button({
             label: "Normal",
             font_key: 'jersey',
@@ -53,6 +62,7 @@ export default class PuzzleDevScene extends Scene {
             }
         })
         this.normal.x = -200;
+        
         this.hard = this.add_new.button({
             label: "Hard",
             font_key: 'jersey',
@@ -70,20 +80,24 @@ export default class PuzzleDevScene extends Scene {
             callback: () => {
                 this.aCircuit.hidden = false;
                 this.bSlide.hidden = true;
+                this.lightsOn.hidden = true;
                 this.changeButtonVisibility();
             }
         });
+        
         this.bSlideButton = this.add_new.button({
             label: "Block Slide",
             font_key: "jersey",
             callback: () => {
                 this.bSlide.hidden = false;
                 this.aCircuit.hidden = true;
+                this.lightsOn.hidden = true;
                 this.bSlideSolveButton.hidden = false;
                 this.changeButtonVisibility();
             }
         });
         this.bSlideButton.y = 100;
+        
         this.bSlideSolveButton = this.add_new.button({
             label: "Auto-Solve",
             font_key: "jersey",
@@ -94,15 +108,30 @@ export default class PuzzleDevScene extends Scene {
         })
         this.bSlideSolveButton.x = 300;
         this.bSlideSolveButton.hidden = true; // No need to see this unless bSlide is open
+        
+        // Lights On button
+        this.lightsOnButton = this.add_new.button({
+            label: "Lights On",
+            font_key: "jersey",
+            callback: () => {
+                this.lightsOn.hidden = false;
+                this.aCircuit.hidden = true;
+                this.bSlide.hidden = true;
+                this.changeButtonVisibility();
+            }
+        });
+        this.lightsOnButton.y = 200;
     }
 
-    // We may want this to be a pause menu eventually
     keyPressed = (e: KeyboardEvent) => {
         if (e.key == "Escape" && !this.aCircuit.hidden) {
             this.aCircuit.hidden = true;
             this.changeButtonVisibility();
         } else if (e.key == "Escape" && !this.bSlide.hidden) {
             this.bSlide.hidden = true;
+            this.changeButtonVisibility();
+        } else if (e.key == "Escape" && !this.lightsOn.hidden) {
+            this.lightsOn.hidden = true;
             this.changeButtonVisibility();
         } else if (e.key === "Escape") {
             this.start("menu-scene");
@@ -120,6 +149,7 @@ export default class PuzzleDevScene extends Scene {
         this.hard.hidden = !this.hard.hidden;
         this.aCircuitButton.hidden = !this.aCircuitButton.hidden;
         this.bSlideButton.hidden = !this.bSlideButton.hidden;
+        this.lightsOnButton.hidden = !this.lightsOnButton.hidden;
     }    
 
     onStop(): void { }
