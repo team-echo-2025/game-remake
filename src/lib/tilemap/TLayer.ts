@@ -97,7 +97,7 @@ export default class TLayer implements GameObject {
             }
         }
         for (let tile of this._tiles) {
-            this.tilemap.buffer.image(tile.image, tile.x - this.tilemap.buffer.width / 2, tile.y - this.tilemap.buffer.height / 2);
+            this.tilemap.buffer.image(tile.image, Math.floor(tile.x), Math.floor(tile.y));
         }
     }
 

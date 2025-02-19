@@ -16,6 +16,10 @@ export default class Scene implements GameObject {
     private preloads: Promise<any>[] = []
     private _camera: Camera;
 
+    private start_time = 0;
+    private frames = 0;
+    private display_frames = 0;
+
     get physics() {
         return this._physics;
     }
@@ -203,6 +207,22 @@ export default class Scene implements GameObject {
             if (!obj.hidden) {
                 obj.draw && obj.draw();
             }
+        }
+        this.p5.push();
+        this.p5.fill(0);
+        this.p5.text(`Frames:  ${this.display_frames.toFixed(1)}`, this.camera.x - this.p5.width / 2 + 20, this.camera.y - this.p5.height / 2 + 60);
+        this.p5.pop();
+        this.frames++;
+
+        // Calculate FPS using the time since the last frame
+        const now = this.p5.millis();
+        const delta = now - this.start_time; // Time difference between frames
+        this.start_time = now; // Reset timer
+
+        if (delta > 0) {
+            const alpha = 0.05
+            const fps = 1000 / delta;
+            this.display_frames = alpha * fps + (1 - alpha) * this.display_frames;
         }
     }
 
