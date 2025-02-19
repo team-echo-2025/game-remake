@@ -14,13 +14,23 @@ export default class LightsOn extends Puzzle {
     async preload(): Promise<void> { }
 
     setup(): void {
-        this.setGridSize(); 
-        this.generateSolvableGrid();
-        this.tileSize = this.boardSize / this.gridSize; 
-        
+    
+        this.state = PuzzleState.notStarted;  // Reset puzzle state to allow a new game
+        this.setGridSize();  
+        this.generateSolvableGrid();  
+        this.tileSize = this.boardSize / this.gridSize;
+    
         this.scene.p5.createCanvas(this.scene.p5.windowWidth, this.scene.p5.windowHeight);
         this.scene.p5.rectMode(this.scene.p5.CENTER);
     }
+    
+
+    setDifficulty(difficulty: string): void {
+        Puzzle.difficulty = difficulty;  // Update the global difficulty
+        console.log(`Lights On difficulty set to: ${Puzzle.difficulty}`);
+        this.setup();  // Restart puzzle with new difficulty
+    }
+    
 
     setGridSize(): void {
         switch (Puzzle.difficulty) {
@@ -62,7 +72,7 @@ export default class LightsOn extends Puzzle {
         p5.fill(255);
         p5.textAlign(p5.CENTER, p5.CENTER);
         p5.textSize(16);
-        p5.text("Click a tile to turn all lights on", 0, this.boardSize / 2 + 40);
+        p5.text("Make all tiles white to turn the lights on.\nClick a tile to begin", 0, this.boardSize / 2 + 40);
     }
 
     draw_header(): void {
