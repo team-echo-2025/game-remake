@@ -20,6 +20,8 @@ export default class Slider implements GameObject {
         this._scene = props.scene;
         this._slider = this.scene.p5.createSlider(0.0, 1.0, 1.0, 0.01);
         this._slider.position(this._x,this._y)
+        this._slider.size(200);
+        this.callback = props.callback;
     }
     set x(x: number) {
         this._x = x;

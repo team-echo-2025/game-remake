@@ -37,14 +37,14 @@ export default class SoundManager implements GameObject{
     setupVolume(){
         var str = localStorage.getItem(this.group)??"1.0"//+(localStorage.getItem(this.group)??"1.0");
         for(const sound of this.sounds){
-            sound.updateVolume(+(str))
+            sound.updateVolume(+(str)+0.0)
         }
     }
     updateVolume(volume:string){
-        console.log("SoundManger::updateVolume()");
-        var volume = localStorage.setItem(this.group, volume+"")??"1.0";
+        localStorage.setItem(this.group, volume+"");
+        console.log("SoundManger::updateVolume()",typeof volume, volume);
         for(const sound of this.sounds){
-            sound.updateVolume(+(volume))
+            sound.updateVolume(+(volume)+0.0)
         }
     }
     // add(new_sound: Sound){

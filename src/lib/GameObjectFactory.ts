@@ -51,6 +51,7 @@ export default class GameObjectFactory {
         _slider.scene = this.scene;
         this.scene.add(_slider);
         _slider.setup();
+        
         return _slider;
     }
     soundmanager = (props: SoundManagerProps): SoundManager =>{
