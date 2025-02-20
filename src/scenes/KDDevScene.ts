@@ -12,6 +12,9 @@ export default class KDDevScene extends Scene {
     play_music_button!: ButtonTest;
     stop_music_button!: ButtonTest;
     mute_music_button!: ButtonTest;
+    manager_play_button!: ButtonTest;
+    manager_stop_button!: ButtonTest;
+    manager_mute_button!: ButtonTest;
     dropMenu!: DropdownMenu;
     background_music!: Sound;
     bgm_manager!: SoundManager;
@@ -24,8 +27,8 @@ export default class KDDevScene extends Scene {
     }
     onStart(): void {
         this.add(this.player)
-        //this.add(this.bgm_manager); // preloads fucked
-        //this.bgm_manager.add(this.background_music);
+        this.add(this.background_music); // preloads fucked
+       // this.bgm_manager.add(this.background_music);
     }
 
     preload(): any {
@@ -51,7 +54,7 @@ export default class KDDevScene extends Scene {
         }
         const bgm_props: SoundManagerProps= {
             group: "BGM",
-            sounds: [new Sound("assets/background_music.mp3")]
+            sounds: [this.background_music]
         }
         this.dropMenu = this.add_new.dropdown_menu({
             label: "Show Dev Scenes",
@@ -73,34 +76,67 @@ export default class KDDevScene extends Scene {
             label: "Play Music",
             font_key: "jersey",
             font_size: 50,
-            callback: () => { this.bgm_manager.play() }
+            callback: () => { this.background_music.play() }
         })
         this.stop_music_button = this.add_new.button({
             label: "Stop Music",
             font_key: "jersey",
             font_size: 50,
-            callback: () => { this.bgm_manager.stop() }
+            callback: () => { this.background_music.stop() }
         })
         this.mute_music_button = this.add_new.button({
             label: "Mute Music",
+            font_key: "jersey",
+            font_size: 50,
+            callback: () => { this.background_music.mute() }
+        })
+        this.manager_play_button = this.add_new.button({
+            label: "Play Manager",
+            font_key: "jersey",
+            font_size: 50,
+            callback: () => { this.bgm_manager.play() }
+        })
+        this.manager_stop_button = this.add_new.button({
+            label: "Stop Manager",
+            font_key: "jersey",
+            font_size: 50,
+            callback: () => { this.bgm_manager.stop() }
+        })
+        this.manager_mute_button = this.add_new.button({
+            label: "Mute Manager",
             font_key: "jersey",
             font_size: 50,
             callback: () => { this.bgm_manager.mute() }
         })
         this.background_slider = this.add_new.slider({
             scene: this,
-            key: "BGM"
+            key: "BGM",
+            callback: (volume: string) => { this.bgm_manager.updateVolume(volume) }
         })
         this.bgm_manager = this.add_new.soundmanager(bgm_props);
 
         this.return_button.x = -300//this.p5.mouseX - this.p5.width / 2;
         this.return_button.y = 200//this.p5.mouseY - this.p5.height / 2;
-        this.play_music_button.x = 300
+        this.play_music_button.x = 550
         this.play_music_button.y = -300
-        this.stop_music_button.x = 300
+        this.play_music_button.width = 80
+        this.stop_music_button.x = 550
         this.stop_music_button.y = -200
-        this.mute_music_button.x = 300
+        this.stop_music_button.width = 80
+        this.mute_music_button.x = 550
         this.mute_music_button.y = -100
+        this.mute_music_button.width = 80
+
+        this.manager_play_button.x = 300
+        this.manager_play_button.y = -300
+        this.manager_play_button.width = 80
+        this.manager_stop_button.x = 300
+        this.manager_stop_button.y = -200
+        this.manager_stop_button.width = 80
+        this.manager_mute_button.x = 300
+        this.manager_mute_button.y = -100
+        this.manager_mute_button.width = 80
+
         this.dropMenu.y = -200
         this.dropMenu.x = -200
         this.background_slider.x = 100

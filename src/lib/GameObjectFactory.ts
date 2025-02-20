@@ -57,6 +57,7 @@ export default class GameObjectFactory {
         const _soundmanager = new SoundManager(props);
         console.log("soundmanager factory call");
         _soundmanager.scene = this.scene;
+        _soundmanager.sounds = props.sounds; 
         this.scene.add(_soundmanager);
         _soundmanager.setup();
         return _soundmanager;
