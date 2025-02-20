@@ -28,7 +28,6 @@ export class TestObject extends PhysicsObject {
 export default class PhysicsTestScene extends Scene {
     player?: Player;
     testObj?: TestObject;
-    testObj2?: TestObject;
 
     constructor() {
         super("physics-scene");
@@ -43,8 +42,8 @@ export default class PhysicsTestScene extends Scene {
         const obj_count = 1000;
         for (let i = 0; i < obj_count; i++) {
             const obj = new TestObject(this);
-            obj.body.w = Math.random() * (100 - 50) + 50;
-            obj.body.h = Math.random() * (100 - 50) + 50;
+            obj.body.w = Math.random() * (200 - 100) + 50;
+            obj.body.h = Math.random() * (200 - 100) + 50;
             obj.body.x = Math.random() * obj_count - Math.random() * obj_count;
             obj.body.y = Math.random() * obj_count - Math.random() * obj_count;
             this.physics.addObject(obj);
@@ -60,6 +59,15 @@ export default class PhysicsTestScene extends Scene {
     keyPressed(e: KeyboardEvent): void {
         if (e.key == "Escape") {
             this.start('menu-scene');
+        }
+    }
+
+    mouseClicked(_: MouseEvent): void {
+        if (!this.player?.shooting) {
+            const obj = this.physics.raycast();
+            if (obj) {
+                this.physics.remove(obj);
+            }
         }
     }
 

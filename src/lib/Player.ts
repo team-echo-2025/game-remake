@@ -23,11 +23,13 @@ export default class Player extends PhysicsObject {
     private leftKey: string = 'a';
     private downKey: string = 's';
     private rightKey: string = 'd';
-    private speed: number = 1000;
+    private speed: number = 100;
     private launch_delay_start = 0;
     private scale: number = 1.5;
     private width: number = 64 * this.scale;
     private height: number = 64 * this.scale;
+    shooting: boolean = true;
+
     constructor(scene: Scene) {
         super({ width: 24, height: 24, mass: 50 * 50, });
         this.scene = scene;
@@ -74,6 +76,7 @@ export default class Player extends PhysicsObject {
         return _sprites;
     }
 
+
     keyPressed(e: KeyboardEvent): void {
         if (!this.pressed_keys[this.forwardKey] && e.key == this.forwardKey) {
             this.direction.y -= 1;
@@ -91,6 +94,9 @@ export default class Player extends PhysicsObject {
     }
 
     keyReleased(e: KeyboardEvent): void {
+        if (e.key == 'm') {
+            this.shooting = !this.shooting;
+        }
         if (this.pressed_keys[this.forwardKey] && e.key == this.forwardKey) {
             this.direction.y += 1;
         }
@@ -107,6 +113,7 @@ export default class Player extends PhysicsObject {
     }
 
     mousePressed(_: MouseEvent) {
+        if (!this.shooting) return;
         console.log('clicked')
 
         // Simple "cooldown": only launch if >1 second has passed
@@ -123,8 +130,8 @@ export default class Player extends PhysicsObject {
                 const ny = dy / length;
                 const launchSpeed = 500;
                 const obj = new TestObject(this.scene);
-                obj.body.w = Math.random() * (200 - 5) + 5;
-                obj.body.h = Math.random() * (200 - 5) + 5;
+                obj.body.w = Math.random() * (200 - 50) + 50;
+                obj.body.h = Math.random() * (200 - 50) + 50;
                 obj.body.x = this.body.x + nx * 100;
                 obj.body.y = this.body.y + ny * 100;
                 obj.body.mass = obj.body.w * obj.body.h + 1000;
