@@ -3,7 +3,7 @@ import { Vector2D } from "../types/Physics";
 import { CollisionResult } from "./CollisionResult";
 import DynamicQuadTree from "./DynamicQuadTree";
 import PhysicsObject from "./PhysicsObject";
-import { RectangleProps } from "./Rectangle";
+import Rectangle, { RectangleProps } from "./Rectangle";
 import RigidBody from "./RigidBody";
 
 export default class WorldPhysics {
@@ -280,6 +280,25 @@ export default class WorldPhysics {
             this._scene.p5.stroke(0);
             this.quad_tree.debug_draw(this._scene);
         }
+    }
+
+    remove(object: PhysicsObject) {
+        this._scene.remove(object);
+        this.physic_objects = this.physic_objects.filter(obj => {
+            if (obj === object) {
+                obj.onDestroy?.();
+                return false;
+            }
+            return true;
+        });
+    }
+
+    raycast(): PhysicsObject | null {
+        if (!this.quad_tree) return null;
+        const rect = new Rectangle({ h: 1, w: 1, x: this._scene.p5.mouseX + this._scene.camera.x - this._scene.p5.width / 2, y: this._scene.p5.mouseY + this._scene.camera.y - this._scene.p5.height / 2 });
+        const found = this.quad_tree.query(rect)
+        if (found.length <= 0) return null;
+        return found[0].data;
     }
 
     onDestroy() {

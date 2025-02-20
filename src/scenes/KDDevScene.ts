@@ -28,6 +28,14 @@ export default class KDDevScene extends Scene {
         this.loadFont("jersey", 'assets/fonts/jersey.ttf');
     }
 
+    mouseClicked(_: MouseEvent): void {
+        if (this.player.shooting) return;
+        const obj = this.physics.raycast();
+        if (obj) {
+            this.physics.remove(obj);
+        }
+    }
+
     setup(): void {
         const button1: ButtonTestProps = {
             label: "test nothing",
