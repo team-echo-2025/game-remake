@@ -3,6 +3,7 @@ import ButtonTest from "../lib/ui/ButtonTest";
 import AccessCircuit from "../puzzles/AccessCircuit/AccessCircuit";
 import BlockSlide from "../puzzles/BlockSlide/BlockSlide";
 import LightsOn from "../puzzles/LightsOn/LightsOn";
+import CubeScales from "../puzzles/CubeScales/CubeScales";
 import Puzzle from "../lib/Puzzle"
 
 export default class PuzzleDevScene extends Scene {
@@ -11,10 +12,12 @@ export default class PuzzleDevScene extends Scene {
     hard!: ButtonTest;
     aCircuit!: AccessCircuit;
     bSlide!: BlockSlide;
+    cScales!: CubeScales;
     lightsOn!: LightsOn;
     aCircuitButton!: ButtonTest;
     bSlideButton!: ButtonTest;
     lightsOnButton!: ButtonTest;
+    cScalesButton!: ButtonTest;
     bSlideSolveButton!: ButtonTest;
     set_difficulty!: Puzzle;
 
@@ -28,14 +31,17 @@ export default class PuzzleDevScene extends Scene {
         this.aCircuit = new AccessCircuit(this);
         this.bSlide = new BlockSlide(this);
         this.lightsOn = new LightsOn(this);
+        this.cScales = new CubeScales(this);
         
         this.aCircuit.hidden = true;
         this.bSlide.hidden = true;
         this.lightsOn.hidden = true;
+        this.cScales.hidden = true;
         
         this.add(this.aCircuit);
         this.add(this.bSlide);
         this.add(this.lightsOn);
+        this.add(this.cScales);
     }
 
     preload(): any {
@@ -81,6 +87,7 @@ export default class PuzzleDevScene extends Scene {
                 this.aCircuit.hidden = false;
                 this.bSlide.hidden = true;
                 this.lightsOn.hidden = true;
+                this.cScales.hidden = true;
                 this.changeButtonVisibility();
             }
         });
@@ -93,6 +100,7 @@ export default class PuzzleDevScene extends Scene {
                 this.aCircuit.hidden = true;
                 this.lightsOn.hidden = true;
                 this.bSlideSolveButton.hidden = false;
+                this.cScales.hidden = true;
                 this.changeButtonVisibility();
             }
         });
@@ -117,10 +125,24 @@ export default class PuzzleDevScene extends Scene {
                 this.lightsOn.hidden = false;
                 this.aCircuit.hidden = true;
                 this.bSlide.hidden = true;
+                this.cScales.hidden = true;
                 this.changeButtonVisibility();
             }
         });
         this.lightsOnButton.y = 200;
+
+        this.cScalesButton = this.add_new.button({
+            label: "Cube Scales",
+            font_key: "jersey",
+            callback: () => {
+                this.bSlide.hidden = true;
+                this.aCircuit.hidden = true;
+                this.lightsOn.hidden = true;
+                this.cScales.hidden = false;
+                this.changeButtonVisibility();
+            }
+        });
+        this.cScalesButton.y = -100;
     }
 
     keyPressed = (e: KeyboardEvent) => {
@@ -156,6 +178,7 @@ export default class PuzzleDevScene extends Scene {
         this.aCircuitButton.hidden = !this.aCircuitButton.hidden;
         this.bSlideButton.hidden = !this.bSlideButton.hidden;
         this.lightsOnButton.hidden = !this.lightsOnButton.hidden;
+        this.cScalesButton.hidden = !this.cScalesButton.hidden;
     }    
 
     onStop(): void { }
