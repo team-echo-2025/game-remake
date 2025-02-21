@@ -108,9 +108,11 @@ export default class QuadTree extends Rectangle {
     }
 
     debug_draw(scene: Scene) {
+        scene.p5.push();
         scene.p5.noFill();
         scene.p5.rectMode("center")
         scene.p5.rect(this.x, this.y, this.w, this.h);
+        scene.p5.pop();
         if (this.subdivided) {
             this.northeast!.debug_draw(scene);
             this.northwest!.debug_draw(scene);

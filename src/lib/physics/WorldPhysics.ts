@@ -1,3 +1,4 @@
+import GameObject from "../GameObject";
 import Scene from "../Scene";
 import { Vector2D } from "../types/Physics";
 import { CollisionResult } from "./CollisionResult";
@@ -6,15 +7,16 @@ import PhysicsObject from "./PhysicsObject";
 import Rectangle, { RectangleProps } from "./Rectangle";
 import RigidBody from "./RigidBody";
 
-export default class WorldPhysics {
+export default class WorldPhysics implements GameObject {
     private physic_objects: PhysicsObject[];
     private quad_tree?: DynamicQuadTree;
     private quad_capacity: number = 8;
     private _scene!: Scene;
-    private _debug: boolean = true;
+    private _debug: boolean = false;
 
     private accumulator: number = 0;
     private fixedTimeStep: number = 1 / 60; // seconds
+    private _paused: boolean = false;
 
     set scene(scene: Scene) {
         this._scene = scene;
@@ -23,9 +25,20 @@ export default class WorldPhysics {
     set debug(debug: boolean) {
         this._debug = debug;
     }
+    get debug(): boolean {
+        return this._debug;
+    }
 
     constructor() {
         this.physic_objects = [];
+    }
+
+    private handle_visibility_change = () => {
+        if (document.hidden) {
+            this._paused = true;
+        } else {
+            this._paused = false;
+        }
     }
 
     setup() {
@@ -36,6 +49,7 @@ export default class WorldPhysics {
             h: window.innerHeight,
         }
         this.quad_tree = new DynamicQuadTree(quad_rect, this.quad_capacity);
+        document.addEventListener('visibilitychange', this.handle_visibility_change);
     }
 
     addObject(object: PhysicsObject) {
@@ -235,6 +249,7 @@ export default class WorldPhysics {
     }
 
     update() {
+        if (this._paused) return;
         if (!this.quad_tree) return;
         const dtSec = this._scene.p5.deltaTime / 1000;
         this.accumulator += dtSec;
@@ -297,6 +312,7 @@ export default class WorldPhysics {
         if (!this.quad_tree) return null;
         const rect = new Rectangle({ h: 1, w: 1, x: this._scene.p5.mouseX + this._scene.camera.x - this._scene.p5.width / 2, y: this._scene.p5.mouseY + this._scene.camera.y - this._scene.p5.height / 2 });
         const found = this.quad_tree.query(rect)
+        console.log(found)
         if (found.length <= 0) return null;
         return found[0].data;
     }
@@ -307,5 +323,6 @@ export default class WorldPhysics {
         }
         this.physic_objects = [];
         this.quad_tree = undefined;
+        document.removeEventListener('visibilitychange', this.handle_visibility_change);
     }
 }

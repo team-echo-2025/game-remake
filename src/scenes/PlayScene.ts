@@ -15,7 +15,7 @@ export default class PlayScene extends Scene {
     }
 
     onStart(): void {
-        this.physics.debug = false;
+        //this.physics.debug = true;
         this.player = new Player(this);
         this.physics.addObject(this.player);
         this.aCircuit = new AccessCircuit(this);
@@ -49,6 +49,14 @@ export default class PlayScene extends Scene {
             this.start("menu-scene");
         }
     };
+
+    mouseClicked(_: MouseEvent): void {
+        if (this.player?.shooting) return;
+        const obj = this.physics.raycast();
+        if (obj) {
+            this.physics.remove(obj);
+        }
+    }
 
     onStop(): void {
         this.player = undefined;
