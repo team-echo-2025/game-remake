@@ -36,6 +36,9 @@ export default class Tileset implements GameObject {
     }
 
     getTile(gid: number) {
+        if (gid == 0) {
+            return { image: this.image, x: 0, y: 0, width: this._tilewidth, height: this._tileheight };
+        }
         if (gid < this._firstgid || gid >= this._firstgid + this.tilecount) {
             throw new Error(`GID ${gid} is not in this tileset`);
         }

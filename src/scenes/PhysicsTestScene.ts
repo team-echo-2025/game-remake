@@ -1,4 +1,5 @@
 import PhysicsObject from "../lib/physics/PhysicsObject";
+import Rectangle from "../lib/physics/Rectangle";
 import Player from "../lib/Player";
 import Scene from "../lib/Scene";
 export class TestObject extends PhysicsObject {
@@ -62,7 +63,9 @@ export default class PhysicsTestScene extends Scene {
         }
     }
 
-    mouseClicked(_: MouseEvent): void {
+    mousePressed(_: MouseEvent): void {
+        const rect = new Rectangle({ h: 1, w: 1, x: this.p5.mouseX + this.camera.x - this.p5.width / 2, y: this.p5.mouseY + this.camera.y - this.p5.height / 2 });
+        console.log(rect)
         if (!this.player?.shooting) {
             const obj = this.physics.raycast();
             if (obj) {

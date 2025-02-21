@@ -2,11 +2,11 @@ import GameObject from '../GameObject';
 import RigidBody from './RigidBody';
 
 export type PhysicsObjectProps = Readonly<{
-    offset?: { x: number, y: number };
     width: number;
     height: number;
     mass: number;
     friction?: number;
+    offset?: { x: number, y: number };
 }>;
 
 export default class PhysicsObject implements GameObject {
