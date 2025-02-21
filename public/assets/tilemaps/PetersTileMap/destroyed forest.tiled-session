@@ -1,0 +1,30 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "ashlands.tsx": {
+            "scaleInDock": 0.75,
+            "scaleInEditor": 2
+        },
+        "farmland.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1.5
+        }
+    },
+    "last.imagePath": "C:/Users/SSBtd/OneDrive/Documents/GitHub/game-remake/public/assets/tilemaps/PetersTileMap/Farm Game Dungeon Cellar Tileset/Tilesets",
+    "map.fixedSize": false,
+    "openFiles": [
+        "ashlands.tsx"
+    ],
+    "project": "destroyed forest.tiled-project",
+    "recentFiles": [
+        "ashlands.tsx",
+        "farmland.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx"
+}
