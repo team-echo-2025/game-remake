@@ -35,10 +35,20 @@ export default class SoundManager implements GameObject{
         //this.sounds = props.sounds
     }
     setupVolume(){
-        var str = localStorage.getItem(this.group)??"1.0"//+(localStorage.getItem(this.group)??"1.0");
+        if(localStorage.getItem("muted") == "true"){
+            console.log("muted == true");
+            //localStorage.setItem(this.group, "0.0");
+            for(const sound of this.sounds){
+                sound.updateVolume(0.0)
+            }
+        }
+        else{
+            var str = localStorage.getItem(this.group)??"1.0"//+(localStorage.getItem(this.group)??"1.0");
         for(const sound of this.sounds){
             sound.updateVolume(+(str)+0.0)
         }
+        }
+        
     }
     updateVolume(volume:string){
         localStorage.setItem(this.group, volume+"");
@@ -72,7 +82,6 @@ export default class SoundManager implements GameObject{
             sound.onDestroy
         }
     }
-
     // below functions all call the function of the same name on each stored sound
     mute(): void{
         //this.updateVolume();
@@ -96,5 +105,8 @@ export default class SoundManager implements GameObject{
         for(const sound of this.sounds){
             sound.stop()
         }
+    }
+    add(sound: Sound){
+        this._sounds.push(sound);
     }
 }

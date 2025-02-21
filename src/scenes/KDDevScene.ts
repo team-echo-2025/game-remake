@@ -20,41 +20,55 @@ export default class KDDevScene extends Scene {
     bgm_manager!: SoundManager;
     background_slider!: Slider;
 
+    private button_sfx!: Sound;
+    private sfx_manager!: SoundManager;
+
     constructor() {
         super("kd-dev-scene");
+        this.button_sfx = new Sound("assets/TInterfaceSounds/light-switch.mp3");
         this.background_music = new Sound("assets/background_music.mp3");
         this.player = new Player(this);
     }
     onStart(): void {
         this.add(this.player)
-        this.add(this.background_music); // preloads fucked
+        this.add(this.background_music);
+        this.add(this.button_sfx);
        // this.bgm_manager.add(this.background_music);
     }
 
     preload(): any {
         console.log("begin preload of KD Dev scene")
-        this.background_music.preload();
         this.loadFont("jersey", 'assets/fonts/jersey.ttf');
     }
 
     setup(): void {
-        const button1: ButtonTestProps = {
+        const bgm_props: SoundManagerProps= {
+            group: "BGM",
+            sounds: [this.background_music]
+        }
+        const sfx_props: SoundManagerProps= {
+            group: "SFX",
+            sounds: [this.button_sfx]
+        } 
+       const button1: ButtonTestProps = {
             label: "test nothing",
             font_key: "jersey",
             font_size: 50,
+            callback: () => { 
+                this.button_sfx.play()
+            }
         };
         const button2: ButtonTestProps = {
             ...button1,
-            callback: () => { this.start("menu-scene") },
+            callback: () => { 
+                this.start("menu-scene");
+                this.button_sfx.play()
+            },
             label: "to menu"
         }
         const button3: ButtonTestProps = {
             ...button1,
             label: "this big massive button does nothing"
-        }
-        const bgm_props: SoundManagerProps= {
-            group: "BGM",
-            sounds: [this.background_music]
         }
         this.dropMenu = this.add_new.dropdown_menu({
             label: "Show Dev Scenes",
@@ -64,56 +78,82 @@ export default class KDDevScene extends Scene {
                 button1,
                 button2,
                 button3
-            ]
+            ],
+            callback:()=> {this.button_sfx.play()}
         })
         this.return_button = this.add_new.button({
             label: "Exit Dev Scene",
             font_key: "jersey",
             font_size: 50,
-            callback: () => { this.start("menu-scene") }
+            callback: () => { 
+                this.start("menu-scene");
+                this.button_sfx.play();
+            }
         })
         this.play_music_button = this.add_new.button({
             label: "Play Music",
             font_key: "jersey",
             font_size: 50,
-            callback: () => { this.background_music.play() }
+            callback: () => { 
+                this.background_music.play();
+                this.button_sfx.play()
+            }
         })
         this.stop_music_button = this.add_new.button({
             label: "Stop Music",
             font_key: "jersey",
             font_size: 50,
-            callback: () => { this.background_music.stop() }
+            callback: () => { 
+                this.background_music.stop() 
+                this.button_sfx.play()
+            }
         })
         this.mute_music_button = this.add_new.button({
             label: "Mute Music",
             font_key: "jersey",
             font_size: 50,
-            callback: () => { this.background_music.mute() }
+            callback: () => { 
+                this.background_music.mute() 
+                this.button_sfx.play()
+            }
         })
         this.manager_play_button = this.add_new.button({
             label: "Play Manager",
             font_key: "jersey",
             font_size: 50,
-            callback: () => { this.bgm_manager.play() }
+            callback: () => { 
+                this.bgm_manager.play();
+                this.button_sfx.play();
+            }
         })
         this.manager_stop_button = this.add_new.button({
             label: "Stop Manager",
             font_key: "jersey",
             font_size: 50,
-            callback: () => { this.bgm_manager.stop() }
+            callback: () => { 
+                this.bgm_manager.stop();
+                this.button_sfx.play();
+             }
         })
         this.manager_mute_button = this.add_new.button({
             label: "Mute Manager",
             font_key: "jersey",
             font_size: 50,
-            callback: () => { this.bgm_manager.mute() }
+            callback: () => { 
+                this.bgm_manager.mute();
+                this.button_sfx.play()
+            }
         })
         this.background_slider = this.add_new.slider({
             scene: this,
             key: "BGM",
-            callback: (volume: string) => { this.bgm_manager.updateVolume(volume) }
+            callback: (volume: string) => { 
+                this.bgm_manager.updateVolume(volume)
+                this.button_sfx.play()
+            }
         })
         this.bgm_manager = this.add_new.soundmanager(bgm_props);
+        this.sfx_manager = this.add_new.soundmanager(sfx_props);
 
         this.return_button.x = -300//this.p5.mouseX - this.p5.width / 2;
         this.return_button.y = 200//this.p5.mouseY - this.p5.height / 2;
