@@ -1,28 +1,61 @@
 import Page from "../lib/Page";
 import ButtonTest from "../lib/ui/ButtonTest";
+import Sound from "../lib/Sound";
+import SoundManager, {SoundManagerProps} from "../lib/SoundManager";
+import Slider from "../lib/ui/Slider";
 
 export default class SettingPage extends Page {
     private mute!: ButtonTest;
     private keybinds!: ButtonTest;
     private back!: ButtonTest;
     private isMuted: boolean = false;
-    constructor() {
+    private bgm_slider!: Slider;
+    private sfx_slider!: Slider;
+    //state below needs to be initialized to assets that already exist in scene
+    private background_music!: Sound;
+    private bgm_manager!: SoundManager;
+    private button_sfx!: Sound;
+    private sfx_manager!: SoundManager;
+    constructor(menu_theme:Sound, button_sfx:Sound, bgm_manager:SoundManager,sfx_manager:SoundManager) {
         super("settings-page")
+        this.background_music =  menu_theme//new Sound("assets/background_music.mp3");
+        this.button_sfx = button_sfx//new Sound("assets/TInterfaceSounds/light-switch.mp3");
+        this.bgm_manager = bgm_manager
+        this.sfx_manager = sfx_manager
     }
     preload(): any {
         this.scene.loadFont('jersey', 'assets/fonts/jersey.ttf')
+        
+        //this.scene.add(this.background_music)
+        //this.scene.add(this.button_sfx)
     }
     cleanup = () => {
         this.scene.remove(this.mute)
         this.scene.remove(this.keybinds)
         this.scene.remove(this.back)
+        //this.scene.remove(this.background_music);
+        //this.scene.remove(this.bgm_manager);
+        this.scene.remove(this.bgm_slider);
+        //this.scene.remove(this.button_sfx);
+        //this.scene.remove(this.sfx_manager);
+        this.scene.remove(this.sfx_slider);
     }
     setup(): void {
+        this.scene.add(this.background_music)
+        this.scene.add(this.button_sfx)
+        const bgm_props: SoundManagerProps= {
+            group: "BGM",
+            sounds: [this.background_music]
+        }
+        const sfx_props: SoundManagerProps= {
+            group: "SFX",
+            sounds: [this.button_sfx]
+        }
         this.mute = this.scene.add_new.button({
             label: "Mute",
             font_key: 'jersey',
             callback: () => {
-                this.cleanup()
+                this.button_sfx.play();
                 this.handleMute();
             }
         })
@@ -32,6 +65,7 @@ export default class SettingPage extends Page {
             label: "Keybinds",
             font_key: 'jersey',
             callback: () => {
+                this.button_sfx.play();
                 this.cleanup();
                 this.set_page("keybinds-page");
             }
@@ -42,12 +76,38 @@ export default class SettingPage extends Page {
             label: "Back",
             font_key: 'jersey',
             callback: () => {
+                this.button_sfx.play();
                 this.cleanup();
                 this.set_page("menu-page");
             }
         })
         this.back.x = 0;
         this.back.y = 100;
+
+        this.bgm_slider = this.scene.add_new.slider({
+            scene: this.scene,
+            key: "BGM",
+            callback: (volume: string) => { 
+                this.bgm_manager.updateVolume(volume);
+                this.button_sfx.play();
+
+            }
+        })
+        this.bgm_slider.x = 250
+        this.bgm_slider.y = 150
+        this.bgm_manager = this.scene.add_new.soundmanager(bgm_props);
+        this.sfx_slider = this.scene.add_new.slider({
+            scene: this.scene,
+            key: "SFX",
+            callback: (volume: string) => { 
+                this.sfx_manager.updateVolume(volume);
+                this.button_sfx.play();
+            }
+        })
+        this.sfx_manager = this.scene.add_new.soundmanager(sfx_props);
+        this.sfx_slider.x = 250
+        this.sfx_slider.y = 350
+        //this.background_music.play();
     }
 
     keyPressed = (e: KeyboardEvent) => {
@@ -66,5 +126,6 @@ export default class SettingPage extends Page {
 
         // Update button label dynamically
         this.mute.label = this.isMuted ? "Unmute" : "Mute";
+        this.bgm_manager.setupVolume()
     }
 }

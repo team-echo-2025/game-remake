@@ -6,6 +6,7 @@ import Tilemap, { TilemapProps } from "./tilemap/Tilemap";
 import ButtonTest, { ButtonTestProps } from "./ui/ButtonTest";
 import DropdownMenu, { DropdownMenuProps } from "./ui/DropdownMenu";
 import Slider, { SliderProps } from "./ui/Slider";
+import Sound from "./Sound";
 
 export default class GameObjectFactory {
     private scene: Scene;
@@ -51,8 +52,13 @@ export default class GameObjectFactory {
         _slider.scene = this.scene;
         this.scene.add(_slider);
         _slider.setup();
-        
         return _slider;
+    }
+    sound = (pathname: string): Sound =>{
+        const _sound = new Sound(pathname);
+        this.scene.add(_sound);
+        _sound.setup();
+        return _sound;
     }
     soundmanager = (props: SoundManagerProps): SoundManager =>{
         const _soundmanager = new SoundManager(props);

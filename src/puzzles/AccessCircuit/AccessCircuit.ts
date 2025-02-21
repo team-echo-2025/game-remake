@@ -2,6 +2,9 @@ import Puzzle from "../../lib/Puzzle";
 import Cell, { CellState } from "./Cell";
 import Ball from "./Ball";
 import DispenserCell from "./DispenserCell";
+import Scene from "../../lib/Scene";
+import Sound from "../../lib/Sound";
+
 type RGB = Readonly<{
     r: number;
     g: number;
@@ -24,6 +27,20 @@ export default class AccessCircuit extends Puzzle {
     boardCircleDiameter = 0;
     dispensersWidth = 0;
     dispenserDiameter = 0;
+
+    //sound state
+    private circuit_correct_sfx!: Sound;
+    private circuit_xposition_sfx!: Sound;
+    private circuit_incorrect_sfx!: Sound;
+    private circuit_grab_sfx!: Sound;
+    //constructor modified for purpose of passing sound references
+    constructor(scene: Scene,correct_sfx:Sound,incorrect_sfx:Sound,xposition_sfx:Sound,grab_sfx:Sound){
+        super(scene);
+        this.circuit_correct_sfx = correct_sfx;
+        this.circuit_xposition_sfx = xposition_sfx;
+        this.circuit_incorrect_sfx = incorrect_sfx;
+        this.circuit_grab_sfx = grab_sfx;
+    }
     checkSolution(): boolean {
         for (let row of this.board) {
             let rowIsCorrect = true;
@@ -73,6 +90,7 @@ export default class AccessCircuit extends Puzzle {
             const radius = cell.circleDiameter / 2
             if (cell.x - radius < x && cell.x + radius > x && cell.y - radius < y && cell.y + radius > y) {
                 this.dragging = cell.pickupBall();
+                this.circuit_grab_sfx.play();
             }
         }
     }
@@ -114,6 +132,7 @@ export default class AccessCircuit extends Puzzle {
                         cell.placeBall(this.dragging);
                         if (this.dragging.color == this.solution[i]) {
                             cell.state = CellState.CORRECT;
+                            this.circuit_correct_sfx.play();
                             //} else if (this.solution.some(item => item == this.dragging?.color)) {
                         } else {
                             let solution_count = 0;
@@ -129,8 +148,10 @@ export default class AccessCircuit extends Puzzle {
                             console.log(filled_positions, solution_count)
                             if (solution_count > 0 && filled_positions <= solution_count) {
                                 cell.state = CellState.WRONG_POSITION;
+                                this.circuit_xposition_sfx.play()
                             } else {
                                 cell.state = CellState.INCORRECT;
+                                this.circuit_incorrect_sfx.play()
                             }
                         }
                         this.balls.push(this.dragging);

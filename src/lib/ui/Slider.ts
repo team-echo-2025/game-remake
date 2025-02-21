@@ -15,12 +15,14 @@ export default class Slider implements GameObject {
     protected _slider: p5.Element; // will be Slider
     private previous: string = "";
     protected callback?: (e: string) => void;
+    protected key: string = "";
 
     constructor(props: SliderProps){
         this._scene = props.scene;
         this._slider = this.scene.p5.createSlider(0.0, 1.0, 1.0, 0.01);
         this._slider.position(this._x,this._y)
         this._slider.size(200);
+        this.key = props.key;
         this.callback = props.callback;
     }
     set x(x: number) {
@@ -50,7 +52,8 @@ export default class Slider implements GameObject {
         return this._scene;
     }
 
-    setup(): void { 
+    setup(): void {
+        this._slider.value(localStorage.getItem(this.key)||"1.0");
     }
     draw(): void {
         this._draw();
