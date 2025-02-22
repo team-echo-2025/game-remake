@@ -23,7 +23,7 @@ export default class Player extends PhysicsObject {
     private leftKey: string = 'a';
     private downKey: string = 's';
     private rightKey: string = 'd';
-    private speed: number = 100;
+    private speed: number = 1000;
     private launch_delay_start = 0;
     private scale: number = 1.5;
     private width: number = 64 * this.scale;
@@ -130,8 +130,8 @@ export default class Player extends PhysicsObject {
                 const ny = dy / length;
                 const launchSpeed = 500;
                 const obj = new TestObject(this.scene);
-                obj.body.w = Math.random() * (200 - 50) + 50;
-                obj.body.h = Math.random() * (200 - 50) + 50;
+                obj.body.w = Math.random() * (50 - 10) + 10;
+                obj.body.h = Math.random() * (50 - 10) + 10;
                 obj.body.x = this.body.x + nx * 100;
                 obj.body.y = this.body.y + ny * 100;
                 obj.body.mass = obj.body.w * obj.body.h + 1000;
@@ -176,4 +176,3 @@ export default class Player extends PhysicsObject {
         this.scene.p5.pop();
     }
 }
-//make event to let player know keybind changed, and needs re-read
