@@ -23,7 +23,7 @@ export default class Player extends PhysicsObject {
     private leftKey: string = 'a';
     private downKey: string = 's';
     private rightKey: string = 'd';
-    private speed: number = 1000;
+    private speed: number = 100;
     private launch_delay_start = 0;
     private scale: number = 1.5;
     private width: number = 64 * this.scale;
@@ -171,8 +171,8 @@ export default class Player extends PhysicsObject {
         this.body.velocity.x = this.direction.x * this.speed;
         this.body.velocity.y = this.direction.y * this.speed;
         this.scene.p5.fill(0);
+        this.scene.p5.textSize(24);
         this.scene.p5.text("X: " + Math.round(this.body.x) + " Y: " + Math.round(this.body.y), this.scene.camera.x - this.scene.p5.width / 2 + 20, this.scene.camera.y - this.scene.p5.height / 2 + 20);
-        this.scene.p5.text("MouseX: " + Math.round(this.scene.p5.mouseX + this.scene.camera.x - this.scene.p5.width / 2) + " MouseY: " + Math.round(this.scene.p5.mouseY + this.scene.camera.y - this.scene.p5.height / 2), this.scene.camera.x - this.scene.p5.width / 2 + 20, this.scene.camera.y - this.scene.p5.height / 2 + 40);
         this.scene.p5.pop();
     }
 }

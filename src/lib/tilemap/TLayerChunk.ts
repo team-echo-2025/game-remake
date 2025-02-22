@@ -12,7 +12,8 @@ export default class TLayerChunk {
     tiles: (Tile | null)[][] = [];
     scene: Scene;
     tilemap: Tilemap;
-    constructor(chunk: XML, tilemap: Tilemap, scene: Scene) {
+    topmost: boolean;
+    constructor(chunk: XML, tilemap: Tilemap, scene: Scene, topmost?: boolean) {
         this.data = chunk.getContent().split(',').map(item => parseInt(item));
         this.x = chunk.getNum("x")
         this.y = chunk.getNum("y")
@@ -20,11 +21,16 @@ export default class TLayerChunk {
         this.height = chunk.getNum("height")
         this.scene = scene;
         this.tilemap = tilemap;
+        this.topmost = topmost ?? false;
     }
     prerender() {
         let layer_width = this.tilemap.width;
         let layer_height = this.tilemap.height;
-        this.tilemap.buffer.begin();
+        if (this.topmost) {
+            this.tilemap.player_buffer.begin();
+        } else {
+            this.tilemap.buffer.begin();
+        }
         this.scene.p5.push();
         for (const row of this.tiles) {
             for (const tile of row) {
@@ -39,6 +45,10 @@ export default class TLayerChunk {
             }
         }
         this.scene.p5.pop();
-        this.tilemap.buffer.end();
+        if (this.topmost) {
+            this.tilemap.player_buffer.end();
+        } else {
+            this.tilemap.buffer.end();
+        }
     }
 }
