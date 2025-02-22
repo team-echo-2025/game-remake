@@ -8,6 +8,7 @@ export default class MenuPage extends Page {
     KDbutton!: ButtonTest;
     credits!: ButtonTest;
     physicsTest!: ButtonTest;
+    puzzleTest!: ButtonTest;
 
     constructor() {
         super("menu-page")
@@ -22,6 +23,7 @@ export default class MenuPage extends Page {
         this.scene.remove(this.setting);
         this.scene.remove(this.credits);
         this.scene.remove(this.physicsTest);
+        this.scene.remove(this.puzzleTest);
     }
     setup(): void {
         this.play = this.scene.add_new.button({
@@ -85,5 +87,17 @@ export default class MenuPage extends Page {
             })
         this.physicsTest.x = 150
         this.physicsTest.y = 300
+        this.puzzleTest = this.scene.add_new.button
+        ({
+            label: "Puzzles",
+            font_key: "jersey",
+            callback: () =>
+            {
+                this.cleanup();
+                this.scene.start("puzzle-dev-scene");
+            }
+        })
+        this.puzzleTest.x = 0
+        this.puzzleTest.y = 300
     }
 }
