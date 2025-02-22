@@ -57,6 +57,7 @@ export default class CreditsPage extends Page {
 
         let rectX = 0;
         let rectY = -50;
+        this.scene.p5.push()
         this.page_manager.scene.p5.fill(255, 255, 255, 150);
         this.page_manager.scene.p5.rect(rectX, rectY, rectWidth, rectHeight);
 
@@ -79,6 +80,7 @@ export default class CreditsPage extends Page {
         // Built with title
         this.page_manager.scene.p5.textSize(75);
         this.page_manager.scene.p5.text('Built with...', 0, 125);
+        this.scene.p5.pop()
     }
     keyPressed = (e: KeyboardEvent) => {
         if (e.key === "Escape") {
