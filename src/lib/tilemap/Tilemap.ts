@@ -88,6 +88,7 @@ export default class Tilemap implements GameObject {
     async preload(): Promise<any> { }
 
     setup(): void {
+        console.log("Loaded")
         this.tilemap = this._scene.get_asset(this.tilemap_key);
         this._tilewidth = this.tilemap.getNum('tilewidth')
         this._tileheight = this.tilemap.getNum('tileheight')
@@ -129,7 +130,6 @@ export default class Tilemap implements GameObject {
 
         this._width = this.maxx - this.minx + this.chunk_size;
         this._height = this.maxy - this.miny + this.chunk_size;
-        console.log(this._width, this._height, this.maxx, this.minx);
 
         this.buffer = this._scene.p5.createFramebuffer({
             width: this._width * this._tilewidth,
@@ -147,5 +147,9 @@ export default class Tilemap implements GameObject {
         }
     }
 
-    draw(): void { }
+    draw(): void {
+        const x = this.x - (this.width * this.tilewidth / 2)
+        const y = this.y - (this.height * this.tileheight / 2);
+        this._scene.p5.image(this.buffer, x, y);
+    }
 }

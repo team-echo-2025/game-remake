@@ -66,6 +66,7 @@ export default class Tileset implements GameObject {
         this._tileheight = this.tileset!.getNum("tileheight");
         this.tilecount = this.tileset!.getNum("tilecount");
         this.columns = this.tileset!.getNum("columns");
+        console.log("setup tileset")
         const children = this.tileset.getChildren();
         if (children.length != 1) {
             console.log(children)
