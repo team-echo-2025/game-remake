@@ -163,6 +163,9 @@ export default class PuzzleDevScene extends Scene {
         } else if (e.key == "Escape" && !this.lightsOn.hidden) {
             this.lightsOn.hidden = true;
             this.changeButtonVisibility();
+        } else if (e.key == "Escape" && !this.cScales.hidden) {
+            this.cScales.hidden = true;
+            this.changeButtonVisibility();
         } else if (e.key === "Escape") {
             this.start("menu-scene");
         }
