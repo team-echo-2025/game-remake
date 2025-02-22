@@ -111,8 +111,8 @@ export default class ButtonTest implements GameObject {
 
     mouseClicked(e: any): void {
         if (this.hidden) return;
-        const x = this._scene.p5.mouseX - this._scene.p5.width / 2;
-        const y = this._scene.p5.mouseY - this._scene.p5.height / 2;
+        const x = this._scene.p5.mouseX + this.scene.camera.x - this._scene.p5.width / 2;
+        const y = this._scene.p5.mouseY + this.scene.camera.y - this._scene.p5.height / 2;
         const min_x = this._x - this._width / 2;
         const max_x = this._x + this._width / 2;
         const min_y = this._y - this._height / 2;

@@ -1,19 +1,28 @@
 import PhysicsObject from "../lib/physics/PhysicsObject";
+import Rectangle from "../lib/physics/Rectangle";
 import Player from "../lib/Player";
 import Scene from "../lib/Scene";
-class TestObject extends PhysicsObject {
+export class TestObject extends PhysicsObject {
     private scene: Scene;
-    constructor(scene: Scene) {
+    private color: { r: number, b: number, g: number };
+    constructor(scene: Scene, width?: number, height?: number) {
         super({
-            width: 64,
-            height: 64,
-            mass: 0,
+            width: width ?? 100,
+            height: height ?? 100,
+            mass: (width ?? 100) * (height ?? 100),
+            friction: 0.5
         })
         this.scene = scene;
+        this.color = {
+            r: Math.random() * 255,
+            g: Math.random() * 255,
+            b: Math.random() * 255,
+        }
     }
     draw(): void {
-        this.scene.p5.fill(0);
-        this.scene.p5.rect(0, 0, 64, 64);
+        this.scene.p5.rectMode('center')
+        this.scene.p5.fill(this.color.r, this.color.b, this.color.g);
+        this.scene.p5.rect(this.body.x, this.body.y, this.body.w, this.body.h);
     }
 
 }
@@ -27,10 +36,19 @@ export default class PhysicsTestScene extends Scene {
 
     onStart(): void {
         this.player = new Player(this);
-        this.player.x = -100;
+        this.player.body.x = 1;
         this.physics.addObject(this.player);
         this.testObj = new TestObject(this);
         this.physics.addObject(this.testObj);
+        const obj_count = 1000;
+        for (let i = 0; i < obj_count; i++) {
+            const obj = new TestObject(this);
+            obj.body.w = Math.random() * (200 - 100) + 50;
+            obj.body.h = Math.random() * (200 - 100) + 50;
+            obj.body.x = Math.random() * obj_count - Math.random() * obj_count;
+            obj.body.y = Math.random() * obj_count - Math.random() * obj_count;
+            this.physics.addObject(obj);
+        }
     }
 
     setup(): void { }
@@ -45,7 +63,19 @@ export default class PhysicsTestScene extends Scene {
         }
     }
 
+    mousePressed(_: MouseEvent): void {
+        const rect = new Rectangle({ h: 1, w: 1, x: this.p5.mouseX + this.camera.x - this.p5.width / 2, y: this.p5.mouseY + this.camera.y - this.p5.height / 2 });
+        console.log(rect)
+        if (!this.player?.shooting) {
+            const obj = this.physics.raycast();
+            if (obj) {
+                this.physics.remove(obj);
+            }
+        }
+    }
+
     onStop() {
         this.player = undefined;
+        this.testObj = undefined;
     }
 }

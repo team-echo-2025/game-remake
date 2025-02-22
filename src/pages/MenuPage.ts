@@ -75,15 +75,14 @@ export default class MenuPage extends Page {
         this.credits.x = -300
         this.credits.y = 300
         this.physicsTest = this.scene.add_new.button
-        ({
-            label: "Physics",
-            font_key: "jersey",
-            callback: () =>
-            {
-                this.cleanup();
-                this.scene.start("physics-scene");
-            }
-        })
+            ({
+                label: "Physics",
+                font_key: "jersey",
+                callback: () => {
+                    this.cleanup();
+                    this.scene.start("physics-scene");
+                }
+            })
         this.physicsTest.x = 150
         this.physicsTest.y = 300
     }

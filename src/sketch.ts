@@ -21,28 +21,28 @@ const sketch = (p: p5) => {
     };
 
     p.keyPressed = (e: KeyboardEvent) => {
-        scene_manager.keyPressed(e);
+        scene_manager?.keyPressed(e);
     };
 
     p.keyReleased = (e: KeyboardEvent) => {
-        scene_manager.keyReleased(e);
+        scene_manager?.keyReleased(e);
     };
 
     p.mouseClicked = (e: MouseEvent) => {
-        scene_manager.mouseClicked(e);
+        scene_manager?.mouseClicked(e);
     };
 
     p.mousePressed = (e: MouseEvent) => {
-        scene_manager.mousePressed(e);
+        scene_manager?.mousePressed(e);
     };
 
     p.mouseReleased = (e: MouseEvent) => {
-        scene_manager.mouseReleased(e);
+        scene_manager?.mouseReleased(e);
     };
 
     p.draw = () => {
         p.clear();
-        scene_manager.draw();
+        scene_manager?.draw();
     };
 };
 
