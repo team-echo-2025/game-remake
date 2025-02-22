@@ -104,7 +104,7 @@ export default class Tilemap implements GameObject {
                 this._tilesets.push(tileset)
             } else if (name == "layer") {
                 i--;
-                const layer = new TLayer({ layer: item, scene: this._scene, tilemap: this, z_index: i });
+                const layer = new TLayer({ layer: item, scene: this._scene, tilemap: this });
                 layer.x = this._x;
                 layer.y = this._y;
                 this.layers.push(layer);
