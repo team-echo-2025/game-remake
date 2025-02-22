@@ -116,7 +116,7 @@ export default class LightsOn extends Puzzle {
         let p5 = this.scene.p5;
         
         if (this.solved()) {
-            this.scene.start("puzzle-dev-scene");
+            this.scene.start(this.scene.name);
             return;
         }
         
