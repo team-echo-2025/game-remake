@@ -10,7 +10,6 @@ export default class TLayerChunk {
     width: number;
     height: number;
     tiles: (Tile | null)[][] = [];
-    buffer: Framebuffer;
     scene: Scene;
     tilemap: Tilemap;
     constructor(chunk: XML, tilemap: Tilemap, scene: Scene) {
@@ -21,23 +20,25 @@ export default class TLayerChunk {
         this.height = chunk.getNum("height")
         this.scene = scene;
         this.tilemap = tilemap;
-        this.buffer = scene.p5.createFramebuffer({
-            width: this.width * this.tilemap.tilewidth,
-            height: this.width * this.tilemap.tileheight,
-        })!;
     }
     prerender() {
-        this.buffer.begin();
+        let layer_width = this.tilemap.width;
+        let layer_height = this.tilemap.height;
+        this.tilemap.buffer.begin();
         this.scene.p5.push();
         for (const row of this.tiles) {
             for (const tile of row) {
                 if (!tile) continue;
-                const x = tile.x * this.tilemap.tilewidth - this.width * this.tilemap.tilewidth / 2;
-                const y = tile.y * this.tilemap.tileheight - this.height * this.tilemap.tileheight / 2;
-                this.scene.p5.image(tile.image, x, y)
+                let x = tile.x * this.tilemap.tilewidth - this.width * this.tilemap.tilewidth / 2;
+                x += (this.x - this.tilemap.minx) * (this.tilemap.tilewidth)
+                x -= this.tilemap.tilewidth * layer_width / 2;
+                let y = tile.y * this.tilemap.tileheight - this.height * this.tilemap.tileheight / 2;
+                y += (this.y - this.tilemap.miny) * (this.tilemap.tileheight);
+                y -= this.tilemap.tileheight * layer_height / 2;
+                this.scene.p5.image(tile.image, x + 16 * 48 / 2, y + 16 * 48 / 2);
             }
         }
         this.scene.p5.pop();
-        this.buffer.end();
+        this.tilemap.buffer.end();
     }
 }

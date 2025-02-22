@@ -1,19 +1,16 @@
-import { Framebuffer, Graphics, XML } from "p5";
+import { Framebuffer, XML } from "p5";
 import GameObject from "../GameObject";
 import Scene from "../Scene";
 import TLayerChunk from "./TLayerChunk";
 import Tilemap from "./Tilemap";
 import Tile from "./Tile";
 import { Vector2D } from "../types/Physics";
-import PhysicsObject from "../physics/PhysicsObject";
-import Rectangle from "../physics/Rectangle";
 import TLayerColliderChunk from "./TLayerColliderChunk";
 
 type TLayerProps = Readonly<{
     layer: XML;
     scene: Scene;
     tilemap: Tilemap;
-    z_index: number;
 }>;
 
 export default class TLayer implements GameObject {
@@ -30,7 +27,7 @@ export default class TLayer implements GameObject {
     private _y: number = 0;
     private tilemap: Tilemap;
     private is_collider: boolean = false;
-    zIndex: number = 0;
+    private top_layer: boolean = false;
     minx: number = 0;
     maxx: number = 0;
     miny: number = 0;
@@ -59,7 +56,6 @@ export default class TLayer implements GameObject {
         this.scene = props.scene;
         this.tilemap = props.tilemap;
         this.chunks = [];
-        this.zIndex = props.z_index;
     }
 
     setup_chunks(data: XML[]) {
@@ -91,7 +87,10 @@ export default class TLayer implements GameObject {
                 const property_name = child.getString('name');
                 if (property_name == "collider") {
                     this.is_collider = true;
+                } else if (property_name == "toplayer") {
+                    this.top_layer = true;
                 }
+
             }
         }
     }
@@ -158,19 +157,18 @@ export default class TLayer implements GameObject {
                         chunk.tiles[y].push(tile)
                     }
                 }
-                chunk.prerender();
             }
         }
-        console.log(this.zIndex);
         this.width = this.maxx - this.minx;
         this.height = this.maxy - this.miny;
     }
 
     prerender(): void {
-        //this.buffer = this.scene.p5.createFramebuffer({
-        //    width: this.tilemap.width * this.tilemap.tilewidth,
-        //    height: this.tilemap.height * this.tilemap.tileheight,
-        //})!;
+        for (const row of this.chunks) {
+            for (const chunk of row) {
+                chunk.prerender();
+            }
+        }
         this.tilemap.buffer.begin()
         this.scene.p5.push();
         this.scene.p5.rectMode('corner');
@@ -187,13 +185,12 @@ export default class TLayer implements GameObject {
                         obj.physics_object.body.x = x + obj.offset.x;
                         obj.physics_object.body.y = y + obj.offset.y;
                     }
-                } else {
-                    this.scene.p5.image(chunk.buffer, x, y);
                 }
             }
         }
         this.scene.p5.pop();
         this.tilemap.buffer.end()
     }
+
     draw(): void { }
 }
