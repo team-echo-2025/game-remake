@@ -167,10 +167,10 @@ export default class TLayer implements GameObject {
     }
 
     prerender(): void {
-        this.buffer = this.scene.p5.createFramebuffer({
-            width: this.tilemap.width * this.tilemap.tilewidth,
-            height: this.tilemap.height * this.tilemap.tileheight,
-        })!;
+        //this.buffer = this.scene.p5.createFramebuffer({
+        //    width: this.tilemap.width * this.tilemap.tilewidth,
+        //    height: this.tilemap.height * this.tilemap.tileheight,
+        //})!;
         this.tilemap.buffer.begin()
         this.scene.p5.push();
         this.scene.p5.rectMode('corner');
