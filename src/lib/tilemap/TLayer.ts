@@ -106,6 +106,7 @@ export default class TLayer implements GameObject {
         this.maxx = 0;
         this.miny = 0;
         this.maxy = 0;
+        console.log('setup layer')
         for (const child of children) {
             const name = child.getName();
             if (name == 'properties') {
@@ -170,7 +171,7 @@ export default class TLayer implements GameObject {
             width: this.tilemap.width * this.tilemap.tilewidth,
             height: this.tilemap.height * this.tilemap.tileheight,
         })!;
-        this.buffer.begin()
+        this.tilemap.buffer.begin()
         this.scene.p5.push();
         this.scene.p5.rectMode('corner');
         let layer_width = this.tilemap.width;
@@ -192,13 +193,7 @@ export default class TLayer implements GameObject {
             }
         }
         this.scene.p5.pop();
-        this.buffer.end()
+        this.tilemap.buffer.end()
     }
-    draw(): void {
-        if (!this.is_collider) {
-            const x = this.x - (this.width * this.tilemap.tilewidth / 2)
-            const y = this.y - (this.height * this.tilemap.tileheight / 2);
-            this.scene.p5.image(this.buffer, x, y);
-        }
-    }
+    draw(): void { }
 }
