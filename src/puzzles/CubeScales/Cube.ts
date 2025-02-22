@@ -1,22 +1,57 @@
 import GameObject from "../../lib/GameObject";
 import Scene from "../../lib/Scene";
 
+export enum CubeState {
+    left,
+    right,
+    unmoved,
+    dragged
+}
+
 export default class CubeScales implements GameObject {
     weight: number;
     x: number;
     y: number;
+    initialX: number;
+    initialY: number;
+    dragging: boolean;
+    rollover: boolean;
+    state: CubeState;
     scene!: Scene;
-    constructor(scene: Scene, x: number, y: number) {
+    offsetX: number;
+    offsetY: number;
+    constructor(scene: Scene, x: number, y: number, weight: number) {
+        this.state = CubeState.unmoved;
         this.x = x;
         this.y = y;
+        this.initialX = x;
+        this.initialY = y;
         this.scene = scene;
-        this.weight = this.scene.p5.random(1, 10);
+        this.dragging = false;
+        this.rollover = false;
+        this.offsetX =  -this.scene.p5.width / 2;
+        this.offsetY =  -this.scene.p5.height / 2;
+        this.weight = Math.floor(this.scene.p5.random(1, 10));
+    }
+    over() {
+        // Is mouse over object
+        if (this.scene.p5.mouseX > this.x && this.scene.p5.mouseY > this.y) {
+          this.rollover = true;
+        } else {
+          this.rollover = false;
+        }
+    }
+    update() {
+        // Adjust location if being dragged
+        if (this.dragging) {
+          this.x = this.scene.p5.mouseX + this.offsetX;
+          this.y = this.scene.p5.mouseY + this.offsetY;
+        }
+        this.draw();
     }
     draw(): void {
-        console.log("drawing a cube");
         this.scene.p5.fill(200);
-        this.scene.p5.noStroke();
-        this.scene.p5.rect(this.x, this.y, this.scene.p5.width / 25)
+        this.scene.p5.rect(this.x, this.y, this.scene.p5.width / 50)
     }
     preload(): any { }
     setup(): void { }

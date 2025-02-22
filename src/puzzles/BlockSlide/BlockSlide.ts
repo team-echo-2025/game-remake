@@ -194,7 +194,7 @@ export default class BlockSlide extends Puzzle {
 
         // If the puzzle is solved, clicking anywhere will hide it
         if (this.solved()) {
-            this.scene.start("puzzle-dev-scene");
+            this.scene.start(this.scene.name);
             return;
         }
 
