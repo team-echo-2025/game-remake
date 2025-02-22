@@ -20,6 +20,14 @@ export default class Scene implements GameObject {
     private frames = 0;
     private display_frames = 0;
 
+    get mouseX() {
+        return this.p5.mouseX + this.camera.x - this.p5.width / 2;
+    }
+
+    get mouseY() {
+        return this.p5.mouseY + this.camera.y - this.p5.height / 2;
+    }
+
     get physics() {
         return this._physics;
     }
@@ -198,8 +206,6 @@ export default class Scene implements GameObject {
     update(): void { }
     update_objects(): void {
         this._physics.update();
-        for (const obj of this.objects) {
-        }
     }
 
     draw(): void { }
@@ -211,14 +217,14 @@ export default class Scene implements GameObject {
         }
         this.p5.push();
         this.p5.fill(0);
+        this.p5.textSize(24);
+        this.p5.text("MouseX: " + Math.round(this.mouseX) + " MouseY: " + Math.round(this.mouseY), this.camera.x - this.p5.width / 2 + 20, this.camera.y - this.p5.height / 2 + 40);
         this.p5.text(`Frames:  ${this.display_frames.toFixed(1)}`, this.camera.x - this.p5.width / 2 + 20, this.camera.y - this.p5.height / 2 + 60);
         this.p5.pop();
         this.frames++;
-
-        // Calculate FPS using the time since the last frame
         const now = this.p5.millis();
-        const delta = now - this.start_time; // Time difference between frames
-        this.start_time = now; // Reset timer
+        const delta = now - this.start_time;
+        this.start_time = now;
 
         if (delta > 0) {
             const alpha = 0.05

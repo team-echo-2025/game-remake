@@ -1,4 +1,4 @@
-import { Framebuffer, Graphics, XML } from "p5";
+import { Framebuffer, XML } from "p5";
 import GameObject from "../GameObject";
 import Scene from "../Scene";
 import Tileset from "./Tileset";
@@ -13,8 +13,30 @@ export type TilemapProps = Readonly<{
     loaded_chunks?: number;
 }>
 
-export default class Tilemap implements GameObject {
+class TilemapBuffer implements GameObject {
     zIndex?: number = -100;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    buffer: Framebuffer;
+    scene: Scene;
+    constructor(x: number, y: number, width: number, height: number, buffer: Framebuffer, scene: Scene) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.buffer = buffer;
+        this.scene = scene;
+    }
+    draw(): void {
+        const x = this.x - this.width / 2
+        const y = this.y - this.height / 2;
+        this.scene.p5.image(this.buffer, x, y);
+    }
+}
+
+export default class Tilemap implements GameObject {
     private _scene!: Scene;
     private tilemap_key: string;
     private tilemap!: XML;
@@ -27,6 +49,7 @@ export default class Tilemap implements GameObject {
     private _x: number;
     private _y: number;
     buffer!: Framebuffer;
+    player_buffer!: Framebuffer;
     minx: number = 0;
     maxx: number = 0;
     miny: number = 0;
@@ -94,7 +117,6 @@ export default class Tilemap implements GameObject {
         this._tileheight = this.tilemap.getNum('tileheight')
         this._width = this.tilemap.getNum('width')
         this._height = this.tilemap.getNum('height')
-        let i = -50;
         for (let item of this.tilemap!.getChildren()) {
             const name = item.getName();
             if (name == "tileset") {
@@ -103,7 +125,6 @@ export default class Tilemap implements GameObject {
                 tileset.setup();
                 this._tilesets.push(tileset)
             } else if (name == "layer") {
-                i--;
                 const layer = new TLayer({ layer: item, scene: this._scene, tilemap: this });
                 layer.x = this._x;
                 layer.y = this._y;
@@ -137,6 +158,12 @@ export default class Tilemap implements GameObject {
             stencil: false,
             depth: false,
         })!;
+        this.player_buffer = this._scene.p5.createFramebuffer({
+            width: this._width * this._tilewidth,
+            height: this._height * this._tileheight,
+            stencil: false,
+            depth: false,
+        })!;
         this.buffer.begin();
         this._scene.p5.rect(0, 0, this.width * this.tilewidth, this.height * this.tileheight);
         this.buffer.end();
@@ -145,11 +172,10 @@ export default class Tilemap implements GameObject {
             layer.prerender();
             this._scene.add(layer);
         }
-    }
-
-    draw(): void {
-        const x = this.x - (this.width * this.tilewidth / 2)
-        const y = this.y - (this.height * this.tileheight / 2);
-        this._scene.p5.image(this.buffer, x, y);
+        const tilemap_buffer = new TilemapBuffer(this.x, this.y, this.width * this.tilewidth, this.height * this.tileheight, this.buffer, this._scene);
+        this._scene.add(tilemap_buffer);
+        const player_buffer = new TilemapBuffer(this.x, this.y, this.width * this.tilewidth, this.height * this.tileheight, this.player_buffer, this._scene);
+        player_buffer.zIndex = 100;
+        this._scene.add(player_buffer);
     }
 }

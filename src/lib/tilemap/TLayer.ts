@@ -67,7 +67,7 @@ export default class TLayer implements GameObject {
             if (this.is_collider) {
                 chunk = new TLayerColliderChunk(child, this.tilemap, this.scene);
             } else {
-                chunk = new TLayerChunk(child, this.tilemap, this.scene);
+                chunk = new TLayerChunk(child, this.tilemap, this.scene, this.top_layer);
             }
             if (chunk.y != y && chunk.y % chunk.height == 0) {
                 this.chunks.push([]);
@@ -87,7 +87,7 @@ export default class TLayer implements GameObject {
                 const property_name = child.getString('name');
                 if (property_name == "collider") {
                     this.is_collider = true;
-                } else if (property_name == "toplayer") {
+                } else if (property_name == "topmost") {
                     this.top_layer = true;
                 }
 
