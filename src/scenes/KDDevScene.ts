@@ -26,15 +26,22 @@ export default class KDDevScene extends Scene {
         this.player = new Player(this);
     }
     onStart(): void {
-        this.add(this.player)
-        this.add(this.background_music); // preloads fucked
-       // this.bgm_manager.add(this.background_music);
+        this.physics.addObject(this.player)
+        this.add(this.background_music);
     }
 
     preload(): any {
         console.log("begin preload of KD Dev scene")
         this.background_music.preload();
         this.loadFont("jersey", 'assets/fonts/jersey.ttf');
+    }
+
+    mouseClicked(_: MouseEvent): void {
+        if (this.player.shooting) return;
+        const obj = this.physics.raycast();
+        if (obj) {
+            this.physics.remove(obj);
+        }
     }
 
     setup(): void {
