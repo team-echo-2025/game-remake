@@ -67,7 +67,6 @@ export default class PlayScene extends Scene {
         // this.sfx_manager = this.add_new.soundmanager(sfx_props);
 
 
-        
         this.aCircuitButton = this.add_new.button({
             label: "Access Circuit",
             font_key: "jersey",
