@@ -37,7 +37,7 @@ export default class SoundManager implements GameObject{
     setupVolume(){
         if(localStorage.getItem("muted") == "true"){
             console.log("muted == true");
-            //localStorage.setItem(this.group, "0.0");
+            localStorage.setItem(this.group, "0.0");
             for(const sound of this.sounds){
                 sound.updateVolume(0.0)
             }
@@ -45,14 +45,16 @@ export default class SoundManager implements GameObject{
         else{
             var str = localStorage.getItem(this.group)??"1.0"//+(localStorage.getItem(this.group)??"1.0");
         for(const sound of this.sounds){
+            //console.log(sound, str);
             sound.updateVolume(+(str)+0.0)
         }
         }
         
     }
     updateVolume(volume:string){
+        console.log(this.group, volume)
         localStorage.setItem(this.group, volume+"");
-        console.log("SoundManger::updateVolume()",typeof volume, volume);
+        //console.log("SoundManger::updateVolume()",typeof volume, volume);
         for(const sound of this.sounds){
             sound.updateVolume(+(volume)+0.0)
         }

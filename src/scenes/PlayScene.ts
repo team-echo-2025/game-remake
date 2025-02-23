@@ -11,32 +11,32 @@ export default class PlayScene extends Scene {
     aCircuit!: AccessCircuit;
     button!: ButtonTest;
     private background_music!: Sound;
-    private bgm_manager!: SoundManager;
-    private button_sfx!: Sound;
-    private circuit_correct_sfx!: Sound;
-    private circuit_xposition_sfx!: Sound;
-    private circuit_incorrect_sfx!: Sound;
-    private sfx_manager!: SoundManager;
+    // private bgm_manager!: SoundManager;
+    // private button_sfx!: Sound;
+    // private circuit_correct_sfx!: Sound;
+    // private circuit_xposition_sfx!: Sound;
+    // private circuit_incorrect_sfx!: Sound;
+    // private sfx_manager!: SoundManager;
 
     constructor() {
         super("play-scene");
-        this.background_music = new Sound("assets/background_music.mp3");
-        this.button_sfx = new Sound("assets/TInterfaceSounds/light-switch.mp3");
-        this.circuit_correct_sfx = new Sound("assets/TInterfaceSounds/greanpatchT.mp3");
-        this.circuit_xposition_sfx = new Sound("assets/TInterfaceSounds/iciclesT.mp3");
-        this.circuit_incorrect_sfx = new Sound("assets/TInterfaceSounds/all-processorsT.mp3");
+        //this.background_music = new Sound("assets/background_music.mp3");
+        //this.button_sfx = new Sound("assets/TInterfaceSounds/light-switch.mp3");
+        //this.circuit_correct_sfx = new Sound("assets/TInterfaceSounds/greanpatchT.mp3");
+        //this.circuit_xposition_sfx = new Sound("assets/TInterfaceSounds/iciclesT.mp3");
+        //this.circuit_incorrect_sfx = new Sound("assets/TInterfaceSounds/all-processorsT.mp3");
     }
 
     onStart(): void {
-        this.add(this.background_music);//loaded sounds first in case of issues with trying to give references to puzzles
-        this.add(this.button_sfx);
-        this.add(this.circuit_correct_sfx);
-        this.add(this.circuit_incorrect_sfx);
-        this.add(this.circuit_xposition_sfx);
+        //this.add(this.background_music);//loaded sounds first in case of issues with trying to give references to puzzles
+        // this.add(this.button_sfx);
+        // this.add(this.circuit_correct_sfx);
+        // this.add(this.circuit_incorrect_sfx);
+        // this.add(this.circuit_xposition_sfx);
         this.physics.debug = false;
         this.player = new Player(this);
         this.physics.addObject(this.player);
-        this.aCircuit = new AccessCircuit(this, this.circuit_correct_sfx,this.circuit_incorrect_sfx,this.circuit_xposition_sfx,this.button_sfx);
+        this.aCircuit = new AccessCircuit(this)//, this.circuit_correct_sfx,this.circuit_incorrect_sfx,this.circuit_xposition_sfx,this.button_sfx);
         this.aCircuit.hidden = true;
         this.add(this.aCircuit);
     }
@@ -44,14 +44,33 @@ export default class PlayScene extends Scene {
     preload(): any {
         this.loadFont("jersey", "assets/fonts/jersey.ttf");
         this.loadTilemap("tilemap", "assets/tilemaps/first-tilemap/outside.tmx")
+        //this.loadSound("background_music", "assets/background_music.mp3")
+        //this.loadSound("button_sfx", "assets/TInterfaceSounds/light-switch.mp3")
     }
 
     setup(): void {
+        //this.get_asset("background_music").load();
+        //this.get_asset("button_sfx").load()
+        //this.background_music = this.add_new.sound("background_music")
+        //this.button_sfx = this.add_new.sound("button_sfx")
+
+        // const bgm_props: SoundManagerProps= {
+        //     group: "BGM",
+        //     sounds: [this.background_music]
+        // }
+        // const sfx_props: SoundManagerProps= {
+        //     group: "SFX",
+        //     sounds: [this.button_sfx]
+        // }
+        // this.bgm_manager = this.add_new.soundmanager(bgm_props);
+        // this.sfx_manager = this.add_new.soundmanager(sfx_props);
+
+
         this.button = this.add_new.button({
             label: "Puzzle",
             font_key: "jersey",
             callback: () => {
-                this.button_sfx.play();
+                //this.button_sfx.play();
                 this.aCircuit.hidden = false;
             }
         });
@@ -59,22 +78,22 @@ export default class PlayScene extends Scene {
             tilemap_key: "tilemap",
         })
 
-        const bgm_props: SoundManagerProps= {
-            group: "BGM",
-            sounds: [this.background_music]
-        }
-        const sfx_props: SoundManagerProps= {
-            group: "SFX",
-            sounds: [
-                this.button_sfx,
-                this.circuit_correct_sfx,
-                this.circuit_incorrect_sfx,
-                this.circuit_xposition_sfx
-            ]
-        }
-        this.bgm_manager = this.add_new.soundmanager(bgm_props);
-        this.sfx_manager = this.add_new.soundmanager(sfx_props);
-        this.bgm_manager.play();
+        // const bgm_props: SoundManagerProps= {
+        //     group: "BGM",
+        //     sounds: [this.background_music]
+        // }
+        // const sfx_props: SoundManagerProps= {
+        //     group: "SFX",
+        //     sounds: [
+        //         this.button_sfx,
+        //         this.circuit_correct_sfx,
+        //         this.circuit_incorrect_sfx,
+        //         this.circuit_xposition_sfx
+        //     ]
+        // }
+        // this.bgm_manager = this.add_new.soundmanager(bgm_props);
+        // this.sfx_manager = this.add_new.soundmanager(sfx_props);
+        // this.bgm_manager.play();
     }
 
     // We may want this to be a pause menu eventually

@@ -4,6 +4,7 @@ import SceneManager from "./SceneManager";
 import GameObjectFactory from "./GameObjectFactory";
 import Camera from "./Camera";
 import WorldPhysics from "./physics/WorldPhysics";
+import { Howl } from "howler";
 
 export default class Scene implements GameObject {
     private _name: string;
@@ -71,6 +72,26 @@ export default class Scene implements GameObject {
 
     get add_new() {
         return this.game_object_factory;
+    }
+    
+    loadSound =(key: string, path: string) => {//
+        console.log("loading sound", key)
+        if(this.get_asset(key)){
+            console.log("asset already loaded", key)
+        }
+        if(this.get_asset(key)==undefined){
+            const sound:Promise<Howl> = new Promise<Howl>(res=>{
+                const temp:Howl = new Howl({
+                    src: [path]
+                });
+                temp.on("load", () => {
+                    this.assets.set(key, temp);
+                    res(temp)
+                });
+            });
+            this.preloads.push(sound);
+        }
+
     }
 
     loadFont = (key: string, path: string) => {
@@ -173,13 +194,19 @@ export default class Scene implements GameObject {
 
     async preload(): Promise<any> { }
     async preload_objects(): Promise<any> {
+        console.log("in preload objects")
         const to_load = []
-        for (const obj of this.objects) {
-            obj.preload && to_load.push(obj.preload());
-        }
-        for (const pre of this.preloads) {
-            to_load.push(pre);
-        }
+        //if(this.objects.length!=0){
+            for (const obj of this.objects) {
+                console.log(obj)
+                obj.preload && to_load.push(obj.preload());
+            }
+            for (const pre of this.preloads) {
+                console.log(pre)
+                to_load.push(pre);
+            }
+        //}
+        
         await Promise.all(to_load);
     }
 

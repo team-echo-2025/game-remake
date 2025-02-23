@@ -16,33 +16,31 @@ export default class SettingPage extends Page {
     private bgm_manager!: SoundManager;
     private button_sfx!: Sound;
     private sfx_manager!: SoundManager;
-    constructor(menu_theme:Sound, button_sfx:Sound, bgm_manager:SoundManager,sfx_manager:SoundManager) {
+    constructor() {
         super("settings-page")
-        this.background_music =  menu_theme//new Sound("assets/background_music.mp3");
-        this.button_sfx = button_sfx//new Sound("assets/TInterfaceSounds/light-switch.mp3");
-        this.bgm_manager = bgm_manager
-        this.sfx_manager = sfx_manager
     }
     preload(): any {
-        this.scene.loadFont('jersey', 'assets/fonts/jersey.ttf')
-        
-        //this.scene.add(this.background_music)
-        //this.scene.add(this.button_sfx)
+        //this.scene.loadFont('jersey', 'assets/fonts/jersey.ttf')
+        //this.scene.loadSound("background_music", "assets/background_music.mp3")
+        //this.scene.loadSound("button_sfx", "assets/TInterfaceSounds/light-switch.mp3")
     }
     cleanup = () => {
         this.scene.remove(this.mute)
         this.scene.remove(this.keybinds)
         this.scene.remove(this.back)
-        //this.scene.remove(this.background_music);
-        //this.scene.remove(this.bgm_manager);
         this.scene.remove(this.bgm_slider);
-        //this.scene.remove(this.button_sfx);
-        //this.scene.remove(this.sfx_manager);
         this.scene.remove(this.sfx_slider);
+        // this.scene.remove(this.button_sfx);
+        // this.scene.remove(this.sfx_manager);
+        // this.scene.remove(this.background_music);
+        // this.scene.remove(this.bgm_manager);
     }
     setup(): void {
-        this.scene.add(this.background_music)
-        this.scene.add(this.button_sfx)
+        // this.scene.get_asset("background_music").load();
+        // this.scene.get_asset("button_sfx").load()
+        this.background_music = this.scene.add_new.sound("background_music")
+        this.button_sfx = this.scene.add_new.sound("button_sfx")
+
         const bgm_props: SoundManagerProps= {
             group: "BGM",
             sounds: [this.background_music]
@@ -51,11 +49,13 @@ export default class SettingPage extends Page {
             group: "SFX",
             sounds: [this.button_sfx]
         }
+        this.bgm_manager = this.scene.add_new.soundmanager(bgm_props);
+        this.sfx_manager = this.scene.add_new.soundmanager(sfx_props);
         this.mute = this.scene.add_new.button({
             label: "Mute",
             font_key: 'jersey',
             callback: () => {
-                this.button_sfx.play();
+                //this.button_sfx.play();
                 this.handleMute();
             }
         })
@@ -65,7 +65,7 @@ export default class SettingPage extends Page {
             label: "Keybinds",
             font_key: 'jersey',
             callback: () => {
-                this.button_sfx.play();
+                //this.button_sfx.play();
                 this.cleanup();
                 this.set_page("keybinds-page");
             }
@@ -76,35 +76,40 @@ export default class SettingPage extends Page {
             label: "Back",
             font_key: 'jersey',
             callback: () => {
-                this.button_sfx.play();
+                //this.button_sfx.play();
                 this.cleanup();
                 this.set_page("menu-page");
             }
         })
         this.back.x = 0;
         this.back.y = 100;
-
+        //console.log(this.bgm_manager,"yes") 
         this.bgm_slider = this.scene.add_new.slider({
             scene: this.scene,
             key: "BGM",
-            callback: (volume: string) => { 
-                this.bgm_manager.updateVolume(volume);
-                this.button_sfx.play();
+            callback: (volume: string) => {
+                if(!this.isMuted){
+                    this.bgm_manager.updateVolume(volume);
+                    this.button_sfx.play();
+                }
 
             }
         })
         this.bgm_slider.x = 250
         this.bgm_slider.y = 150
-        this.bgm_manager = this.scene.add_new.soundmanager(bgm_props);
+        
         this.sfx_slider = this.scene.add_new.slider({
             scene: this.scene,
             key: "SFX",
-            callback: (volume: string) => { 
-                this.sfx_manager.updateVolume(volume);
-                this.button_sfx.play();
+            callback: (volume: string) => {
+                if(!this.isMuted){
+                    this.sfx_manager.updateVolume(volume);
+                    this.button_sfx.play();
+                }
+                
             }
         })
-        this.sfx_manager = this.scene.add_new.soundmanager(sfx_props);
+        
         this.sfx_slider.x = 250
         this.sfx_slider.y = 350
         //this.background_music.play();
@@ -126,6 +131,7 @@ export default class SettingPage extends Page {
 
         // Update button label dynamically
         this.mute.label = this.isMuted ? "Unmute" : "Mute";
-        this.bgm_manager.setupVolume()
+        // this.bgm_manager.setupVolume()
+        // this.sfx_manager.setupVolume()
     }
 }
