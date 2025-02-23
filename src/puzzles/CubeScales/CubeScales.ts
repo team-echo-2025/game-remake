@@ -26,6 +26,34 @@ export default class CubeScalesPuzzle extends Puzzle {
         });
         this.resetButton.hidden = true;
         this.resetButton.y = 200;
+    }  
+
+    draw(): void {
+        this.resetButton.hidden = false;
+        if (this.solved()) {
+            this.displayWinMessage();
+        } else {
+            this.scene.p5.background(255); // Clear the screen each frame
+            this.drawBody();
+            this.scales.draw();
+            
+            // Draw all cubes except the one being dragged
+            for (let cube of this.cubes) {
+                if (cube != this.draggingCube && cube.state != CubeState.left && cube.state != CubeState.right) {
+                    cube.draw();
+                }
+            }
+        
+            // Ensure the dragged cube is drawn **on top** while dragging
+            if (this.draggingCube) {
+                console.log("updating dragging cube")
+                this.draggingCube.update();
+            }
+            
+            if(this.checkSolution()) {
+                this.displayWinMessage();
+            }
+        }
     }
 
     generateSolvableCubes(cubeCount: number): Cube[] {
@@ -88,36 +116,8 @@ export default class CubeScalesPuzzle extends Puzzle {
             let j = Math.floor(this.scene.p5.random(0, i + 1));
             [array[i], array[j]] = [array[j], array[i]];
         }
-    }    
-
-    draw(): void {
-        this.resetButton.hidden = false;
-        if (this.solved()) {
-            this.displayWinMessage();
-        } else {
-            this.scene.p5.background(255); // Clear the screen each frame
-            this.drawBody();
-            this.scales.draw();
-            
-            // Draw all cubes except the one being dragged
-            for (let cube of this.cubes) {
-                if (cube != this.draggingCube && cube.state != CubeState.left && cube.state != CubeState.right) {
-                    cube.draw();
-                }
-            }
-        
-            // Ensure the dragged cube is drawn **on top** while dragging
-            if (this.draggingCube) {
-                console.log("updating dragging cube")
-                this.draggingCube.update();
-            }
-            
-            if(this.checkSolution()) {
-                this.displayWinMessage();
-            }
-        }
     }
-
+    
     drawBody() {
         let rectWidth = this.scene.p5.width / 3;
         let rectHeight = this.scene.p5.height / 2;
