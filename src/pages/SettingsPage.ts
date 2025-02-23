@@ -20,9 +20,6 @@ export default class SettingPage extends Page {
         super("settings-page")
     }
     preload(): any {
-        //this.scene.loadFont('jersey', 'assets/fonts/jersey.ttf')
-        //this.scene.loadSound("background_music", "assets/background_music.mp3")
-        //this.scene.loadSound("button_sfx", "assets/TInterfaceSounds/light-switch.mp3")
     }
     cleanup = () => {
         this.scene.remove(this.mute)
@@ -30,10 +27,6 @@ export default class SettingPage extends Page {
         this.scene.remove(this.back)
         this.scene.remove(this.bgm_slider);
         this.scene.remove(this.sfx_slider);
-        // this.scene.remove(this.button_sfx);
-        // this.scene.remove(this.sfx_manager);
-        // this.scene.remove(this.background_music);
-        // this.scene.remove(this.bgm_manager);
     }
     setup(): void {
         // this.scene.get_asset("background_music").load();
@@ -55,7 +48,7 @@ export default class SettingPage extends Page {
             label: "Mute",
             font_key: 'jersey',
             callback: () => {
-                //this.button_sfx.play();
+                this.button_sfx.play();
                 this.handleMute();
             }
         })
@@ -65,7 +58,7 @@ export default class SettingPage extends Page {
             label: "Keybinds",
             font_key: 'jersey',
             callback: () => {
-                //this.button_sfx.play();
+                this.button_sfx.play();
                 this.cleanup();
                 this.set_page("keybinds-page");
             }
@@ -76,14 +69,13 @@ export default class SettingPage extends Page {
             label: "Back",
             font_key: 'jersey',
             callback: () => {
-                //this.button_sfx.play();
+                this.button_sfx.play();
                 this.cleanup();
                 this.set_page("menu-page");
             }
         })
         this.back.x = 0;
         this.back.y = 100;
-        //console.log(this.bgm_manager,"yes") 
         this.bgm_slider = this.scene.add_new.slider({
             scene: this.scene,
             key: "BGM",
@@ -112,7 +104,6 @@ export default class SettingPage extends Page {
         
         this.sfx_slider.x = 250
         this.sfx_slider.y = 350
-        //this.background_music.play();
     }
 
     keyPressed = (e: KeyboardEvent) => {
