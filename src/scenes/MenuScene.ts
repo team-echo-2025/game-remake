@@ -15,11 +15,10 @@ export default class MenuScene extends Scene {
     private background_music!: Sound;
     private button_sfx!: Sound;
     private bgm_manager!: SoundManager;
-    // private sfx_manager!: SoundManager;
+    private sfx_manager!: SoundManager;
     constructor() {
         super("menu-scene");
-        //this.background_music = new Sound("assets/background_music.mp3");
-        //this.button_sfx = new Sound("assets/TInterfaceSounds/light-switch.mp3");
+        this.button_sfx = new Sound("assets/TInterfaceSounds/light-switch.mp3");
         this.pManager = new PageManager([
             new MenuPage(),
             new KeybindsPage(),
@@ -47,12 +46,12 @@ export default class MenuScene extends Scene {
             group: "BGM",
             sounds: [this.background_music]
         }
-        // const sfx_props: SoundManagerProps= {
-        //     group: "SFX",
-        //     sounds: [this.button_sfx]
-        // }
+        const sfx_props: SoundManagerProps= {
+            group: "SFX",
+            sounds: [this.button_sfx]
+        }
         this.bgm_manager = this.add_new.soundmanager(bgm_props);
-        // this.sfx_manager = this.add_new.soundmanager(sfx_props);
+        this.sfx_manager = this.add_new.soundmanager(sfx_props);
         this.bgm_manager.play();
     }
     postDraw(): void {
