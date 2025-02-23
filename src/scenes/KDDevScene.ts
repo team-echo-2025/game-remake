@@ -29,7 +29,8 @@ export default class KDDevScene extends Scene {
         this.player = new Player(this);
     }
     onStart(): void {
-        this.add(this.player)
+        this.physics.addObject(this.player)
+        this.add(this.background_music);
         //this.add(this.background_music);
         //this.add(this.button_sfx);
         //this.bgm_manager.add(this.background_music);
@@ -40,6 +41,14 @@ export default class KDDevScene extends Scene {
         this.loadFont("jersey", 'assets/fonts/jersey.ttf');
         this.loadSound("background_music", "assets/background_music.mp3");
         this.loadSound("button_sfx", "assets/TInterfaceSounds/light-switch.mp3");
+    }
+
+    mouseClicked(_: MouseEvent): void {
+        if (this.player.shooting) return;
+        const obj = this.physics.raycast();
+        if (obj) {
+            this.physics.remove(obj);
+        }
     }
 
     setup(): void {

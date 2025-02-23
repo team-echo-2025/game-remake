@@ -94,6 +94,11 @@ export default class AccessCircuit extends Puzzle {
             }
         }
     }
+    setDifficulty(difficulty: string): void {
+        Puzzle.difficulty = difficulty;
+        console.log(`Access Circuit: Difficulty changed to ${Puzzle.difficulty}`);
+        this.setup();  // Restart puzzle
+    }
 
     checkRow() {
         for (let i = 0; i < this.board[this.current_row].length; i++) {
