@@ -1,27 +1,39 @@
 import { Howl } from 'howler';
 import GameObject from './GameObject';
+import Scene from './Scene';
 
 
 export default class Sound implements GameObject{
-    private path_name: string;
+    private sound_key: string;
+    private _scene!: Scene;
     public sound!: Howl;
     public muted: boolean;
+
+    set scene(s: Scene) {
+        this._scene = s;
+    }
     
-    constructor(path_name: string) {
-        this.path_name = path_name;
+    get scene() {
+        return this._scene;
+    }
+    
+    constructor(sound_key: string) {
+        this.sound_key = sound_key;
         const muted = localStorage.getItem("muted");
         if (muted && muted==="true") this.muted = true;
         else this.muted = false;
     }
+
     async preload(): Promise<any> {
-        await new Promise((res) => {
-            this.sound = new Howl({
-                src: [this.path_name],
-                onload: () => { res(true)}
-            });
-        });
+
     }
+
     setup(): void {
+        console.log(this._scene,this.sound_key);
+        if(this.scene.get_asset(this.sound_key)==undefined){
+            console.error(`Howler "${this.sound_key}" not found.`)
+        }
+        this.sound = this.scene.get_asset(this.sound_key);
     }
     draw(): void {
     }
@@ -32,6 +44,9 @@ export default class Sound implements GameObject{
         this.sound.stop();
         this.sound.unload();
     }
+    updateVolume(flt: number){//volume should be between 0.0 and 1.0
+        this.sound.volume(flt);
+    }
     // functions to be called in scene \/
     mute(): void{
         this.sound.mute(this.toggleMute());
@@ -41,7 +56,7 @@ export default class Sound implements GameObject{
         this.sound.play();
     }
     loop(): void{
-        this.sound.loop();
+        this.sound.loop(true)
     }
     stop(): void{
         this.sound.stop();

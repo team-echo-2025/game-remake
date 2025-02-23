@@ -24,7 +24,6 @@ export default class DropdownMenu extends ButtonTest {
         console.log(props.buttons)
         this._callback = this.toggleMenu;
         this.menuOpen = false;
-        console.log("herentaeirsn")
         this.button_props = props.buttons;
     }
 
@@ -69,20 +68,28 @@ export default class DropdownMenu extends ButtonTest {
         Usage in scene
     
     
-this.example_button = new Button({
-    label: "Exit Dev Scene",
-    scene: this,
-    font_size: 50,
-    callback: () => { this.start("menu-scene") }
-})
+        const button1: ButtonTestProps = {
+            label: "test nothing",
+            font_key: "jersey",
+            font_size: 50,
+        };
+        const button2: ButtonTestProps = {
+            ...button1,
+            callback: () => { this.start("menu-scene") },
+            label: "to menu"
+        }
+        const button3: ButtonTestProps = {
+            ...button1,
+            label: "this big massive button does nothing"
+        }
+            
 this.MyDropDownMenu = new Button({
     label: "Exit Dev Scene",
     scene: this,
     font_size: 50,
     callback: () => { this.start("menu-scene") },
     buttons: [
-        this.example_button, 
-        
+        button1, button2, button3
     ]
 })
 
