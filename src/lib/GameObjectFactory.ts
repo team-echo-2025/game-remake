@@ -54,8 +54,10 @@ export default class GameObjectFactory {
         _slider.setup();
         return _slider;
     }
-    sound = (pathname: string): Sound =>{
-        const _sound = new Sound(pathname);
+    sound = (sound_key: string): Sound =>{
+        const _sound = new Sound(sound_key);
+        console.log("sound factory call");
+        _sound.scene = this.scene;
         this.scene.add(_sound);
         _sound.setup();
         return _sound;

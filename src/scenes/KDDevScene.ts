@@ -19,29 +19,34 @@ export default class KDDevScene extends Scene {
     background_music!: Sound;
     bgm_manager!: SoundManager;
     background_slider!: Slider;
-
     private button_sfx!: Sound;
     private sfx_manager!: SoundManager;
 
     constructor() {
         super("kd-dev-scene");
-        this.button_sfx = new Sound("assets/TInterfaceSounds/light-switch.mp3");
-        this.background_music = new Sound("assets/background_music.mp3");
+        //this.button_sfx = new Sound("assets/TInterfaceSounds/light-switch.mp3");
+        //this.background_music = new Sound("assets/background_music.mp3");
         this.player = new Player(this);
     }
     onStart(): void {
         this.add(this.player)
-        this.add(this.background_music);
-        this.add(this.button_sfx);
-       // this.bgm_manager.add(this.background_music);
+        //this.add(this.background_music);
+        //this.add(this.button_sfx);
+        //this.bgm_manager.add(this.background_music);
     }
 
     preload(): any {
         console.log("begin preload of KD Dev scene")
         this.loadFont("jersey", 'assets/fonts/jersey.ttf');
+        this.loadSound("background_music", "assets/background_music.mp3");
+        this.loadSound("button_sfx", "assets/TInterfaceSounds/light-switch.mp3");
     }
 
     setup(): void {
+        //this.get_asset("background_music").load();
+        //this.get_asset("button_sfx").load()
+        this.background_music = this.add_new.sound("background_music");
+        this.button_sfx = this.add_new.sound("button_sfx");
         const bgm_props: SoundManagerProps= {
             group: "BGM",
             sounds: [this.background_music]
@@ -50,6 +55,8 @@ export default class KDDevScene extends Scene {
             group: "SFX",
             sounds: [this.button_sfx]
         } 
+        this.bgm_manager = this.add_new.soundmanager(bgm_props);
+        this.sfx_manager = this.add_new.soundmanager(sfx_props);
        const button1: ButtonTestProps = {
             label: "test nothing",
             font_key: "jersey",
@@ -152,8 +159,7 @@ export default class KDDevScene extends Scene {
                 this.button_sfx.play()
             }
         })
-        this.bgm_manager = this.add_new.soundmanager(bgm_props);
-        this.sfx_manager = this.add_new.soundmanager(sfx_props);
+        
 
         this.return_button.x = -300//this.p5.mouseX - this.p5.width / 2;
         this.return_button.y = 200//this.p5.mouseY - this.p5.height / 2;

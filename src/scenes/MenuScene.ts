@@ -13,42 +13,46 @@ export default class MenuScene extends Scene {
     pManager: PageManager;
     imgLogo!: p5.Image;  // Declare imgLogo variable
     private background_music!: Sound;
-    private bgm_manager!: SoundManager;
     private button_sfx!: Sound;
-    private sfx_manager!: SoundManager;
+    private bgm_manager!: SoundManager;
+    // private sfx_manager!: SoundManager;
     constructor() {
         super("menu-scene");
-        this.background_music = new Sound("assets/background_music.mp3");
-        this.button_sfx = new Sound("assets/TInterfaceSounds/light-switch.mp3");
+        //this.background_music = new Sound("assets/background_music.mp3");
+        //this.button_sfx = new Sound("assets/TInterfaceSounds/light-switch.mp3");
         this.pManager = new PageManager([
             new MenuPage(),
             new KeybindsPage(),
-            new SettingPage(this.background_music,this.button_sfx,this.bgm_manager,this.sfx_manager),
+            new SettingPage(),
             new WorldSelectPage(),
             new DifficultyPage(),
             new CreditsPage(),
         ], this);
     }
     onStart(): void {
-        this.add(this.background_music);
-        this.add(this.button_sfx);
     }
     async preload(): Promise<any> {
         await this.pManager.preload();
+        this.loadFont('jersey', 'assets/fonts/jersey.ttf')
         this.imgLogo = this.p5.loadImage('assets/background.png');  // Load the background image
+        this.loadSound("background_music", "assets/background_music.mp3")
+        this.loadSound("button_sfx", "assets/TInterfaceSounds/light-switch.mp3")
     }
     setup(): void {
         this.pManager.setup();
+        this.background_music = this.add_new.sound("background_music");
+        //this.button_sfx = this.add_new.sound("button_sfx");
+        
         const bgm_props: SoundManagerProps= {
             group: "BGM",
             sounds: [this.background_music]
         }
-        const sfx_props: SoundManagerProps= {
-            group: "SFX",
-            sounds: [this.button_sfx]
-        }
+        // const sfx_props: SoundManagerProps= {
+        //     group: "SFX",
+        //     sounds: [this.button_sfx]
+        // }
         this.bgm_manager = this.add_new.soundmanager(bgm_props);
-        this.sfx_manager = this.add_new.soundmanager(sfx_props);
+        // this.sfx_manager = this.add_new.soundmanager(sfx_props);
         this.bgm_manager.play();
     }
     draw(): void {
