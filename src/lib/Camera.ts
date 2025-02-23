@@ -8,15 +8,22 @@ export default class Camera {
     scene: Scene;
     private _follow: RigidBody | undefined;
     private _zoom: number = 1;
-    private _bounds: Rectangle;
+    private _bounds!: Rectangle;
 
     set zoom(zoom: number) {
         this._zoom = zoom;
     }
 
+    get zoom() {
+        return this._zoom;
+    }
+
     constructor(scene: Scene) {
         this.scene = scene;
-        this._bounds = new Rectangle({ x: this.x, y: this.y, w: window.innerWidth, h: window.innerHeight })
+    }
+
+    setup() {
+        this._bounds = new Rectangle({ x: this.x, y: this.y, w: this.scene.p5.width, h: this.scene.p5.height })
     }
 
     lookAt(x: number, y: number) {
@@ -55,5 +62,6 @@ export default class Camera {
         }
         this.scene.p5.scale(this._zoom);
         this.scene.p5.translate(-this.x, -this.y);
+
     }
 }

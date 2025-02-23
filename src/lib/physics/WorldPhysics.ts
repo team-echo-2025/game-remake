@@ -212,10 +212,10 @@ export default class WorldPhysics implements GameObject {
                 for (const candidate of candidates) {
                     if (candidate.data.body == obj.body) continue;
                     const collision_data = this.check_collision(obj.body, candidate.data.body);
+                    if (!this.quad_tree) { return };
                     if (collision_data) {
                         this.resolve_collision(collision_data);
                     }
-
                 }
             }
             this.accumulator -= this.fixedTimeStep;
