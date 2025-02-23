@@ -46,7 +46,6 @@ export default class CubeScalesPuzzle extends Puzzle {
         
             // Ensure the dragged cube is drawn **on top** while dragging
             if (this.draggingCube) {
-                console.log("updating dragging cube")
                 this.draggingCube.update();
             }
             
@@ -153,7 +152,6 @@ export default class CubeScalesPuzzle extends Puzzle {
     mouseDragged(): void {
         if (this.draggingCube!.dragging) {
             this.draggingCube!.x = this.scene.p5.mouseX - this.scene.p5.width / 2;
-            console.log(this.draggingCube!.x);
             this.draggingCube!.y = this.scene.p5.mouseY - this.scene.p5.height / 2;
         }
         this.draw();
