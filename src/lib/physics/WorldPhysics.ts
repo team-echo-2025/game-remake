@@ -58,6 +58,15 @@ export default class WorldPhysics implements GameObject {
     }
 
     check_collision(a: RigidBody, b: RigidBody): CollisionResult | undefined {
+        if (a.overlaps) {
+            a.onOverlap && a.onOverlap(b);
+        }
+        if (b.overlaps) {
+            b.onOverlap && b.onOverlap(a);
+        }
+        if (a.overlaps || b.overlaps) {
+            return undefined;
+        };
         const distX = b.x - a.x;
         const distY = b.y - a.y;
 

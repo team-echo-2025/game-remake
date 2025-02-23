@@ -25,13 +25,14 @@ export default class Player extends PhysicsObject {
     private rightKey: string = 'd';
     private speed: number = 100;
     private launch_delay_start = 0;
-    private scale: number = 1.5;
+    private scale: number = 1;
     private width: number = 64 * this.scale;
     private height: number = 64 * this.scale;
-    shooting: boolean = true;
+    disabled: boolean = false;
+    shooting: boolean = false;
 
     constructor(scene: Scene) {
-        super({ width: 24, height: 24, mass: 50 * 50, });
+        super({ width: 16, height: 16, mass: 16 * 16, });
         this.scene = scene;
         this.direction = {
             x: 0,
@@ -168,11 +169,18 @@ export default class Player extends PhysicsObject {
         if (this.pressed_keys[this.rightKey]) {
             this.anim_row = 6;
         }
-        this.body.velocity.x = this.direction.x * this.speed;
-        this.body.velocity.y = this.direction.y * this.speed;
+        if (!this.disabled) {
+            this.body.velocity.x = this.direction.x * this.speed;
+            this.body.velocity.y = this.direction.y * this.speed;
+        }
+        this.scene.p5.pop();
+    }
+
+    postDraw(): void {
+        this.scene.p5.push();
         this.scene.p5.fill(0);
         this.scene.p5.textSize(24);
-        this.scene.p5.text("X: " + Math.round(this.body.x) + " Y: " + Math.round(this.body.y), this.scene.camera.x - this.scene.p5.width / 2 + 20, this.scene.camera.y - this.scene.p5.height / 2 + 20);
+        this.scene.p5.text("X: " + Math.round(this.body.x) + " Y: " + Math.round(this.body.y), 20 - this.scene.p5.width / 2, 20 - this.scene.p5.height / 2);
         this.scene.p5.pop();
     }
 }

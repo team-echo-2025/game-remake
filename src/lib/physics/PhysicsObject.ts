@@ -12,6 +12,14 @@ export type PhysicsObjectProps = Readonly<{
 export default class PhysicsObject implements GameObject {
     body: RigidBody;
 
+    set overlaps(v: boolean) {
+        this.body.overlaps = v;
+    }
+
+    set onCollide(func: any) {
+        this.body.onOverlap = func;
+    }
+
     constructor(props: PhysicsObjectProps) {
         this.body = new RigidBody(0, 0, props.width, props.height, props.mass, props.friction ?? 0.5);
     }
@@ -23,6 +31,6 @@ export default class PhysicsObject implements GameObject {
         this.body.x += this.body.velocity.x * dt / 1000;
         this.body.y += this.body.velocity.y * dt / 1000;
     }
+    postDraw(): void { }
     onDestroy(): void { }
-    onCollide(_: GameObject): void { }
 }

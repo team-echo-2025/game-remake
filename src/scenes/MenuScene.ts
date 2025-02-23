@@ -55,7 +55,7 @@ export default class MenuScene extends Scene {
         // this.sfx_manager = this.add_new.soundmanager(sfx_props);
         this.bgm_manager.play();
     }
-    draw(): void {
+    postDraw(): void {
         this.p5.push();  // Save the current transformation matrix
         this.p5.clear();  // Clear the canvas
 
