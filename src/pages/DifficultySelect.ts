@@ -4,7 +4,7 @@ import Puzzle from "../lib/Puzzle"
 
 export default class DifficultyPage extends Page {
     easy!: ButtonTest;
-    medium!: ButtonTest;
+    normal!: ButtonTest;
     hard!: ButtonTest;
     back!: ButtonTest;
     set_difficulty!: Puzzle;
@@ -17,7 +17,7 @@ export default class DifficultyPage extends Page {
     }
     cleanup = () => {
         this.scene.remove(this.easy)
-        this.scene.remove(this.medium)
+        this.scene.remove(this.normal)
         this.scene.remove(this.hard)
         this.scene.remove(this.back)
     }
@@ -32,8 +32,8 @@ export default class DifficultyPage extends Page {
             }
         })
         this.easy.y = -100;
-        this.medium = this.scene.add_new.button({
-            label: "Medium",
+        this.normal = this.scene.add_new.button({
+            label: "Normal",
             font_key: 'jersey',
             callback: () => {
                 this.cleanup()

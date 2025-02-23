@@ -9,6 +9,7 @@ export default class MenuPage extends Page {
     KDbutton!: ButtonTest;
     credits!: ButtonTest;
     physicsTest!: ButtonTest;
+    puzzleTest!: ButtonTest;
     //bgm!:Sound;
     //button_sfx!: Sound;
     //interval!:Timer
@@ -30,6 +31,7 @@ export default class MenuPage extends Page {
         this.scene.remove(this.setting);
         this.scene.remove(this.credits);
         this.scene.remove(this.physicsTest);
+        this.scene.remove(this.puzzleTest);
         //this.scene.remove(this.bgm)
     }
     setup(): void {
@@ -90,16 +92,27 @@ export default class MenuPage extends Page {
         this.credits.x = -300
         this.credits.y = 300
         this.physicsTest = this.scene.add_new.button
+            ({
+                label: "Physics",
+                font_key: "jersey",
+                callback: () => {
+                    this.cleanup();
+                    this.scene.start("physics-scene");
+                }
+            })
+        this.physicsTest.x = 150
+        this.physicsTest.y = 300
+        this.puzzleTest = this.scene.add_new.button
         ({
-            label: "Physics",
+            label: "Puzzles",
             font_key: "jersey",
             callback: () =>
             {
                 this.cleanup();
-                this.scene.start("physics-scene");
+                this.scene.start("puzzle-dev-scene");
             }
         })
-        this.physicsTest.x = 150
-        this.physicsTest.y = 300
+        this.puzzleTest.x = 0
+        this.puzzleTest.y = 300
     }
 }
