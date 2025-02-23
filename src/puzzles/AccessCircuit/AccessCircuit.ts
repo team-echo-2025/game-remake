@@ -1,4 +1,4 @@
-import Puzzle from "../../lib/Puzzle";
+import Puzzle, { PuzzleState } from "../../lib/Puzzle";
 import Cell, { CellState } from "./Cell";
 import Ball from "./Ball";
 import DispenserCell from "./DispenserCell";
@@ -51,22 +51,36 @@ export default class AccessCircuit extends Puzzle {
         this.setupFooter();
     }
     draw() {
-        // draw puzzle
-        this.draw_header();
-        this.draw_body();
-        this.draw_footer();
-        for (let ball of this.balls) {
-            ball.draw();
-        }
-        if (this.dragging) {
-            const x = this.scene.p5.mouseX - this.scene.p5.width / 2;
-            const y = this.scene.p5.mouseY - this.scene.p5.height / 2;
-            this.dragging.x = x;
-            this.dragging.y = y;
-            this.dragging.draw();
+        if (this.solved()) {
+            this.displayWinMessage();
+        } else {
+            // draw puzzle
+            this.draw_header();
+            this.draw_body();
+            this.draw_footer();
+            for (let ball of this.balls) {
+                ball.draw();
+            }
+            if (this.dragging) {
+                const x = this.scene.p5.mouseX - this.scene.p5.width / 2;
+                const y = this.scene.p5.mouseY - this.scene.p5.height / 2;
+                this.dragging.x = x;
+                this.dragging.y = y;
+                this.dragging.draw();
+            }
+
+            if(this.checkSolution()) {
+                this.state = PuzzleState.completed;
+                this.displayWinMessage();
+            }
         }
     }
     mousePressed() {
+        if (this.solved()) {
+            this.scene.start(this.scene.name);
+            return;
+        }
+
         const x = this.scene.p5.mouseX - this.scene.p5.width / 2;
         const y = this.scene.p5.mouseY - this.scene.p5.height / 2;
         for (let cell of this.dispenserCells) {
@@ -337,5 +351,25 @@ export default class AccessCircuit extends Puzzle {
             colors.splice(randColorIndex, 1); // Remove used color
             this.solution.push(color);
         }
+    }
+    displayWinMessage(): void {
+        let p5 = this.scene.p5;
+    
+        p5.fill(0, 0, 0, 150);
+        p5.rect(0, 0, p5.width, p5.height);
+    
+        let boxWidth = p5.width / 3;
+        let boxHeight = p5.height / 6;
+        p5.fill(255);
+        p5.stroke(0);
+        p5.rect(0, 0, boxWidth, boxHeight, 10);
+    
+        p5.fill(0);
+        p5.noStroke();
+        p5.textAlign(p5.CENTER, p5.CENTER);
+        p5.textSize(32);
+        p5.text("You Win!", 0, -boxHeight / 8);
+        p5.textSize(16);
+        p5.text("Click to continue.", 0, boxHeight / 4);
     }
 }
