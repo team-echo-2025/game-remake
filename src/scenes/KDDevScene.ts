@@ -24,16 +24,11 @@ export default class KDDevScene extends Scene {
 
     constructor() {
         super("kd-dev-scene");
-        //this.button_sfx = new Sound("assets/TInterfaceSounds/light-switch.mp3");
-        //this.background_music = new Sound("assets/background_music.mp3");
-        this.player = new Player(this);
     }
     onStart(): void {
-        this.physics.addObject(this.player)
-        this.add(this.background_music);
-        //this.add(this.background_music);
-        //this.add(this.button_sfx);
-        //this.bgm_manager.add(this.background_music);
+        this.player = new Player(this);
+        this.physics.addObject(this.player);
+
     }
 
     preload(): any {
@@ -52,8 +47,6 @@ export default class KDDevScene extends Scene {
     }
 
     setup(): void {
-        //this.get_asset("background_music").load();
-        //this.get_asset("button_sfx").load()
         this.background_music = this.add_new.sound("background_music");
         this.button_sfx = this.add_new.sound("button_sfx");
         const bgm_props: SoundManagerProps= {

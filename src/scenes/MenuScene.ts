@@ -41,7 +41,7 @@ export default class MenuScene extends Scene {
     setup(): void {
         this.pManager.setup();
         this.background_music = this.add_new.sound("background_music");
-        //this.button_sfx = this.add_new.sound("button_sfx");
+        this.button_sfx = this.add_new.sound("button_sfx");
         
         const bgm_props: SoundManagerProps= {
             group: "BGM",
