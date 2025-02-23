@@ -9,11 +9,19 @@
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "Dungeon Floor 1.tmx": {
-            "scale": 1,
-            "selectedLayer": 5,
+            "scale": 1.5,
+            "selectedLayer": 8,
             "viewCenter": {
-                "x": 24.5,
-                "y": 360.5
+                "x": 247.66666666666666,
+                "y": 318.33333333333337
+            }
+        },
+        "Dungeon.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 6,
+            "viewCenter": {
+                "x": -63.666666666666686,
+                "y": -373.66666666666663
             }
         }
     },
