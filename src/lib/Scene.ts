@@ -4,6 +4,7 @@ import SceneManager from "./SceneManager";
 import GameObjectFactory from "./GameObjectFactory";
 import Camera from "./Camera";
 import WorldPhysics from "./physics/WorldPhysics";
+import Rectangle from "./physics/Rectangle";
 
 export default class Scene implements GameObject {
     private _name: string;
@@ -15,6 +16,7 @@ export default class Scene implements GameObject {
     private assets: Map<string, any> = new Map();
     private preloads: Promise<any>[] = []
     private _camera: Camera;
+    private _bounds: Rectangle;
 
     private start_time = 0;
     private frames = 0;
@@ -26,6 +28,14 @@ export default class Scene implements GameObject {
 
     get mouseY() {
         return this.p5.mouseY + this.camera.y - this.p5.height / 2;
+    }
+
+    get bounds() {
+        return this._bounds;
+    }
+
+    set bounds(bounds: Rectangle) {
+        this._bounds = bounds;
     }
 
     get physics() {
@@ -57,6 +67,8 @@ export default class Scene implements GameObject {
         if (name.length <= 0) {
             throw new Error("Scene name not specified.");
         }
+        //this._bounds = new Rectangle({ x: 0, y: 0, w: window.innerWidth, h: window.innerHeight });
+        this._bounds = new Rectangle({ x: 0, y: 0, w: Infinity, h: Infinity });
         this.game_object_factory = new GameObjectFactory(this);
         this._camera = new Camera(this);
         this._name = name;
@@ -70,6 +82,14 @@ export default class Scene implements GameObject {
 
     add(object: GameObject) {
         this.objects.push(object);
+        this.objects.sort((obj1, obj2) => {
+            const z1 = obj1.zIndex ?? 0;
+            const z2 = obj2.zIndex ?? 0;
+            return z1 - z2;
+        })
+    }
+
+    update_zindex() {
         this.objects.sort((obj1, obj2) => {
             const z1 = obj1.zIndex ?? 0;
             const z2 = obj2.zIndex ?? 0;
@@ -215,12 +235,6 @@ export default class Scene implements GameObject {
                 obj.draw && obj.draw();
             }
         }
-        this.p5.push();
-        this.p5.fill(0);
-        this.p5.textSize(24);
-        this.p5.text("MouseX: " + Math.round(this.mouseX) + " MouseY: " + Math.round(this.mouseY), this.camera.x - this.p5.width / 2 + 20, this.camera.y - this.p5.height / 2 + 40);
-        this.p5.text(`Frames:  ${this.display_frames.toFixed(1)}`, this.camera.x - this.p5.width / 2 + 20, this.camera.y - this.p5.height / 2 + 60);
-        this.p5.pop();
         this.frames++;
         const now = this.p5.millis();
         const delta = now - this.start_time;
@@ -230,6 +244,26 @@ export default class Scene implements GameObject {
             const alpha = 0.05
             const fps = 1000 / delta;
             this.display_frames = alpha * fps + (1 - alpha) * this.display_frames;
+        }
+        this.p5.push();
+        this.p5.noFill();
+        this.p5.rectMode("center");
+        this.p5.rect(this._bounds.x, this._bounds.y, this._bounds.halfWidth * 2, this._bounds.halfHeight * 2);
+        this.p5.pop();
+    }
+
+    postDraw(): void { }
+    postDraw_objects(): void {
+        this.p5.push();
+        this.p5.fill(0);
+        this.p5.textSize(24);
+        this.p5.text("MouseX: " + Math.round(this.mouseX) + " MouseY: " + Math.round(this.mouseY), 20 - this.p5.width / 2, 40 - this.p5.height / 2);
+        this.p5.text(`Frames:  ${this.display_frames.toFixed(1)}`, 20 - this.p5.width / 2, 60 - this.p5.height / 2);
+        this.p5.pop();
+        for (const obj of this.objects) {
+            if (!obj.hidden) {
+                obj.postDraw && obj.postDraw();
+            }
         }
     }
 

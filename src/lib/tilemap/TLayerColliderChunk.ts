@@ -27,6 +27,5 @@ export default class TLayerColliderChunk extends TLayerChunk {
                 this.bodies.push({ physics_object: obj, offset: { x: tile.x * this.tilemap.tilewidth + tile.image.width / 2, y: tile.y * this.tilemap.tileheight + tile.image.height / 2 } });
             }
         }
-        console.log(this.bodies.length, " physic obvjects");
     }
 }

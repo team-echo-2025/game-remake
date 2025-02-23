@@ -68,6 +68,10 @@ export default class SceneManager implements GameObject {
         this.current_scene?.update();
         this.current_scene?.update_objects();
         this.current_scene?.p5.pop()
+        this.current_scene?.p5.push();
+        this.current_scene?.postDraw();
+        this.current_scene?.postDraw_objects();
+        this.current_scene?.p5.pop();
     }
 
     keyPressed(e: KeyboardEvent): void {

@@ -13,7 +13,7 @@ type TLayerProps = Readonly<{
     tilemap: Tilemap;
 }>;
 
-export default class TLayer implements GameObject {
+export default class TLayer {
     private layer: XML;
     private scene: Scene;
     private id!: string;
@@ -82,7 +82,6 @@ export default class TLayer implements GameObject {
     setup_properties(data: XML[]) {
         for (const child of data) {
             const name = child.getName();
-            console.log(name)
             if (name == "property") {
                 const property_name = child.getString('name');
                 if (property_name == "collider") {
@@ -105,7 +104,6 @@ export default class TLayer implements GameObject {
         this.maxx = 0;
         this.miny = 0;
         this.maxy = 0;
-        console.log('setup layer')
         for (const child of children) {
             const name = child.getName();
             if (name == 'properties') {
@@ -124,7 +122,7 @@ export default class TLayer implements GameObject {
                     this.minx = chunk.x;
                 }
                 if (chunk.x > this.maxx) {
-                    this.maxx = chunk.x;
+                    this.maxx = chunk.x
                 }
                 if (chunk.y < this.miny) {
                     this.miny = chunk.y;
@@ -171,15 +169,16 @@ export default class TLayer implements GameObject {
         }
         this.tilemap.buffer.begin()
         this.scene.p5.push();
-        this.scene.p5.rectMode('corner');
         let layer_width = this.tilemap.width;
         let layer_height = this.tilemap.height;
         for (const row of this.chunks) {
             for (const chunk of row) {
                 let x = this.x + (chunk.x - this.tilemap.minx) * (this.tilemap.tilewidth);
                 x -= this.tilemap.tilewidth * layer_width / 2;
+                x -= this.tilemap.tilewidth * chunk.width;
                 let y = this.y + (chunk.y - this.tilemap.miny) * (this.tilemap.tileheight);
                 y -= this.tilemap.tileheight * layer_height / 2;
+                y -= this.tilemap.tileheight * chunk.height;
                 if (this.is_collider && chunk instanceof TLayerColliderChunk) {
                     for (const obj of chunk.bodies) {
                         obj.physics_object.body.x = x + obj.offset.x;
@@ -191,6 +190,4 @@ export default class TLayer implements GameObject {
         this.scene.p5.pop();
         this.tilemap.buffer.end()
     }
-
-    draw(): void { }
 }
