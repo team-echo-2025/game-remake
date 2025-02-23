@@ -1,6 +1,7 @@
 import { Image } from 'p5';
 import Scene from './Scene';
 import PhysicsObject from './physics/PhysicsObject';
+import { TestObject } from '../scenes/PhysicsTestScene';
 
 type Velocity = {
     x: number;
@@ -23,8 +24,14 @@ export default class Player extends PhysicsObject {
     private downKey: string = 's';
     private rightKey: string = 'd';
     private speed: number = 100;
+    private launch_delay_start = 0;
+    private scale: number = 1.5;
+    private width: number = 64 * this.scale;
+    private height: number = 64 * this.scale;
+    shooting: boolean = true;
+
     constructor(scene: Scene) {
-        super({ width: 64, height: 64, mass: 100, });
+        super({ width: 24, height: 24, mass: 50 * 50, });
         this.scene = scene;
         this.direction = {
             x: 0,
@@ -46,6 +53,7 @@ export default class Player extends PhysicsObject {
 
     setup(): void {
         this.#setup_frames(this.spritesheet);
+        this.scene.camera.follow(this.body);
     }
 
     #setup_frames(spritesheet?: Image) {
@@ -68,6 +76,7 @@ export default class Player extends PhysicsObject {
         return _sprites;
     }
 
+
     keyPressed(e: KeyboardEvent): void {
         if (!this.pressed_keys[this.forwardKey] && e.key == this.forwardKey) {
             this.direction.y -= 1;
@@ -85,6 +94,9 @@ export default class Player extends PhysicsObject {
     }
 
     keyReleased(e: KeyboardEvent): void {
+        if (e.key == 'm') {
+            this.shooting = !this.shooting;
+        }
         if (this.pressed_keys[this.forwardKey] && e.key == this.forwardKey) {
             this.direction.y += 1;
         }
@@ -100,7 +112,38 @@ export default class Player extends PhysicsObject {
         this.pressed_keys[e?.key] = false;
     }
 
+    mousePressed(_: MouseEvent) {
+        if (!this.shooting) return;
+        console.log('clicked')
+
+        // Simple "cooldown": only launch if >1 second has passed
+        if (this.scene.p5.millis() - this.launch_delay_start > 100) {
+            this.launch_delay_start = this.scene.p5.millis();
+            for (let i = 0; i < 3; i++) {
+                const mx = this.scene.p5.mouseX + this.scene.camera.x - this.scene.p5.width / 2 + i * 64;
+                const my = this.scene.p5.mouseY + this.scene.camera.y - this.scene.p5.height / 2 + i * 64;
+                const dx = mx - this.body.x;
+                const dy = my - this.body.y;
+                const length = Math.sqrt(dx * dx + dy * dy);
+                if (length === 0) return;
+                const nx = dx / length;
+                const ny = dy / length;
+                const launchSpeed = 500;
+                const obj = new TestObject(this.scene);
+                obj.body.w = Math.random() * (50 - 10) + 10;
+                obj.body.h = Math.random() * (50 - 10) + 10;
+                obj.body.x = this.body.x + nx * 100;
+                obj.body.y = this.body.y + ny * 100;
+                obj.body.mass = obj.body.w * obj.body.h + 1000;
+                obj.body.velocity.x = nx * launchSpeed;
+                obj.body.velocity.y = ny * launchSpeed;
+                this.scene.physics.addObject(obj);
+            }
+        }
+    }
+
     draw(): void {
+        this.scene.p5.push();
         if (this.direction.x == 0 && this.direction.y == 0) {
             this.moving = false;
         } else {
@@ -111,7 +154,7 @@ export default class Player extends PhysicsObject {
             this.anim_index = (this.anim_index + 1) % 6;
         }
         if (this.frames.length > 0 && this.frames[0].length > 0) {
-            this.scene.p5.image(this.frames[this.anim_row][this.anim_index], this.x - (64 * 1.5) / 2 + 32, this.y - (64 * 1.5) / 2 + 32, 64 * 1.5, 64 * 1.5);
+            this.scene.p5.image(this.frames[this.anim_row][this.anim_index], this.body.x - this.width / 2, this.body.y - this.height / 1.8, this.width, this.height);
         }
         if (this.pressed_keys[this.forwardKey]) {
             this.anim_row = 5;
@@ -125,10 +168,11 @@ export default class Player extends PhysicsObject {
         if (this.pressed_keys[this.rightKey]) {
             this.anim_row = 6;
         }
-        // Example: If speed is in pixels per second:
-        this.velocity.x = this.direction.x;
-        this.velocity.y = this.direction.y;
-        this.scene.camera.lookAt(this.x, this.y)
+        this.body.velocity.x = this.direction.x * this.speed;
+        this.body.velocity.y = this.direction.y * this.speed;
+        this.scene.p5.fill(0);
+        this.scene.p5.textSize(24);
+        this.scene.p5.text("X: " + Math.round(this.body.x) + " Y: " + Math.round(this.body.y), this.scene.camera.x - this.scene.p5.width / 2 + 20, this.scene.camera.y - this.scene.p5.height / 2 + 20);
+        this.scene.p5.pop();
     }
 }
-//make event to let player know keybind changed, and needs re-read
