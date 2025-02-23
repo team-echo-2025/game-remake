@@ -15,7 +15,6 @@ export default class CubeScales implements GameObject {
     initialX: number;
     initialY: number;
     dragging: boolean;
-    rollover: boolean;
     state: CubeState;
     scene!: Scene;
     offsetX: number;
@@ -28,18 +27,9 @@ export default class CubeScales implements GameObject {
         this.initialY = y;
         this.scene = scene;
         this.dragging = false;
-        this.rollover = false;
         this.offsetX =  -this.scene.p5.width / 2;
         this.offsetY =  -this.scene.p5.height / 2;
         this.weight = Math.floor(this.scene.p5.random(1, 10));
-    }
-    over() {
-        // Is mouse over object
-        if (this.scene.p5.mouseX > this.x && this.scene.p5.mouseY > this.y) {
-          this.rollover = true;
-        } else {
-          this.rollover = false;
-        }
     }
     update() {
         // Adjust location if being dragged
