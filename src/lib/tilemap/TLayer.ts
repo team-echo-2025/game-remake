@@ -1,5 +1,4 @@
 import { Framebuffer, XML } from "p5";
-import GameObject from "../GameObject";
 import Scene from "../Scene";
 import TLayerChunk from "./TLayerChunk";
 import Tilemap from "./Tilemap";
@@ -20,7 +19,7 @@ export default class TLayer {
     private name!: string;
     private width!: number;
     private height!: number;
-    private chunks: TLayerChunk[][];
+    private chunks: TLayerChunk[];
     private offsetx!: number;
     private offsety!: number;
     private _x: number = 0;
@@ -59,24 +58,15 @@ export default class TLayer {
     }
 
     setup_chunks(data: XML[]) {
-        this.chunks.push([]);
-        let row = 0;
-        let y = 0;
-        for (let child of data) {
-            let chunk;
-            if (this.is_collider) {
-                chunk = new TLayerColliderChunk(child, this.tilemap, this.scene);
-            } else {
-                chunk = new TLayerChunk(child, this.tilemap, this.scene, this.top_layer);
-            }
-            if (chunk.y != y && chunk.y % chunk.height == 0) {
-                this.chunks.push([]);
-                row++;
-                y = chunk.y;
-            }
-            this.chunks[row].push(chunk);
-        }
+        this.chunks = [];
 
+        for (let child of data) {
+            let chunk = this.is_collider
+                ? new TLayerColliderChunk(child, this.tilemap, this.scene)
+                : new TLayerChunk(child, this.tilemap, this.scene, this.top_layer);
+
+            this.chunks.push(chunk);
+        }
     }
 
     setup_properties(data: XML[]) {
@@ -100,10 +90,6 @@ export default class TLayer {
         this.offsetx = this.layer.getNum("offsetx");
         this.offsety = this.layer.getNum("offsety");
         const children = this.layer.getChildren();
-        this.minx = 0;
-        this.maxx = 0;
-        this.miny = 0;
-        this.maxy = 0;
         for (const child of children) {
             const name = child.getName();
             if (name == 'properties') {
@@ -116,78 +102,47 @@ export default class TLayer {
                 this.setup_chunks(child.getChildren())
             }
         }
-        for (let row of this.chunks) {
-            for (let chunk of row) {
-                if (chunk.x < this.minx) {
-                    this.minx = chunk.x;
-                }
-                if (chunk.x > this.maxx) {
-                    this.maxx = chunk.x
-                }
-                if (chunk.y < this.miny) {
-                    this.miny = chunk.y;
-                }
-                if (chunk.y > this.maxy) {
-                    this.maxy = chunk.y;
-                }
-                for (let y = 0; y < chunk.height; y++) {
-                    chunk.tiles.push([]);
-                    for (let x = 0; x < chunk.width; x++) {
-                        const i = x + y * chunk.width;
-                        const tilegid = chunk.data[i];
-                        if (tilegid == 0) {
-                            chunk.tiles[y].push(null);
-                            continue;
-                        };
-                        let tileset;
-                        for (let item of this.tilemap.tilesets) {
-                            if (item.firstgid <= tilegid) {
-                                tileset = item
-                            }
+        for (let chunk of this.chunks) {
+            for (let y = 0; y < chunk.height; y++) {
+                chunk.tiles.push([]);
+                for (let x = 0; x < chunk.width; x++) {
+                    const i = x + y * chunk.width;
+                    const tilegid = chunk.data[i] & 0x1FFFFFFF;
+                    if (tilegid == 0) {
+                        chunk.tiles[y].push(null);
+                        continue;
+                    };
+                    let tileset;
+                    for (let item of this.tilemap.tilesets) {
+                        if (item.firstgid <= tilegid) {
+                            tileset = item
                         }
-                        const tile_data = tileset!.getTile(tilegid);
-                        const tile = new Tile({
-                            x: x,
-                            y: y,
-                            scene: this.scene,
-                            image: tile_data.image.get(tile_data.x, tile_data.y, tile_data.width, tile_data.height)
-                        })
-                        chunk.tiles[y].push(tile)
                     }
+                    const tile_data = tileset!.getTile(tilegid);
+                    const tile = new Tile({
+                        x: x,
+                        y: y,
+                        scene: this.scene,
+                        image: tile_data.image.get(tile_data.x, tile_data.y, tile_data.width, tile_data.height)
+                    })
+                    chunk.tiles[y].push(tile)
                 }
             }
+        }
+        for (const chunk of this.chunks) {
+            chunk.precalculate();
+            this.tilemap.minx = Math.min(this.tilemap.minx, chunk.minx);
+            this.tilemap.miny = Math.min(this.tilemap.miny, chunk.miny);
+            this.tilemap.maxx = Math.max(this.tilemap.maxx, chunk.maxx);
+            this.tilemap.maxy = Math.max(this.tilemap.maxy, chunk.maxy);
         }
         this.width = this.maxx - this.minx;
         this.height = this.maxy - this.miny;
     }
 
     prerender(): void {
-        for (const row of this.chunks) {
-            for (const chunk of row) {
-                chunk.prerender();
-            }
+        for (const chunk of this.chunks) {
+            chunk.prerender();
         }
-        this.tilemap.buffer.begin()
-        this.scene.p5.push();
-        let layer_width = this.tilemap.width;
-        let layer_height = this.tilemap.height;
-        for (const row of this.chunks) {
-            for (const chunk of row) {
-                let x = this.x + (chunk.x - this.tilemap.minx) * (this.tilemap.tilewidth);
-                x -= this.tilemap.tilewidth * layer_width / 2;
-                x -= this.tilemap.tilewidth * chunk.width;
-                let y = this.y + (chunk.y - this.tilemap.miny) * (this.tilemap.tileheight);
-                y -= this.tilemap.tileheight * layer_height / 2;
-                y -= this.tilemap.tileheight * chunk.height;
-                if (this.is_collider && chunk instanceof TLayerColliderChunk) {
-                    for (const obj of chunk.bodies) {
-                        obj.physics_object.body.x = x + obj.offset.x;
-                        obj.physics_object.body.y = y + obj.offset.y;
-                    }
-                }
-            }
-        }
-        this.scene.p5.pop();
-        this.tilemap.buffer.end()
     }
 }

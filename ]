@@ -59,28 +59,28 @@ class Door implements GameObject {
     }
 }
 
-export default class TestDungeon extends Scene {
+export default class PlayScene extends Scene {
     player?: Player;
     tilemap?: Tilemap;
     door?: Door;
     access_circuit?: AccessCircuit;
 
     constructor() {
-        super("dungeon-scene");
+        super("play-scene");
         this.physics.debug = true;
     }
 
     onStart(): void {
         this.camera.zoom = 3;
         this.player = new Player(this);
-        this.player.body.x = -466;
-        this.player.body.y = 31;
+        this.player.body.x = -425;
+        this.player.body.y = 218;
         this.physics.addObject(this.player);
     }
 
     preload(): any {
         this.loadFont("jersey", "assets/fonts/jersey.ttf");
-        this.loadTilemap("tilemap", "assets/tilemaps/PetersTileMap/Dungeon.tmx")
+        this.loadTilemap("tilemap", "assets/tilemaps/LaythsTileMap/world-1.tmx")
         this.loadImage("door", "assets/doors/prison_door.png");
         this.loadImage("puzzle", "assets/access_circuit.png");
         this.loadImage("broken-puzzle", "assets/access_circuit_broken.png");
@@ -89,22 +89,22 @@ export default class TestDungeon extends Scene {
 
     setup(): void {
         this.access_circuit = new AccessCircuit(this, 'puzzle', this.player!);
-        this.access_circuit.x = -321;
-        this.access_circuit.y = -105;
+        this.access_circuit.x = -300;
+        this.access_circuit.y = 56;
         this.access_circuit?.setup();
         this.access_circuit.asset.zIndex = 101;
 
         this.tilemap = this.add_new.tilemap({
             tilemap_key: "tilemap",
         })
-        const yoffset = 350;
-        const xoffset = 70;
-        this.bounds = new Rectangle({ x: -xoffset / 2, y: -yoffset / 2, w: this.tilemap.width * this.tilemap.tilewidth - xoffset, h: this.tilemap.height * this.tilemap.tileheight - yoffset });
+        const offsetX = 32;
+        const offsetY = 32;
+        this.bounds = new Rectangle({ x: this.tilemap.x + offsetX / 2 - 16, y: this.tilemap.y + offsetY / 2, w: this.tilemap.width - offsetX - 32, h: this.tilemap.height - offsetX });
 
         this.door = new Door(this, "door");
         this.door.setup();
-        this.door.x = -415;
-        this.door.y = -110;
+        this.door.x = -384;
+        this.door.y = 63;
         this.access_circuit.onCompleted = () => {
             this.door!.open();
         }

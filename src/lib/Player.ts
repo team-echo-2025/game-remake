@@ -30,6 +30,7 @@ export default class Player extends PhysicsObject {
     private height: number = 64 * this.scale;
     disabled: boolean = false;
     shooting: boolean = false;
+    teleporting: boolean = false;
 
     constructor(scene: Scene) {
         super({ width: 16, height: 16, mass: 16 * 16, });
@@ -114,6 +115,10 @@ export default class Player extends PhysicsObject {
     }
 
     mousePressed(_: MouseEvent) {
+        if (this.teleporting) {
+            this.body.x = this.scene.mouseX;
+            this.body.y = this.scene.mouseY;
+        }
         if (!this.shooting) return;
         console.log('clicked')
 
