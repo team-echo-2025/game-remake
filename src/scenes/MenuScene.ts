@@ -29,7 +29,7 @@ export default class MenuScene extends Scene {
     setup(): void {
         this.pManager.setup();
     }
-    draw(): void {
+    postDraw(): void {
         this.p5.push();  // Save the current transformation matrix
         this.p5.clear();  // Clear the canvas
 

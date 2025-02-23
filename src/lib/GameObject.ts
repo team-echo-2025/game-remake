@@ -4,6 +4,7 @@ export default interface GameObject {
     setup?(): void;
     update?(dt: number): void;
     draw?(): void;
+    postDraw?(): void;
     preload?(): Promise<any>;
     keyPressed?(e: KeyboardEvent): void;
     keyReleased?(e: KeyboardEvent): void;

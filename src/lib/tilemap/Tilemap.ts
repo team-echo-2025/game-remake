@@ -111,7 +111,6 @@ export default class Tilemap implements GameObject {
     async preload(): Promise<any> { }
 
     setup(): void {
-        console.log("Loaded")
         this.tilemap = this._scene.get_asset(this.tilemap_key);
         this._tilewidth = this.tilemap.getNum('tilewidth')
         this._tileheight = this.tilemap.getNum('tileheight')
@@ -149,8 +148,8 @@ export default class Tilemap implements GameObject {
             }
         }
 
-        this._width = this.maxx - this.minx + this.chunk_size;
-        this._height = this.maxy - this.miny + this.chunk_size;
+        this._width = this.maxx - this.minx;
+        this._height = this.maxy - this.miny;
 
         this.buffer = this._scene.p5.createFramebuffer({
             width: this._width * this._tilewidth,
@@ -164,13 +163,9 @@ export default class Tilemap implements GameObject {
             stencil: false,
             depth: false,
         })!;
-        this.buffer.begin();
-        this._scene.p5.rect(0, 0, this.width * this.tilewidth, this.height * this.tileheight);
-        this.buffer.end();
 
         for (const layer of this.layers) {
             layer.prerender();
-            this._scene.add(layer);
         }
         const tilemap_buffer = new TilemapBuffer(this.x, this.y, this.width * this.tilewidth, this.height * this.tileheight, this.buffer, this._scene);
         this._scene.add(tilemap_buffer);
@@ -178,4 +173,10 @@ export default class Tilemap implements GameObject {
         player_buffer.zIndex = 100;
         this._scene.add(player_buffer);
     }
+//draw(): void {
+//    this._scene.p5.push();
+//    this._scene.p5.rectMode("corner");
+//    this._scene.p5.rect(this.x - this.width * this.tilewidth / 2, this.y - this.height * this.tileheight / 2, this.width * this.tilewidth, this.height * this.tileheight);
+//    this._scene.p5.pop();
+//}
 }

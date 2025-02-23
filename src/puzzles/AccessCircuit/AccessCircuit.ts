@@ -1,14 +1,21 @@
-import Puzzle from "../../lib/Puzzle";
+import Puzzle, { PuzzleState } from "../../lib/Puzzle";
 import Cell, { CellState } from "./Cell";
 import Ball from "./Ball";
 import DispenserCell from "./DispenserCell";
+import Scene from "../../lib/Scene";
+import Sprite from "../../lib/Sprite";
+import PhysicsObject from "../../lib/physics/PhysicsObject";
+import RigidBody from "../../lib/physics/RigidBody";
+import Player from "../../lib/Player";
+
 type RGB = Readonly<{
     r: number;
     g: number;
     b: number;
 }>
 export default class AccessCircuit extends Puzzle {
-    zIndex = 1000;
+    x: number = 0;
+    y: number = 0;
     board: Cell[][] = [];
     colors: RGB[] = [
         { r: 0, g: 76, b: 84 },
@@ -24,6 +31,21 @@ export default class AccessCircuit extends Puzzle {
     boardCircleDiameter = 0;
     dispensersWidth = 0;
     dispenserDiameter = 0;
+
+    asset_key: string;
+    asset!: Sprite;
+    player: Player;
+
+    physics_object!: PhysicsObject;
+    highlight: boolean = false;
+
+    constructor(scene: Scene, puzzle_asset_key: string, player: Player) {
+        super(scene);
+        this.asset_key = puzzle_asset_key;
+        this.hidden = true;
+        this.player = player;
+    }
+
     checkSolution(): boolean {
         for (let row of this.board) {
             let rowIsCorrect = true;
@@ -35,14 +57,47 @@ export default class AccessCircuit extends Puzzle {
                 }
             }
             if (rowIsCorrect) {
+                this.onCompleted && this.onCompleted();
+                this.state = PuzzleState.completed;
+                this.hidden = true;
+                this.player.disabled = false;
+                this.asset.change_asset('success-puzzle');
+                this.scene.physics.remove(this.physics_object);
                 return true;
             }
         }
 
         return false;
     }
+
     preload(): any { }
+
     setup(): void {
+        this.physics_object = new PhysicsObject({
+            width: 100,
+            height: 100,
+            mass: Infinity
+        });
+        this.physics_object.overlaps = true;
+        this.physics_object.body.x = this.x;
+        this.physics_object.body.y = this.y;
+        this.scene.physics.addObject(this.physics_object);
+        let timeout: any;
+        this.physics_object.onCollide = (other: RigidBody) => {
+            if (other == this.player.body) {
+                clearTimeout(timeout);
+                this.highlight = true;
+                timeout = setTimeout(() => {
+                    this.highlight = false;
+                }, 100);
+            }
+        }
+
+        this.asset = this.scene.add_new.sprite(this.asset_key);
+        this.asset.x = this.x;
+        this.asset.y = this.y;
+        this.asset.width = 32;
+        this.asset.height = 48;
         this.generateSolution();
         this.scene.p5.createCanvas(this.scene.p5.windowWidth, this.scene.p5.windowHeight);
         this.scene.p5.rectMode(this.scene.p5.CENTER);
@@ -50,7 +105,17 @@ export default class AccessCircuit extends Puzzle {
         this.setupBoard();
         this.setupFooter();
     }
+
     draw() {
+        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
+        if (this.highlight) {
+            this.scene.p5.circle(this.x - this.asset.width / 2, this.y - this.asset.height / 2, 50);
+        }
+    }
+
+    postDraw() {
+        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
+        if (this.hidden) return;
         // draw puzzle
         this.draw_header();
         this.draw_body();
@@ -66,7 +131,16 @@ export default class AccessCircuit extends Puzzle {
             this.dragging.draw();
         }
     }
+
+    keyPressed(e: KeyboardEvent): void {
+        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
+        if (this.hidden && this.highlight && e.key == 'e') {
+            this.player.disabled = true;
+            this.hidden = false;
+        }
+    }
     mousePressed() {
+        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
         const x = this.scene.p5.mouseX - this.scene.p5.width / 2;
         const y = this.scene.p5.mouseY - this.scene.p5.height / 2;
         for (let cell of this.dispenserCells) {
@@ -98,6 +172,7 @@ export default class AccessCircuit extends Puzzle {
     }
 
     mouseReleased() {
+        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
         const x = this.scene.p5.mouseX - this.scene.p5.width / 2;
         const y = this.scene.p5.mouseY - this.scene.p5.height / 2;
         let found = false;
@@ -149,6 +224,14 @@ export default class AccessCircuit extends Puzzle {
                 this.dragging.cellOfBall.placeBall(this.dragging);
             }
             this.dragging = null;
+        }
+        const solved = this.checkSolution();
+        if (!solved && this.current_row >= this.board.length) {
+            this.state = PuzzleState.failed;
+            this.hidden = true;
+            this.player.disabled = false;
+            this.scene.physics.remove(this.physics_object);
+            this.asset.change_asset('broken-puzzle');
         }
     }
 

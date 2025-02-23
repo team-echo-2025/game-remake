@@ -1,4 +1,3 @@
-import { TEXT } from "p5";
 import Page from "../lib/Page";
 import ButtonTest from "../lib/ui/ButtonTest";
 
@@ -6,17 +5,21 @@ export default class CreditsPage extends Page {
     backButton!: ButtonTest;
     p5Button!: ButtonTest;
     howlButton!: ButtonTest;
+
     constructor() {
         super("credits-page")
     }
+
     preload(): any {
         this.scene.loadFont('jersey', 'assets/fonts/jersey.ttf')
     }
+
     cleanup() {
         this.scene.remove(this.backButton);
         this.scene.remove(this.p5Button);
         this.scene.remove(this.howlButton);
     }
+
     setup(): void {
         this.scene.p5.createCanvas(this.scene.p5.windowWidth, this.scene.p5.windowHeight);
         this.scene.p5.rectMode(this.scene.p5.CENTER);
@@ -50,7 +53,8 @@ export default class CreditsPage extends Page {
         this.howlButton.x = 100;
         this.howlButton.y = 200;
     }
-    draw(): void {
+
+    postDraw(): void {
         // Background
         let rectWidth = 400;
         let rectHeight = 600;
