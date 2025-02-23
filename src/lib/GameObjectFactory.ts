@@ -2,6 +2,8 @@ import Page from "./Page";
 import PageManager from "./PageManager";
 import Scene from "./Scene";
 import SoundManager, { SoundManagerProps } from "./SoundManager";
+import Sprite from "./Sprite";
+import Spritesheet from "./Spritesheet";
 import Tilemap, { TilemapProps } from "./tilemap/Tilemap";
 import ButtonTest, { ButtonTestProps } from "./ui/ButtonTest";
 import DropdownMenu, { DropdownMenuProps } from "./ui/DropdownMenu";
@@ -13,6 +15,22 @@ export default class GameObjectFactory {
 
     constructor(scene: Scene) {
         this.scene = scene;
+    }
+
+    sprite = (key: string) => {
+        const _sprite = new Sprite(key);
+        _sprite.scene = this.scene;
+        _sprite.setup();
+        this.scene.add(_sprite);
+        return _sprite;
+    }
+
+    spritesheet = (asset_key: string, col_count: number, row_count: number, duration?: number) => {
+        const _sprite = new Spritesheet(asset_key, col_count, row_count, duration);
+        _sprite.scene = this.scene;
+        _sprite.setup();
+        this.scene.add(_sprite);
+        return _sprite;
     }
 
     button = (props: ButtonTestProps): ButtonTest => {
