@@ -1,5 +1,7 @@
 import Page from "../lib/Page";
 import ButtonTest from "../lib/ui/ButtonTest";
+import Sound from "../lib/Sound";
+import SoundManager, {SoundManagerProps} from "../lib/SoundManager";
 
 export default class KeybindsPage extends Page {
     buttonW!: ButtonTest;
@@ -15,6 +17,8 @@ export default class KeybindsPage extends Page {
         right: localStorage.getItem("right") || "d"
     };
     private waitingForKey: string | null = null;
+    private button_sfx!: Sound;
+    private sfx_manager!: SoundManager;
 
     constructor() {
         super("keybinds-page")
@@ -30,34 +34,53 @@ export default class KeybindsPage extends Page {
         this.scene.loadFont('jersey', 'assets/fonts/jersey.ttf')
     }
     setup(): void {
+        this.button_sfx = this.scene.add_new.sound("button_sfx")
+        const sfx_props: SoundManagerProps= {
+            group: "SFX",
+            sounds: [this.button_sfx]
+        }
+        this.sfx_manager = this.scene.add_new.soundmanager(sfx_props);
         this.buttonW = this.scene.add_new.button({
             label: `Up: ${this.keybinds.forward.toUpperCase()}`,
             font_key: "jersey",
-            callback: () => this.setKeybindChange('forward')
+            callback: () => {
+                this.button_sfx.play();
+                this.setKeybindChange('forward')
+            }
         });
 
         this.buttonA = this.scene.add_new.button({
             label: `Left: ${this.keybinds.left.toUpperCase()}`,
             font_key: "jersey",
-            callback: () => this.setKeybindChange('left')
+            callback: () => {
+                this.button_sfx.play();
+                this.setKeybindChange('left')
+            }    
         });
 
         this.buttonS = this.scene.add_new.button({
             label: `Down: ${this.keybinds.down.toUpperCase()}`,
             font_key: "jersey",
-            callback: () => this.setKeybindChange('down')
+            callback: () => {
+                this.button_sfx.play();
+                this.setKeybindChange('down')
+            }
         });
 
         this.buttonD = this.scene.add_new.button({
             label: `Right: ${this.keybinds.right.toUpperCase()}`,
             font_key: "jersey",
-            callback: () => this.setKeybindChange('right')
+            callback: () => {
+                this.button_sfx.play();
+                this.setKeybindChange('right')
+            }
         });
 
         this.buttonBack = this.scene.add_new.button({
             label: "Back",
             font_key: "jersey",
             callback: () => {
+                this.button_sfx.play();
                 this.cleanup();
                 this.set_page("settings-page")
             }
