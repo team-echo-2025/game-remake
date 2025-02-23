@@ -6,6 +6,7 @@ import LoadingScene from './scenes/LoadingScene';
 import KDDevScene from './scenes/KDDevScene';
 import PhysicsTestScene from "./scenes/PhysicsTestScene";
 import PuzzleDevScene from "./scenes/PuzzleDevScene";
+import TestDungeon from './scenes/TestDungeon';
 
 let scene_manager: SceneManager;
 const sketch = (p: p5) => {

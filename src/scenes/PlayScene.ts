@@ -67,7 +67,7 @@ export default class PlayScene extends Scene {
 
     constructor() {
         super("play-scene");
-        this.physics.debug = true;
+        this.physics.debug = false;
     }
 
     onStart(): void {
