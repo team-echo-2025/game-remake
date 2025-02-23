@@ -59,15 +59,15 @@ class Door implements GameObject {
     }
 }
 
-export default class PlayScene extends Scene {
+export default class TestDungeon extends Scene {
     player?: Player;
     tilemap?: Tilemap;
     door?: Door;
     access_circuit?: AccessCircuit;
 
     constructor() {
-        super("play-scene");
-        this.physics.debug = false;
+        super("dungeon-scene");
+        this.physics.debug = true;
     }
 
     onStart(): void {
@@ -80,7 +80,7 @@ export default class PlayScene extends Scene {
 
     preload(): any {
         this.loadFont("jersey", "assets/fonts/jersey.ttf");
-        this.loadTilemap("tilemap", "assets/tilemaps/LaythsTileMap/world-1.tmx")
+        this.loadTilemap("tilemap", "assets/tilemaps/PetersTileMap/Dungeon.tmx")
         this.loadImage("door", "assets/doors/prison_door.png");
         this.loadImage("puzzle", "assets/access_circuit.png");
         this.loadImage("broken-puzzle", "assets/access_circuit_broken.png");
