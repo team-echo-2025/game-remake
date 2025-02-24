@@ -3,9 +3,11 @@ import PhysicsObject, { PhysicsObjectProps } from "../lib/physics/PhysicsObject"
 import Rectangle from "../lib/physics/Rectangle";
 import RigidBody from "../lib/physics/RigidBody";
 import Player from "../lib/Player";
+import { PuzzleState } from "../lib/Puzzle";
 import Scene from "../lib/Scene";
 import Spritesheet from "../lib/Spritesheet";
 import Tilemap from "../lib/tilemap/Tilemap";
+import { Vector2D } from "../lib/types/Physics";
 import AccessCircuit from "../puzzles/AccessCircuit/AccessCircuit";
 
 class Door implements GameObject {
@@ -47,7 +49,7 @@ class Door implements GameObject {
         this.asset.zIndex = 99;
         this.asset.end_col = 4;
         this.physics_object = new PhysicsObject({
-            width: this.asset.width + 10,
+            width: this.asset.width + 30,
             height: this.asset.height / 2,
             mass: Infinity,
         });
@@ -60,22 +62,33 @@ class Door implements GameObject {
     }
 }
 
+type StartArgs = Readonly<{
+    starting_pos: Vector2D
+}>
+
+type SceneState = {
+    access_puzzle: PuzzleState;
+}
+
 export default class PlayScene extends Scene {
     player?: Player;
     tilemap?: Tilemap;
     door?: Door;
     access_circuit?: AccessCircuit;
+    state: SceneState = {
+        access_puzzle: PuzzleState.notStarted,
+    }
 
     constructor() {
         super("play-scene");
         this.physics.debug = false;
     }
 
-    onStart(): void {
+    onStart(args: StartArgs): void {
         this.camera.zoom = 3;
         this.player = new Player(this);
-        this.player.body.x = -425;
-        this.player.body.y = 218;
+        this.player.body.x = args?.starting_pos?.x ?? -425;
+        this.player.body.y = args?.starting_pos?.y ?? 218;
         this.physics.addObject(this.player);
     }
 
@@ -105,9 +118,10 @@ export default class PlayScene extends Scene {
         this.door = new Door(this, "door");
         this.door.setup();
         this.door.x = -384;
-        this.door.y = 65;
+        this.door.y = 66;
         this.access_circuit.onCompleted = () => {
             this.door!.open();
+            this.state.access_puzzle = PuzzleState.completed;
         }
         const portal1 = new PhysicsObject({
             width: 300,
@@ -119,10 +133,16 @@ export default class PlayScene extends Scene {
         portal1.body.y = -360;
         portal1.onCollide = (other: RigidBody) => {
             if (other == this.player?.body) {
-                this.start("dungeon-1");
+                this.start("dungeon-1", {
+                    starting_pos: { x: -1767, y: 863 }
+                });
             }
         }
-        this.physics.addObject(portal1)
+        this.physics.addObject(portal1);
+        if (this.state.access_puzzle == PuzzleState.completed) {
+            this.access_circuit.force_solve();
+            this.door.open();
+        }
     }
 
     mousePressed(_: MouseEvent): void {

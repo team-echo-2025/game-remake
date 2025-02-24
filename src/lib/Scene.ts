@@ -74,8 +74,8 @@ export default class Scene implements GameObject {
         this._physics.scene = this;
     }
 
-    start(name: string) {
-        this._scene_manager.start(name);
+    start(name: string, args?: any) {
+        this._scene_manager.start(name, args);
     }
 
     add(object: GameObject) {
@@ -309,5 +309,5 @@ export default class Scene implements GameObject {
         this.assets = new Map();
     }
 
-    onStart() { }
+    onStart(args?: any) { }
 }

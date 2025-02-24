@@ -4,6 +4,11 @@ import RigidBody from "../lib/physics/RigidBody";
 import Player from "../lib/Player";
 import Scene from "../lib/Scene";
 import Tilemap from "../lib/tilemap/Tilemap";
+import { Vector2D } from "../lib/types/Physics";
+
+type StartArgs = Readonly<{
+    starting_pos: Vector2D
+}>
 
 export default class Dungeon1 extends Scene {
     player?: Player;
@@ -14,11 +19,11 @@ export default class Dungeon1 extends Scene {
         this.physics.debug = false;
     }
 
-    onStart(): void {
+    onStart(args?: StartArgs): void {
         this.camera.zoom = 3;
         this.player = new Player(this);
-        this.player.body.x = -1767;
-        this.player.body.y = 863;
+        this.player.body.x = args?.starting_pos?.x ?? -1767;
+        this.player.body.y = args?.starting_pos?.y ?? 863;
         this.physics.addObject(this.player);
     }
 
@@ -46,10 +51,29 @@ export default class Dungeon1 extends Scene {
         object.overlaps = true;
         object.onCollide = (other: RigidBody) => {
             if (other == this.player?.body) {
-                this.start('dungeon-2');
+                this.start('dungeon-2', {
+                    starting_pos: { x: 0, y: 348 }
+                });
             }
         }
+        const enter_portal = new PhysicsObject({
+            width: 50,
+            height: 300,
+            mass: Infinity
+        })
+        enter_portal.body.x = -1810;
+        enter_portal.body.y = 863;
+        enter_portal.overlaps = true;
+        enter_portal.onCollide = (other: RigidBody) => {
+            if (other == this.player?.body) {
+                this.start("play-scene", {
+                    starting_pos: { x: 319, y: -300 }
+                })
+            }
+        }
+
         this.physics.addObject(object);
+        this.physics.addObject(enter_portal);
     }
 
     // We may want this to be a pause menu eventually
