@@ -32,11 +32,9 @@ export default class PuzzleDevScene extends Scene {
         this.bSlide = new BlockSlide(this);
         this.lightsOn = new LightsOn(this);
 
-        this.aCircuit.hidden = true;
         this.bSlide.hidden = true;
         this.lightsOn.hidden = true;
 
-        this.add(this.aCircuit);
         this.add(this.bSlide);
         this.add(this.lightsOn);
     }
@@ -48,6 +46,8 @@ export default class PuzzleDevScene extends Scene {
 
     setup(): void {
         this.aCircuit = new AccessCircuit(this, 'puzzle', this.player);
+        this.aCircuit.hidden = true;
+        this.aCircuit?.setup();
         // difficulty settings
         this.easy = this.add_new.button({
             label: "Easy",
@@ -164,4 +164,12 @@ export default class PuzzleDevScene extends Scene {
     }
 
     onStop(): void { }
+
+    postDraw(): void {
+        this.aCircuit?.postDraw();
+    }
+
+    draw(): void {
+        this.aCircuit?.draw();
+    }
 }
