@@ -58,6 +58,15 @@ export default class WorldPhysics implements GameObject {
     }
 
     check_collision(a: RigidBody, b: RigidBody): CollisionResult | undefined {
+        if (a.overlaps) {
+            a.onOverlap && a.onOverlap(b);
+        }
+        if (b.overlaps) {
+            b.onOverlap && b.onOverlap(a);
+        }
+        if (a.overlaps || b.overlaps) {
+            return undefined;
+        };
         const distX = b.x - a.x;
         const distY = b.y - a.y;
 
@@ -190,7 +199,7 @@ export default class WorldPhysics implements GameObject {
         if (this._paused) return;
         if (!this.quad_tree) return;
         const dtSec = this._scene.p5.deltaTime / 1000;
-        this.accumulator += dtSec;
+        this.accumulator += this.accumulator >= 1 ? 0 : dtSec;
         while (this.accumulator >= this.fixedTimeStep) {
             this.quad_tree.clear();
             for (const obj of this.physic_objects) {
@@ -203,10 +212,10 @@ export default class WorldPhysics implements GameObject {
                 for (const candidate of candidates) {
                     if (candidate.data.body == obj.body) continue;
                     const collision_data = this.check_collision(obj.body, candidate.data.body);
+                    if (!this.quad_tree) { return };
                     if (collision_data) {
                         this.resolve_collision(collision_data);
                     }
-
                 }
             }
             this.accumulator -= this.fixedTimeStep;

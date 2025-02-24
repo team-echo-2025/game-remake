@@ -111,7 +111,6 @@ export default class Tilemap implements GameObject {
     async preload(): Promise<any> { }
 
     setup(): void {
-        console.log("Loaded")
         this.tilemap = this._scene.get_asset(this.tilemap_key);
         this._tilewidth = this.tilemap.getNum('tilewidth')
         this._tileheight = this.tilemap.getNum('tileheight')
@@ -124,7 +123,11 @@ export default class Tilemap implements GameObject {
                 const tileset = new Tileset({ tileset_ref: item, tileset_key: `${this.tilemap_key}/${source}`, scene: this._scene })
                 tileset.setup();
                 this._tilesets.push(tileset)
-            } else if (name == "layer") {
+            }
+        }
+        for (let item of this.tilemap!.getChildren()) {
+            const name = item.getName();
+            if (name == "layer") {
                 const layer = new TLayer({ layer: item, scene: this._scene, tilemap: this });
                 layer.x = this._x;
                 layer.y = this._y;
@@ -149,33 +152,35 @@ export default class Tilemap implements GameObject {
             }
         }
 
-        this._width = this.maxx - this.minx + this.chunk_size;
-        this._height = this.maxy - this.miny + this.chunk_size;
+        this._width = this.maxx - this.minx;
+        this._height = this.maxy - this.miny;
+        console.log(this.minx, this.maxx)
+        console.log("SETUP")
 
         this.buffer = this._scene.p5.createFramebuffer({
-            width: this._width * this._tilewidth,
-            height: this._height * this._tileheight,
-            stencil: false,
-            depth: false,
+            width: this._width,
+            height: this._height,
         })!;
         this.player_buffer = this._scene.p5.createFramebuffer({
-            width: this._width * this._tilewidth,
-            height: this._height * this._tileheight,
-            stencil: false,
-            depth: false,
+            width: this._width,
+            height: this._height,
         })!;
-        this.buffer.begin();
-        this._scene.p5.rect(0, 0, this.width * this.tilewidth, this.height * this.tileheight);
-        this.buffer.end();
 
         for (const layer of this.layers) {
             layer.prerender();
-            this._scene.add(layer);
         }
-        const tilemap_buffer = new TilemapBuffer(this.x, this.y, this.width * this.tilewidth, this.height * this.tileheight, this.buffer, this._scene);
+        const tilemap_buffer = new TilemapBuffer(this.x, this.y, this.width, this.height, this.buffer, this._scene);
         this._scene.add(tilemap_buffer);
-        const player_buffer = new TilemapBuffer(this.x, this.y, this.width * this.tilewidth, this.height * this.tileheight, this.player_buffer, this._scene);
+        const player_buffer = new TilemapBuffer(this.x, this.y, this.width, this.height, this.player_buffer, this._scene);
+        this.player_buffer.begin();
         player_buffer.zIndex = 100;
         this._scene.add(player_buffer);
+        this._scene.p5.push();
+        this._scene.p5.rectMode("corner");
+        this._scene.p5.noFill();
+        this._scene.p5.stroke(255, 0, 0);
+        this._scene.p5.rect(this.x - this._width / 2, this.y - this._height / 2, this._width, this._height);
+        this._scene.p5.pop();
+        this.player_buffer.end();
     }
 }

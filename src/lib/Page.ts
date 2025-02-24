@@ -17,6 +17,8 @@ export default class Page implements GameObject {
 
     draw(): void { }
 
+    postDraw(): void { }
+
     set_page(page_name: string): void {
         if (this.page_manager) {
             this.page_manager.set_page(page_name);

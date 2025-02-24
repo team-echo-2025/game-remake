@@ -88,7 +88,7 @@ export default class Button implements GameObject {
         this._height = this.scene.p5.textAscent() + this.scene.p5.textDescent() + this.padding_y;
     }
 
-    draw(): void {
+    postDraw(): void {
         this._draw();
     }
 
