@@ -1,118 +1,180 @@
+import GameObject from "../lib/GameObject";
+import PhysicsObject, { PhysicsObjectProps } from "../lib/physics/PhysicsObject";
+import Rectangle from "../lib/physics/Rectangle";
+import RigidBody from "../lib/physics/RigidBody";
 import Player from "../lib/Player";
+import { PuzzleState } from "../lib/Puzzle";
 import Scene from "../lib/Scene";
-import AccessCircuit from "../puzzles/AccessCircuit/AccessCircuit";
-import BlockSlide from "../puzzles/BlockSlide/BlockSlide";
+import Spritesheet from "../lib/Spritesheet";
 import Tilemap from "../lib/tilemap/Tilemap";
-import ButtonTest from "../lib/ui/ButtonTest";
+import { Vector2D } from "../lib/types/Physics";
+import AccessCircuit from "../puzzles/AccessCircuit/AccessCircuit";
+
+class Door implements GameObject {
+    private _x: number = 0;
+    private _y: number = 0;
+    zIndex?: number | undefined = 102;
+    asset_key: string;
+    asset!: Spritesheet;
+    scene: Scene;
+    physics_object!: PhysicsObject;
+
+    get x() {
+        return this._x;
+    }
+
+    set x(_x: number) {
+        this._x = _x;
+        this.asset.x = _x;
+        this.physics_object.body.x = this.x;
+    }
+
+    get y() {
+        return this._y;
+    }
+
+    set y(_y: number) {
+        this._y = _y;
+        this.asset.y = _y;
+        this.physics_object.body.y = this.y - 10;
+    }
+
+    constructor(scene: Scene, door_key: string) {
+        this.asset_key = door_key;
+        this.scene = scene;
+    }
+
+    setup() {
+        this.asset = this.scene.add_new.spritesheet(this.asset_key, 8, 1, 500);
+        this.asset.zIndex = 99;
+        this.asset.end_col = 4;
+        this.physics_object = new PhysicsObject({
+            width: this.asset.width + 30,
+            height: this.asset.height / 2,
+            mass: Infinity,
+        });
+        this.scene.physics.addObject(this.physics_object);
+    }
+
+    open() {
+        this.asset.once(true);
+        this.scene.physics.remove(this.physics_object);
+    }
+}
+
+type StartArgs = Readonly<{
+    starting_pos: Vector2D
+}>
+
+type SceneState = {
+    access_puzzle: PuzzleState;
+}
 
 export default class PlayScene extends Scene {
     player?: Player;
     tilemap?: Tilemap;
-    aCircuit!: AccessCircuit;
-    bSlide!: BlockSlide;
-    aCircuitButton!: ButtonTest;
-    bSlideButton!: ButtonTest;
+    door?: Door;
+    access_circuit?: AccessCircuit;
+    state: SceneState = {
+        access_puzzle: PuzzleState.notStarted,
+    }
 
     constructor() {
         super("play-scene");
+        this.physics.debug = false;
     }
 
-    onStart(): void {
-        //this.physics.debug = true;
+    onStart(args: StartArgs): void {
+        this.camera.zoom = 3;
         this.player = new Player(this);
+        this.player.body.x = args?.starting_pos?.x ?? -425;
+        this.player.body.y = args?.starting_pos?.y ?? 218;
         this.physics.addObject(this.player);
-        this.aCircuit = new AccessCircuit(this);
-        this.bSlide = new BlockSlide(this);
-        this.aCircuit.hidden = true;
-        this.bSlide.hidden = true;
-        this.add(this.aCircuit);
-        this.add(this.bSlide);
     }
 
     preload(): any {
         this.loadFont("jersey", "assets/fonts/jersey.ttf");
-        this.loadTilemap("tilemap", "assets/tilemaps/first-tilemap/outside.tmx")
+        this.loadTilemap("tilemap", "assets/tilemaps/LaythsTileMap/world-1.tmx")
+        this.loadImage("door", "assets/doors/prison_door.png");
+        this.loadImage("puzzle", "assets/access_circuit.png");
+        this.loadImage("broken-puzzle", "assets/access_circuit_broken.png");
+        this.loadImage("success-puzzle", "assets/access_circuit_success.png");
     }
 
     setup(): void {
-        this.aCircuitButton = this.add_new.button({
-            label: "Access Circuit",
-            font_key: "jersey",
-            callback: () => {
-                this.aCircuit.hidden = false;
-            }
-        });
-        this.bSlideButton = this.add_new.button({
-            label: "Block Slide",
-            font_key: "jersey",
-            callback: () => {
-                this.bSlide.hidden = false;
-            }
-        });
-        this.bSlideButton.y = 100;
+        this.access_circuit = new AccessCircuit(this, 'puzzle', this.player!);
+        this.access_circuit.x = -280;
+        this.access_circuit.y = 70;
+        this.access_circuit?.setup();
+        this.access_circuit.asset.zIndex = 101;
+
         this.tilemap = this.add_new.tilemap({
             tilemap_key: "tilemap",
         })
+        const offsetX = 32;
+        const offsetY = 32;
+        this.bounds = new Rectangle({ x: this.tilemap.x + offsetX / 2 - 16, y: this.tilemap.y + offsetY / 2, w: this.tilemap.width - offsetX - 32, h: this.tilemap.height - offsetX });
+
+        this.door = new Door(this, "door");
+        this.door.setup();
+        this.door.x = -384;
+        this.door.y = 66;
+        this.access_circuit.onCompleted = () => {
+            this.door!.open();
+            this.state.access_puzzle = PuzzleState.completed;
+        }
+        const portal1 = new PhysicsObject({
+            width: 300,
+            height: 32,
+            mass: Infinity,
+        })
+        portal1.overlaps = true;
+        portal1.body.x = 350;
+        portal1.body.y = -360;
+        portal1.onCollide = (other: RigidBody) => {
+            if (other == this.player?.body) {
+                this.start("dungeon-1", {
+                    starting_pos: { x: -1767, y: 863 }
+                });
+            }
+        }
+        this.physics.addObject(portal1);
+        if (this.state.access_puzzle == PuzzleState.completed) {
+            this.access_circuit.force_solve();
+            this.door.open();
+        }
     }
+
+    mousePressed(_: MouseEvent): void {
+        this.access_circuit?.mousePressed();
+    }
+
+    mouseReleased(_: MouseEvent): void {
+        this.access_circuit?.mouseReleased();
+    }
+
+
 
     // We may want this to be a pause menu eventually
     keyPressed = (e: KeyboardEvent) => {
-        if (e.key == "Escape" && !this.aCircuit.hidden) {
-            this.aCircuit.hidden = true;
-        } else if (e.key === "Escape") {
+        this.access_circuit?.keyPressed(e);
+        if (e.key === "Escape") {
             this.start("menu-scene");
         }
     };
 
-    mouseClicked(_: MouseEvent): void {
-        if (this.player?.shooting) return;
-        const obj = this.physics.raycast();
-        if (obj) {
-            this.physics.remove(obj);
-        }
-    }
-
-    memorySizeOf(obj: any) {
-        var bytes = 0;
-
-        function sizeOf(obj: any) {
-            if (obj !== null && obj !== undefined) {
-                switch (typeof obj) {
-                    case "number":
-                        bytes += 8;
-                        break;
-                    case "string":
-                        bytes += obj.length * 2;
-                        break;
-                    case "boolean":
-                        bytes += 4;
-                        break;
-                    case "object":
-                        var objClass = Object.prototype.toString.call(obj).slice(8, -1);
-                        if (objClass === "Object" || objClass === "Array") {
-                            for (var key in obj) {
-                                if (!obj.hasOwnProperty(key)) continue;
-                                sizeOf(obj[key]);
-                            }
-                        } else bytes += obj.toString().length * 2;
-                        break;
-                }
-            }
-            return bytes;
-        }
-
-        function formatByteSize(bytes: any) {
-            if (bytes < 1024) return bytes + " bytes";
-            else if (bytes < 1048576) return (bytes / 1024).toFixed(3) + " KiB";
-            else if (bytes < 1073741824) return (bytes / 1048576).toFixed(3) + " MiB";
-            else return (bytes / 1073741824).toFixed(3) + " GiB";
-        }
-
-        return formatByteSize(sizeOf(obj));
-    }
-
     onStop(): void {
         this.player = undefined;
         this.tilemap = undefined;
+        this.door = undefined;
+        this.access_circuit = undefined;
+    }
+
+    postDraw(): void {
+        this.access_circuit?.postDraw();
+    }
+
+    draw(): void {
+        this.access_circuit?.draw();
     }
 }

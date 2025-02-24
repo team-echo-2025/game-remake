@@ -10,10 +10,12 @@ export enum PuzzleState {
 }
 
 export default class Puzzle implements GameObject {
+    protected _zIndex?: number | undefined = 1000;
     hidden?: boolean = false;
     scene!: Scene;
     puzzle!: Page;
     state!: PuzzleState;
+    onCompleted?: () => void;
     static difficulty: string;
 
     constructor(scene: Scene) {
@@ -21,11 +23,23 @@ export default class Puzzle implements GameObject {
         this.scene = scene;
     }
 
+    set zIndex(n: number) {
+        this._zIndex = n;
+        this.scene.update_zindex();
+    }
+
+    get zIndex(): number | undefined {
+        return this._zIndex;
+    }
+
+
     async preload(): Promise<void> { }
 
     setup(): void { }
 
     draw(): void { }
+
+    postDraw(): void { }
 
     mouseClicked(_: MouseEvent): void { }
 
