@@ -10,13 +10,13 @@ export default class MenuPage extends Page {
     credits!: ButtonTest;
     physicsTest!: ButtonTest;
     puzzleTest!: ButtonTest;
+    button_sfx!: Sound;
     dropdown!: DropdownMenu;
 
     constructor() {
         super("menu-page")
     }
     preload(): any {
-        this.scene.loadFont('jersey', 'assets/fonts/jersey.ttf')
     }
     cleanup() {
         this.scene.remove(this.play);
@@ -27,7 +27,7 @@ export default class MenuPage extends Page {
         this.scene.remove(this.physicsTest);
         this.scene.remove(this.puzzleTest);
     }
-    setup(): void {
+        this.button_sfx = this.scene.add_new.sound("button_sfx")
         const button1: ButtonTestProps = {
             label: "Scene 1",
             font_key: "jersey",
@@ -59,6 +59,7 @@ export default class MenuPage extends Page {
             label: "Play!",
             font_key: 'jersey',
             callback: () => {
+                this.button_sfx.play();
                 this.cleanup()
                 this.set_page('world-select-page')
             }
@@ -69,6 +70,7 @@ export default class MenuPage extends Page {
             label: "Settings",
             font_key: 'jersey',
             callback: () => {
+                this.button_sfx.play();
                 this.cleanup();
                 this.set_page("settings-page");
             }
@@ -79,6 +81,7 @@ export default class MenuPage extends Page {
             label: "Character Customization",
             font_key: 'jersey',
             callback: () => {
+                this.button_sfx.play();
                 this.cleanup();
                 this.set_page("settings-page");
             }
@@ -89,6 +92,7 @@ export default class MenuPage extends Page {
             label: "KD DEV",
             font_key: "jersey",
             callback: () => {
+                this.button_sfx.play();
                 this.cleanup()
                 this.scene.start("kd-dev-scene")
             }
@@ -99,6 +103,7 @@ export default class MenuPage extends Page {
             label: "Credits",
             font_key: "jersey",
             callback: () => {
+                this.button_sfx.play();
                 this.cleanup();
                 this.set_page("credits-page");
             }
@@ -110,6 +115,7 @@ export default class MenuPage extends Page {
                 label: "Physics",
                 font_key: "jersey",
                 callback: () => {
+                    this.button_sfx.play();
                     this.cleanup();
                     this.scene.start("physics-scene");
                 }
@@ -117,6 +123,16 @@ export default class MenuPage extends Page {
         this.physicsTest.x = 150
         this.physicsTest.y = 300
         this.puzzleTest = this.scene.add_new.button
+        ({
+            label: "Puzzles",
+            font_key: "jersey",
+            callback: () =>
+            {
+                this.button_sfx.play();
+                this.cleanup();
+                this.scene.start("puzzle-dev-scene");
+            }
+        })
             ({
                 label: "Puzzles",
                 font_key: "jersey",
