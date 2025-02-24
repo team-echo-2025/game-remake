@@ -2,7 +2,6 @@ import { XML } from "p5";
 import Tile from "./Tile";
 import Scene from "../Scene";
 import Tilemap from "./Tilemap";
-import { Vector2D } from "../types/Physics";
 
 export default class TLayerChunk {
     data: number[];
@@ -19,6 +18,7 @@ export default class TLayerChunk {
     maxx: number = 0;
     miny: number = 0;
     maxy: number = 0;
+    layers: TLayerChunk[] = [];
 
     constructor(chunk: XML, tilemap: Tilemap, scene: Scene, topmost?: boolean) {
         this.data = chunk.getContent().split(',').map(item => parseInt(item));
@@ -30,6 +30,7 @@ export default class TLayerChunk {
         this.tilemap = tilemap;
         this.topmost = topmost ?? false;
     }
+
     precalculate() {
         for (const row of this.tiles) {
             for (const tile of row) {
@@ -47,6 +48,7 @@ export default class TLayerChunk {
             }
         }
     }
+
     prerender() {
         if (this.topmost) {
             this.tilemap.player_buffer.begin();
@@ -69,6 +71,20 @@ export default class TLayerChunk {
             this.tilemap.player_buffer.end();
         } else {
             this.tilemap.buffer.end();
+        }
+        for (const layer of this.layers) {
+            layer.prerender();
+        }
+    }
+
+    merge_chunk(chunk: TLayerChunk) {
+        this.layers.push(chunk);
+    }
+
+
+    load_bodies() {
+        for (const layer of this.layers) {
+            layer.load_bodies();
         }
     }
 }
