@@ -2,7 +2,6 @@ import { XML } from "p5";
 import Tile from "./Tile";
 import Scene from "../Scene";
 import Tilemap from "./Tilemap";
-import { Vector2D } from "../types/Physics";
 
 export default class TLayerChunk {
     data: number[];
@@ -69,6 +68,16 @@ export default class TLayerChunk {
             this.tilemap.player_buffer.end();
         } else {
             this.tilemap.buffer.end();
+        }
+    }
+
+    merge_chunk(chunk: TLayerChunk) {
+        console.log(chunk, this);
+        for (const row of chunk.tiles) {
+            for (const tile of row) {
+                if (!tile) continue;
+                this.tiles[tile.y][tile.x] = tile;
+            }
         }
     }
 }

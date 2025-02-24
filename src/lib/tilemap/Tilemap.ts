@@ -4,6 +4,7 @@ import Scene from "../Scene";
 import Tileset from "./Tileset";
 import TLayer from "./TLayer";
 import { Vector2D } from "../types/Physics";
+import TLayerChunk from "./TLayerChunk";
 
 export type TilemapProps = Readonly<{
     tilemap_key: string;
@@ -48,13 +49,14 @@ export default class Tilemap implements GameObject {
     private _tileheight!: number;
     private _x: number;
     private _y: number;
+    chunks: Map<string, TLayerChunk> = new Map();
     buffer!: Framebuffer;
     player_buffer!: Framebuffer;
     minx: number = 0;
     maxx: number = 0;
     miny: number = 0;
     maxy: number = 0;
-    loaded_chunks: number = 0;
+    loaded_chunks: number;
     chunk_offset: Vector2D = { x: 0, y: 0 };
     chunk_size: number = 16;
 
@@ -169,8 +171,17 @@ export default class Tilemap implements GameObject {
             depth: false,
         })!;
 
-        for (const layer of this.layers) {
-            layer.prerender();
+        console.log("hello", this.loaded_chunks);
+        console.log(this.chunks);
+        for (let i = 0; i < this.loaded_chunks; i++) {
+            for (let j = 0; j < this.loaded_chunks; j++) {
+                console.log(i * (this.chunk_size - 1), j * (this.chunk_size - 1));
+                const vec: Vector2D = ({ x: 0, y: 0 });
+                console.log(vec);
+                const chunk = this.chunks.get(vec.x + ":" + vec.y);
+                console.log(chunk, "hello");
+                chunk?.prerender();
+            }
         }
         const tilemap_buffer = new TilemapBuffer(this.x, this.y, this.width, this.height, this.buffer, this._scene);
         this._scene.add(tilemap_buffer);

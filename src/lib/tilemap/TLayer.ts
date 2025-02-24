@@ -59,7 +59,6 @@ export default class TLayer {
 
     setup_chunks(data: XML[]) {
         this.chunks = [];
-
         for (let child of data) {
             let chunk = this.is_collider
                 ? new TLayerColliderChunk(child, this.tilemap, this.scene)
@@ -135,14 +134,20 @@ export default class TLayer {
             this.tilemap.miny = Math.min(this.tilemap.miny, chunk.miny);
             this.tilemap.maxx = Math.max(this.tilemap.maxx, chunk.maxx);
             this.tilemap.maxy = Math.max(this.tilemap.maxy, chunk.maxy);
+            let found = this.tilemap.chunks.get(chunk.x + ":" + chunk.y);
+            if (found) {
+                found.merge_chunk(chunk);
+            } else {
+                this.tilemap.chunks.set(chunk.x + ":" + chunk.y, chunk);
+            }
         }
         this.width = this.maxx - this.minx;
         this.height = this.maxy - this.miny;
     }
 
     prerender(): void {
-        for (const chunk of this.chunks) {
-            chunk.prerender();
-        }
+        //for (const chunk of this.chunks) {
+        //    chunk.prerender();
+        //}
     }
 }

@@ -6,12 +6,15 @@ export default class WorldSelectPage extends Page {
     w2?: ButtonTest;
     w3?: ButtonTest;
     back!: ButtonTest;
+
     constructor() {
         super("world-select-page")
     }
+
     preload(): any {
         this.scene.loadFont('jersey', 'assets/fonts/jersey.ttf')
     }
+
     cleanup = () => {
         this.w1 && this.scene.remove(this.w1);
         this.w2 && this.scene.remove(this.w2);
@@ -21,6 +24,7 @@ export default class WorldSelectPage extends Page {
         this.w2 = undefined;
         this.w3 = undefined;
     }
+
     setup(): void {
         this.w1 = this.scene.add_new.button({
             label: "World 1",
