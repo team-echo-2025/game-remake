@@ -155,18 +155,15 @@ export default class Tilemap implements GameObject {
         this._width = this.maxx - this.minx;
         this._height = this.maxy - this.miny;
         console.log(this.minx, this.maxx)
+        console.log("SETUP")
 
         this.buffer = this._scene.p5.createFramebuffer({
             width: this._width,
             height: this._height,
-            stencil: false,
-            depth: false,
         })!;
         this.player_buffer = this._scene.p5.createFramebuffer({
             width: this._width,
             height: this._height,
-            stencil: false,
-            depth: false,
         })!;
 
         for (const layer of this.layers) {

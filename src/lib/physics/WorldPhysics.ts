@@ -199,7 +199,7 @@ export default class WorldPhysics implements GameObject {
         if (this._paused) return;
         if (!this.quad_tree) return;
         const dtSec = this._scene.p5.deltaTime / 1000;
-        this.accumulator += dtSec;
+        this.accumulator += this.accumulator >= 1 ? 0 : dtSec;
         while (this.accumulator >= this.fixedTimeStep) {
             this.quad_tree.clear();
             for (const obj of this.physic_objects) {
