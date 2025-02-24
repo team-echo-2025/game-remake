@@ -3,7 +3,9 @@ import GameObject from "../GameObject";
 import Scene from "../Scene";
 import Tileset from "./Tileset";
 import TLayer from "./TLayer";
+import TLayerChunk from "./TLayerChunk";
 import { Vector2D } from "../types/Physics";
+import TLayerColliderChunk from "./TLayerColliderChunk";
 
 export type TilemapProps = Readonly<{
     tilemap_key: string;
@@ -54,9 +56,7 @@ export default class Tilemap implements GameObject {
     maxx: number = 0;
     miny: number = 0;
     maxy: number = 0;
-    loaded_chunks: number = 0;
-    chunk_offset: Vector2D = { x: 0, y: 0 };
-    chunk_size: number = 16;
+    chunks: Map<string, TLayerChunk> = new Map();
 
     get x() {
         return this._x;
@@ -104,11 +104,13 @@ export default class Tilemap implements GameObject {
         this._y = props.y ?? 0;
         this._tilesets = [];
         this.layers = [];
-        this.loaded_chunks = props.loaded_chunks ?? 3;
-        this.chunk_size = props.chunk_size ?? this.chunk_size;
     }
 
     async preload(): Promise<any> { }
+
+    key_for = (vec: Vector2D) => {
+        return `${vec.x}:${vec.y}`;
+    }
 
     setup(): void {
         this.tilemap = this._scene.get_asset(this.tilemap_key);
@@ -166,9 +168,6 @@ export default class Tilemap implements GameObject {
             height: this._height,
         })!;
 
-        for (const layer of this.layers) {
-            layer.prerender();
-        }
         const tilemap_buffer = new TilemapBuffer(this.x, this.y, this.width, this.height, this.buffer, this._scene);
         this._scene.add(tilemap_buffer);
         const player_buffer = new TilemapBuffer(this.x, this.y, this.width, this.height, this.player_buffer, this._scene);
@@ -182,5 +181,28 @@ export default class Tilemap implements GameObject {
         this._scene.p5.rect(this.x - this._width / 2, this.y - this._height / 2, this._width, this._height);
         this._scene.p5.pop();
         this.player_buffer.end();
+
+        console.log(this.chunks);
+        for (const [_, chunk] of this.chunks) {
+            chunk.load_bodies();
+        }
+        setInterval(() => {
+            const CHUNK_PIXEL_WIDTH = 16 * this.tilewidth;  // 16×32
+            const CHUNK_PIXEL_HEIGHT = 16 * this.tileheight; // 16×32
+            const cam_chunkx = Math.floor(this._scene.camera.x / CHUNK_PIXEL_WIDTH);
+            const cam_chunky = Math.floor(this._scene.camera.y / CHUNK_PIXEL_HEIGHT);
+            for (let row = cam_chunky - 1; row < cam_chunky + 1; row++) {
+                for (let col = cam_chunkx - 1; col < cam_chunkx + 1; col++) {
+                    console.log(col * 16, row * 16);
+                    const chunk = this.chunks.get(this.key_for({ x: col * 16 + 16, y: row * 16 + 16 }))
+                    chunk?.prerender();
+                }
+            }
+            console.log(cam_chunkx, cam_chunky)
+            //for (const [_, chunk] of this.chunks.entries()) {
+            //    chunk.prerender();
+            //}
+
+        }, 1000)
     }
 }

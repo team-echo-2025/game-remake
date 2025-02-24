@@ -131,6 +131,16 @@ export default class TLayer {
         }
         for (const chunk of this.chunks) {
             chunk.precalculate();
+            if (chunk instanceof TLayerColliderChunk) {
+                console.log("HTIRSNIETRNSOITNRISNTERISNTRSTNRSINTRSEINTRSNTOINREOISNTRISENTEIN")
+                chunk.prerender();
+            }
+            const found = this.tilemap.chunks.get(this.tilemap.key_for({ x: chunk.x, y: chunk.y }))
+            if (found) {
+                found.merge_chunk(chunk);
+            } else {
+                this.tilemap.chunks.set(this.tilemap.key_for({ x: chunk.x, y: chunk.y }), chunk);
+            }
             this.tilemap.minx = Math.min(this.tilemap.minx, chunk.minx);
             this.tilemap.miny = Math.min(this.tilemap.miny, chunk.miny);
             this.tilemap.maxx = Math.max(this.tilemap.maxx, chunk.maxx);
@@ -140,9 +150,9 @@ export default class TLayer {
         this.height = this.maxy - this.miny;
     }
 
-    prerender(): void {
-        for (const chunk of this.chunks) {
-            chunk.prerender();
-        }
-    }
+//prerender(): void {
+//    for (const chunk of this.chunks) {
+//        chunk.prerender();
+//    }
+//}
 }

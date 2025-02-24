@@ -6,13 +6,18 @@ import PhysicsObject from "../physics/PhysicsObject";
 
 export default class TLayerColliderChunk extends TLayerChunk {
     bodies: PhysicsObject[] = [];
+
     constructor(chunk: XML, tilemap: Tilemap, scene: Scene) {
         super(chunk, tilemap, scene)
     }
+
     precalculate() {
         super.precalculate()
     }
+
     prerender() {
+        if (this.bodies.length != 0) return
+        console.log("RSEIITNRIENSTIRSI")
         for (const row of this.tiles) {
             for (const tile of row) {
                 if (!tile) continue;
@@ -27,9 +32,17 @@ export default class TLayerColliderChunk extends TLayerChunk {
                 y -= this.tilemap.height / 2;
                 obj.body.x = x + tile.image.width / 2;
                 obj.body.y = y + tile.image.height / 2;
-                this.scene.physics.addObject(obj)
+                //this.scene.physics.addObject(obj)
                 this.bodies.push(obj);
             }
+        }
+    }
+
+    load_bodies() {
+        console.log("BODIES", this.bodies.length);
+        for (const body of this.bodies) {
+            this.scene.physics.addObject(body);
+            console.log(body);
         }
     }
 }
