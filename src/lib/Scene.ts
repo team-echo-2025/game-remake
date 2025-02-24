@@ -24,11 +24,10 @@ export default class Scene implements GameObject {
     private display_frames = 0;
 
     get mouseX() {
-        return this.p5.mouseX + this.camera.x - this.p5.width / 2;
+        return (this.p5.mouseX / this._camera.zoom) + this.camera.x - (this.p5.width / 2) / this._camera.zoom;
     }
-
     get mouseY() {
-        return this.p5.mouseY + this.camera.y - this.p5.height / 2;
+        return (this.p5.mouseY / this._camera.zoom) + this.camera.y - (this.p5.height / 2) / this._camera.zoom;
     }
 
     get bounds() {
@@ -68,7 +67,6 @@ export default class Scene implements GameObject {
         if (name.length <= 0) {
             throw new Error("Scene name not specified.");
         }
-        //this._bounds = new Rectangle({ x: 0, y: 0, w: window.innerWidth, h: window.innerHeight });
         this._bounds = new Rectangle({ x: 0, y: 0, w: Infinity, h: Infinity });
         this.game_object_factory = new GameObjectFactory(this);
         this._camera = new Camera(this);
@@ -77,8 +75,8 @@ export default class Scene implements GameObject {
         this._physics.scene = this;
     }
 
-    start(name: string) {
-        this._scene_manager.start(name);
+    start(name: string, args?: any) {
+        this._scene_manager.start(name, args);
     }
 
     add(object: GameObject) {
@@ -244,6 +242,7 @@ export default class Scene implements GameObject {
 
     setup(): void { }
     setup_objects(): void {
+        this._camera.setup();
         this._physics.setup();
         for (const obj of this.objects) {
             obj.setup && obj.setup();
@@ -337,5 +336,5 @@ export default class Scene implements GameObject {
         this.assets = new Map();
     }
 
-    onStart() { }
+    onStart(args?: any) { }
 }
