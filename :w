@@ -31,10 +31,9 @@ class TilemapBuffer implements GameObject {
         this.scene = scene;
     }
     draw(): void {
-        this.scene.p5.push();
-        this.scene.p5.translate(-this.width / 2, - this.height / 2);
-        this.scene.p5.image(this.buffer, this.x, this.y);
-        this.scene.p5.pop();
+        const x = this.x - this.width / 2
+        const y = this.y - this.height / 2;
+        this.scene.p5.image(this.buffer, x, y);
     }
 }
 
@@ -190,9 +189,6 @@ export default class Tilemap implements GameObject {
 
         console.log(this.chunks);
         this.load_chunks();
-        //for (const [_, chunk] of this.chunks) {
-        //    chunk.load(this.buffer);
-        //}
     }
 
     draw(): void {
@@ -205,8 +201,8 @@ export default class Tilemap implements GameObject {
     get_camera_index = (): Vector2D => {
         const CHUNK_PIXEL_WIDTH = 16 * this.tilewidth;  // 16×32
         const CHUNK_PIXEL_HEIGHT = 16 * this.tileheight; // 16×32
-        const cam_chunkx = Math.floor((this._scene.camera.x - this.minx) / CHUNK_PIXEL_WIDTH);
-        const cam_chunky = Math.floor((this._scene.camera.y - this.miny) / CHUNK_PIXEL_HEIGHT);
+        const cam_chunkx = Math.floor((this._scene.camera.x + this.minx) / CHUNK_PIXEL_WIDTH);
+        const cam_chunky = Math.floor((this._scene.camera.y + this.miny) / CHUNK_PIXEL_HEIGHT);
         return { x: cam_chunkx, y: cam_chunky };
     }
 
@@ -215,13 +211,10 @@ export default class Tilemap implements GameObject {
             loaded_chunk.unload();
         }
         this._loaded_chunks = [];
-        const cam_chunksx = Math.floor(this._scene.camera.bounds.halfWidth * 2 / (16 * this.tilewidth));
-        const cam_chunksy = Math.floor(this._scene.camera.bounds.halfHeight * 2 / (16 * this.tilewidth));
-        console.log(cam_chunksx, cam_chunksy);
         const { x: cam_chunkx, y: cam_chunky } = this.get_camera_index();
         this._current_chunk_index = { x: cam_chunkx, y: cam_chunky };
-        for (let row = cam_chunky - cam_chunksy / 2; row <= cam_chunky + cam_chunksy / 2; row++) {
-            for (let col = cam_chunkx - cam_chunksx / 2; col <= cam_chunkx + cam_chunksx / 2; col++) {
+        for (let row = cam_chunky; row <= cam_chunky; row++) {
+            for (let col = cam_chunkx; col <= cam_chunkx; col++) {
                 const chunk = this.chunks.get(this.key_for({ x: col * 16, y: row * 16 }))
                 if (chunk && !chunk.loaded) {
                     chunk.load(this.buffer);

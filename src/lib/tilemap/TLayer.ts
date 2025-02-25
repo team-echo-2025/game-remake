@@ -145,10 +145,4 @@ export default class TLayer {
         this.width = this.maxx - this.minx;
         this.height = this.maxy - this.miny;
     }
-
-//prerender(): void {
-//    for (const chunk of this.chunks) {
-//        chunk.prerender();
-//    }
-//}
 }
