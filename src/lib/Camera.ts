@@ -18,6 +18,10 @@ export default class Camera {
         return this._zoom;
     }
 
+    get bounds() {
+        return this._bounds;
+    }
+
     constructor(scene: Scene) {
         this.scene = scene;
     }
