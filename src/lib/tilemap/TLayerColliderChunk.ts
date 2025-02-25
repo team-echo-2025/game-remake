@@ -1,4 +1,4 @@
-import { XML } from "p5";
+import { Framebuffer, Graphics, XML } from "p5";
 import Scene from "../Scene";
 import Tilemap from "./Tilemap";
 import TLayerChunk from "./TLayerChunk";
@@ -15,9 +15,14 @@ export default class TLayerColliderChunk extends TLayerChunk {
         super.precalculate()
     }
 
-    prerender() {
-        if (this.bodies.length != 0) return
-        console.log("RSEIITNRIENSTIRSI")
+    load(buffer: Framebuffer) {
+        if (this.bodies.length != 0) {
+            this.loaded = true;
+            for (const layer of this.layers) {
+                layer.load(buffer);
+            }
+            return
+        }
         for (const row of this.tiles) {
             for (const tile of row) {
                 if (!tile) continue;
@@ -32,17 +37,23 @@ export default class TLayerColliderChunk extends TLayerChunk {
                 y -= this.tilemap.height / 2;
                 obj.body.x = x + tile.image.width / 2;
                 obj.body.y = y + tile.image.height / 2;
-                //this.scene.physics.addObject(obj)
+                this.scene.physics.addObject(obj)
                 this.bodies.push(obj);
             }
         }
+        for (const layer of this.layers) {
+            layer.load(buffer);
+        }
+        this.loaded = true;
     }
 
-    load_bodies() {
-        console.log("BODIES", this.bodies.length);
-        for (const body of this.bodies) {
-            this.scene.physics.addObject(body);
-            console.log(body);
+    unload(): void {
+        for (const layer of this.layers) {
+            layer.unload();
         }
+        for (const body of this.bodies) {
+            this.scene.physics.remove(body);
+        }
+        this.loaded = false;
     }
 }

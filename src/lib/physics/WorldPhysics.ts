@@ -221,6 +221,7 @@ export default class WorldPhysics implements GameObject {
             this.accumulator -= this.fixedTimeStep;
         }
         if (this._debug) {
+            this._scene.p5.push();
             for (const obj of this.physic_objects) {
                 this._scene.p5.rectMode("center");
                 this._scene.p5.stroke(255, 0, 0);
@@ -240,6 +241,7 @@ export default class WorldPhysics implements GameObject {
             }
             this._scene.p5.stroke(0);
             this.quad_tree.debug_draw(this._scene);
+            this._scene.p5.pop();
         }
     }
 
@@ -270,5 +272,14 @@ export default class WorldPhysics implements GameObject {
         this.physic_objects = [];
         this.quad_tree = undefined;
         document.removeEventListener('visibilitychange', this.handle_visibility_change);
+    }
+
+    postDraw(): void {
+        if (this._debug) {
+            this._scene.p5.push();
+            this._scene.p5.fill(0)
+            this._scene.p5.text("Loaded Bodies: " + this.physic_objects.length, 20 - this._scene.p5.width / 2, 80 - this._scene.p5.height / 2);
+            this._scene.p5.pop();
+        }
     }
 }

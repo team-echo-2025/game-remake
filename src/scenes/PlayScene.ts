@@ -1,5 +1,5 @@
 import GameObject from "../lib/GameObject";
-import PhysicsObject, { PhysicsObjectProps } from "../lib/physics/PhysicsObject";
+import PhysicsObject from "../lib/physics/PhysicsObject";
 import Rectangle from "../lib/physics/Rectangle";
 import RigidBody from "../lib/physics/RigidBody";
 import Player from "../lib/Player";
