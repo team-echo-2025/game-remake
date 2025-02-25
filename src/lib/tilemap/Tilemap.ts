@@ -50,6 +50,8 @@ export default class Tilemap implements GameObject {
     private _tileheight!: number;
     private _x: number;
     private _y: number;
+    private _current_chunk_index: Vector2D = { x: 0, y: 0 };
+    private _loaded_chunks: TLayerChunk[] = [];
     buffer!: Framebuffer;
     player_buffer!: Framebuffer;
     minx: number = 0;
@@ -183,26 +185,43 @@ export default class Tilemap implements GameObject {
         this.player_buffer.end();
 
         console.log(this.chunks);
-        for (const [_, chunk] of this.chunks) {
-            chunk.load_bodies();
+        this.load_chunks();
+    }
+
+    draw(): void {
+        const { x, y } = this.get_camera_index();
+        if (x != this._current_chunk_index.x || y != this._current_chunk_index.y) {
+            this.load_chunks();
         }
-        setInterval(() => {
-            const CHUNK_PIXEL_WIDTH = 16 * this.tilewidth;  // 16×32
-            const CHUNK_PIXEL_HEIGHT = 16 * this.tileheight; // 16×32
-            const cam_chunkx = Math.floor(this._scene.camera.x / CHUNK_PIXEL_WIDTH);
-            const cam_chunky = Math.floor(this._scene.camera.y / CHUNK_PIXEL_HEIGHT);
-            for (let row = cam_chunky - 1; row < cam_chunky + 1; row++) {
-                for (let col = cam_chunkx - 1; col < cam_chunkx + 1; col++) {
-                    console.log(col * 16, row * 16);
-                    const chunk = this.chunks.get(this.key_for({ x: col * 16 + 16, y: row * 16 + 16 }))
-                    chunk?.prerender();
+    }
+
+    get_camera_index = (): Vector2D => {
+        const CHUNK_PIXEL_WIDTH = 16 * this.tilewidth;  // 16×32
+        const CHUNK_PIXEL_HEIGHT = 16 * this.tileheight; // 16×32
+        const cam_chunkx = Math.floor((this._scene.camera.x + CHUNK_PIXEL_WIDTH) / CHUNK_PIXEL_WIDTH);
+        const cam_chunky = Math.floor((this._scene.camera.y + CHUNK_PIXEL_HEIGHT) / CHUNK_PIXEL_HEIGHT);
+        return { x: cam_chunkx, y: cam_chunky };
+    }
+
+    load_chunks = () => {
+        console.log(this._loaded_chunks.length, " LOADED CHUNKS")
+        for (const loaded_chunk of this._loaded_chunks) {
+            loaded_chunk.unload();
+        }
+        this._loaded_chunks = [];
+        const { x: cam_chunkx, y: cam_chunky } = this.get_camera_index();
+        this._current_chunk_index = { x: cam_chunkx, y: cam_chunky };
+        for (let row = cam_chunky - 1; row <= cam_chunky + 1; row++) {
+            console.log("ROW: ", row)
+            for (let col = cam_chunkx - 1; col <= cam_chunkx + 1; col++) {
+                console.log("COL: ", col)
+                const chunk = this.chunks.get(this.key_for({ x: col * 16, y: row * 16 }))
+                if (chunk && !chunk.loaded) {
+                    chunk.load(this.buffer);
+                    this._loaded_chunks.push(chunk);
                 }
             }
-            console.log(cam_chunkx, cam_chunky)
-            //for (const [_, chunk] of this.chunks.entries()) {
-            //    chunk.prerender();
-            //}
-
-        }, 1000)
+        }
+        console.log(cam_chunkx, cam_chunky)
     }
 }

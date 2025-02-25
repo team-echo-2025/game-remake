@@ -1,4 +1,4 @@
-import { XML } from "p5";
+import { Framebuffer, Graphics, XML } from "p5";
 import Tile from "./Tile";
 import Scene from "../Scene";
 import Tilemap from "./Tilemap";
@@ -19,6 +19,8 @@ export default class TLayerChunk {
     miny: number = 0;
     maxy: number = 0;
     layers: TLayerChunk[] = [];
+    loaded: boolean = false;
+    buffer: Graphics;
 
     constructor(chunk: XML, tilemap: Tilemap, scene: Scene, topmost?: boolean) {
         this.data = chunk.getContent().split(',').map(item => parseInt(item));
@@ -29,6 +31,7 @@ export default class TLayerChunk {
         this.scene = scene;
         this.tilemap = tilemap;
         this.topmost = topmost ?? false;
+        this.buffer = scene.p5.createGraphics(this.width * tilemap.tilewidth, this.height * tilemap.tileheight);
     }
 
     precalculate() {
@@ -43,48 +46,43 @@ export default class TLayerChunk {
                 this.maxy = Math.max(this.tilemap.maxy, tilePixelY + this.tilemap.tileheight);
                 let x = (this.x + tile.x) * this.tilemap.tilewidth;
                 let y = (this.y + tile.y) * this.tilemap.tileheight;
+                this.buffer.image(tile.image, tile.x * this.tilemap.tilewidth, tile.y * this.tilemap.tileheight);
                 tile.x = x;
                 tile.y = y;
             }
         }
     }
 
-    prerender() {
-        if (this.topmost) {
-            this.tilemap.player_buffer.begin();
-        } else {
-            this.tilemap.buffer.begin();
-        }
+    load(buffer: Framebuffer) {
+        buffer.begin();
         this.scene.p5.push();
-        for (const row of this.tiles) {
-            for (const tile of row) {
-                if (!tile) continue;
-                let x = tile.x - this.tilemap.minx;
-                x -= this.tilemap.width / 2;
-                let y = tile.y - this.tilemap.miny;
-                y -= this.tilemap.height / 2;
-                this.scene.p5.image(tile.image, x, y);
-            }
-        }
+        //for (const row of this.tiles) {
+        //    for (const tile of row) {
+        //        if (!tile) continue;
+        //        let x = tile.x - this.tilemap.minx;
+        //        x -= this.tilemap.width / 2;
+        //        let y = tile.y - this.tilemap.miny;
+        //        y -= this.tilemap.height / 2;
+        //        this.scene.p5.image(tile.image, x, y);
+        //    }
+        //}
+        this.scene.p5.image(this.buffer, this.x * this.tilemap.tilewidth - this.tilemap.minx - this.tilemap.width / 2, this.y * this.tilemap.tileheight - this.tilemap.miny - this.tilemap.height / 2);
         this.scene.p5.pop();
-        if (this.topmost) {
-            this.tilemap.player_buffer.end();
-        } else {
-            this.tilemap.buffer.end();
-        }
+        buffer.end();
         for (const layer of this.layers) {
-            layer.prerender();
+            layer.load(buffer);
         }
+        this.loaded = true;
     }
 
     merge_chunk(chunk: TLayerChunk) {
         this.layers.push(chunk);
     }
 
-
-    load_bodies() {
+    unload() {
         for (const layer of this.layers) {
-            layer.load_bodies();
+            layer.unload();
         }
+        this.loaded = false;
     }
 }

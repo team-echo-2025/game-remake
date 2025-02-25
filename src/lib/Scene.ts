@@ -253,6 +253,7 @@ export default class Scene implements GameObject {
 
     postDraw(): void { }
     postDraw_objects(): void {
+        this._physics.postDraw();
         this.p5.push();
         this.p5.fill(0);
         this.p5.textSize(24);
