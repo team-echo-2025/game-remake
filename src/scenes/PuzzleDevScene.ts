@@ -4,6 +4,7 @@ import AccessCircuit from "../puzzles/AccessCircuit/AccessCircuit";
 import BlockSlide from "../puzzles/BlockSlide/BlockSlide";
 import LightsOn from "../puzzles/LightsOn/LightsOn";
 import Tangram from "../puzzles/Tangram/Tangram";
+import Breakaway from "../puzzles/Breakaway/Breakaway";
 import Puzzle from "../lib/Puzzle"
 
 export default class PuzzleDevScene extends Scene {
@@ -12,8 +13,10 @@ export default class PuzzleDevScene extends Scene {
     hard!: ButtonTest;
     aCircuit!: AccessCircuit;
     bSlide!: BlockSlide;
+    bAway!: Breakaway;
     lightsOn!: LightsOn;
     aCircuitButton!: ButtonTest;
+    bAwayButton!: ButtonTest;
     tangramButton!: ButtonTest;
     bSlideButton!: ButtonTest;
     lightsOnButton!: ButtonTest;
@@ -32,16 +35,19 @@ export default class PuzzleDevScene extends Scene {
         this.bSlide = new BlockSlide(this);
         this.lightsOn = new LightsOn(this);
         this.tangram = new Tangram(this);
+        this.bAway = new Breakaway(this);
         
         this.aCircuit.hidden = true;
         this.bSlide.hidden = true;
         this.lightsOn.hidden = true;
         this.tangram.hidden = true;
+        this.bAway.hidden = true;
         
         this.add(this.aCircuit);
         this.add(this.bSlide);
         this.add(this.lightsOn);
         this.add(this.tangram);
+        this.add(this.bAway);
     }
 
     preload(): any {
@@ -88,6 +94,7 @@ export default class PuzzleDevScene extends Scene {
                 this.bSlide.hidden = true;
                 this.lightsOn.hidden = true;
                 this.tangram.hidden = true;
+                this.bAway.hidden = true;
                 this.changeButtonVisibility();
             }
         });
@@ -100,6 +107,7 @@ export default class PuzzleDevScene extends Scene {
                 this.aCircuit.hidden = true;
                 this.lightsOn.hidden = true;
                 this.tangram.hidden = true;
+                this.bAway.hidden = true;
                 this.bSlideSolveButton.hidden = false;
                 this.changeButtonVisibility();
             }
@@ -126,6 +134,7 @@ export default class PuzzleDevScene extends Scene {
                 this.aCircuit.hidden = true;
                 this.tangram.hidden = true;
                 this.bSlide.hidden = true;
+                this.bAway.hidden = true;
                 this.changeButtonVisibility();
             }
         });
@@ -139,10 +148,25 @@ export default class PuzzleDevScene extends Scene {
                 this.aCircuit.hidden = true;
                 this.bSlide.hidden = true;
                 this.lightsOn.hidden = true;
+                this.bAway.hidden = true;
                 this.changeButtonVisibility();
             }
         });
         this.tangramButton.y = 300;
+
+        this.bAwayButton = this.add_new.button({
+            label: "Breakaway",
+            font_key: "jersey",
+            callback: () => {
+                this.tangram.hidden = true;
+                this.aCircuit.hidden = true;
+                this.bSlide.hidden = true;
+                this.lightsOn.hidden = true;
+                this.bAway.hidden = false;
+                this.changeButtonVisibility();
+            }
+        });
+        this.bAwayButton.y =400;
     }
 
     keyPressed = (e: KeyboardEvent) => {
@@ -157,6 +181,9 @@ export default class PuzzleDevScene extends Scene {
             this.changeButtonVisibility();
         } else if (e.key == "Escape" && !this.tangram.hidden) {
             this.tangram.hidden = true;
+            this.changeButtonVisibility();
+        } else if (e.key == "Escape" && !this.bAway.hidden) {
+            this.bAway.hidden = true;
             this.changeButtonVisibility();
         } else if (e.key === "Escape") {
             this.start("menu-scene");
@@ -173,6 +200,7 @@ export default class PuzzleDevScene extends Scene {
         this.bSlide.setDifficulty(difficulty);
         this.lightsOn.setDifficulty(difficulty);
         this.tangram.setDifficulty(difficulty);
+        this.bAway.setDifficulty(difficulty);
     }
     
     changeButtonVisibility(): void {
@@ -183,6 +211,7 @@ export default class PuzzleDevScene extends Scene {
         this.bSlideButton.hidden = !this.bSlideButton.hidden;
         this.lightsOnButton.hidden = !this.lightsOnButton.hidden;
         this.tangramButton.hidden = !this.tangramButton.hidden;
+        this.bAwayButton.hidden = !this.bAwayButton.hidden;
     }    
 
     onStop(): void { }
