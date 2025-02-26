@@ -49,6 +49,7 @@ export default class SettingPage extends Page {
             font_key: 'jersey',
             callback: () => {
                 this.button_sfx.play();
+                //this.cleanup();
                 this.handleMute();
             }
         })

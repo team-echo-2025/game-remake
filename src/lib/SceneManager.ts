@@ -48,6 +48,7 @@ export default class SceneManager implements GameObject {
             this.current_scene.onStop_objects();
         }
         this.current_scene = this.loading_scene;
+        console.log("after new_scene onStart")
         new_scene.onStart(args);
         await new_scene.preload()
         console.log("after new scene preload")
