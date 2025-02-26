@@ -28,7 +28,8 @@ export default class MenuScene extends Scene {
             new CreditsPage(),
         ], this);
     }
-    onStart(): void {
+    onStart(args?: any): void {
+        this.add(this.pManager);
     }
     async preload(): Promise<any> {
         await this.pManager.preload();
@@ -68,15 +69,5 @@ export default class MenuScene extends Scene {
         this.p5.endShape(this.p5.CLOSE);
 
         this.p5.pop();  // Restore the previous transformation matrix
-        this.pManager.draw();
-    }
-    keyReleased(e: KeyboardEvent): void {
-        this.pManager.keyReleased(e)
-    }
-    keyPressed(e: KeyboardEvent): void {
-        this.pManager.keyPressed(e);
-    }
-    mouseClicked(e: MouseEvent): void {
-        this.pManager.mouseClicked(e)
     }
 }

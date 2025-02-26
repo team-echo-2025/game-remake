@@ -1,6 +1,8 @@
 import Page from "../lib/Page";
 import ButtonTest from "../lib/ui/ButtonTest";
 import Sound from "../lib/Sound";
+import ButtonTest, { ButtonTestProps } from "../lib/ui/ButtonTest";
+import DropdownMenu from "../lib/ui/DropdownMenu";
 
 export default class MenuPage extends Page {
     play!: ButtonTest;
@@ -11,6 +13,7 @@ export default class MenuPage extends Page {
     physicsTest!: ButtonTest;
     puzzleTest!: ButtonTest;
     button_sfx!: Sound;
+    dropdown!: DropdownMenu;
 
     constructor() {
         super("menu-page")
@@ -28,7 +31,33 @@ export default class MenuPage extends Page {
     }
     setup(): void { 
         this.button_sfx = this.scene.add_new.sound("button_sfx")
-      
+        const button1: ButtonTestProps = {
+            label: "Scene 1",
+            font_key: "jersey",
+            callback: () => { this.scene.start("play-scene") },
+        };
+        const button2: ButtonTestProps = {
+            ...button1,
+            callback: () => { this.scene.start("dungeon-1") },
+            label: "Scene 2"
+        }
+        const button3: ButtonTestProps = {
+            ...button1,
+            label: "Scene 3",
+            callback: () => { this.scene.start("dungeon-2") },
+        }
+
+        this.dropdown = this.scene.add_new.dropdown_menu({
+            label: "Show Dev Scenes",
+            font_key: "jersey",
+            buttons: [
+                button1,
+                button2,
+                button3
+            ]
+        })
+        this.dropdown.y = -200
+        this.dropdown.x = -200
         this.play = this.scene.add_new.button({
             label: "Play!",
             font_key: 'jersey',
@@ -79,6 +108,7 @@ export default class MenuPage extends Page {
             callback: () => {
                 this.button_sfx.play();
                 this.cleanup();
+                console.log("switching to credits");
                 this.set_page("credits-page");
             }
         })
@@ -109,5 +139,11 @@ export default class MenuPage extends Page {
         })
         this.puzzleTest.x = 0
         this.puzzleTest.y = 300
+    }
+    postDraw(): void {
+        this.page_manager.scene.p5.fill(0);
+        this.page_manager.scene.p5.textAlign(this.page_manager.scene.p5.CENTER, this.page_manager.scene.p5.CENTER);
+        this.page_manager.scene.p5.textSize(75);
+        this.page_manager.scene.p5.text('EXIT PARADOX', 0, -300);
     }
 }
