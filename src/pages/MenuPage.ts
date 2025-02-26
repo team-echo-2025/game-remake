@@ -129,7 +129,7 @@ export default class MenuPage extends Page {
         this.puzzleTest.x = 0
         this.puzzleTest.y = 300
     }
-    draw(): void {
+    postDraw(): void {
         this.page_manager.scene.p5.fill(0);
         this.page_manager.scene.p5.textAlign(this.page_manager.scene.p5.CENTER, this.page_manager.scene.p5.CENTER);
         this.page_manager.scene.p5.textSize(75);

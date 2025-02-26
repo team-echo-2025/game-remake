@@ -47,6 +47,10 @@ export default class PageManager implements GameObject {
         this.current_page?.draw();
     }
 
+    postDraw(): void {
+        this.current_page?.postDraw();
+    }
+
     mouseClicked(e: MouseEvent): void {
         this.current_page?.mouseClicked(e);
     }

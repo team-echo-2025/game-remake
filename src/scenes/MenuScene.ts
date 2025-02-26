@@ -22,12 +22,11 @@ export default class MenuScene extends Scene {
             new CreditsPage(),
         ], this);
     }
-    async preload(): Promise<any> {
-        await this.pManager.preload();
-        this.imgLogo = this.p5.loadImage('assets/background.png');  // Load the background image
+    onStart(args?: any): void {
+        this.add(this.pManager);
     }
-    setup(): void {
-        this.pManager.setup();
+    async preload(): Promise<any> {
+        this.imgLogo = this.p5.loadImage('assets/background.png');  // Load the background image
     }
     postDraw(): void {
         this.p5.push();  // Save the current transformation matrix
@@ -43,15 +42,5 @@ export default class MenuScene extends Scene {
         this.p5.endShape(this.p5.CLOSE);
 
         this.p5.pop();  // Restore the previous transformation matrix
-        this.pManager.draw();
-    }
-    keyReleased(e: KeyboardEvent): void {
-        this.pManager.keyReleased(e)
-    }
-    keyPressed(e: KeyboardEvent): void {
-        this.pManager.keyPressed(e);
-    }
-    mouseClicked(e: MouseEvent): void {
-        this.pManager.mouseClicked(e)
     }
 }
