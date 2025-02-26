@@ -1,5 +1,4 @@
 import Page from "../lib/Page";
-import ButtonTest from "../lib/ui/ButtonTest";
 import Sound from "../lib/Sound";
 import ButtonTest, { ButtonTestProps } from "../lib/ui/ButtonTest";
 import DropdownMenu from "../lib/ui/DropdownMenu";
@@ -29,7 +28,6 @@ export default class MenuPage extends Page {
         this.scene.remove(this.physicsTest);
         this.scene.remove(this.puzzleTest);
     }
-    setup(): void { 
         this.button_sfx = this.scene.add_new.sound("button_sfx")
         const button1: ButtonTestProps = {
             label: "Scene 1",
@@ -137,6 +135,14 @@ export default class MenuPage extends Page {
                 this.scene.start("puzzle-dev-scene");
             }
         })
+            ({
+                label: "Puzzles",
+                font_key: "jersey",
+                callback: () => {
+                    this.cleanup();
+                    this.scene.start("puzzle-dev-scene");
+                }
+            })
         this.puzzleTest.x = 0
         this.puzzleTest.y = 300
     }
