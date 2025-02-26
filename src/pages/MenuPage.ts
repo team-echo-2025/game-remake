@@ -100,6 +100,7 @@ export default class MenuPage extends Page {
             font_key: "jersey",
             callback: () => {
                 this.cleanup();
+                console.log("switching to credits");
                 this.set_page("credits-page");
             }
         })
@@ -127,5 +128,11 @@ export default class MenuPage extends Page {
             })
         this.puzzleTest.x = 0
         this.puzzleTest.y = 300
+    }
+    draw(): void {
+        this.page_manager.scene.p5.fill(0);
+        this.page_manager.scene.p5.textAlign(this.page_manager.scene.p5.CENTER, this.page_manager.scene.p5.CENTER);
+        this.page_manager.scene.p5.textSize(75);
+        this.page_manager.scene.p5.text('EXIT PARADOX', 0, -300);
     }
 }
