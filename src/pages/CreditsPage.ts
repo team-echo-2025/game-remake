@@ -54,7 +54,7 @@ export default class CreditsPage extends Page {
         this.howlButton.y = 200;
     }
 
-    draw(): void {
+    postDraw(): void {
         // Background
         let rectWidth = 400;
         let rectHeight = 600;
