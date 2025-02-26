@@ -7,6 +7,7 @@ export default class BlockSlide extends Puzzle {
     emptyPos: Position = { row: 0, col: 0 }; // The empty tile
     tileSize: number = 0;
     gridSize: number = 4; // Grid will be 4x4 by default
+    isAnimating: boolean = false; // Will prevent clicks while animations are going on
     animations: {
         [key: string]: {
             x: number; y: number;
@@ -74,6 +75,8 @@ export default class BlockSlide extends Puzzle {
         let startX = -gridSizePixels / 2 + this.tileSize / 2;
         let startY = -gridSizePixels / 2 + this.tileSize / 2;
 
+        let animationActive = false;
+
         for (let row = 0; row < this.gridSize; row++) {
             for (let col = 0; col < this.gridSize; col++) {
                 let tileValue = this.grid[row]?.[col];
@@ -93,6 +96,8 @@ export default class BlockSlide extends Puzzle {
 
                     x = anim.x;
                     y = anim.y;
+
+                    animationActive = true;
 
                     if (anim.progress >= 1) {
                         delete this.animations[key];
@@ -125,6 +130,7 @@ export default class BlockSlide extends Puzzle {
                 p5.text(tileValue.toString(), x, y);
             }
         }
+        this.isAnimating = animationActive;
     }
     setDifficulty(difficulty: string): void {
         Puzzle.difficulty = difficulty;
@@ -184,6 +190,8 @@ export default class BlockSlide extends Puzzle {
     mousePressed(): void {
         let p5 = this.scene.p5;
 
+        if (this.isAnimating) return;
+
         // If the puzzle is solved, clicking anywhere will hide it
         if (this.solved()) {
             this.scene.start("puzzle-dev-scene");
@@ -221,7 +229,7 @@ export default class BlockSlide extends Puzzle {
     }
 
     moveTile(row: number, col: number): void {
-        if (!this.isValidMove(row, col)) return;
+        if (!this.isValidMove(row, col) || this.isAnimating) return;
 
         let { row: emptyRow, col: emptyCol } = this.emptyPos;
         let key = `${row}-${col}`;
@@ -231,6 +239,8 @@ export default class BlockSlide extends Puzzle {
         let startY = (-this.gridSize / 2 + row + 0.5) * this.tileSize;
         let targetX = (-this.gridSize / 2 + emptyCol + 0.5) * this.tileSize;
         let targetY = (-this.gridSize / 2 + emptyRow + 0.5) * this.tileSize;
+
+        this.isAnimating = true;
 
         // Start animation
         this.animations[key] = {
