@@ -1,4 +1,5 @@
 import Page from "../lib/Page";
+import Sound from "../lib/Sound";
 import ButtonTest, { ButtonTestProps } from "../lib/ui/ButtonTest";
 import DropdownMenu from "../lib/ui/DropdownMenu";
 
@@ -105,6 +106,7 @@ export default class MenuPage extends Page {
             callback: () => {
                 this.button_sfx.play();
                 this.cleanup();
+                console.log("switching to credits");
                 this.set_page("credits-page");
             }
         })
@@ -143,5 +145,11 @@ export default class MenuPage extends Page {
             })
         this.puzzleTest.x = 0
         this.puzzleTest.y = 300
+    }
+    postDraw(): void {
+        this.page_manager.scene.p5.fill(0);
+        this.page_manager.scene.p5.textAlign(this.page_manager.scene.p5.CENTER, this.page_manager.scene.p5.CENTER);
+        this.page_manager.scene.p5.textSize(75);
+        this.page_manager.scene.p5.text('EXIT PARADOX', 0, -300);
     }
 }
