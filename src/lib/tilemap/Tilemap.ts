@@ -163,8 +163,8 @@ export default class Tilemap implements GameObject {
         console.log("SETUP")
 
         this.buffer = this._scene.p5.createFramebuffer({
-            width: this._scene.camera.bounds.halfWidth * 2,
-            height: this._scene.camera.bounds.halfHeight * 2,
+            width: this._width,
+            height: this._height,
         })!;
         this.player_buffer = this._scene.p5.createFramebuffer({
             width: this._width,
@@ -172,7 +172,7 @@ export default class Tilemap implements GameObject {
         })!;
         console.log(this._scene.camera.bounds.halfWidth * 2, this._scene.camera.bounds.halfHeight * 2, 'BOUNDS')
 
-        const tilemap_buffer = new TilemapBuffer(this.x, this.y, this._scene.camera.bounds.halfWidth * 2, this._scene.camera.bounds.halfHeight * 2, this.buffer, this._scene);
+        const tilemap_buffer = new TilemapBuffer(this.x, this.y, this._width, this._height, this.buffer, this._scene);
         this._scene.add(tilemap_buffer);
         const player_buffer = new TilemapBuffer(this.x, this.y, this.width, this.height, this.player_buffer, this._scene);
         this.player_buffer.begin();
