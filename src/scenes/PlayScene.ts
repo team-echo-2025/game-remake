@@ -1,10 +1,13 @@
 import GameObject from "../lib/GameObject";
-import PhysicsObject from "../lib/physics/PhysicsObject";
+import PhysicsObject, { PhysicsObjectProps } from "../lib/physics/PhysicsObject";
 import Rectangle from "../lib/physics/Rectangle";
+import RigidBody from "../lib/physics/RigidBody";
 import Player from "../lib/Player";
+import { PuzzleState } from "../lib/Puzzle";
 import Scene from "../lib/Scene";
 import Spritesheet from "../lib/Spritesheet";
 import Tilemap from "../lib/tilemap/Tilemap";
+import { Vector2D } from "../lib/types/Physics";
 import AccessCircuit from "../puzzles/AccessCircuit/AccessCircuit";
 import Sound from "../lib/Sound";
 import SoundManager, {SoundManagerProps} from "../lib/SoundManager";
@@ -48,7 +51,7 @@ class Door implements GameObject {
         this.asset.zIndex = 99;
         this.asset.end_col = 4;
         this.physics_object = new PhysicsObject({
-            width: this.asset.width + 10,
+            width: this.asset.width + 30,
             height: this.asset.height / 2,
             mass: Infinity,
         });
@@ -61,6 +64,14 @@ class Door implements GameObject {
     }
 }
 
+type StartArgs = Readonly<{
+    starting_pos: Vector2D
+}>
+
+type SceneState = {
+    access_puzzle: PuzzleState;
+}
+
 export default class PlayScene extends Scene {
     player?: Player;
     tilemap?: Tilemap;
@@ -70,16 +81,20 @@ export default class PlayScene extends Scene {
     private button_sfx!: Sound;
     private bgm_manager!: SoundManager;
     private sfx_manager!: SoundManager;
+    state: SceneState = {
+        access_puzzle: PuzzleState.notStarted,
+    }
+
     constructor() {
         super("play-scene");
         this.physics.debug = false;
     }
 
-    onStart(): void {
+    onStart(args: StartArgs): void {
         this.camera.zoom = 3;
         this.player = new Player(this);
-        this.player.body.x = -466;
-        this.player.body.y = 31;
+        this.player.body.x = args?.starting_pos?.x ?? -425;
+        this.player.body.y = args?.starting_pos?.y ?? 218;
         this.physics.addObject(this.player);
     }
 
@@ -111,26 +126,46 @@ export default class PlayScene extends Scene {
         this.bgm_manager.play();
         
         this.access_circuit = new AccessCircuit(this, 'puzzle', this.player!);
-        this.access_circuit.x = -321;
-        this.access_circuit.y = -105;
+        this.access_circuit.x = -280;
+        this.access_circuit.y = 70;
         this.access_circuit?.setup();
         this.access_circuit.asset.zIndex = 101;
 
         this.tilemap = this.add_new.tilemap({
             tilemap_key: "tilemap",
         })
-        const yoffset = 350;
-        const xoffset = 70;
-        this.bounds = new Rectangle({ x: -xoffset / 2, y: -yoffset / 2, w: this.tilemap.width * this.tilemap.tilewidth - xoffset, h: this.tilemap.height * this.tilemap.tileheight - yoffset });
+        const offsetX = 32;
+        const offsetY = 32;
+        this.bounds = new Rectangle({ x: this.tilemap.x + offsetX / 2 - 16, y: this.tilemap.y + offsetY / 2, w: this.tilemap.width - offsetX - 32, h: this.tilemap.height - offsetX });
 
         this.door = new Door(this, "door");
         this.door.setup();
-        this.door.x = -415;
-        this.door.y = -110;
+        this.door.x = -384;
+        this.door.y = 66;
         this.access_circuit.onCompleted = () => {
             this.door!.open();
+            this.state.access_puzzle = PuzzleState.completed;
         }
-        //@ts-ignore
+        const portal1 = new PhysicsObject({
+            width: 300,
+            height: 32,
+            mass: Infinity,
+        })
+        portal1.overlaps = true;
+        portal1.body.x = 350;
+        portal1.body.y = -360;
+        portal1.onCollide = (other: RigidBody) => {
+            if (other == this.player?.body) {
+                this.start("dungeon-1", {
+                    starting_pos: { x: -1767, y: 863 }
+                });
+            }
+        }
+        this.physics.addObject(portal1);
+        if (this.state.access_puzzle == PuzzleState.completed) {
+            this.access_circuit.force_solve();
+            this.door.open();
+        }
     }
 
     mousePressed(_: MouseEvent): void {

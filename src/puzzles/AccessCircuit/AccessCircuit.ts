@@ -48,6 +48,22 @@ export default class AccessCircuit extends Puzzle {
         this.player = player;
     }
 
+    force_solve() {
+        this.state = PuzzleState.completed;
+        this.hidden = true;
+        this.player.disabled = false;
+        this.asset.change_asset('success-puzzle');
+        this.scene.physics.remove(this.physics_object);
+    }
+
+    force_fail() {
+        this.state = PuzzleState.failed;
+        this.hidden = true;
+        this.player.disabled = false;
+        this.asset.change_asset('broken-puzzle');
+        this.scene.physics.remove(this.physics_object);
+    }
+
     checkSolution(): boolean {
         for (let row of this.board) {
             let rowIsCorrect = true;

@@ -3,28 +3,32 @@ import Scene from "../Scene";
 import Tilemap from "./Tilemap";
 import TLayerChunk from "./TLayerChunk";
 import PhysicsObject from "../physics/PhysicsObject";
-import { Vector2D } from "../types/Physics";
 
 export default class TLayerColliderChunk extends TLayerChunk {
-    bodies: { physics_object: PhysicsObject, offset: Vector2D }[] = [];
+    bodies: PhysicsObject[] = [];
     constructor(chunk: XML, tilemap: Tilemap, scene: Scene) {
         super(chunk, tilemap, scene)
+    }
+    precalculate() {
+        super.precalculate()
     }
     prerender() {
         for (const row of this.tiles) {
             for (const tile of row) {
                 if (!tile) continue;
-                const x = tile.x * this.tilemap.tilewidth - this.width * this.tilemap.tilewidth / 2;
-                const y = tile.y * this.tilemap.tileheight - this.height * this.tilemap.tileheight / 2;
                 const obj = new PhysicsObject({
-                    width: tile.image.width + 1,
-                    height: tile.image.height + 1,
+                    width: tile.image.width,
+                    height: tile.image.height,
                     mass: Infinity
                 });
-                obj.body.x = x;
-                obj.body.y = y;
+                let x = tile.x - this.tilemap.minx;
+                x -= this.tilemap.width / 2;
+                let y = tile.y - this.tilemap.miny;
+                y -= this.tilemap.height / 2;
+                obj.body.x = x + tile.image.width / 2;
+                obj.body.y = y + tile.image.height / 2;
                 this.scene.physics.addObject(obj)
-                this.bodies.push({ physics_object: obj, offset: { x: tile.x * this.tilemap.tilewidth + tile.image.width / 2, y: tile.y * this.tilemap.tileheight + tile.image.height / 2 } });
+                this.bodies.push(obj);
             }
         }
     }

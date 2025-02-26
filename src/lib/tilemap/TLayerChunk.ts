@@ -2,6 +2,7 @@ import { XML } from "p5";
 import Tile from "./Tile";
 import Scene from "../Scene";
 import Tilemap from "./Tilemap";
+import { Vector2D } from "../types/Physics";
 
 export default class TLayerChunk {
     data: number[];
@@ -13,6 +14,7 @@ export default class TLayerChunk {
     scene: Scene;
     tilemap: Tilemap;
     topmost: boolean;
+    debug: boolean = true;
     minx: number = 0;
     maxx: number = 0;
     miny: number = 0;
@@ -28,9 +30,24 @@ export default class TLayerChunk {
         this.tilemap = tilemap;
         this.topmost = topmost ?? false;
     }
+    precalculate() {
+        for (const row of this.tiles) {
+            for (const tile of row) {
+                if (!tile) continue;
+                const tilePixelX = (this.x + tile.x) * this.tilemap.tilewidth;
+                const tilePixelY = (this.y + tile.y) * this.tilemap.tileheight;
+                this.minx = Math.min(this.tilemap.minx, tilePixelX);
+                this.miny = Math.min(this.tilemap.miny, tilePixelY);
+                this.maxx = Math.max(this.tilemap.maxx, tilePixelX + this.tilemap.tilewidth);
+                this.maxy = Math.max(this.tilemap.maxy, tilePixelY + this.tilemap.tileheight);
+                let x = (this.x + tile.x) * this.tilemap.tilewidth;
+                let y = (this.y + tile.y) * this.tilemap.tileheight;
+                tile.x = x;
+                tile.y = y;
+            }
+        }
+    }
     prerender() {
-        let layer_width = this.tilemap.width;
-        let layer_height = this.tilemap.height;
         if (this.topmost) {
             this.tilemap.player_buffer.begin();
         } else {
@@ -40,27 +57,11 @@ export default class TLayerChunk {
         for (const row of this.tiles) {
             for (const tile of row) {
                 if (!tile) continue;
-                let x = tile.x * this.tilemap.tilewidth - this.width * this.tilemap.tilewidth / 2;
-                x += (this.x - this.tilemap.minx) * (this.tilemap.tilewidth)
-                x -= this.tilemap.tilewidth * layer_width / 2;
-                x -= this.tilemap.tilewidth * this.width;
-                let y = tile.y * this.tilemap.tileheight - this.height * this.tilemap.tileheight / 2;
-                y += (this.y - this.tilemap.miny) * (this.tilemap.tileheight);
-                y -= this.tilemap.tileheight * layer_height / 2;
-                y -= this.tilemap.tileheight * this.height;
-                this.scene.p5.image(tile.image, x + this.width * this.tilemap.tilewidth / 2, y + this.height * this.tilemap.tileheight / 2);
-                if (tile.x < this.minx) {
-                    this.minx = tile.x;
-                }
-                if (tile.x > this.maxx) {
-                    this.maxx = tile.x;
-                }
-                if (tile.y < this.miny) {
-                    this.miny = tile.y;
-                }
-                if (tile.y > this.maxy) {
-                    this.maxy = tile.y;
-                }
+                let x = tile.x - this.tilemap.minx;
+                x -= this.tilemap.width / 2;
+                let y = tile.y - this.tilemap.miny;
+                y -= this.tilemap.height / 2;
+                this.scene.p5.image(tile.image, x, y);
             }
         }
         this.scene.p5.pop();

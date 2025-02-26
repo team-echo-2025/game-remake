@@ -35,7 +35,8 @@ export default class Tileset implements GameObject {
         return this._tileheight;
     }
 
-    getTile(gid: number) {
+    getTile(_gid: number) {
+        const gid = _gid & 0x1FFFFFFF;
         if (gid == 0) {
             return { image: this.image, x: 0, y: 0, width: this._tilewidth, height: this._tileheight };
         }
