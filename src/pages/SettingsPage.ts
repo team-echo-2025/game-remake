@@ -22,7 +22,7 @@ export default class SettingPage extends Page {
             label: "Mute",
             font_key: 'jersey',
             callback: () => {
-                this.cleanup()
+                //this.cleanup();
                 this.handleMute();
             }
         })
