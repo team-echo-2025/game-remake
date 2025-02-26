@@ -21,13 +21,16 @@ export default class MenuPage extends Page {
     }
     cleanup() {
         this.scene.remove(this.play);
+        this.scene.remove(this.setting);
         this.scene.remove(this.carCuz);
         this.scene.remove(this.KDbutton);
-        this.scene.remove(this.setting);
         this.scene.remove(this.credits);
         this.scene.remove(this.physicsTest);
         this.scene.remove(this.puzzleTest);
+        this.scene.remove(this.button_sfx);
+        this.scene.remove(this.dropdown);
     }
+    setup() {
         this.button_sfx = this.scene.add_new.sound("button_sfx")
         const button1: ButtonTestProps = {
             label: "Scene 1",
@@ -112,37 +115,26 @@ export default class MenuPage extends Page {
         })
         this.credits.x = -300
         this.credits.y = 300
-        this.physicsTest = this.scene.add_new.button
-            ({
-                label: "Physics",
-                font_key: "jersey",
-                callback: () => {
-                    this.button_sfx.play();
-                    this.cleanup();
-                    this.scene.start("physics-scene");
-                }
-            })
+        this.physicsTest = this.scene.add_new.button({
+            label: "Physics",
+            font_key: "jersey",
+            callback: () => {
+                this.button_sfx.play();
+                this.cleanup();
+                this.scene.start("physics-scene");
+            }
+        })
         this.physicsTest.x = 150
         this.physicsTest.y = 300
-        this.puzzleTest = this.scene.add_new.button
-        ({
+        this.puzzleTest = this.scene.add_new.button({
             label: "Puzzles",
             font_key: "jersey",
-            callback: () =>
-            {
+            callback: () => {
                 this.button_sfx.play();
                 this.cleanup();
                 this.scene.start("puzzle-dev-scene");
             }
         })
-            ({
-                label: "Puzzles",
-                font_key: "jersey",
-                callback: () => {
-                    this.cleanup();
-                    this.scene.start("puzzle-dev-scene");
-                }
-            })
         this.puzzleTest.x = 0
         this.puzzleTest.y = 300
     }
