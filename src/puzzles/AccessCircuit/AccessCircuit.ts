@@ -2,11 +2,13 @@ import Puzzle, { PuzzleState } from "../../lib/Puzzle";
 import Cell, { CellState } from "./Cell";
 import Ball from "./Ball";
 import DispenserCell from "./DispenserCell";
-import Scene from "../../lib/Scene";
 import Sprite from "../../lib/Sprite";
 import PhysicsObject from "../../lib/physics/PhysicsObject";
 import RigidBody from "../../lib/physics/RigidBody";
 import Player from "../../lib/Player";
+
+import Scene from "../../lib/Scene";
+import Sound from "../../lib/Sound";
 
 type RGB = Readonly<{
     r: number;
@@ -163,6 +165,7 @@ export default class AccessCircuit extends Puzzle {
             const radius = cell.circleDiameter / 2
             if (cell.x - radius < x && cell.x + radius > x && cell.y - radius < y && cell.y + radius > y) {
                 this.dragging = cell.pickupBall();
+                //this.circuit_grab_sfx.play();
             }
         }
     }
@@ -210,6 +213,7 @@ export default class AccessCircuit extends Puzzle {
                         cell.placeBall(this.dragging);
                         if (this.dragging.color == this.solution[i]) {
                             cell.state = CellState.CORRECT;
+                            //this.circuit_correct_sfx.play();
                             //} else if (this.solution.some(item => item == this.dragging?.color)) {
                         } else {
                             let solution_count = 0;
@@ -225,8 +229,10 @@ export default class AccessCircuit extends Puzzle {
                             console.log(filled_positions, solution_count)
                             if (solution_count > 0 && filled_positions <= solution_count) {
                                 cell.state = CellState.WRONG_POSITION;
+                                //this.circuit_xposition_sfx.play()
                             } else {
                                 cell.state = CellState.INCORRECT;
+                                //this.circuit_incorrect_sfx.play()
                             }
                         }
                         this.balls.push(this.dragging);

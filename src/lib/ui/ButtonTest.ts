@@ -118,7 +118,7 @@ export default class ButtonTest implements GameObject {
         const min_y = this._y - this._height / 2;
         const max_y = this._y + this._height / 2;
         if (x > min_x && x < max_x && y > min_y && y < max_y) {
-            console.log(this.label)
+            console.log(this.label);
             this._callback?.(e);
         }
     }

@@ -59,6 +59,7 @@ export default class PhysicsTestScene extends Scene {
 
     keyPressed(e: KeyboardEvent): void {
         if (e.key == "Escape") {
+            console.log("leaving physics, going to menu")
             this.start('menu-scene');
         }
     }
