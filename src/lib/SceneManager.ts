@@ -34,6 +34,8 @@ export default class SceneManager implements GameObject {
         }).then(() => {
             this.loading_scene?.setup_objects();
             this.loading_scene?.setup();
+            this.loading_scene?.postSetup()
+            this.loading_scene?.postSetup_objects();
             this.start(new_scene.name);
         });
     }
@@ -53,6 +55,8 @@ export default class SceneManager implements GameObject {
         await new_scene.preload_objects()
         new_scene?.setup_objects();
         new_scene?.setup();
+        new_scene?.postSetup();
+        new_scene?.postSetup_objects();
         this.current_scene = new_scene;
     }
 
@@ -72,6 +76,11 @@ export default class SceneManager implements GameObject {
         this.current_scene?.postDraw();
         this.current_scene?.postDraw_objects();
         this.current_scene?.p5.pop();
+    }
+
+    postSetup(): void {
+        this.current_scene?.postSetup();
+        this.current_scene?.postSetup_objects();
     }
 
     keyPressed(e: KeyboardEvent): void {

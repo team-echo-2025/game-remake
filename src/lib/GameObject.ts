@@ -2,6 +2,7 @@ export default interface GameObject {
     zIndex?: number;
     hidden?: boolean;
     setup?(): void;
+    postSetup?(): void;
     update?(dt: number): void;
     draw?(): void;
     postDraw?(): void;

@@ -213,6 +213,13 @@ export default class Scene implements GameObject {
         await Promise.all(to_load);
     }
 
+    postSetup(): void { }
+    postSetup_objects(): void {
+        for (const obj of this.objects) {
+            obj.postSetup?.();
+        }
+    }
+
     setup(): void { }
     setup_objects(): void {
         this._camera.setup();
