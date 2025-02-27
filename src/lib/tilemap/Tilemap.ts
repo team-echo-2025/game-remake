@@ -162,29 +162,29 @@ export default class Tilemap implements GameObject {
         console.log(this.minx, this.maxx)
         console.log("SETUP")
 
-        this.buffer = this._scene.p5.createFramebuffer({
-            width: this._width,
-            height: this._height,
-        })!;
-        this.player_buffer = this._scene.p5.createFramebuffer({
-            width: this._width,
-            height: this._height,
-        })!;
+        //this.buffer = this._scene.p5.createFramebuffer({
+        //    width: this._width,
+        //    height: this._height,
+        //})!;
+        //this.player_buffer = this._scene.p5.createFramebuffer({
+        //    width: this._width,
+        //    height: this._height,
+        //})!;
         console.log(this._scene.camera.bounds.halfWidth * 2, this._scene.camera.bounds.halfHeight * 2, 'BOUNDS')
 
-        const tilemap_buffer = new TilemapBuffer(this.x, this.y, this._width, this._height, this.buffer, this._scene);
-        this._scene.add(tilemap_buffer);
-        const player_buffer = new TilemapBuffer(this.x, this.y, this.width, this.height, this.player_buffer, this._scene);
-        this.player_buffer.begin();
-        player_buffer.zIndex = 100;
-        this._scene.add(player_buffer);
+        //const tilemap_buffer = new TilemapBuffer(this.x, this.y, this._width, this._height, this.buffer, this._scene);
+        //this._scene.add(tilemap_buffer);
+        //const player_buffer = new TilemapBuffer(this.x, this.y, this.width, this.height, this.player_buffer, this._scene);
+        //this.player_buffer.begin();
+        //player_buffer.zIndex = 100;
+        //this._scene.add(player_buffer);
         this._scene.p5.push();
         this._scene.p5.rectMode("corner");
         this._scene.p5.noFill();
         this._scene.p5.stroke(255, 0, 0);
         this._scene.p5.rect(this.x - this._width / 2, this.y - this._height / 2, this._width, this._height);
         this._scene.p5.pop();
-        this.player_buffer.end();
+        //this.player_buffer.end();
 
         for (const [_, chunk] of this.chunks) {
             chunk.preload();
@@ -192,16 +192,13 @@ export default class Tilemap implements GameObject {
 
         console.log(this.chunks);
         this.load_chunks();
-        //for (const [_, chunk] of this.chunks) {
-        //    chunk.load(this.buffer);
-        //}
     }
 
     draw(): void {
-        const { x, y } = this.get_camera_index();
-        if (x != this._current_chunk_index.x || y != this._current_chunk_index.y) {
-            this.load_chunks();
-        }
+        //const { x, y } = this.get_camera_index();
+        //if (x != this._current_chunk_index.x || y != this._current_chunk_index.y) {
+        this.load_chunks();
+        //}
     }
 
     get_camera_index = (): Vector2D => {
@@ -227,7 +224,7 @@ export default class Tilemap implements GameObject {
                 console.log(this.key_for({ x: col * 16, y: row * 16 }));
                 const chunk = this.chunks.get(this.key_for({ x: col * 16, y: row * 16 }));
                 if (chunk && !chunk.loaded) {
-                    chunk.load(this.buffer);
+                    chunk.load(this._scene.p5);
                     this._loaded_chunks.push(chunk);
                 }
             }
