@@ -1,4 +1,4 @@
-import { Framebuffer, Graphics, XML } from "p5";
+import p5, { Framebuffer, Graphics, XML } from "p5";
 import Scene from "../Scene";
 import Tilemap from "./Tilemap";
 import TLayerChunk from "./TLayerChunk";
@@ -13,15 +13,12 @@ export default class TLayerColliderChunk extends TLayerChunk {
 
     precalculate() {
         super.precalculate()
+        this.buffer?.clear();
     }
 
-    load(buffer: Framebuffer) {
-        if (this.bodies.length != 0) {
-            this.loaded = true;
-            for (const layer of this.layers) {
-                layer.load(buffer);
-            }
-            return
+    preload(): void {
+        for (const layer of this.layers) {
+            layer.preload();
         }
         for (const row of this.tiles) {
             for (const tile of row) {
@@ -41,6 +38,16 @@ export default class TLayerColliderChunk extends TLayerChunk {
                 this.bodies.push(obj);
             }
         }
+    }
+
+    load(buffer: p5) {
+        if (this.bodies.length != 0) {
+            this.loaded = true;
+            for (const layer of this.layers) {
+                layer.load(buffer);
+            }
+            return
+        }
         for (const layer of this.layers) {
             layer.load(buffer);
         }
@@ -50,9 +57,6 @@ export default class TLayerColliderChunk extends TLayerChunk {
     unload(): void {
         for (const layer of this.layers) {
             layer.unload();
-        }
-        for (const body of this.bodies) {
-            this.scene.physics.remove(body);
         }
         this.loaded = false;
     }

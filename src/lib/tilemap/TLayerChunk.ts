@@ -1,4 +1,4 @@
-import { Framebuffer, Graphics, Image, XML } from "p5";
+import p5, { Framebuffer, Graphics, Image, XML } from "p5";
 import Tile from "./Tile";
 import Scene from "../Scene";
 import Tilemap from "./Tilemap";
@@ -56,22 +56,34 @@ export default class TLayerChunk {
 
     preload() {
         for (const layer of this.layers) {
-            this.buffer!.image(layer.buffer!, 0, 0);
+            layer.preload();
         }
         this.chunk_image = this.buffer!.get();
         this.buffer = undefined;
     }
 
-    load(buffer: Framebuffer) {
-        buffer.begin();
+    load(buffer: p5) {
+        //if (this.topmost) {
+        //    console.log("TOPMOST")
+        //    topmost.begin();
+        //} else {
+        //    buffer.begin();
+        //}
         this.scene.p5.push();
         //this.scene.p5.image(this.chunk_image!, this.x * this.tilemap.tilewidth - this.tilemap.minx - this.tilemap.width / 2, this.y * this.tilemap.tileheight - this.tilemap.miny - this.tilemap.height / 2);
         this.scene.p5.translate(-this.tilemap.width / 2, -this.tilemap.height / 2);
         this.scene.p5.translate(-this.tilemap.minx, -this.tilemap.miny)
         this.scene.p5.image(this.chunk_image!, this.x * this.tilemap.tilewidth, this.y * this.tilemap.tileheight);
         this.scene.p5.pop();
-        buffer.end();
+        //if (this.topmost) {
+        //    topmost.end();
+        //} else {
+        //    buffer.end();
+        //}
         this.loaded = true;
+        for (const layer of this.layers) {
+            layer.load(buffer);
+        }
     }
 
     merge_chunk(chunk: TLayerChunk) {
