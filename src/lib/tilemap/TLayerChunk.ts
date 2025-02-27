@@ -64,23 +64,11 @@ export default class TLayerChunk {
     }
 
     load(buffer: p5) {
-        //if (this.topmost) {
-        //    console.log("TOPMOST")
-        //    topmost.begin();
-        //} else {
-        //    buffer.begin();
-        //}
         this.scene.p5.push();
-        //this.scene.p5.image(this.chunk_image!, this.x * this.tilemap.tilewidth - this.tilemap.minx - this.tilemap.width / 2, this.y * this.tilemap.tileheight - this.tilemap.miny - this.tilemap.height / 2);
         this.scene.p5.translate(-this.tilemap.width / 2, -this.tilemap.height / 2);
         this.scene.p5.translate(-this.tilemap.minx, -this.tilemap.miny)
         this.scene.p5.image(this.chunk_image!, this.x * this.tilemap.tilewidth, this.y * this.tilemap.tileheight);
         this.scene.p5.pop();
-        //if (this.topmost) {
-        //    topmost.end();
-        //} else {
-        //    buffer.end();
-        //}
         this.loaded = true;
         for (const layer of this.layers) {
             layer.load(buffer);
