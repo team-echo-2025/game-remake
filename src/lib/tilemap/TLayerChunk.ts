@@ -1,4 +1,4 @@
-import p5, { Framebuffer, Graphics, Image, XML } from "p5";
+import p5, { Graphics, Image, XML } from "p5";
 import Tile from "./Tile";
 import Scene from "../Scene";
 import Tilemap from "./Tilemap";
@@ -59,6 +59,7 @@ export default class TLayerChunk {
             layer.preload();
         }
         this.chunk_image = this.buffer!.get();
+        this.buffer!.remove();
         this.buffer = undefined;
     }
 

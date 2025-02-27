@@ -216,12 +216,12 @@ export default class Tilemap implements GameObject {
         this._loaded_chunks = [];
         const cam_chunksx = Math.ceil(this._scene.camera.bounds.halfWidth * 2 / (16 * this.tilewidth));
         const cam_chunksy = Math.ceil(this._scene.camera.bounds.halfHeight * 2 / (16 * this.tilewidth));
-        console.log(cam_chunksx, cam_chunksy);
+        //console.log(cam_chunksx, cam_chunksy);
         const { x: cam_chunkx, y: cam_chunky } = this.get_camera_index();
-        this._current_chunk_index = { x: cam_chunkx, y: cam_chunky };
+        //this._current_chunk_index = { x: cam_chunkx, y: cam_chunky };
         for (let row = Math.floor(cam_chunky - cam_chunksy / 2); row <= Math.floor(cam_chunky + cam_chunksy / 2); row++) {
             for (let col = Math.floor(cam_chunkx - cam_chunksx / 2); col <= Math.floor(cam_chunkx + cam_chunksx / 2); col++) {
-                console.log(this.key_for({ x: col * 16, y: row * 16 }));
+                //console.log(this.key_for({ x: col * 16, y: row * 16 }));
                 const chunk = this.chunks.get(this.key_for({ x: col * 16, y: row * 16 }));
                 if (chunk && !chunk.loaded) {
                     chunk.load(this._scene.p5);
@@ -229,7 +229,7 @@ export default class Tilemap implements GameObject {
                 }
             }
         }
-        console.log(this._loaded_chunks.length, " LOADED CHUNKS")
-        console.log(cam_chunkx, cam_chunky)
+        //console.log(this._loaded_chunks.length, " LOADED CHUNKS")
+        //console.log(cam_chunkx, cam_chunky)
     }
 }
