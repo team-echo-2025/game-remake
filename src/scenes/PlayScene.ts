@@ -75,8 +75,6 @@ export default class PlayScene extends Scene {
     tilemap?: Tilemap;
     door?: Door;
     access_circuit?: AccessCircuit;
-    private timeRemaining: number = 300; // time in seconds
-    private lastUpdateTime: number = 0;
     state: SceneState = {
         access_puzzle: PuzzleState.notStarted,
     }
@@ -92,8 +90,8 @@ export default class PlayScene extends Scene {
         this.player.body.x = args?.starting_pos?.x ?? -425;
         this.player.body.y = args?.starting_pos?.y ?? 218;
         this.physics.addObject(this.player);
-        this.timeRemaining = 300;
-        this.lastUpdateTime = this.p5.millis();
+        this.set_time(300); // set time limit for scene
+        this.set_update_time(this.p5.millis()); // time since last update to timer
     }
 
     preload(): any {
@@ -177,11 +175,11 @@ export default class PlayScene extends Scene {
     postDraw(): void {
         this.access_circuit?.postDraw();
 
-        let currentTime = this.p5.millis();
-        let deltaTime = (currentTime - this.lastUpdateTime) / 1000; // Convert to seconds
-        this.lastUpdateTime = currentTime;
-        this.timeRemaining -= deltaTime;
-        if (this.timeRemaining <= 0) {
+        this.set_current_time(this.p5.millis());
+        this.set_delta_time((this.get_current_time() - this.get_update_time()) / 1000); // convert to seconds
+        this.set_update_time(this.get_current_time());
+        this.set_time(this.get_time() - this.get_delta_time());
+        if (this.get_time() <= 0) {
             this.start("menu-scene");
             return;
         }
@@ -190,7 +188,7 @@ export default class PlayScene extends Scene {
         this.p5.fill(255, 0, 0);
         this.p5.textSize(24);
         this.p5.textAlign(this.p5.RIGHT, this.p5.TOP);
-        let timeDisplay = Math.ceil(this.timeRemaining); // rounding up to whole second
+        let timeDisplay = Math.ceil(this.get_time()); // rounding up to whole second
         this.p5.text(`Time Left: ${timeDisplay}s`, this.p5.width / 2 - 20, -this.p5.height / 2 + 20);
         this.p5.pop();
     }
