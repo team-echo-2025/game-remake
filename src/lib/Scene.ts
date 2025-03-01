@@ -4,6 +4,8 @@ import SceneManager from "./SceneManager";
 import GameObjectFactory from "./GameObjectFactory";
 import Camera from "./Camera";
 import WorldPhysics from "./physics/WorldPhysics";
+import Rectangle from "./physics/Rectangle";
+import { Howl } from "howler";
 
 export default class Scene implements GameObject {
     private _name: string;
@@ -15,6 +17,30 @@ export default class Scene implements GameObject {
     private assets: Map<string, any> = new Map();
     private preloads: Promise<any>[] = []
     private _camera: Camera;
+    private _bounds: Rectangle;
+
+    private start_time = 0;
+    private frames = 0;
+    private display_frames = 0;
+
+    get _objects() {
+        return this.objects;
+    }
+
+    get mouseX() {
+        return (this.p5.mouseX / this._camera.zoom) + this.camera.x - (this.p5.width / 2) / this._camera.zoom;
+    }
+    get mouseY() {
+        return (this.p5.mouseY / this._camera.zoom) + this.camera.y - (this.p5.height / 2) / this._camera.zoom;
+    }
+
+    get bounds() {
+        return this._bounds;
+    }
+
+    set bounds(bounds: Rectangle) {
+        this._bounds = bounds;
+    }
 
     get physics() {
         return this._physics;
@@ -45,6 +71,7 @@ export default class Scene implements GameObject {
         if (name.length <= 0) {
             throw new Error("Scene name not specified.");
         }
+        this._bounds = new Rectangle({ x: 0, y: 0, w: Infinity, h: Infinity });
         this.game_object_factory = new GameObjectFactory(this);
         this._camera = new Camera(this);
         this._name = name;
@@ -52,8 +79,8 @@ export default class Scene implements GameObject {
         this._physics.scene = this;
     }
 
-    start(name: string) {
-        this._scene_manager.start(name);
+    start(name: string, args?: any) {
+        this._scene_manager.start(name, args);
     }
 
     add(object: GameObject) {
@@ -65,12 +92,44 @@ export default class Scene implements GameObject {
         })
     }
 
+    update_zindex() {
+        this.objects.sort((obj1, obj2) => {
+            const z1 = obj1.zIndex ?? 0;
+            const z2 = obj2.zIndex ?? 0;
+            return z1 - z2;
+        })
+    }
+
     get_asset = (key: string) => {
         return this.assets.get(key);
     }
 
+    set_asset = (key: string, asset: any) => {
+        this.assets.set(key, asset);
+    }
+
     get add_new() {
         return this.game_object_factory;
+    }
+
+    loadSound = (key: string, path: string) => {//
+        console.log("loading sound", key)
+        if (this.get_asset(key)) {
+            console.log("asset already loaded", key)
+        }
+        if (this.get_asset(key) == undefined) {
+            const sound: Promise<Howl> = new Promise<Howl>(res => {
+                const temp: Howl = new Howl({
+                    src: [path]
+                });
+                temp.on("load", () => {
+                    this.assets.set(key, temp);
+                    res(temp)
+                });
+            });
+            this.preloads.push(sound);
+        }
+
     }
 
     loadFont = (key: string, path: string) => {
@@ -173,18 +232,31 @@ export default class Scene implements GameObject {
 
     async preload(): Promise<any> { }
     async preload_objects(): Promise<any> {
+        console.log("in preload objects")
         const to_load = []
         for (const obj of this.objects) {
+            console.log(obj)
             obj.preload && to_load.push(obj.preload());
         }
         for (const pre of this.preloads) {
+            console.log(pre)
             to_load.push(pre);
         }
+
         await Promise.all(to_load);
+    }
+
+    postSetup(): void { }
+    postSetup_objects(): void {
+        for (const obj of this.objects) {
+            obj.postSetup?.();
+        }
     }
 
     setup(): void { }
     setup_objects(): void {
+        this._camera.setup();
+        this._physics.setup();
         for (const obj of this.objects) {
             obj.setup && obj.setup();
         }
@@ -193,8 +265,6 @@ export default class Scene implements GameObject {
     update(): void { }
     update_objects(): void {
         this._physics.update();
-        for (const obj of this.objects) {
-        }
     }
 
     draw(): void { }
@@ -202,6 +272,37 @@ export default class Scene implements GameObject {
         for (const obj of this.objects) {
             if (!obj.hidden) {
                 obj.draw && obj.draw();
+            }
+        }
+        this.frames++;
+        const now = this.p5.millis();
+        const delta = now - this.start_time;
+        this.start_time = now;
+
+        if (delta > 0) {
+            const alpha = 0.05
+            const fps = 1000 / delta;
+            this.display_frames = alpha * fps + (1 - alpha) * this.display_frames;
+        }
+        this.p5.push();
+        this.p5.noFill();
+        this.p5.rectMode("center");
+        this.p5.rect(this._bounds.x, this._bounds.y, this._bounds.halfWidth * 2, this._bounds.halfHeight * 2);
+        this.p5.pop();
+    }
+
+    postDraw(): void { }
+    postDraw_objects(): void {
+        this._physics.postDraw();
+        this.p5.push();
+        this.p5.fill(0);
+        this.p5.textSize(24);
+        this.p5.text("MouseX: " + Math.round(this.mouseX) + " MouseY: " + Math.round(this.mouseY), 20 - this.p5.width / 2, 40 - this.p5.height / 2);
+        this.p5.text(`Frames:  ${this.display_frames.toFixed(1)}`, 20 - this.p5.width / 2, 60 - this.p5.height / 2);
+        this.p5.pop();
+        for (const obj of this.objects) {
+            if (!obj.hidden) {
+                obj.postDraw && obj.postDraw();
             }
         }
     }
@@ -249,5 +350,5 @@ export default class Scene implements GameObject {
         this.assets = new Map();
     }
 
-    onStart() { }
+    onStart(args?: any) { }
 }

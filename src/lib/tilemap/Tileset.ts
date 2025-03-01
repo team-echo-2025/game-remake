@@ -35,7 +35,11 @@ export default class Tileset implements GameObject {
         return this._tileheight;
     }
 
-    getTile(gid: number) {
+    getTile(_gid: number) {
+        const gid = _gid & 0x1FFFFFFF;
+        if (gid == 0) {
+            return { image: this.image, x: 0, y: 0, width: this._tilewidth, height: this._tileheight };
+        }
         if (gid < this._firstgid || gid >= this._firstgid + this.tilecount) {
             throw new Error(`GID ${gid} is not in this tileset`);
         }
@@ -63,6 +67,7 @@ export default class Tileset implements GameObject {
         this._tileheight = this.tileset!.getNum("tileheight");
         this.tilecount = this.tileset!.getNum("tilecount");
         this.columns = this.tileset!.getNum("columns");
+        console.log("setup tileset")
         const children = this.tileset.getChildren();
         if (children.length != 1) {
             console.log(children)

@@ -6,31 +6,31 @@ export default class LightsOn extends Puzzle {
     grid: boolean[][] = [];
     gridSize: number = 5; // 5x5 grid by default
     tileSize: number = 0;
-    boardSize: number = 300; 
+    boardSize: number = 300;
     lastClicked: Position | null = null; // Track last clicked tile
-    
-    
-    
+
+
+
     async preload(): Promise<void> { }
 
     setup(): void {
-    
+
         this.state = PuzzleState.notStarted;  // Reset puzzle state to allow a new game
-        this.setGridSize();  
-        this.generateSolvableGrid();  
+        this.setGridSize();
+        this.generateSolvableGrid();
         this.tileSize = this.boardSize / this.gridSize;
-    
+
         this.scene.p5.createCanvas(this.scene.p5.windowWidth, this.scene.p5.windowHeight);
         this.scene.p5.rectMode(this.scene.p5.CENTER);
     }
-    
+
 
     setDifficulty(difficulty: string): void {
         Puzzle.difficulty = difficulty;  // Update the global difficulty
         console.log(`Lights On difficulty set to: ${Puzzle.difficulty}`);
         this.setup();  // Restart puzzle with new difficulty
     }
-    
+
 
     setGridSize(): void {
         switch (Puzzle.difficulty) {
@@ -48,7 +48,7 @@ export default class LightsOn extends Puzzle {
         }
     }
 
-    draw(): void {
+    postDraw(): void {
         if (this.solved()) {
             this.displayWinMessage();
         } else {
@@ -89,7 +89,7 @@ export default class LightsOn extends Puzzle {
         let p5 = this.scene.p5;
         let startX = -this.boardSize / 2 + this.tileSize / 2;
         let startY = -this.boardSize / 2 + this.tileSize / 2;
-        
+
         for (let row = 0; row < this.gridSize; row++) {
             for (let col = 0; col < this.gridSize; col++) {
                 let isOn = this.grid[row][col];
@@ -100,9 +100,9 @@ export default class LightsOn extends Puzzle {
     }
 
     generateSolvableGrid(): void {
-        
+
         this.grid = Array.from({ length: this.gridSize }, () => Array(this.gridSize).fill(false));
-        
+
         // Apply more random toggles to create a harder starting board
         let numShuffles = this.gridSize * 2; // Increase difficulty by doubling the number of shuffles
         for (let i = 0; i < numShuffles; i++) {
@@ -114,15 +114,15 @@ export default class LightsOn extends Puzzle {
 
     mousePressed(): void {
         let p5 = this.scene.p5;
-        
+
         if (this.solved()) {
             this.scene.start(this.scene.name);
             return;
         }
-        
+
         let col = Math.floor((p5.mouseX - p5.width / 2 + this.boardSize / 2) / this.tileSize);
         let row = Math.floor((p5.mouseY - p5.height / 2 + this.boardSize / 2) / this.tileSize);
-        
+
         if (row >= 0 && row < this.gridSize && col >= 0 && col < this.gridSize) {
             if (this.lastClicked && this.lastClicked.row === row && this.lastClicked.col === col) {
                 return; // Prevent clicking the same tile twice in a row
@@ -130,7 +130,7 @@ export default class LightsOn extends Puzzle {
             this.lastClicked = { row, col };
             this.toggleTile(row, col, true);
         }
-        
+
     }
 
     toggleTile(row: number, col: number, checkWin: boolean = true): void {
@@ -139,9 +139,9 @@ export default class LightsOn extends Puzzle {
                 this.grid[r][c] = !this.grid[r][c];
             }
         };
-        
+
         let toggleRow = Math.random() < 0.5;
-        
+
         if (toggleRow) {
             for (let c = 0; c < this.gridSize; c++) {
                 toggle(row, c);
@@ -151,7 +151,7 @@ export default class LightsOn extends Puzzle {
                 toggle(r, col);
             }
         }
-        
+
         if (checkWin && this.checkWin()) {
             this.state = PuzzleState.completed;
         }
@@ -164,16 +164,16 @@ export default class LightsOn extends Puzzle {
 
     displayWinMessage(): void {
         let p5 = this.scene.p5;
-    
+
         p5.fill(0, 0, 0, 150);
         p5.rect(0, 0, p5.width, p5.height);
-    
+
         let boxWidth = p5.width / 3;
         let boxHeight = p5.height / 6;
         p5.fill(255);
         p5.stroke(0);
         p5.rect(0, 0, boxWidth, boxHeight, 10);
-    
+
         p5.fill(0);
         p5.noStroke();
         p5.textAlign(p5.CENTER, p5.CENTER);

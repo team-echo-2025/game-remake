@@ -5,6 +5,7 @@ import BlockSlide from "../puzzles/BlockSlide/BlockSlide";
 import LightsOn from "../puzzles/LightsOn/LightsOn";
 import CubeScales from "../puzzles/CubeScales/CubeScales";
 import Puzzle from "../lib/Puzzle"
+import Player from "../lib/Player";
 
 export default class PuzzleDevScene extends Scene {
     easy!: ButtonTest;
@@ -20,6 +21,7 @@ export default class PuzzleDevScene extends Scene {
     cScalesButton!: ButtonTest;
     bSlideSolveButton!: ButtonTest;
     set_difficulty!: Puzzle;
+    player!: Player;
 
     constructor() {
         super("puzzle-dev-scene");
@@ -27,17 +29,16 @@ export default class PuzzleDevScene extends Scene {
     }
 
     onStart(): void {
+        this.player = new Player(this)
+        this.add(this.player);
         this.physics.debug = false;
-        this.aCircuit = new AccessCircuit(this);
         this.bSlide = new BlockSlide(this);
         this.lightsOn = new LightsOn(this);
         this.cScales = new CubeScales(this);
-        
         this.aCircuit.hidden = true;
         this.bSlide.hidden = true;
         this.lightsOn.hidden = true;
         this.cScales.hidden = true;
-        
         this.add(this.aCircuit);
         this.add(this.bSlide);
         this.add(this.lightsOn);
@@ -46,9 +47,13 @@ export default class PuzzleDevScene extends Scene {
 
     preload(): any {
         this.loadFont("jersey", "assets/fonts/jersey.ttf");
+        this.loadImage("puzzle", "assets/access_circuit.png");
     }
 
     setup(): void {
+        this.aCircuit = new AccessCircuit(this, 'puzzle', this.player);
+        this.aCircuit.hidden = true;
+        this.aCircuit?.setup();
         // difficulty settings
         this.easy = this.add_new.button({
             label: "Easy",
@@ -59,7 +64,7 @@ export default class PuzzleDevScene extends Scene {
         })
         this.easy.y = -100;
         this.easy.x = -200;
-        
+
         this.normal = this.add_new.button({
             label: "Normal",
             font_key: 'jersey',
@@ -68,7 +73,7 @@ export default class PuzzleDevScene extends Scene {
             }
         })
         this.normal.x = -200;
-        
+
         this.hard = this.add_new.button({
             label: "Hard",
             font_key: 'jersey',
@@ -91,7 +96,7 @@ export default class PuzzleDevScene extends Scene {
                 this.changeButtonVisibility();
             }
         });
-        
+
         this.bSlideButton = this.add_new.button({
             label: "Block Slide",
             font_key: "jersey",
@@ -105,7 +110,7 @@ export default class PuzzleDevScene extends Scene {
             }
         });
         this.bSlideButton.y = 100;
-        
+
         this.bSlideSolveButton = this.add_new.button({
             label: "Auto-Solve",
             font_key: "jersey",
@@ -116,7 +121,7 @@ export default class PuzzleDevScene extends Scene {
         })
         this.bSlideSolveButton.x = 300;
         this.bSlideSolveButton.hidden = true; // No need to see this unless bSlide is open
-        
+
         // Lights On button
         this.lightsOnButton = this.add_new.button({
             label: "Lights On",
@@ -165,15 +170,15 @@ export default class PuzzleDevScene extends Scene {
 
     setDifficulty(difficulty: string) {
         console.log(`Changing difficulty to: ${difficulty}`);
-    
+
         this.set_difficulty.setDifficulty(difficulty);  // Ensure global difficulty is updated
-    
+
         // Update difficulty for all puzzles (even if hidden)
         this.aCircuit.setDifficulty(difficulty);
         this.bSlide.setDifficulty(difficulty);
         this.lightsOn.setDifficulty(difficulty);
     }
-    
+
     changeButtonVisibility(): void {
         this.easy.hidden = !this.easy.hidden;
         this.normal.hidden = !this.normal.hidden;
@@ -182,7 +187,15 @@ export default class PuzzleDevScene extends Scene {
         this.bSlideButton.hidden = !this.bSlideButton.hidden;
         this.lightsOnButton.hidden = !this.lightsOnButton.hidden;
         this.cScalesButton.hidden = !this.cScalesButton.hidden;
-    }    
+    }
 
     onStop(): void { }
+
+    postDraw(): void {
+        this.aCircuit?.postDraw();
+    }
+
+    draw(): void {
+        this.aCircuit?.draw();
+    }
 }

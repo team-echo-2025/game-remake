@@ -6,11 +6,13 @@ import LoadingScene from './scenes/LoadingScene';
 import KDDevScene from './scenes/KDDevScene';
 import PhysicsTestScene from "./scenes/PhysicsTestScene";
 import PuzzleDevScene from "./scenes/PuzzleDevScene";
+import Dungeon1 from './scenes/Dungeon1';
+import Dungeon2 from './scenes/Dungeon2';
 
 let scene_manager: SceneManager;
 const sketch = (p: p5) => {
     p.preload = () => {
-        scene_manager = new SceneManager(p, [MenuScene, PlayScene, KDDevScene, PhysicsTestScene, PuzzleDevScene], LoadingScene);
+        scene_manager = new SceneManager(p, [MenuScene, PlayScene, KDDevScene, PhysicsTestScene, PuzzleDevScene, Dungeon1, Dungeon2], LoadingScene);
         scene_manager.preload();
     };
 
@@ -22,28 +24,28 @@ const sketch = (p: p5) => {
     };
 
     p.keyPressed = (e: KeyboardEvent) => {
-        scene_manager.keyPressed(e);
+        scene_manager?.keyPressed(e);
     };
 
     p.keyReleased = (e: KeyboardEvent) => {
-        scene_manager.keyReleased(e);
+        scene_manager?.keyReleased(e);
     };
 
     p.mouseClicked = (e: MouseEvent) => {
-        scene_manager.mouseClicked(e);
+        scene_manager?.mouseClicked(e);
     };
 
     p.mousePressed = (e: MouseEvent) => {
-        scene_manager.mousePressed(e);
+        scene_manager?.mousePressed(e);
     };
 
     p.mouseReleased = (e: MouseEvent) => {
-        scene_manager.mouseReleased(e);
+        scene_manager?.mouseReleased(e);
     };
 
     p.draw = () => {
         p.clear();
-        scene_manager.draw();
+        scene_manager?.draw();
     };
 };
 

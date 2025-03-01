@@ -2,13 +2,23 @@ import Puzzle, { PuzzleState } from "../../lib/Puzzle";
 import Cell, { CellState } from "./Cell";
 import Ball from "./Ball";
 import DispenserCell from "./DispenserCell";
+import Sprite from "../../lib/Sprite";
+import PhysicsObject from "../../lib/physics/PhysicsObject";
+import RigidBody from "../../lib/physics/RigidBody";
+import Player from "../../lib/Player";
+
+import Scene from "../../lib/Scene";
+import Sound from "../../lib/Sound";
+import SoundManager,{SoundManagerProps} from "../../lib/SoundManager";
+
 type RGB = Readonly<{
     r: number;
     g: number;
     b: number;
 }>
 export default class AccessCircuit extends Puzzle {
-    zIndex = 1000;
+    x: number = 0;
+    y: number = 0;
     board: Cell[][] = [];
     colors: RGB[] = [
         { r: 0, g: 76, b: 84 },
@@ -24,6 +34,44 @@ export default class AccessCircuit extends Puzzle {
     boardCircleDiameter = 0;
     dispensersWidth = 0;
     dispenserDiameter = 0;
+
+    asset_key: string;
+    asset!: Sprite;
+    player: Player;
+
+    physics_object!: PhysicsObject;
+    highlight: boolean = false;
+
+
+    private sfx_manager!: SoundManager;
+    private circuit_correct_sfx!: Sound;
+    private circuit_xposition_sfx!: Sound;
+    private circuit_incorrect_sfx!: Sound;
+    private circuit_grab_sfx!: Sound;
+
+    constructor(scene: Scene, puzzle_asset_key: string, player: Player) {
+        super(scene);
+        this.asset_key = puzzle_asset_key;
+        this.hidden = true;
+        this.player = player;
+    }
+
+    force_solve() {
+        this.state = PuzzleState.completed;
+        this.hidden = true;
+        this.player.disabled = false;
+        this.asset.change_asset('success-puzzle');
+        this.scene.physics.remove(this.physics_object);
+    }
+
+    force_fail() {
+        this.state = PuzzleState.failed;
+        this.hidden = true;
+        this.player.disabled = false;
+        this.asset.change_asset('broken-puzzle');
+        this.scene.physics.remove(this.physics_object);
+    }
+
     checkSolution(): boolean {
         for (let row of this.board) {
             let rowIsCorrect = true;
@@ -35,14 +83,59 @@ export default class AccessCircuit extends Puzzle {
                 }
             }
             if (rowIsCorrect) {
+                this.onCompleted && this.onCompleted();
+                this.state = PuzzleState.completed;
+                this.hidden = true;
+                this.player.disabled = false;
+                this.asset.change_asset('success-puzzle');
+                this.scene.physics.remove(this.physics_object);
                 return true;
             }
         }
 
         return false;
     }
+
     preload(): any { }
+
     setup(): void {
+        this.physics_object = new PhysicsObject({
+            width: 100,
+            height: 100,
+            mass: Infinity
+        });
+        this.physics_object.overlaps = true;
+        this.physics_object.body.x = this.x;
+        this.physics_object.body.y = this.y;
+        this.scene.physics.addObject(this.physics_object);
+        let timeout: any;
+        this.physics_object.onCollide = (other: RigidBody) => {
+            if (other == this.player.body) {
+                clearTimeout(timeout);
+                this.highlight = true;
+                timeout = setTimeout(() => {
+                    this.highlight = false;
+                }, 100);
+            }
+        }
+        this.asset = this.scene.add_new.sprite(this.asset_key);
+
+        //adding sounds after physics stuff just in case
+        this.circuit_grab_sfx = this.scene.add_new.sound("button_sfx")
+        this.circuit_correct_sfx = this.scene.add_new.sound("circuit_correct_sfx")
+        this.circuit_incorrect_sfx = this.scene.add_new.sound("circuit_incorrect_sfx")
+        this.circuit_xposition_sfx = this.scene.add_new.sound("circuit_xposition_sfx")
+        const sfx_props: SoundManagerProps= {
+            group: "SFX",
+            sounds: [this.circuit_grab_sfx,this.circuit_correct_sfx,this.circuit_incorrect_sfx, this.circuit_incorrect_sfx]
+        }
+        this.sfx_manager = this.scene.add_new.soundmanager(sfx_props);
+                
+
+        this.asset.x = this.x;
+        this.asset.y = this.y;
+        this.asset.width = 32;
+        this.asset.height = 48;
         this.generateSolution();
         this.scene.p5.createCanvas(this.scene.p5.windowWidth, this.scene.p5.windowHeight);
         this.scene.p5.rectMode(this.scene.p5.CENTER);
@@ -50,7 +143,9 @@ export default class AccessCircuit extends Puzzle {
         this.setupBoard();
         this.setupFooter();
     }
+
     draw() {
+<<<<<<< HEAD
         if (this.solved()) {
             this.displayWinMessage();
         } else {
@@ -73,20 +168,57 @@ export default class AccessCircuit extends Puzzle {
                 this.state = PuzzleState.completed;
                 this.displayWinMessage();
             }
+=======
+        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
+        if (this.highlight) {
+            this.scene.p5.circle(this.x - this.asset.width / 2, this.y - this.asset.height / 2, 50);
+        }
+    }
+
+    postDraw() {
+        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
+        if (this.hidden) return;
+        // draw puzzle
+        this.draw_header();
+        this.draw_body();
+        this.draw_footer();
+        for (let ball of this.balls) {
+            ball.draw();
+        }
+        if (this.dragging) {
+            const x = this.scene.p5.mouseX - this.scene.p5.width / 2;
+            const y = this.scene.p5.mouseY - this.scene.p5.height / 2;
+            this.dragging.x = x;
+            this.dragging.y = y;
+            this.dragging.draw();
+>>>>>>> main
+        }
+    }
+
+    keyPressed(e: KeyboardEvent): void {
+        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
+        if (this.hidden && this.highlight && e.key == 'e') {
+            this.player.disabled = true;
+            this.hidden = false;
         }
     }
     mousePressed() {
+<<<<<<< HEAD
         if (this.solved()) {
             this.scene.start(this.scene.name);
             return;
         }
 
+=======
+        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
+>>>>>>> main
         const x = this.scene.p5.mouseX - this.scene.p5.width / 2;
         const y = this.scene.p5.mouseY - this.scene.p5.height / 2;
         for (let cell of this.dispenserCells) {
             const radius = cell.circleDiameter / 2
             if (cell.x - radius < x && cell.x + radius > x && cell.y - radius < y && cell.y + radius > y) {
                 this.dragging = cell.pickupBall();
+                this.circuit_grab_sfx.play();
             }
         }
     }
@@ -112,6 +244,7 @@ export default class AccessCircuit extends Puzzle {
     }
 
     mouseReleased() {
+        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
         const x = this.scene.p5.mouseX - this.scene.p5.width / 2;
         const y = this.scene.p5.mouseY - this.scene.p5.height / 2;
         let found = false;
@@ -133,6 +266,7 @@ export default class AccessCircuit extends Puzzle {
                         cell.placeBall(this.dragging);
                         if (this.dragging.color == this.solution[i]) {
                             cell.state = CellState.CORRECT;
+                            this.circuit_correct_sfx.play();
                             //} else if (this.solution.some(item => item == this.dragging?.color)) {
                         } else {
                             let solution_count = 0;
@@ -148,8 +282,10 @@ export default class AccessCircuit extends Puzzle {
                             console.log(filled_positions, solution_count)
                             if (solution_count > 0 && filled_positions <= solution_count) {
                                 cell.state = CellState.WRONG_POSITION;
+                                this.circuit_xposition_sfx.play()
                             } else {
                                 cell.state = CellState.INCORRECT;
+                                this.circuit_incorrect_sfx.play()
                             }
                         }
                         this.balls.push(this.dragging);
@@ -163,6 +299,14 @@ export default class AccessCircuit extends Puzzle {
                 this.dragging.cellOfBall.placeBall(this.dragging);
             }
             this.dragging = null;
+        }
+        const solved = this.checkSolution();
+        if (!solved && this.current_row >= this.board.length) {
+            this.state = PuzzleState.failed;
+            this.hidden = true;
+            this.player.disabled = false;
+            this.scene.physics.remove(this.physics_object);
+            this.asset.change_asset('broken-puzzle');
         }
     }
 
@@ -352,6 +496,7 @@ export default class AccessCircuit extends Puzzle {
             this.solution.push(color);
         }
     }
+<<<<<<< HEAD
     displayWinMessage(): void {
         let p5 = this.scene.p5;
     
@@ -373,3 +518,6 @@ export default class AccessCircuit extends Puzzle {
         p5.text("Click to continue.", 0, boxHeight / 4);
     }
 }
+=======
+}
+>>>>>>> main
