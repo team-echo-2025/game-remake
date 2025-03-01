@@ -1,4 +1,4 @@
-import { XML } from "p5";
+import { Graphics, Image, XML } from "p5";
 import GameObject from "../GameObject";
 import Scene from "../Scene";
 import Tileset from "./Tileset";
@@ -33,6 +33,8 @@ export default class Tilemap implements GameObject {
     chunks: Map<string, TLayerChunk> = new Map();
     cam_chunksx!: number;
     cam_chunksy!: number;
+    buffer!: Graphics;
+    buffer_image!: Image;
 
     get x() {
         return this._x;
@@ -149,13 +151,18 @@ export default class Tilemap implements GameObject {
         }
 
         console.log(this.chunks);
-        this.load_chunks();
+        //this.load_chunks();
+        this.buffer = this._scene.p5.createGraphics(this._width, this._height);
     }
 
     postSetup(): void {
         this.cam_chunksx = Math.ceil(this._scene.camera.bounds.halfWidth * 2 / (16 * this.tilewidth));
         this.cam_chunksy = Math.ceil(this._scene.camera.bounds.halfHeight * 2 / (16 * this.tilewidth));
-        console.log(this.cam_chunksx, "TESTSSTST")
+        for (const [_, chunk] of this.chunks) {
+            chunk.load(this.buffer);
+        }
+        this.buffer_image = this.buffer.get();
+        this.buffer.remove();
     }
 
     get_camera_index = (): Vector2D => {
@@ -171,12 +178,13 @@ export default class Tilemap implements GameObject {
         for (let row = Math.floor(cam_chunky - this.cam_chunksy / 2); row <= Math.floor(cam_chunky + this.cam_chunksy / 2); row++) {
             for (let col = Math.floor(cam_chunkx - this.cam_chunksx / 2); col <= Math.floor(cam_chunkx + this.cam_chunksx / 2); col++) {
                 const chunk = this.chunks.get(this.key_for({ x: col * 16, y: row * 16 }));
-                chunk?.load(this._scene.p5);
+                //chunk?.load(this._scene.p5);
             }
         }
     }
 
     draw(): void {
-        this.load_chunks();
+        this._scene.p5.image(this.buffer_image, -this._width / 2, -this._height / 2);
+        //this.load_chunks();
     }
 }

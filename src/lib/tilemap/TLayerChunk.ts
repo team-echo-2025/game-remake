@@ -63,12 +63,12 @@ export default class TLayerChunk {
         this.buffer = undefined;
     }
 
-    load(buffer: p5) {
-        this.scene.p5.push();
-        this.scene.p5.translate(-this.tilemap.width / 2, -this.tilemap.height / 2);
-        this.scene.p5.translate(-this.tilemap.minx, -this.tilemap.miny)
-        this.scene.p5.image(this.chunk_image!, this.x * this.tilemap.tilewidth, this.y * this.tilemap.tileheight);
-        this.scene.p5.pop();
+    load(buffer: Graphics) {
+        buffer.push();
+        //buffer.translate(-this.tilemap.width / 2, -this.tilemap.height / 2);
+        buffer.translate(-this.tilemap.minx, -this.tilemap.miny)
+        buffer.image(this.chunk_image!, this.x * this.tilemap.tilewidth, this.y * this.tilemap.tileheight);
+        buffer.pop();
         this.loaded = true;
         for (const layer of this.layers) {
             layer.load(buffer);
