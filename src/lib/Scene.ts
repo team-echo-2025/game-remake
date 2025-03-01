@@ -23,6 +23,10 @@ export default class Scene implements GameObject {
     private frames = 0;
     private display_frames = 0;
 
+    get _objects() {
+        return this.objects;
+    }
+
     get mouseX() {
         return (this.p5.mouseX / this._camera.zoom) + this.camera.x - (this.p5.width / 2) / this._camera.zoom;
     }
@@ -103,15 +107,15 @@ export default class Scene implements GameObject {
     get add_new() {
         return this.game_object_factory;
     }
-    
-    loadSound =(key: string, path: string) => {//
+
+    loadSound = (key: string, path: string) => {//
         console.log("loading sound", key)
-        if(this.get_asset(key)){
+        if (this.get_asset(key)) {
             console.log("asset already loaded", key)
         }
-        if(this.get_asset(key)==undefined){
-            const sound:Promise<Howl> = new Promise<Howl>(res=>{
-                const temp:Howl = new Howl({
+        if (this.get_asset(key) == undefined) {
+            const sound: Promise<Howl> = new Promise<Howl>(res => {
+                const temp: Howl = new Howl({
                     src: [path]
                 });
                 temp.on("load", () => {
@@ -226,17 +230,15 @@ export default class Scene implements GameObject {
     async preload_objects(): Promise<any> {
         console.log("in preload objects")
         const to_load = []
-        //if(this.objects.length!=0){
-            for (const obj of this.objects) {
-                console.log(obj)
-                obj.preload && to_load.push(obj.preload());
-            }
-            for (const pre of this.preloads) {
-                console.log(pre)
-                to_load.push(pre);
-            }
-        //}
-        
+        for (const obj of this.objects) {
+            console.log(obj)
+            obj.preload && to_load.push(obj.preload());
+        }
+        for (const pre of this.preloads) {
+            console.log(pre)
+            to_load.push(pre);
+        }
+
         await Promise.all(to_load);
     }
 
