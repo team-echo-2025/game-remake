@@ -1,5 +1,5 @@
 import GameObject from "../lib/GameObject";
-import PhysicsObject, { PhysicsObjectProps } from "../lib/physics/PhysicsObject";
+import PhysicsObject from "../lib/physics/PhysicsObject";
 import Rectangle from "../lib/physics/Rectangle";
 import RigidBody from "../lib/physics/RigidBody";
 import Player from "../lib/Player";
@@ -87,7 +87,8 @@ export default class PlayScene extends Scene {
 
     constructor() {
         super("play-scene");
-        this.physics.debug = false;
+        //this.physics.debug = false;
+        this.physics.debug = true;
     }
 
     onStart(args: StartArgs): void {
