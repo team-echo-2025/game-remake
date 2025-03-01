@@ -1,11 +1,14 @@
 import Page from "../lib/Page";
 import ButtonTest from "../lib/ui/ButtonTest";
-
+import Sound from "../lib/Sound";
+import SoundManager, {SoundManagerProps} from "../lib/SoundManager";
 export default class WorldSelectPage extends Page {
     w1?: ButtonTest;
     w2?: ButtonTest;
     w3?: ButtonTest;
     back!: ButtonTest;
+    private button_sfx!: Sound;
+    private sfx_manager!: SoundManager;
     constructor() {
         super("world-select-page")
     }
@@ -22,10 +25,17 @@ export default class WorldSelectPage extends Page {
         this.w3 = undefined;
     }
     setup(): void {
+        this.button_sfx = this.scene.add_new.sound("button_sfx")
+        const sfx_props: SoundManagerProps= {
+            group: "SFX",
+            sounds: [this.button_sfx]
+        }
+        this.sfx_manager = this.scene.add_new.soundmanager(sfx_props);
         this.w1 = this.scene.add_new.button({
             label: "World 1",
             font_key: 'jersey',
             callback: () => {
+                this.button_sfx.play();
                 this.cleanup();
                 this.set_page("difficulty-page");
             }
@@ -35,6 +45,7 @@ export default class WorldSelectPage extends Page {
             label: "World 2",
             font_key: 'jersey',
             callback: () => {
+                this.button_sfx.play();
                 this.cleanup();
                 this.set_page("difficulty-page");
             }
@@ -43,6 +54,7 @@ export default class WorldSelectPage extends Page {
             label: "World 3",
             font_key: 'jersey',
             callback: () => {
+                this.button_sfx.play();
                 this.cleanup();
                 this.set_page("difficulty-page");
             }
@@ -51,6 +63,7 @@ export default class WorldSelectPage extends Page {
             label: "Back",
             font_key: 'jersey',
             callback: () => {
+                this.button_sfx.play();
                 this.cleanup();
                 this.set_page("menu-page");
             }

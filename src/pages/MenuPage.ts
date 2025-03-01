@@ -1,4 +1,5 @@
 import Page from "../lib/Page";
+import Sound from "../lib/Sound";
 import ButtonTest, { ButtonTestProps } from "../lib/ui/ButtonTest";
 import DropdownMenu from "../lib/ui/DropdownMenu";
 
@@ -10,24 +11,27 @@ export default class MenuPage extends Page {
     credits!: ButtonTest;
     physicsTest!: ButtonTest;
     puzzleTest!: ButtonTest;
+    button_sfx!: Sound;
     dropdown!: DropdownMenu;
 
     constructor() {
         super("menu-page")
     }
     preload(): any {
-        this.scene.loadFont('jersey', 'assets/fonts/jersey.ttf')
     }
     cleanup() {
         this.scene.remove(this.play);
+        this.scene.remove(this.setting);
         this.scene.remove(this.carCuz);
         this.scene.remove(this.KDbutton);
-        this.scene.remove(this.setting);
         this.scene.remove(this.credits);
         this.scene.remove(this.physicsTest);
         this.scene.remove(this.puzzleTest);
+        this.scene.remove(this.button_sfx);
+        this.scene.remove(this.dropdown);
     }
-    setup(): void {
+    setup() {
+        this.button_sfx = this.scene.add_new.sound("button_sfx")
         const button1: ButtonTestProps = {
             label: "Scene 1",
             font_key: "jersey",
@@ -59,6 +63,7 @@ export default class MenuPage extends Page {
             label: "Play!",
             font_key: 'jersey',
             callback: () => {
+                this.button_sfx.play();
                 this.cleanup()
                 this.set_page('world-select-page')
             }
@@ -69,6 +74,7 @@ export default class MenuPage extends Page {
             label: "Settings",
             font_key: 'jersey',
             callback: () => {
+                this.button_sfx.play();
                 this.cleanup();
                 this.set_page("settings-page");
             }
@@ -79,6 +85,7 @@ export default class MenuPage extends Page {
             label: "Character Customization",
             font_key: 'jersey',
             callback: () => {
+                this.button_sfx.play();
                 this.cleanup();
                 this.set_page("settings-page");
             }
@@ -89,6 +96,7 @@ export default class MenuPage extends Page {
             label: "KD DEV",
             font_key: "jersey",
             callback: () => {
+                this.button_sfx.play();
                 this.cleanup()
                 this.scene.start("kd-dev-scene")
             }
@@ -99,33 +107,41 @@ export default class MenuPage extends Page {
             label: "Credits",
             font_key: "jersey",
             callback: () => {
+                this.button_sfx.play();
                 this.cleanup();
+                console.log("switching to credits");
                 this.set_page("credits-page");
             }
         })
         this.credits.x = -300
         this.credits.y = 300
-        this.physicsTest = this.scene.add_new.button
-            ({
-                label: "Physics",
-                font_key: "jersey",
-                callback: () => {
-                    this.cleanup();
-                    this.scene.start("physics-scene");
-                }
-            })
+        this.physicsTest = this.scene.add_new.button({
+            label: "Physics",
+            font_key: "jersey",
+            callback: () => {
+                this.button_sfx.play();
+                this.cleanup();
+                this.scene.start("physics-scene");
+            }
+        })
         this.physicsTest.x = 150
         this.physicsTest.y = 300
-        this.puzzleTest = this.scene.add_new.button
-            ({
-                label: "Puzzles",
-                font_key: "jersey",
-                callback: () => {
-                    this.cleanup();
-                    this.scene.start("puzzle-dev-scene");
-                }
-            })
+        this.puzzleTest = this.scene.add_new.button({
+            label: "Puzzles",
+            font_key: "jersey",
+            callback: () => {
+                this.button_sfx.play();
+                this.cleanup();
+                this.scene.start("puzzle-dev-scene");
+            }
+        })
         this.puzzleTest.x = 0
         this.puzzleTest.y = 300
+    }
+    postDraw(): void {
+        this.page_manager.scene.p5.fill(0);
+        this.page_manager.scene.p5.textAlign(this.page_manager.scene.p5.CENTER, this.page_manager.scene.p5.CENTER);
+        this.page_manager.scene.p5.textSize(75);
+        this.page_manager.scene.p5.text('EXIT PARADOX', 0, -300);
     }
 }
