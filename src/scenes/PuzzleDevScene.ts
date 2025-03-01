@@ -37,11 +37,9 @@ export default class PuzzleDevScene extends Scene {
         this.bSlide.hidden = true;
         this.lightsOn.hidden = true;
         this.cScales = new CubeScales(this);
-        this.aCircuit.hidden = true;
         this.bSlide.hidden = true;
         this.lightsOn.hidden = true;
         this.cScales.hidden = true;
-
         this.add(this.aCircuit);
         this.add(this.bSlide);
         this.add(this.lightsOn);
@@ -51,12 +49,24 @@ export default class PuzzleDevScene extends Scene {
     preload(): any {
         this.loadFont("jersey", "assets/fonts/jersey.ttf");
         this.loadImage("puzzle", "assets/access_circuit.png");
+        this.loadFont("jersey", "assets/fonts/jersey.ttf");
+        this.loadTilemap("tilemap", "assets/tilemaps/LaythsTileMap/world-1.tmx")
+        this.loadImage("door", "assets/doors/prison_door.png");
+        this.loadImage("puzzle", "assets/access_circuit.png");
+        this.loadImage("broken-puzzle", "assets/access_circuit_broken.png");
+        this.loadImage("success-puzzle", "assets/access_circuit_success.png");
+        this.loadSound("background_music", "assets/background_music.mp3");
+        this.loadSound("button_sfx", "assets/TInterfaceSounds/light-switch.mp3");
+        this.loadSound("circuit_correct_sfx", "assets/TInterfaceSounds/greanpatchT.mp3");
+        this.loadSound("circuit_incorrect_sfx", "assets/TInterfaceSounds/all-processorsT.mp3");
+        this.loadSound("circuit_xposition_sfx", "assets/TInterfaceSounds/iciclesT.mp3");
     }
 
     setup(): void {
         this.aCircuit = new AccessCircuit(this, 'puzzle', this.player);
         this.aCircuit.hidden = true;
         this.aCircuit?.setup();
+        this.add(this.aCircuit);
         // difficulty settings
         this.easy = this.add_new.button({
             label: "Easy",
