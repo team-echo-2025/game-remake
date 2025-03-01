@@ -9,7 +9,7 @@ import Player from "../../lib/Player";
 
 import Scene from "../../lib/Scene";
 import Sound from "../../lib/Sound";
-import SoundManager,{SoundManagerProps} from "../../lib/SoundManager";
+import SoundManager, { SoundManagerProps } from "../../lib/SoundManager";
 
 type RGB = Readonly<{
     r: number;
@@ -125,12 +125,12 @@ export default class AccessCircuit extends Puzzle {
         this.circuit_correct_sfx = this.scene.add_new.sound("circuit_correct_sfx")
         this.circuit_incorrect_sfx = this.scene.add_new.sound("circuit_incorrect_sfx")
         this.circuit_xposition_sfx = this.scene.add_new.sound("circuit_xposition_sfx")
-        const sfx_props: SoundManagerProps= {
+        const sfx_props: SoundManagerProps = {
             group: "SFX",
-            sounds: [this.circuit_grab_sfx,this.circuit_correct_sfx,this.circuit_incorrect_sfx, this.circuit_incorrect_sfx]
+            sounds: [this.circuit_grab_sfx, this.circuit_correct_sfx, this.circuit_incorrect_sfx, this.circuit_incorrect_sfx]
         }
         this.sfx_manager = this.scene.add_new.soundmanager(sfx_props);
-                
+
 
         this.asset.x = this.x;
         this.asset.y = this.y;
@@ -145,30 +145,6 @@ export default class AccessCircuit extends Puzzle {
     }
 
     draw() {
-<<<<<<< HEAD
-        if (this.solved()) {
-            this.displayWinMessage();
-        } else {
-            // draw puzzle
-            this.draw_header();
-            this.draw_body();
-            this.draw_footer();
-            for (let ball of this.balls) {
-                ball.draw();
-            }
-            if (this.dragging) {
-                const x = this.scene.p5.mouseX - this.scene.p5.width / 2;
-                const y = this.scene.p5.mouseY - this.scene.p5.height / 2;
-                this.dragging.x = x;
-                this.dragging.y = y;
-                this.dragging.draw();
-            }
-
-            if(this.checkSolution()) {
-                this.state = PuzzleState.completed;
-                this.displayWinMessage();
-            }
-=======
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
         if (this.highlight) {
             this.scene.p5.circle(this.x - this.asset.width / 2, this.y - this.asset.height / 2, 50);
@@ -191,7 +167,6 @@ export default class AccessCircuit extends Puzzle {
             this.dragging.x = x;
             this.dragging.y = y;
             this.dragging.draw();
->>>>>>> main
         }
     }
 
@@ -203,15 +178,7 @@ export default class AccessCircuit extends Puzzle {
         }
     }
     mousePressed() {
-<<<<<<< HEAD
-        if (this.solved()) {
-            this.scene.start(this.scene.name);
-            return;
-        }
-
-=======
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
->>>>>>> main
         const x = this.scene.p5.mouseX - this.scene.p5.width / 2;
         const y = this.scene.p5.mouseY - this.scene.p5.height / 2;
         for (let cell of this.dispenserCells) {
@@ -496,28 +463,4 @@ export default class AccessCircuit extends Puzzle {
             this.solution.push(color);
         }
     }
-<<<<<<< HEAD
-    displayWinMessage(): void {
-        let p5 = this.scene.p5;
-    
-        p5.fill(0, 0, 0, 150);
-        p5.rect(0, 0, p5.width, p5.height);
-    
-        let boxWidth = p5.width / 3;
-        let boxHeight = p5.height / 6;
-        p5.fill(255);
-        p5.stroke(0);
-        p5.rect(0, 0, boxWidth, boxHeight, 10);
-    
-        p5.fill(0);
-        p5.noStroke();
-        p5.textAlign(p5.CENTER, p5.CENTER);
-        p5.textSize(32);
-        p5.text("You Win!", 0, -boxHeight / 8);
-        p5.textSize(16);
-        p5.text("Click to continue.", 0, boxHeight / 4);
-    }
 }
-=======
-}
->>>>>>> main
