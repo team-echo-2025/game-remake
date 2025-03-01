@@ -1,8 +1,9 @@
-import { Framebuffer, XML } from "p5";
+import { Graphics, Image, XML } from "p5";
 import GameObject from "../GameObject";
 import Scene from "../Scene";
 import Tileset from "./Tileset";
 import TLayer from "./TLayer";
+import TLayerChunk from "./TLayerChunk";
 import { Vector2D } from "../types/Physics";
 
 export type TilemapProps = Readonly<{
@@ -12,29 +13,6 @@ export type TilemapProps = Readonly<{
     chunk_size?: number;
     loaded_chunks?: number;
 }>
-
-class TilemapBuffer implements GameObject {
-    zIndex?: number = -100;
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    buffer: Framebuffer;
-    scene: Scene;
-    constructor(x: number, y: number, width: number, height: number, buffer: Framebuffer, scene: Scene) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.buffer = buffer;
-        this.scene = scene;
-    }
-    draw(): void {
-        const x = this.x - this.width / 2
-        const y = this.y - this.height / 2;
-        this.scene.p5.image(this.buffer, x, y);
-    }
-}
 
 export default class Tilemap implements GameObject {
     private _scene!: Scene;
@@ -48,15 +26,17 @@ export default class Tilemap implements GameObject {
     private _tileheight!: number;
     private _x: number;
     private _y: number;
-    buffer!: Framebuffer;
-    player_buffer!: Framebuffer;
     minx: number = 0;
     maxx: number = 0;
     miny: number = 0;
     maxy: number = 0;
-    loaded_chunks: number = 0;
-    chunk_offset: Vector2D = { x: 0, y: 0 };
-    chunk_size: number = 16;
+    chunks: Map<string, TLayerChunk> = new Map();
+    cam_chunksx!: number;
+    cam_chunksy!: number;
+    buffer!: Graphics;
+    buffer_image!: Image;
+    player_buffer!: Graphics;
+    player_buffer_image!: Image;
 
     get x() {
         return this._x;
@@ -104,11 +84,13 @@ export default class Tilemap implements GameObject {
         this._y = props.y ?? 0;
         this._tilesets = [];
         this.layers = [];
-        this.loaded_chunks = props.loaded_chunks ?? 3;
-        this.chunk_size = props.chunk_size ?? this.chunk_size;
     }
 
     async preload(): Promise<any> { }
+
+    key_for = (vec: Vector2D) => {
+        return `${vec.x}:${vec.y}`;
+    }
 
     setup(): void {
         this.tilemap = this._scene.get_asset(this.tilemap_key);
@@ -157,30 +139,51 @@ export default class Tilemap implements GameObject {
         console.log(this.minx, this.maxx)
         console.log("SETUP")
 
-        this.buffer = this._scene.p5.createFramebuffer({
-            width: this._width,
-            height: this._height,
-        })!;
-        this.player_buffer = this._scene.p5.createFramebuffer({
-            width: this._width,
-            height: this._height,
-        })!;
+        console.log(this._scene.camera.bounds.halfWidth * 2, this._scene.camera.bounds.halfHeight * 2, 'BOUNDS')
 
-        for (const layer of this.layers) {
-            layer.prerender();
-        }
-        const tilemap_buffer = new TilemapBuffer(this.x, this.y, this.width, this.height, this.buffer, this._scene);
-        this._scene.add(tilemap_buffer);
-        const player_buffer = new TilemapBuffer(this.x, this.y, this.width, this.height, this.player_buffer, this._scene);
-        this.player_buffer.begin();
-        player_buffer.zIndex = 100;
-        this._scene.add(player_buffer);
         this._scene.p5.push();
         this._scene.p5.rectMode("corner");
         this._scene.p5.noFill();
         this._scene.p5.stroke(255, 0, 0);
         this._scene.p5.rect(this.x - this._width / 2, this.y - this._height / 2, this._width, this._height);
         this._scene.p5.pop();
-        this.player_buffer.end();
+
+        for (const [_, chunk] of this.chunks) {
+            chunk.preload();
+        }
+
+        console.log(this.chunks);
+        //this.load_chunks();
+        this.buffer = this._scene.p5.createGraphics(this._width, this._height);
+        this.player_buffer = this._scene.p5.createGraphics(this._width, this._height);
+    }
+
+    postSetup(): void {
+        this.cam_chunksx = Math.ceil(this._scene.camera.bounds.halfWidth * 2 / (16 * this.tilewidth));
+        this.cam_chunksy = Math.ceil(this._scene.camera.bounds.halfHeight * 2 / (16 * this.tilewidth));
+        for (const [_, chunk] of this.chunks) {
+            if (chunk.topmost) {
+                chunk.load(this.buffer, this.player_buffer);
+            } else {
+                chunk.load(this.buffer, this.player_buffer);
+            }
+        }
+        this.buffer_image = this.buffer.get();
+        this.buffer.remove();
+        this.player_buffer_image = this.player_buffer.get();
+        this.player_buffer.remove();
+        this._scene.set_asset("buffer_image", this.buffer_image);
+        this._scene.set_asset("player_buffer_image", this.player_buffer_image);
+        const sprite = this._scene.add_new.sprite("buffer_image");
+        const player_sprite = this._scene.add_new.sprite("player_buffer_image");
+        player_sprite.zIndex = 100
+    }
+
+    get_camera_index = (): Vector2D => {
+        const CHUNK_PIXEL_WIDTH = 16 * this.tilewidth;  // 16×32
+        const CHUNK_PIXEL_HEIGHT = 16 * this.tileheight; // 16×32
+        const cam_chunkx = Math.floor((this._scene.camera.x) / CHUNK_PIXEL_WIDTH);
+        const cam_chunky = Math.floor((this._scene.camera.y) / CHUNK_PIXEL_HEIGHT);
+        return { x: cam_chunkx, y: cam_chunky };
     }
 }

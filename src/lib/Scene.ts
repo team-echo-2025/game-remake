@@ -104,6 +104,10 @@ export default class Scene implements GameObject {
         return this.assets.get(key);
     }
 
+    set_asset = (key: string, asset: any) => {
+        this.assets.set(key, asset);
+    }
+
     get add_new() {
         return this.game_object_factory;
     }
@@ -242,6 +246,13 @@ export default class Scene implements GameObject {
         await Promise.all(to_load);
     }
 
+    postSetup(): void { }
+    postSetup_objects(): void {
+        for (const obj of this.objects) {
+            obj.postSetup?.();
+        }
+    }
+
     setup(): void { }
     setup_objects(): void {
         this._camera.setup();
@@ -282,6 +293,7 @@ export default class Scene implements GameObject {
 
     postDraw(): void { }
     postDraw_objects(): void {
+        this._physics.postDraw();
         this.p5.push();
         this.p5.fill(0);
         this.p5.textSize(24);
