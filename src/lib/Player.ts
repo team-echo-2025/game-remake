@@ -9,7 +9,7 @@ type Velocity = {
 };
 
 export default class Player extends PhysicsObject {
-    zIndex?: number = 100;
+    zIndex?: number = 50;
     private pressed_keys: any = {};
     private spritesheet?: Image;
     private frames: Image[][] = [];
