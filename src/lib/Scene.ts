@@ -99,6 +99,10 @@ export default class Scene implements GameObject {
         return this.assets.get(key);
     }
 
+    set_asset = (key: string, asset: any) => {
+        this.assets.set(key, asset);
+    }
+
     get add_new() {
         return this.game_object_factory;
     }
