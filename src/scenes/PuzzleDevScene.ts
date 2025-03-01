@@ -40,7 +40,6 @@ export default class PuzzleDevScene extends Scene {
         this.cScales.hidden = true;
         this.add(this.bSlide);
         this.add(this.lightsOn);
-        this.add(this.cScales);
     }
 
     preload(): any {
@@ -64,6 +63,8 @@ export default class PuzzleDevScene extends Scene {
         this.aCircuit.hidden = true;
         this.aCircuit?.setup();
         this.add(this.aCircuit);
+        this.cScales.setup();
+        this.add(this.cScales);
         // difficulty settings
         this.easy = this.add_new.button({
             label: "Easy",

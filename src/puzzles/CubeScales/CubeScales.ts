@@ -21,7 +21,6 @@ export default class CubeScalesPuzzle extends Puzzle {
             label: "Reset Button",
             font_key: "jersey",
             callback: () => {
-                this.resetCubes();
                 this.resetButton.hidden = true;
             }
         });
