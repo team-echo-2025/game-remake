@@ -63,7 +63,14 @@ export default class TLayerChunk {
         this.buffer = undefined;
     }
 
-    load(buffer: Graphics) {
+    load(_buffer: Graphics, topmost: Graphics) {
+        let buffer;
+        if (this.topmost) {
+            buffer = topmost;
+        } else {
+            buffer = _buffer;
+        }
+        console.log(this.topmost);
         buffer.push();
         //buffer.translate(-this.tilemap.width / 2, -this.tilemap.height / 2);
         buffer.translate(-this.tilemap.minx, -this.tilemap.miny)
@@ -71,7 +78,7 @@ export default class TLayerChunk {
         buffer.pop();
         this.loaded = true;
         for (const layer of this.layers) {
-            layer.load(buffer);
+            layer.load(_buffer, topmost);
         }
     }
 

@@ -40,16 +40,16 @@ export default class TLayerColliderChunk extends TLayerChunk {
         }
     }
 
-    load(buffer: Graphics) {
+    load(buffer: Graphics, topmost: Graphics) {
         if (this.bodies.length != 0) {
             this.loaded = true;
             for (const layer of this.layers) {
-                layer.load(buffer);
+                layer.load(buffer, topmost);
             }
             return
         }
         for (const layer of this.layers) {
-            layer.load(buffer);
+            layer.load(buffer, topmost);
         }
         this.loaded = true;
     }

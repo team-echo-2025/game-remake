@@ -35,6 +35,8 @@ export default class Tilemap implements GameObject {
     cam_chunksy!: number;
     buffer!: Graphics;
     buffer_image!: Image;
+    player_buffer!: Graphics;
+    player_buffer_image!: Image;
 
     get x() {
         return this._x;
@@ -153,16 +155,28 @@ export default class Tilemap implements GameObject {
         console.log(this.chunks);
         //this.load_chunks();
         this.buffer = this._scene.p5.createGraphics(this._width, this._height);
+        this.player_buffer = this._scene.p5.createGraphics(this._width, this._height);
     }
 
     postSetup(): void {
         this.cam_chunksx = Math.ceil(this._scene.camera.bounds.halfWidth * 2 / (16 * this.tilewidth));
         this.cam_chunksy = Math.ceil(this._scene.camera.bounds.halfHeight * 2 / (16 * this.tilewidth));
         for (const [_, chunk] of this.chunks) {
-            chunk.load(this.buffer);
+            if (chunk.topmost) {
+                chunk.load(this.buffer, this.player_buffer);
+            } else {
+                chunk.load(this.buffer, this.player_buffer);
+            }
         }
         this.buffer_image = this.buffer.get();
         this.buffer.remove();
+        this.player_buffer_image = this.player_buffer.get();
+        this.player_buffer.remove();
+        this._scene.set_asset("buffer_image", this.buffer_image);
+        this._scene.set_asset("player_buffer_image", this.player_buffer_image);
+        const sprite = this._scene.add_new.sprite("buffer_image");
+        const player_sprite = this._scene.add_new.sprite("player_buffer_image");
+        player_sprite.zIndex = 100
     }
 
     get_camera_index = (): Vector2D => {
@@ -171,20 +185,5 @@ export default class Tilemap implements GameObject {
         const cam_chunkx = Math.floor((this._scene.camera.x) / CHUNK_PIXEL_WIDTH);
         const cam_chunky = Math.floor((this._scene.camera.y) / CHUNK_PIXEL_HEIGHT);
         return { x: cam_chunkx, y: cam_chunky };
-    }
-
-    load_chunks = () => {
-        const { x: cam_chunkx, y: cam_chunky } = this.get_camera_index();
-        for (let row = Math.floor(cam_chunky - this.cam_chunksy / 2); row <= Math.floor(cam_chunky + this.cam_chunksy / 2); row++) {
-            for (let col = Math.floor(cam_chunkx - this.cam_chunksx / 2); col <= Math.floor(cam_chunkx + this.cam_chunksx / 2); col++) {
-                const chunk = this.chunks.get(this.key_for({ x: col * 16, y: row * 16 }));
-                //chunk?.load(this._scene.p5);
-            }
-        }
-    }
-
-    draw(): void {
-        this._scene.p5.image(this.buffer_image, -this._width / 2, -this._height / 2);
-        //this.load_chunks();
     }
 }
