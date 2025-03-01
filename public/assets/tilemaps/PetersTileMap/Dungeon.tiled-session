@@ -12,16 +12,16 @@
             "scale": 0.75,
             "selectedLayer": 8,
             "viewCenter": {
-                "x": -58,
-                "y": 233.99999999999994
+                "x": 484.66666666666663,
+                "y": 259.33333333333326
             }
         },
         "Dungeon.tmx": {
             "scale": 1,
             "selectedLayer": 6,
             "viewCenter": {
-                "x": -433.5,
-                "y": 467.5
+                "x": 107,
+                "y": -0.5
             }
         },
         "Dungeonset.tsx": {
