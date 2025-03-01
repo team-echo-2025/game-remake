@@ -1,4 +1,3 @@
-import { TEXT } from "p5";
 import Page from "../lib/Page";
 import ButtonTest from "../lib/ui/ButtonTest";
 
@@ -6,17 +5,21 @@ export default class CreditsPage extends Page {
     backButton!: ButtonTest;
     p5Button!: ButtonTest;
     howlButton!: ButtonTest;
+
     constructor() {
         super("credits-page")
     }
+
     preload(): any {
         this.scene.loadFont('jersey', 'assets/fonts/jersey.ttf')
     }
+
     cleanup() {
         this.scene.remove(this.backButton);
         this.scene.remove(this.p5Button);
         this.scene.remove(this.howlButton);
     }
+
     setup(): void {
         this.scene.p5.createCanvas(this.scene.p5.windowWidth, this.scene.p5.windowHeight);
         this.scene.p5.rectMode(this.scene.p5.CENTER);
@@ -50,13 +53,15 @@ export default class CreditsPage extends Page {
         this.howlButton.x = 100;
         this.howlButton.y = 200;
     }
-    draw(): void {
+
+    postDraw(): void {
         // Background
         let rectWidth = 400;
         let rectHeight = 600;
 
         let rectX = 0;
         let rectY = -50;
+        this.scene.p5.push()
         this.page_manager.scene.p5.fill(255, 255, 255, 150);
         this.page_manager.scene.p5.rect(rectX, rectY, rectWidth, rectHeight);
 
@@ -79,6 +84,7 @@ export default class CreditsPage extends Page {
         // Built with title
         this.page_manager.scene.p5.textSize(75);
         this.page_manager.scene.p5.text('Built with...', 0, 125);
+        this.scene.p5.pop()
     }
     keyPressed = (e: KeyboardEvent) => {
         if (e.key === "Escape") {

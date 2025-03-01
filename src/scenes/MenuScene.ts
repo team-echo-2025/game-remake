@@ -7,10 +7,14 @@ import MenuPage from "../pages/MenuPage";
 import SettingPage from "../pages/SettingsPage";
 import WorldSelectPage from "../pages/WordSelect";
 import CreditsPage from "../pages/CreditsPage";
-
+import Sound from "../lib/Sound";
+import SoundManager, { SoundManagerProps } from "../lib/SoundManager";
 export default class MenuScene extends Scene {
     pManager: PageManager;
     imgLogo!: p5.Image;  // Declare imgLogo variable
+    private background_music!: Sound;
+    private bgm_manager!: SoundManager;
+    private sfx_manager!: SoundManager;
     constructor() {
         super("menu-scene");
         this.pManager = new PageManager([
@@ -22,14 +26,26 @@ export default class MenuScene extends Scene {
             new CreditsPage(),
         ], this);
     }
+    onStart(args?: any): void {
+        this.add(this.pManager);
+    }
     async preload(): Promise<any> {
-        await this.pManager.preload();
+        this.loadFont('jersey', 'assets/fonts/jersey.ttf')
         this.imgLogo = this.p5.loadImage('assets/background.png');  // Load the background image
+        this.loadSound("background_music", "assets/background_music.mp3")
+        this.loadSound("button_sfx", "assets/TInterfaceSounds/light-switch.mp3")
     }
     setup(): void {
-        this.pManager.setup();
+        this.background_music = this.add_new.sound("background_music");
+
+        const bgm_props: SoundManagerProps = {
+            group: "BGM",
+            sounds: [this.background_music]
+        }
+        this.bgm_manager = this.add_new.soundmanager(bgm_props);
+        this.bgm_manager.play();
     }
-    draw(): void {
+    postDraw(): void {
         this.p5.push();  // Save the current transformation matrix
         this.p5.clear();  // Clear the canvas
 
@@ -43,15 +59,5 @@ export default class MenuScene extends Scene {
         this.p5.endShape(this.p5.CLOSE);
 
         this.p5.pop();  // Restore the previous transformation matrix
-        this.pManager.draw();
-    }
-    keyReleased(e: KeyboardEvent): void {
-        this.pManager.keyReleased(e)
-    }
-    keyPressed(e: KeyboardEvent): void {
-        this.pManager.keyPressed(e);
-    }
-    mouseClicked(e: MouseEvent): void {
-        this.pManager.mouseClicked(e)
     }
 }
