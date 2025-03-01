@@ -1,8 +1,7 @@
-import { XML } from "p5";
+import p5, { Graphics, Image, XML } from "p5";
 import Tile from "./Tile";
 import Scene from "../Scene";
 import Tilemap from "./Tilemap";
-import { Vector2D } from "../types/Physics";
 
 export default class TLayerChunk {
     data: number[];
@@ -19,6 +18,10 @@ export default class TLayerChunk {
     maxx: number = 0;
     miny: number = 0;
     maxy: number = 0;
+    layers: TLayerChunk[] = [];
+    chunk_image?: Image;
+    loaded: boolean = false;
+    buffer?: Graphics;
 
     constructor(chunk: XML, tilemap: Tilemap, scene: Scene, topmost?: boolean) {
         this.data = chunk.getContent().split(',').map(item => parseInt(item));
@@ -29,7 +32,9 @@ export default class TLayerChunk {
         this.scene = scene;
         this.tilemap = tilemap;
         this.topmost = topmost ?? false;
+        this.buffer = scene.p5.createGraphics(this.width * tilemap.tilewidth, this.height * tilemap.tileheight);
     }
+
     precalculate() {
         for (const row of this.tiles) {
             for (const tile of row) {
@@ -42,33 +47,49 @@ export default class TLayerChunk {
                 this.maxy = Math.max(this.tilemap.maxy, tilePixelY + this.tilemap.tileheight);
                 let x = (this.x + tile.x) * this.tilemap.tilewidth;
                 let y = (this.y + tile.y) * this.tilemap.tileheight;
+                this.buffer!.image(tile.image, tile.x * this.tilemap.tilewidth, tile.y * this.tilemap.tileheight);
                 tile.x = x;
                 tile.y = y;
             }
         }
     }
-    prerender() {
+
+    preload() {
+        for (const layer of this.layers) {
+            layer.preload();
+        }
+        this.chunk_image = this.buffer!.get();
+        this.buffer!.remove();
+        this.buffer = undefined;
+    }
+
+    load(_buffer: Graphics, topmost: Graphics) {
+        let buffer;
         if (this.topmost) {
-            this.tilemap.player_buffer.begin();
+            buffer = topmost;
         } else {
-            this.tilemap.buffer.begin();
+            buffer = _buffer;
         }
-        this.scene.p5.push();
-        for (const row of this.tiles) {
-            for (const tile of row) {
-                if (!tile) continue;
-                let x = tile.x - this.tilemap.minx;
-                x -= this.tilemap.width / 2;
-                let y = tile.y - this.tilemap.miny;
-                y -= this.tilemap.height / 2;
-                this.scene.p5.image(tile.image, x, y);
-            }
+        console.log(this.topmost);
+        buffer.push();
+        //buffer.translate(-this.tilemap.width / 2, -this.tilemap.height / 2);
+        buffer.translate(-this.tilemap.minx, -this.tilemap.miny)
+        buffer.image(this.chunk_image!, this.x * this.tilemap.tilewidth, this.y * this.tilemap.tileheight);
+        buffer.pop();
+        this.loaded = true;
+        for (const layer of this.layers) {
+            layer.load(_buffer, topmost);
         }
-        this.scene.p5.pop();
-        if (this.topmost) {
-            this.tilemap.player_buffer.end();
-        } else {
-            this.tilemap.buffer.end();
+    }
+
+    merge_chunk(chunk: TLayerChunk) {
+        this.layers.push(chunk);
+    }
+
+    unload() {
+        for (const layer of this.layers) {
+            layer.unload();
         }
+        this.loaded = false;
     }
 }

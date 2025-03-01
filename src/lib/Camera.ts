@@ -18,6 +18,10 @@ export default class Camera {
         return this._zoom;
     }
 
+    get bounds() {
+        return this._bounds;
+    }
+
     constructor(scene: Scene) {
         this.scene = scene;
     }
@@ -33,6 +37,8 @@ export default class Camera {
 
     follow(body: RigidBody) {
         this._follow = body;
+        this.x = body.x;
+        this.y = body.y;
     }
 
     apply_transformation() {
