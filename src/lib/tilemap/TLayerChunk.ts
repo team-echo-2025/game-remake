@@ -45,9 +45,49 @@ export default class TLayerChunk {
                 this.miny = Math.min(this.tilemap.miny, tilePixelY);
                 this.maxx = Math.max(this.tilemap.maxx, tilePixelX + this.tilemap.tilewidth);
                 this.maxy = Math.max(this.tilemap.maxy, tilePixelY + this.tilemap.tileheight);
-                let x = (this.x + tile.x) * this.tilemap.tilewidth;
-                let y = (this.y + tile.y) * this.tilemap.tileheight;
-                this.buffer!.image(tile.image, tile.x * this.tilemap.tilewidth, tile.y * this.tilemap.tileheight);
+                let x = tile.x * this.tilemap.tilewidth;
+                let y = tile.y * this.tilemap.tileheight;
+                let scale = { x: 1, y: 1 };
+                let translate = { x: 0, y: 0 };
+                this.buffer?.push();
+                if (tile.flipped_x && !tile.flipped_y) {
+                    scale.x = -1;
+                    translate.x = -this.tilemap.tilewidth;
+                    x = -x;
+                }
+                if (tile.flipped_y && !tile.flipped_x) {
+                    scale.y = -1;
+                    translate.y = -this.tilemap.tileheight;
+                    y = -y;
+                }
+                if (tile.flipped_x && tile.flipped_y) {
+                    scale.y = -1;
+                    translate.y = -this.tilemap.tileheight;
+                    y = -y;
+                    scale.x = -1;
+                    translate.x = -this.tilemap.tilewidth;
+                    x = -x;
+                }
+                if (tile.rotated) {
+                    this.buffer?.angleMode(this.scene.p5.DEGREES);
+                    this.buffer?.rotate(-90);
+                    //x -= this.scene.p5.width / 2;
+                    //y -= this.scene.p5.height / 2;
+                    x += this.width * this.tilemap.tilewidth;
+                    y -= this.height * this.tilemap.tileheight;
+                    console.log(tile.x * this.tilemap.tilewidth, tile.y * this.tilemap.tileheight, "ROTTTTTATEEEEED", x, y);
+                }
+
+                this.buffer?.angleMode(this.scene.p5.DEGREES);
+                this.buffer?.rotate(-90);
+                //x -= this.scene.p5.width / 2;
+                //y -= this.scene.p5.height / 2;
+                x += this.width * this.tilemap.tilewidth;
+                y -= this.height * this.tilemap.tileheight;
+                this.buffer?.scale(scale.x, scale.y);
+                this.buffer?.translate(translate.x, translate.y);
+                this.buffer!.image(tile.image, x, y);
+                this.buffer?.pop(); // -1438, 55
                 tile.x = x;
                 tile.y = y;
             }
@@ -70,7 +110,6 @@ export default class TLayerChunk {
         } else {
             buffer = _buffer;
         }
-        console.log(this.topmost);
         buffer.push();
         //buffer.translate(-this.tilemap.width / 2, -this.tilemap.height / 2);
         buffer.translate(-this.tilemap.minx, -this.tilemap.miny)
