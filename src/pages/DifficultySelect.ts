@@ -1,6 +1,8 @@
 import Page from "../lib/Page";
 import ButtonTest from "../lib/ui/ButtonTest";
 import Puzzle from "../lib/Puzzle"
+import Sound from "../lib/Sound";
+import SoundManager, {SoundManagerProps} from "../lib/SoundManager";
 
 export default class DifficultyPage extends Page {
     easy!: ButtonTest;
@@ -8,6 +10,8 @@ export default class DifficultyPage extends Page {
     hard!: ButtonTest;
     back!: ButtonTest;
     set_difficulty!: Puzzle;
+    private button_sfx!: Sound;
+    private sfx_manager!: SoundManager;
     constructor() {
         super("difficulty-page")
         this.set_difficulty = new Puzzle(this.scene);
@@ -22,10 +26,17 @@ export default class DifficultyPage extends Page {
         this.scene.remove(this.back)
     }
     setup(): void {
+        this.button_sfx = this.scene.add_new.sound("button_sfx")
+        const sfx_props: SoundManagerProps= {
+            group: "SFX",
+            sounds: [this.button_sfx]
+        }
+        this.sfx_manager = this.scene.add_new.soundmanager(sfx_props);
         this.easy = this.scene.add_new.button({
             label: "Easy",
             font_key: 'jersey',
             callback: () => {
+                this.button_sfx.play();
                 this.cleanup()
                 this.scene.start("play-scene");
                 this.setDifficulty("easy");
@@ -36,6 +47,7 @@ export default class DifficultyPage extends Page {
             label: "Normal",
             font_key: 'jersey',
             callback: () => {
+                this.button_sfx.play();
                 this.cleanup()
                 this.scene.start("play-scene");
                 this.setDifficulty("normal");
@@ -45,6 +57,7 @@ export default class DifficultyPage extends Page {
             label: "Hard",
             font_key: 'jersey',
             callback: () => {
+                this.button_sfx.play();
                 this.cleanup()
                 this.scene.start("play-scene");
                 this.setDifficulty("hard");
@@ -55,6 +68,7 @@ export default class DifficultyPage extends Page {
             label: "Back",
             font_key: 'jersey',
             callback: () => {
+                this.button_sfx.play();
                 this.cleanup()
                 this.set_page("world-select-page");
             }

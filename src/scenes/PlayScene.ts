@@ -9,6 +9,8 @@ import Spritesheet from "../lib/Spritesheet";
 import Tilemap from "../lib/tilemap/Tilemap";
 import { Vector2D } from "../lib/types/Physics";
 import AccessCircuit from "../puzzles/AccessCircuit/AccessCircuit";
+import Sound from "../lib/Sound";
+import SoundManager, {SoundManagerProps} from "../lib/SoundManager";
 
 class Door implements GameObject {
     private _x: number = 0;
@@ -75,6 +77,10 @@ export default class PlayScene extends Scene {
     tilemap?: Tilemap;
     door?: Door;
     access_circuit?: AccessCircuit;
+    private background_music!: Sound;
+    private button_sfx!: Sound;
+    private bgm_manager!: SoundManager;
+    private sfx_manager!: SoundManager;
     state: SceneState = {
         access_puzzle: PuzzleState.notStarted,
     }
@@ -100,9 +106,29 @@ export default class PlayScene extends Scene {
         this.loadImage("puzzle", "assets/access_circuit.png");
         this.loadImage("broken-puzzle", "assets/access_circuit_broken.png");
         this.loadImage("success-puzzle", "assets/access_circuit_success.png");
+        this.loadSound("background_music", "assets/background_music.mp3");
+        this.loadSound("button_sfx", "assets/TInterfaceSounds/light-switch.mp3");
+        this.loadSound("circuit_correct_sfx", "assets/TInterfaceSounds/greanpatchT.mp3");
+        this.loadSound("circuit_incorrect_sfx", "assets/TInterfaceSounds/all-processorsT.mp3");
+        this.loadSound("circuit_xposition_sfx", "assets/TInterfaceSounds/iciclesT.mp3");
     }
 
     setup(): void {
+        this.background_music = this.add_new.sound("background_music");
+        this.button_sfx = this.add_new.sound("button_sfx");
+
+        const bgm_props: SoundManagerProps= {
+            group: "BGM",
+            sounds: [this.background_music]
+        }
+        const sfx_props: SoundManagerProps= {
+            group: "SFX",
+            sounds: [this.button_sfx]
+        }
+        this.bgm_manager = this.add_new.soundmanager(bgm_props);
+        this.sfx_manager = this.add_new.soundmanager(sfx_props);
+        this.bgm_manager.play();
+        
         this.access_circuit = new AccessCircuit(this, 'puzzle', this.player!);
         this.access_circuit.x = -280;
         this.access_circuit.y = 70;
