@@ -10,12 +10,12 @@ import Tilemap from "../lib/tilemap/Tilemap";
 import { Vector2D } from "../lib/types/Physics";
 import AccessCircuit from "../puzzles/AccessCircuit/AccessCircuit";
 import Sound from "../lib/Sound";
-import SoundManager, {SoundManagerProps} from "../lib/SoundManager";
+import SoundManager, { SoundManagerProps } from "../lib/SoundManager";
 
 class Door implements GameObject {
     private _x: number = 0;
     private _y: number = 0;
-    zIndex?: number | undefined = 102;
+    zIndex?: number | undefined = 49;
     asset_key: string;
     asset!: Spritesheet;
     scene: Scene;
@@ -48,7 +48,7 @@ class Door implements GameObject {
 
     setup() {
         this.asset = this.scene.add_new.spritesheet(this.asset_key, 8, 1, 500);
-        this.asset.zIndex = 99;
+        this.asset.zIndex = this.zIndex ?? 0;
         this.asset.end_col = 4;
         this.physics_object = new PhysicsObject({
             width: this.asset.width + 30,
@@ -117,18 +117,18 @@ export default class PlayScene extends Scene {
         this.background_music = this.add_new.sound("background_music");
         this.button_sfx = this.add_new.sound("button_sfx");
 
-        const bgm_props: SoundManagerProps= {
+        const bgm_props: SoundManagerProps = {
             group: "BGM",
             sounds: [this.background_music]
         }
-        const sfx_props: SoundManagerProps= {
+        const sfx_props: SoundManagerProps = {
             group: "SFX",
             sounds: [this.button_sfx]
         }
         this.bgm_manager = this.add_new.soundmanager(bgm_props);
         this.sfx_manager = this.add_new.soundmanager(sfx_props);
         this.bgm_manager.play();
-        
+
         this.access_circuit = new AccessCircuit(this, 'puzzle', this.player!);
         this.access_circuit.x = -280;
         this.access_circuit.y = 70;

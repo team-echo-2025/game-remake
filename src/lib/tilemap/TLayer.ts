@@ -110,10 +110,9 @@ export default class TLayer {
                 for (let x = 0; x < chunk.width; x++) {
                     const i = x + y * chunk.width;
                     const tilegid = chunk.data[i] & 0x1FFFFFFF;
-                    const flipped_x = chunk.data[i] & FLIPPED_HORIZONTALLY_FLAG;
-                    const flipped_y = chunk.data[i] & FLIPPED_VERTICALLY_FLAG;
+                    let flipped_x = chunk.data[i] & FLIPPED_HORIZONTALLY_FLAG;
+                    let flipped_y = chunk.data[i] & FLIPPED_VERTICALLY_FLAG;
                     const rotated = chunk.data[i] & ROTATED_HEXAGONAL_FLAG;
-                    console.log(rotated != 0, "ROTATED");
 
                     if (tilegid == 0) {
                         chunk.tiles[y].push(null);
