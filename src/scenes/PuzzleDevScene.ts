@@ -179,7 +179,7 @@ export default class PuzzleDevScene extends Scene {
                 this.pipe.hidden = false;
                 this.aCircuit.hidden = true;
                 this.lightsOn.hidden = true;
-                this.bSlideSolveButton.hidden = false;
+                this.bSlideSolveButton.hidden = true;
                 this.cScales.hidden = true;
                 this.changeButtonVisibility();
             }
