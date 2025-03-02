@@ -20,7 +20,7 @@ export default class Dungeon2 extends Scene {
     }
 
     onStart(args?: StartArgs): void {
-        this.camera.zoom = 1;
+        this.camera.zoom = .5;
         this.player = new Player(this);
         this.player.body.x = args?.starting_pos?.x ?? 0;
         this.player.body.y = args?.starting_pos?.y ?? 348;
@@ -36,7 +36,7 @@ export default class Dungeon2 extends Scene {
         this.tilemap = this.add_new.tilemap({
             tilemap_key: "tilemap",
         })
-        this.bounds = new Rectangle({ x: this.tilemap.x, y: this.tilemap.y, w: this.tilemap.width, h: this.tilemap.height });
+        //this.bounds = new Rectangle({ x: this.tilemap.x, y: this.tilemap.y, w: this.tilemap.width, h: this.tilemap.height });
         const object = new PhysicsObject({
             width: 100,
             height: 50,

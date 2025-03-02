@@ -71,19 +71,13 @@ export default class TLayerChunk {
                 if (tile.rotated) {
                     this.buffer?.angleMode(this.scene.p5.DEGREES);
                     this.buffer?.rotate(-90);
-                    //x -= this.scene.p5.width / 2;
-                    //y -= this.scene.p5.height / 2;
-                    x += this.width * this.tilemap.tilewidth;
-                    y -= this.height * this.tilemap.tileheight;
+                    this.buffer?.translate(-this.tilemap.tilewidth + tile.x * this.tilemap.tilewidth / 2, this.tilemap.tileheight - tile.y * this.tilemap.tileheight / 2);
+                    //this.buffer?.translate(-this.tilemap.tilewidth, -this.tilemap.tileheight);
                     console.log(tile.x * this.tilemap.tilewidth, tile.y * this.tilemap.tileheight, "ROTTTTTATEEEEED", x, y);
                 }
 
-                this.buffer?.angleMode(this.scene.p5.DEGREES);
-                this.buffer?.rotate(-90);
                 //x -= this.scene.p5.width / 2;
                 //y -= this.scene.p5.height / 2;
-                x += this.width * this.tilemap.tilewidth;
-                y -= this.height * this.tilemap.tileheight;
                 this.buffer?.scale(scale.x, scale.y);
                 this.buffer?.translate(translate.x, translate.y);
                 this.buffer!.image(tile.image, x, y);
@@ -112,7 +106,7 @@ export default class TLayerChunk {
         }
         buffer.push();
         //buffer.translate(-this.tilemap.width / 2, -this.tilemap.height / 2);
-        buffer.translate(-this.tilemap.minx, -this.tilemap.miny)
+        buffer.translate(-this.tilemap.minx, -this.tilemap.miny);
         buffer.image(this.chunk_image!, this.x * this.tilemap.tilewidth, this.y * this.tilemap.tileheight);
         buffer.pop();
         this.loaded = true;
