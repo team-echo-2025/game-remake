@@ -108,7 +108,7 @@ export default class BlockSlide extends Puzzle {
                         this.emptyPos = { row, col };
 
                         // When the game is won, set state to completed
-                        if (this.checkWin()) {
+                        if (this.checkSolution()) {
                             this.state = PuzzleState.completed;
                         }
                     }
@@ -194,7 +194,7 @@ export default class BlockSlide extends Puzzle {
 
         // If the puzzle is solved, clicking anywhere will hide it
         if (this.solved()) {
-            this.scene.start("puzzle-dev-scene");
+            this.scene.start(this.scene.name);
             return;
         }
 
@@ -292,7 +292,7 @@ export default class BlockSlide extends Puzzle {
         return { row: this.gridSize - 1, col: this.gridSize - 1 }; // Default fallback
     }
 
-    checkWin(): boolean {
+    checkSolution(): boolean {
         let correct = 1;
         for (let row = 0; row < this.gridSize; row++) {
             for (let col = 0; col < this.gridSize; col++) {
