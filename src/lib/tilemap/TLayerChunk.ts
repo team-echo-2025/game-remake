@@ -47,43 +47,31 @@ export default class TLayerChunk {
                 this.maxy = Math.max(this.tilemap.maxy, tilePixelY + this.tilemap.tileheight);
                 let x = tile.x * this.tilemap.tilewidth;
                 let y = tile.y * this.tilemap.tileheight;
-                let scale = { x: 1, y: 1 };
-                let translate = { x: 0, y: 0 };
                 this.buffer?.push();
-                if (tile.flipped_x && !tile.flipped_y) {
-                    scale.x = -1;
-                    translate.x = -this.tilemap.tilewidth;
-                    x = -x;
-                }
-                if (tile.flipped_y && !tile.flipped_x) {
-                    scale.y = -1;
-                    translate.y = -this.tilemap.tileheight;
-                    y = -y;
-                }
-                if (tile.flipped_x && tile.flipped_y) {
-                    scale.y = -1;
-                    translate.y = -this.tilemap.tileheight;
-                    y = -y;
-                    scale.x = -1;
-                    translate.x = -this.tilemap.tilewidth;
-                    x = -x;
-                }
+                this.buffer?.translate(x, y);
                 if (tile.rotated) {
-                    this.buffer?.angleMode(this.scene.p5.DEGREES);
-                    this.buffer?.rotate(-90);
-                    this.buffer?.translate(-this.tilemap.tilewidth + tile.x * this.tilemap.tilewidth / 2, this.tilemap.tileheight - tile.y * this.tilemap.tileheight / 2);
-                    //this.buffer?.translate(-this.tilemap.tilewidth, -this.tilemap.tileheight);
-                    console.log(tile.x * this.tilemap.tilewidth, tile.y * this.tilemap.tileheight, "ROTTTTTATEEEEED", x, y);
+                    this.buffer?.translate(this.tilemap.tilewidth / 2, this.tilemap.tileheight / 2);
+                    this.buffer?.rotate(this.scene.p5.HALF_PI); // 90° rotation
+                    this.buffer?.translate(-this.tilemap.tilewidth / 2, -this.tilemap.tileheight / 2);
+                    this.buffer?.translate(this.tilemap.tilewidth, 0);
+                    this.buffer?.scale(-1, 1);
+                }
+                if (tile.flipped_x) {
+                    this.buffer?.translate(this.tilemap.tilewidth, 0);
+                    this.buffer?.scale(-1, 1);
+                }
+                if (tile.flipped_y) {
+                    this.buffer?.translate(0, this.tilemap.tileheight);
+                    this.buffer?.scale(1, -1);
                 }
 
-                //x -= this.scene.p5.width / 2;
-                //y -= this.scene.p5.height / 2;
-                this.buffer?.scale(scale.x, scale.y);
-                this.buffer?.translate(translate.x, translate.y);
-                this.buffer!.image(tile.image, x, y);
-                this.buffer?.pop(); // -1438, 55
-                tile.x = x;
-                tile.y = y;
+                this.buffer!.image(tile.image, 0, 0);
+                this.buffer?.pop();
+
+                let _x = (this.x + tile.x) * this.tilemap.tilewidth;
+                let _y = (this.y + tile.y) * this.tilemap.tileheight;
+                tile.x = _x;
+                tile.y = _y;
             }
         }
     }
@@ -105,7 +93,6 @@ export default class TLayerChunk {
             buffer = _buffer;
         }
         buffer.push();
-        //buffer.translate(-this.tilemap.width / 2, -this.tilemap.height / 2);
         buffer.translate(-this.tilemap.minx, -this.tilemap.miny);
         buffer.image(this.chunk_image!, this.x * this.tilemap.tilewidth, this.y * this.tilemap.tileheight);
         buffer.pop();

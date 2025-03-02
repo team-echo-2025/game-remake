@@ -136,10 +136,6 @@ export default class Tilemap implements GameObject {
 
         this._width = this.maxx - this.minx;
         this._height = this.maxy - this.miny;
-        console.log(this.minx, this.maxx)
-        console.log("SETUP")
-
-        console.log(this._scene.camera.bounds.halfWidth * 2, this._scene.camera.bounds.halfHeight * 2, 'BOUNDS')
 
         this._scene.p5.push();
         this._scene.p5.rectMode("corner");
