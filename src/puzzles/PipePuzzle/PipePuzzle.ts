@@ -1,27 +1,31 @@
 import Puzzle, { PuzzleState } from "../../lib/Puzzle";
 import Hexagon from "./Hexagon";
 import Scene from "../../lib/Scene";
-
+import GrowingTree, {Grid} from "./GrowingTree";
+//algo need to define end nodes and the path between them
 export default class PipePuzzle extends Puzzle {
-    grid!: Hexagon[][];
+    grid!: Hexagon[][];  // We will modify this to work with the Grid class
     rows!: number;
     columns!: number;
     scene: Scene;
     hex!: Hexagon;
-    hexSize: number = 100;
-    hexSpacing: number = 10;
+    hexSize: number = this.scene.p5.windowWidth / 15;
+    gridInstance!: Grid; // Instance of the Grid class
+    bigTree: GrowingTree
 
     constructor(scene: Scene) {
         super(scene);
         this.scene = scene;
         this.grid = [];
+        this.gridInstance = new Grid(0);  // Initialize with a total of 0 (this will change later)
+        this.bigTree  = new GrowingTree(this.gridInstance);
     }
 
     preload(): any {}
 
     setup() {
         this.scene.p5.createCanvas(this.scene.p5.windowWidth, this.scene.p5.windowHeight);
-        this.generateGrid();
+        this.generateGrid();  // Use the modified generateGrid function
     }
 
     draw() {
@@ -30,51 +34,67 @@ export default class PipePuzzle extends Puzzle {
 
     keyPressed(): void {
         if (this.hex) {
-          if (this.scene.p5.key === 'r' || this.scene.p5.key === 'R') {
-            this.hex.rotateShape(Math.PI / 4); // Rotate by 45 degrees
-          }
-          if (this.scene.p5.key === 't' || this.scene.p5.key === 'T') {
-              this.hex.rotateShape(-Math.PI / 4); // Rotate counterclockwise
+            if (this.scene.p5.key === 'r' || this.scene.p5.key === 'R') {
+                this.hex.rotateShape(Math.PI / 4); // Rotate by 45 degrees
+            }
+            if (this.scene.p5.key === 't' || this.scene.p5.key === 'T') {
+                this.hex.rotateShape(-Math.PI / 4); // Rotate counterclockwise
             }
         }
     }
+
     generateGrid() {
-        this.grid = [];
         const { columns, rows } = this.getBoardSize();
         this.columns = columns;
         this.rows = rows;
-    
-        let hexWidth = this.hexSize * Math.sqrt(3);
-        let hexHeight = this.hexSize * 1.5;
-    
+
+        // Initialize the Grid with the total number of cells (columns * rows)
+        const totalCells = columns * rows;
+        this.gridInstance = new Grid(totalCells);
+
+        // Initialize the empty cells set with all the cells
+        for (let i = 0; i < totalCells; i++) {
+            this.gridInstance.emptyCells.add(i);
+        }
+
+        // Loop over rows and columns to create the grid
+        let hexWidth = 87; // You may need to adjust these to fit your game's visuals
+        let hexHeight = 75;
+
         for (let row = 0; row < rows; row++) {
             let rowArray: Hexagon[] = [];
             for (let col = 0; col < columns; col++) {
-                let x = col * (hexWidth + this.hexSpacing);
-                let y = row * (hexHeight + this.hexSpacing);
-                if (row % 2 !== 0) x += hexWidth / 2; // Offset for staggered rows
-    
+                let x = col * hexWidth - hexWidth * columns / 2;
+                let y = row * hexHeight - hexHeight * rows / 2;
+
+                // If it's an odd row, offset by half the hexagon's width (to create a staggered grid)
+                if (row % 2 !== 0) {
+                    x += hexWidth / 2;  // Stagger every odd row
+                }
+
                 let hex = new Hexagon(this.scene);
                 hex.transX = x;
                 hex.transY = y;
                 hex.scale = 1;
-    
+
                 rowArray.push(hex);
             }
             this.grid.push(rowArray);
         }
+        this.bigTree.generate(3, )
     }
-    
+
     getBoardSize() {
         switch (PipePuzzle.difficulty) {
             case "easy":
                 return { columns: 4, rows: 4 };
-                case "normal":
-                    return { columns: 5, rows: 5 };
-                    default:
-                        return { columns: 7, rows: 7 };
+            case "normal":
+                return { columns: 5, rows: 5 };
+            default:
+                return { columns: 7, rows: 7 };
         }
     }
+
     draw_board() {
         for (let i = 0; i < this.grid.length; i++) {
             for (let j = 0; j < this.grid[i].length; j++) {
@@ -82,6 +102,5 @@ export default class PipePuzzle extends Puzzle {
             }
         }
     }
-    
 }
 

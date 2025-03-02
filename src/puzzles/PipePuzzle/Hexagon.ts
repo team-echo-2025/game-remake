@@ -20,7 +20,7 @@ export default class Hexagon implements GameObject {
 
     constructor(scene: Scene) {
         this.scene = scene;
-        this.rotation = 0;
+        this.rotation = 30;
 
         this.hexA = { x: 100, y: 100 };
         this.hexB = { x: 150, y: 100 };
@@ -50,13 +50,14 @@ export default class Hexagon implements GameObject {
     }
     
 
-    drawHex(x: number, y: number, s: number, rotation: number = 0, size: number = 150) {
+    drawHex(x: number, y: number, s: number, rotation: number = 30, size: number = 150) {
         let p = this.scene.p5;
-        p.stroke(255);
-        p.strokeWeight(5);
+        // p.stroke(0);
+        p.strokeWeight(1);
         p.fill('rgba(0, 0, 0, 0.25)');
         p.push();
         p.translate(x, y);
+        p.angleMode(p.DEGREES);
         p.rotate(rotation);
         p.scale(s);
         p.beginShape();
@@ -130,6 +131,7 @@ class HexagonDraw extends Hexagon {
         this.scene.p5.pop();
 
     }
+    //listen for an even in here to rotate
 }
 
 //usage exapmle
