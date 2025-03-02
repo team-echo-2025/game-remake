@@ -9,7 +9,7 @@ import Player from "../../lib/Player";
 
 import Scene from "../../lib/Scene";
 import Sound from "../../lib/Sound";
-import SoundManager,{SoundManagerProps} from "../../lib/SoundManager";
+import SoundManager, { SoundManagerProps } from "../../lib/SoundManager";
 
 type RGB = Readonly<{
     r: number;
@@ -125,12 +125,12 @@ export default class AccessCircuit extends Puzzle {
         this.circuit_correct_sfx = this.scene.add_new.sound("circuit_correct_sfx")
         this.circuit_incorrect_sfx = this.scene.add_new.sound("circuit_incorrect_sfx")
         this.circuit_xposition_sfx = this.scene.add_new.sound("circuit_xposition_sfx")
-        const sfx_props: SoundManagerProps= {
+        const sfx_props: SoundManagerProps = {
             group: "SFX",
-            sounds: [this.circuit_grab_sfx,this.circuit_correct_sfx,this.circuit_incorrect_sfx, this.circuit_incorrect_sfx]
+            sounds: [this.circuit_grab_sfx, this.circuit_correct_sfx, this.circuit_incorrect_sfx, this.circuit_incorrect_sfx]
         }
         this.sfx_manager = this.scene.add_new.soundmanager(sfx_props);
-                
+
 
         this.asset.x = this.x;
         this.asset.y = this.y;
