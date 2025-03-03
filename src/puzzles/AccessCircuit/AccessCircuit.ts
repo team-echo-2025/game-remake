@@ -48,6 +48,7 @@ export default class AccessCircuit extends Puzzle {
     private circuit_xposition_sfx!: Sound;
     private circuit_incorrect_sfx!: Sound;
     private circuit_grab_sfx!: Sound;
+    private collider_timeout: any;
 
     constructor(scene: Scene, puzzle_asset_key: string, player: Player) {
         super(scene);
@@ -83,12 +84,13 @@ export default class AccessCircuit extends Puzzle {
                 }
             }
             if (rowIsCorrect) {
-                this.onCompleted && this.onCompleted();
                 this.state = PuzzleState.completed;
                 this.hidden = true;
+                this.onCompleted && this.onCompleted();
                 this.player.disabled = false;
-                this.asset.change_asset('success-puzzle');
                 this.scene.physics.remove(this.physics_object);
+                clearTimeout(this.collider_timeout);
+                this.asset.change_asset('success-puzzle');
                 return true;
             }
         }
@@ -108,19 +110,21 @@ export default class AccessCircuit extends Puzzle {
         this.physics_object.body.x = this.x;
         this.physics_object.body.y = this.y;
         this.scene.physics.addObject(this.physics_object);
-        let timeout: any;
         this.physics_object.onCollide = (other: RigidBody) => {
             if (other == this.player.body) {
-                clearTimeout(timeout);
-                this.highlight = true;
-                timeout = setTimeout(() => {
+                clearTimeout(this.collider_timeout);
+                if (!this.highlight) {
+                    this.highlight = true
+                    this.asset.change_asset("highlighted-puzzle");
+                }
+                this.collider_timeout = setTimeout(() => {
                     this.highlight = false;
+                    this.asset.change_asset("puzzle");
                 }, 100);
             }
         }
         this.asset = this.scene.add_new.sprite(this.asset_key);
 
-        //adding sounds after physics stuff just in case
         this.circuit_grab_sfx = this.scene.add_new.sound("button_sfx")
         this.circuit_correct_sfx = this.scene.add_new.sound("circuit_correct_sfx")
         this.circuit_incorrect_sfx = this.scene.add_new.sound("circuit_incorrect_sfx")
@@ -146,9 +150,6 @@ export default class AccessCircuit extends Puzzle {
 
     draw() {
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
-        if (this.highlight) {
-            this.scene.p5.circle(this.x - this.asset.width / 2, this.y - this.asset.height / 2, 50);
-        }
     }
 
     postDraw() {
@@ -172,12 +173,14 @@ export default class AccessCircuit extends Puzzle {
 
     keyPressed(e: KeyboardEvent): void {
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
+        console.log("STATE", this.state);
         if (this.hidden && this.highlight && e.key == 'e') {
             this.player.disabled = true;
             this.hidden = false;
         }
     }
     mousePressed() {
+        if (this.hidden) return;
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
         const x = this.scene.p5.mouseX - this.scene.p5.width / 2;
         const y = this.scene.p5.mouseY - this.scene.p5.height / 2;
@@ -211,6 +214,7 @@ export default class AccessCircuit extends Puzzle {
     }
 
     mouseReleased() {
+        if (this.hidden) return;
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
         const x = this.scene.p5.mouseX - this.scene.p5.width / 2;
         const y = this.scene.p5.mouseY - this.scene.p5.height / 2;

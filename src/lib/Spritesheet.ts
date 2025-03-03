@@ -11,12 +11,18 @@ export default class Spritesheet extends Sprite {
     private _frame_asset!: Image;
     private _duration: number;
     private _start: number = 0;
+
     private _start_row: number = 0;
     private _start_col: number = 0;
+    private _end_row: number = 0;
     private _end_col: number = 1;
+
     private _playing: boolean = false;
     private _once: boolean = false;
     private _stay: boolean = false;
+    private _frame_offset: number = 0;
+    display_width?: number;
+    display_height?: number;
 
     get height() {
         return this._frame_height;
@@ -26,9 +32,9 @@ export default class Spritesheet extends Sprite {
         return this._frame_width;
     }
 
-
     set start_col(_start_col: number) {
         this._start_col = _start_col;
+        this._frame_offset = 0;
         this.update_frame();
     }
 
@@ -39,6 +45,12 @@ export default class Spritesheet extends Sprite {
 
     set start_row(_start_row: number) {
         this._start_row = _start_row;
+        this._frame_offset = 0;
+        this.update_frame();
+    }
+
+    set end_row(_end_row: number) {
+        this._end_row = _end_row;
         this.update_frame();
     }
 
@@ -57,49 +69,71 @@ export default class Spritesheet extends Sprite {
         this.update_frame();
     }
 
-    set_frame(vec: Vector2D) {
-        this._frame = vec;
+    set_frame(index: number) {
+        this._frame_offset = index;
         this.update_frame();
     }
 
     update_frame(): void {
-        this._frame_asset = this.asset.get(this._frame.x * this._frame_width, this._frame.y * this._frame_height, this._frame_width, this._frame_height);
+        this._frame_asset = this.asset.get(
+            this._frame.x * this._frame_width,
+            this._frame.y * this._frame_height,
+            this._frame_width,
+            this._frame_height
+        );
     }
 
     play(): void {
         this._playing = true;
         this._once = false;
+        this._start = this.scene.p5.millis();
     }
 
     stop(): void {
         this._playing = false;
+        this._once = false;
+        this._start = this.scene.p5.millis();
     }
 
     once(stay: boolean = false): void {
         this._playing = false;
         this._once = true;
         this._stay = stay;
+        this._frame_offset = 0;
     }
 
     draw(): void {
-        if (this._once && this.scene.p5.millis() - this._start > this._duration / this._end_col) {
-            this._start = this.scene.p5.millis();
-            this._frame.x = (this._frame.x + 1);
-            this._frame.x += 1;
-            if (this._frame.x >= this._end_col) {
-                this._once = false;
-                if (!this._stay) {
-                    this._frame.x = this._start_col;
+        const p5 = this.scene.p5;
+        const startIndex = this._start_row * this._col_count + this._start_col;
+        const endIndex = this._end_row * this._col_count + this._end_col;
+        const totalFrames = endIndex - startIndex + 1;
+
+        if (p5.millis() - this._start > this._duration / totalFrames) {
+            this._start = p5.millis();
+            if (this._once) {
+                if (this._frame_offset < totalFrames - 1) {
+                    this._frame_offset++;
+                } else {
+                    if (!this._stay) {
+                        this._frame_offset = 0;
+                    }
+                    this._once = false;
                 }
+            } else if (this._playing) {
+                this._frame_offset = (this._frame_offset + 1) % totalFrames;
             }
-            this.update_frame();
-            console.log(this._frame_asset)
-        }
-        if (this._playing && this.scene.p5.millis() - this._start > this._duration / this._end_col) {
-            this._start = this.scene.p5.millis();
-            this._frame.x = (this._frame.x + 1) % (this._end_col + 1) + this._start_col; // round-robin
+
+            const currentIndex = startIndex + this._frame_offset;
+            this._frame.y = Math.floor(currentIndex / this._col_count);
+            this._frame.x = currentIndex % this._col_count;
             this.update_frame();
         }
-        this.scene.p5.image(this._frame_asset, this.x - this._frame_asset.width / 2, this.y - this._frame_asset.height / 2);
+        p5.image(
+            this._frame_asset,
+            this.x - this._frame_asset.width / 2,
+            this.y - this._frame_asset.height / 2,
+            this.display_width ?? this._frame_asset.width,
+            this.display_height ?? this._frame_asset.height
+        );
     }
 }

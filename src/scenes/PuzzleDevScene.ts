@@ -40,7 +40,6 @@ export default class PuzzleDevScene extends Scene {
         this.bSlide.hidden = true;
         this.lightsOn.hidden = true;
         this.cScales.hidden = true;
-        this.add(this.aCircuit);
         this.add(this.bSlide);
         this.add(this.lightsOn);
     }
