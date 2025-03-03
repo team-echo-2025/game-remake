@@ -34,6 +34,8 @@ export default class PuzzleDevScene extends Scene {
         this.physics.debug = false;
         this.bSlide = new BlockSlide(this);
         this.lightsOn = new LightsOn(this);
+        this.bSlide.hidden = true;
+        this.lightsOn.hidden = true;
         this.cScales = new CubeScales(this);
         this.bSlide.hidden = true;
         this.lightsOn.hidden = true;
