@@ -7,9 +7,15 @@ type TileProps = Readonly<{
     y: number;
     image: Image;
     scene: Scene;
+    flipped_x?: boolean;
+    flipped_y?: boolean;
+    rotated?: boolean;
 }>
 
 export default class Tile {
+    flipped_x: boolean;
+    flipped_y: boolean;
+    rotated: boolean;
     x: number;
     y: number;
     image: Image;
@@ -20,5 +26,8 @@ export default class Tile {
         this.y = props.y;
         this.image = props.image;
         this.scene = props.scene;
+        this.flipped_x = props.flipped_x ?? false;
+        this.flipped_y = props.flipped_y ?? false;
+        this.rotated = props.rotated ?? false;
     }
 }

@@ -7,9 +7,11 @@ export type PhysicsObjectProps = Readonly<{
     mass: number;
     friction?: number;
     offset?: { x: number, y: number };
+    id?: any;
 }>;
 
 export default class PhysicsObject implements GameObject {
+    id: any;
     body: RigidBody;
 
     set overlaps(v: boolean) {
@@ -22,6 +24,7 @@ export default class PhysicsObject implements GameObject {
 
     constructor(props: PhysicsObjectProps) {
         this.body = new RigidBody(0, 0, props.width, props.height, props.mass, props.friction ?? 0.5);
+        this.id = Date.now();
     }
 
     setup(): void { }
