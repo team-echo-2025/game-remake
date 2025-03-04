@@ -78,7 +78,7 @@ export default class ButtonTest implements GameObject {
     }
 
     constructor(props: ButtonTestProps) {
-        this.font_size = props.font_size ?? this.font_size;
+        this.font_size = props.font_size ? props.font_size : this.font_size;
         this._label = props.label;
         this._callback = props.callback;
         this.font_key = props.font_key;

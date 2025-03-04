@@ -34,7 +34,7 @@ export default class Cell implements GameObject {
         this._state = state;
     }
     constructor(scene: Scene, x: number, y: number, circleDiameter: number, cellState?: CellState) {
-        this._state = cellState ?? CellState.EMPTY;
+        this._state = cellState ? cellState : CellState.EMPTY;
         this.scene = scene;
         this.x = x;
         this.y = y;

@@ -23,7 +23,7 @@ export default class PhysicsObject implements GameObject {
     }
 
     constructor(props: PhysicsObjectProps) {
-        this.body = new RigidBody(0, 0, props.width, props.height, props.mass, props.friction ?? 0.5);
+        this.body = new RigidBody(0, 0, props.width, props.height, props.mass, props.friction ? props.friction : 0.5);
         this.id = Date.now();
     }
 

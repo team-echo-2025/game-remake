@@ -7,9 +7,9 @@ export class TestObject extends PhysicsObject {
     private color: { r: number, b: number, g: number };
     constructor(scene: Scene, width?: number, height?: number) {
         super({
-            width: width ?? 100,
-            height: height ?? 100,
-            mass: (width ?? 100) * (height ?? 100),
+            width: width ? width : 100,
+            height: height ? height : 100,
+            mass: (width ? width : 100) * (height ? height : 100),
             friction: 0.5
         })
         this.scene = scene;

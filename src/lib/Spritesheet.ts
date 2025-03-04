@@ -58,7 +58,7 @@ export default class Spritesheet extends Sprite {
         super(asset_key);
         this._row_count = row_count;
         this._col_count = col_count;
-        this._duration = duration ?? 1000;
+        this._duration = duration ? duration : 1000;
         this._frame = { x: this._start_col, y: this._start_row }
     }
 
@@ -132,8 +132,8 @@ export default class Spritesheet extends Sprite {
             this._frame_asset,
             this.x - this._frame_asset.width / 2,
             this.y - this._frame_asset.height / 2,
-            this.display_width ?? this._frame_asset.width,
-            this.display_height ?? this._frame_asset.height
+            this.display_width ? this.display_width : this._frame_asset.width,
+            this.display_height ? this.display_height : this._frame_asset.height
         );
     }
 }
