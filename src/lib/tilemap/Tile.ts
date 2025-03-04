@@ -26,8 +26,8 @@ export default class Tile {
         this.y = props.y;
         this.image = props.image;
         this.scene = props.scene;
-        this.flipped_x = props.flipped_x ?? false;
-        this.flipped_y = props.flipped_y ?? false;
-        this.rotated = props.rotated ?? false;
+        this.flipped_x = props.flipped_x ? props.flipped_x : false;
+        this.flipped_y = props.flipped_y ? props.flipped_y : false;
+        this.rotated = props.rotated ? props.rotated : false;
     }
 }

@@ -47,10 +47,10 @@ export default class Player extends PhysicsObject {
                 resolve(true);
             }, (err) => reject(err));
         })
-        this.forwardKey = localStorage.getItem("forward") ?? 'w';
-        this.leftKey = localStorage.getItem("left") ?? 'a';
-        this.downKey = localStorage.getItem("down") ?? 's';
-        this.rightKey = localStorage.getItem("right") ?? 'd';
+        this.forwardKey = localStorage.getItem("forward") ? localStorage.getItem("forward")! : 'w';
+        this.leftKey = localStorage.getItem("left") ? localStorage.getItem("left")! : 'a';
+        this.downKey = localStorage.getItem("down") ? localStorage.getItem("down")! : 's';
+        this.rightKey = localStorage.getItem("right") ? localStorage.getItem("kight")! : 'd';
     }
 
     setup(): void {
