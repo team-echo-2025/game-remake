@@ -39,13 +39,13 @@ export default class Sprite implements GameObject {
     }
 
     get width(): number {
-        return this._width ? this._width : this.asset.width;
+        return this._width ?? this.asset.width;
     }
     set width(w: number) {
         this._width = w;
     }
     get height(): number {
-        return this._height ? this._height : this.asset.height;
+        return this._height ?? this.asset.height;
     }
     set height(h: number) {
         this._height = h;
@@ -67,6 +67,6 @@ export default class Sprite implements GameObject {
     }
 
     draw(): void {
-        this.scene.p5.image(this.asset, this.x - this.asset.width / 2, this.y - this.asset.height / 2, this.width ? this.width : this.asset.width, this.height ? this.height : this.asset.height);
+        this.scene.p5.image(this.asset, this.x - this.asset.width / 2, this.y - this.asset.height / 2, this.width ?? this.asset.width, this.height ?? this.asset.height);
     }
 }

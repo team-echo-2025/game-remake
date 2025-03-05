@@ -86,16 +86,16 @@ export default class Scene implements GameObject {
     add(object: GameObject) {
         this.objects.push(object);
         this.objects.sort((obj1, obj2) => {
-            const z1 = obj1.zIndex ? obj1.zIndex : 0;
-            const z2 = obj2.zIndex ? obj2.zIndex : 0;
+            const z1 = obj1.zIndex ?? 0;
+            const z2 = obj2.zIndex ?? 0;
             return z1 - z2;
         })
     }
 
     update_zindex() {
         this.objects.sort((obj1, obj2) => {
-            const z1 = obj1.zIndex ? obj1.zIndex : 0;
-            const z2 = obj2.zIndex ? obj2.zIndex : 0;
+            const z1 = obj1.zIndex ?? 0;
+            const z2 = obj2.zIndex ?? 0;
             return z1 - z2;
         })
     }

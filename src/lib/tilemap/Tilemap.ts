@@ -80,8 +80,8 @@ export default class Tilemap implements GameObject {
 
     constructor(props: TilemapProps) {
         this.tilemap_key = props.tilemap_key;
-        this._x = props.x ? props.x : 0;
-        this._y = props.y ? props.y : 0;
+        this._x = props.x ?? 0;
+        this._y = props.y ?? 0;
         this._tilesets = [];
         this.layers = [];
     }

@@ -9,9 +9,9 @@ export default class RigidBody extends Rectangle {
     onOverlap?: (other: RigidBody) => void;
     constructor(x: number, y: number, width: number, height: number, mass?: number, friction?: number, restitution?: number) {
         super({ x, y, w: width, h: height })
-        this.mass = mass ? mass : 0;
+        this.mass = mass ?? 0;
         this.velocity = { x: 0, y: 0 };
-        this.restitution = restitution ? restitution : 0;
-        this.friction = friction ? friction : .5;
+        this.restitution = restitution ?? 0;
+        this.friction = friction ?? .5;
     }
 } 
