@@ -31,7 +31,7 @@ export default class TLayerChunk {
         this.height = chunk.getNum("height")
         this.scene = scene;
         this.tilemap = tilemap;
-        this.topmost = topmost ? topmost : false;
+        this.topmost = topmost ?? false;
         this.buffer = scene.p5.createGraphics(this.width * tilemap.tilewidth, this.height * tilemap.tileheight);
     }
 

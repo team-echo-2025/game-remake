@@ -22,8 +22,8 @@ export default class Dungeon1 extends Scene {
     onStart(args?: StartArgs): void {
         this.camera.zoom = 3;
         this.player = new Player(this);
-        this.player.body.x = args?.starting_pos ? args?.starting_pos.x : -1767;
-        this.player.body.y = args?.starting_pos ? args?.starting_pos.y : 863;
+        this.player.body.x = args?.starting_pos?.x ?? -1767;
+        this.player.body.y = args?.starting_pos?.y ?? 863;
         this.physics.addObject(this.player);
     }
 

@@ -48,7 +48,7 @@ class Door implements GameObject {
 
     setup() {
         this.asset = this.scene.add_new.spritesheet(this.asset_key, 8, 1, 500);
-        this.asset.zIndex = this.zIndex ? this.zIndex : 0;
+        this.asset.zIndex = this.zIndex ?? 0;
         this.asset.end_col = 4;
         this.physics_object = new PhysicsObject({
             width: this.asset.width + 30,
@@ -94,8 +94,8 @@ export default class PlayScene extends Scene {
     onStart(args: StartArgs): void {
         this.camera.zoom = 3;
         this.player = new Player(this);
-        this.player.body.x = args?.starting_pos ? args.starting_pos.x : -425;
-        this.player.body.y = args?.starting_pos ? args.starting_pos.y : 218;
+        this.player.body.x = args?.starting_pos?.x ?? -425;
+        this.player.body.y = args?.starting_pos?.y ?? 218;
         this.physics.addObject(this.player);
     }
 
