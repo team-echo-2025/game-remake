@@ -53,12 +53,10 @@ export default class PuzzleDevScene extends Scene {
         this.loadFont("jersey", "assets/fonts/jersey.ttf");
         this.loadImage("puzzle", "assets/access_circuit.png");
         this.loadFont("jersey", "assets/fonts/jersey.ttf");
-        this.loadTilemap("tilemap", "assets/tilemaps/LaythsTileMap/world-1.tmx")
         this.loadImage("door", "assets/doors/prison_door.png");
         this.loadImage("puzzle", "assets/access_circuit.png");
         this.loadImage("broken-puzzle", "assets/access_circuit_broken.png");
         this.loadImage("success-puzzle", "assets/access_circuit_success.png");
-        this.loadSound("background_music", "assets/background_music.mp3");
         this.loadSound("button_sfx", "assets/TInterfaceSounds/light-switch.mp3");
         this.loadSound("circuit_correct_sfx", "assets/TInterfaceSounds/greanpatchT.mp3");
         this.loadSound("circuit_incorrect_sfx", "assets/TInterfaceSounds/all-processorsT.mp3");
