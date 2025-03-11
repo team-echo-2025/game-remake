@@ -10,7 +10,7 @@ export default class Hexagon implements GameObject {
     transY!: number;
     scale!: number;
     rotation: number;
-    hexDraw!: HexagonDraw;
+    tileState: number = 0;
 
     hexA: Point;
     hexB: Point;
@@ -46,6 +46,9 @@ export default class Hexagon implements GameObject {
         this.scene.p5.push();
         this.scene.p5.translate(this.transX, this.transY);
         this.drawHex(0, 0, this.scale, this.rotation, this.size);
+        if (this.tileState & 1) {
+            this.scene.p5.line(0, 0, 50, 0); // Example connection line
+        }
         this.scene.p5.pop();
     }
     
@@ -113,26 +116,7 @@ export default class Hexagon implements GameObject {
     }
 }
 
-class HexagonDraw extends Hexagon {
-    scene: Scene
-    constructor(scene: Scene) {
-        super(scene);
-        this.scene = scene;
-    }
-    drawHex(){
-        this.scene.p5.beginShape();
-        this.scene.p5.vertex(-75, -130);
-        this.scene.p5.vertex(75, -130);
-        this.scene.p5.vertex(150, 0);
-        this.scene.p5.vertex(75, 130);
-        this.scene.p5.vertex(-75, 130);
-        this.scene.p5.vertex(-150, 0);
-        this.scene.p5.endShape(this.scene.p5.CLOSE); 
-        this.scene.p5.pop();
 
-    }
-    //listen for an even in here to rotate
-}
 
 //usage exapmle
 // const hexA = { x: 100, y: 100 };

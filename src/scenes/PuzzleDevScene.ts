@@ -6,8 +6,9 @@ import LightsOn from "../puzzles/LightsOn/LightsOn";
 import CubeScales from "../puzzles/CubeScales/CubeScales";
 import Puzzle from "../lib/Puzzle"
 import Player from "../lib/Player";
-import PipePuzzle from "../puzzles/PipePuzzle/PipePuzzle";
+import PipePuzzle from "../puzzles/PipePuzzle/DrawPuzzle/DrawPuzzle";
 import Button from "../lib/ui/Button";
+import DrawPuzzle from "../puzzles/PipePuzzle/DrawPuzzle/DrawPuzzle";
 
 export default class PuzzleDevScene extends Scene {
     easy!: ButtonTest;
@@ -17,7 +18,7 @@ export default class PuzzleDevScene extends Scene {
     bSlide!: BlockSlide;
     cScales!: CubeScales;
     lightsOn!: LightsOn;
-    pipe! : PipePuzzle;
+    pipe! : DrawPuzzle;
     pipeButton!: ButtonTest;
     aCircuitButton!: ButtonTest;
     bSlideButton!: ButtonTest;
