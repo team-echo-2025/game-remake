@@ -42,47 +42,56 @@ export default class PipePuzzle extends Puzzle {
             }
         }
     }
-
+// hexWidth and hexHeight handle the plcement of the hexagons relative to each other
     generateGrid() {
-        const { columns, rows } = this.getBoardSize();
-        this.columns = columns;
-        this.rows = rows;
+    const { columns, rows } = this.getBoardSize();
+    this.columns = columns;
+    this.rows = rows;
 
-        // Initialize the Grid with the total number of cells (columns * rows)
-        const totalCells = columns * rows;
-        this.gridInstance = new Grid(totalCells);
+    // Initialize the Grid and GrowingTree with the total number of cells
+    const totalCells = columns * rows;
+    this.gridInstance = new Grid(totalCells);
+    this.bigTree = new GrowingTree(this.gridInstance);
 
-        // Initialize the empty cells set with all the cells
-        for (let i = 0; i < totalCells; i++) {
-            this.gridInstance.emptyCells.add(i);
-        }
-
-        // Loop over rows and columns to create the grid
-        let hexWidth = 87; // You may need to adjust these to fit your game's visuals
-        let hexHeight = 75;
-
-        for (let row = 0; row < rows; row++) {
-            let rowArray: Hexagon[] = [];
-            for (let col = 0; col < columns; col++) {
-                let x = col * hexWidth - hexWidth * columns / 2;
-                let y = row * hexHeight - hexHeight * rows / 2;
-
-                // If it's an odd row, offset by half the hexagon's width (to create a staggered grid)
-                if (row % 2 !== 0) {
-                    x += hexWidth / 2;  // Stagger every odd row
-                }
-
-                let hex = new Hexagon(this.scene);
-                hex.transX = x;
-                hex.transY = y;
-                hex.scale = 1;
-
-                rowArray.push(hex);
-            }
-            this.grid.push(rowArray);
-        }
-        this.bigTree.generate(3, )
+    // Initialize the empty cells set with all the cells
+    for (let i = 0; i < totalCells; i++) {
+        this.gridInstance.emptyCells.add(i);
     }
+
+    // Generate the maze using Growing Tree Algorithm
+    const tiles = this.bigTree.generate(0.5); // Branching amount set to 0.5 for balanced behavior
+
+    // Loop over rows and columns to create the grid
+    let hexWidth = 87; 
+    let hexHeight = 75;
+
+    for (let row = 0; row < rows; row++) {
+        let rowArray: Hexagon[] = [];
+        for (let col = 0; col < columns; col++) {
+            let x = col * hexWidth - hexWidth * columns / 2;
+            let y = row * hexHeight - hexHeight * rows / 2;
+
+            if (row % 2 !== 0) {
+                x += hexWidth / 2; 
+            }
+
+            let hex = new Hexagon(this.scene);
+            hex.transX = x;
+            hex.transY = y;
+            hex.scale = 1;
+
+            // Determine the index of the current hexagon in the grid
+            const index = row * columns + col;
+
+            // Apply the tile state from the maze generation
+            hex.tileState = tiles[index];
+
+            rowArray.push(hex);
+        }
+        this.grid.push(rowArray);
+    }
+}
+
 
     getBoardSize() {
         switch (PipePuzzle.difficulty) {
