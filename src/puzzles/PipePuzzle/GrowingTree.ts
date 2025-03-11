@@ -67,9 +67,9 @@ export default class GrowingTree {
     }
 
     public generate(branchingAmount: number, startTiles:  [] = []): number[] {
-        if (startTiles.length === this.grid.total) {
-            this.reuseStartTiles(startTiles);
-        }
+        // if (startTiles.length === this.grid.total) {
+        //     this.reuseStartTiles(startTiles);
+        // }
         
         if (this.visited.length === 0) {
             const startIndex = this.getRandomElement(Array.from(this.unvisited));
@@ -138,7 +138,7 @@ export default class GrowingTree {
         }
     }
 
-    private reuseStartTiles(startTiles: number[]) {
-        // Implement logic to reuse predefined tile portions
-    }
+    // private reuseStartTiles(startTiles: number[]) {
+    //     // Implement logic to reuse predefined tile portions
+    // }
 }
