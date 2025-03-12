@@ -24,17 +24,18 @@ export default class DrawPuzzle extends Puzzle {
         super(scene);
         this.scene = scene;
         this.cursor = new Cursor(scene);
+        this.state = PuzzleState.notStarted;
     }
 
     preload(): any { }
 
     setup(): void {
-        this.state = PuzzleState.notStarted;
         this.generateBoard();
         this.getBoardSize();
         this.scene.p5.createCanvas(this.scene.p5.windowWidth, this.scene.p5.windowHeight);
         this.scene.p5.rectMode(this.scene.p5.CENTER);
     }
+
     setDifficulty(difficulty: string): void {
         Puzzle.difficulty = difficulty;  // Update the global difficulty
         console.log(`Line Puzzle difficulty set to: ${Puzzle.difficulty}`);
@@ -42,27 +43,12 @@ export default class DrawPuzzle extends Puzzle {
     }
 
 
-    selectRandomSquares(): void {
-        //done by deafult for the large size
-        this.getBoardSize();
-        const allSquares = this.squares.flat();
-        this.selectedSquares = [];
-        let colorIndex = 0;
-
-        while (this.selectedSquares.length < this.totalPairs * 2 && allSquares.length > 0) {
-            const index = Math.floor(Math.random() * allSquares.length);
-            const square = allSquares.splice(index, 1)[0];
-            square.hasPoint = true;
-            //console.log(Math.floor(this.selectedSquares.length/2));
-            square.color = this.colors[colorIndex]; //changes dot color every two dots
-            this.selectedSquares.push(square);
-            if (this.selectedSquares.length % 2 == 0) colorIndex++;
-        }
-        this.selectedSquares = [];
-    }
 
     draw(): void {
         // this.generateBoard();
+        if (this.checkSolution())
+            if (this.solved())
+                this.displayWinMessage();
         this.drawBoard();
         this.cursor.draw();
         if (this.lines.length != 0) {
@@ -94,6 +80,24 @@ export default class DrawPuzzle extends Puzzle {
             }
 
         }
+    }
+
+    selectRandomSquares(): void {
+        this.getBoardSize();
+        const allSquares = this.squares.flat();
+        this.selectedSquares = [];
+        let colorIndex = 0;
+
+        while (this.selectedSquares.length < this.totalPairs * 2 && allSquares.length > 0) {
+            const index = Math.floor(Math.random() * allSquares.length);
+            const square = allSquares.splice(index, 1)[0];
+            square.hasPoint = true;
+            //console.log(Math.floor(this.selectedSquares.length/2));
+            square.color = this.colors[colorIndex]; //changes dot color every two dots
+            this.selectedSquares.push(square);
+            if (this.selectedSquares.length % 2 == 0) colorIndex++;
+        }
+        this.selectedSquares = [];
     }
 
     drawBoard(): void {
@@ -147,6 +151,7 @@ export default class DrawPuzzle extends Puzzle {
         }
     }
 
+
     //Helper method to get the square under the mouse position
     getSquareAtMousePosition(mouseX: number, mouseY: number): Square | null {
         // Loop through all squares to find the one under the mouse
@@ -199,5 +204,42 @@ export default class DrawPuzzle extends Puzzle {
         }
 
     }
+    checkSolution(): boolean {
+        //get all 
+        this.getBoardSize(); // find num pairs
+        let found = false;
+        let colRow = this.getBoardSize(); //get column & rows
+        if (this.totalPairs == this.lines.length){
+            for (let i = 0; i < colRow.columns; ++i)
+                for (let j = 0; j < colRow.rows; ++j)
+                    if (this.squares[i][j].color == null)
+                        return false;
+            this.state = PuzzleState.completed
+            return true;
+        }
+        return false;
+       
+    }
+    //changing color variable names to colored
 
+    displayWinMessage(): void {
+        let p5 = this.scene.p5;
+
+        p5.fill(0, 0, 0, 150);
+        p5.rect(0, 0, p5.width, p5.height);
+
+        let boxWidth = p5.width / 3;
+        let boxHeight = p5.height / 6;
+        p5.fill(255);
+        p5.stroke(0);
+        p5.rect(0, 0, boxWidth, boxHeight, 10);
+
+        p5.fill(0);
+        p5.noStroke();
+        p5.textAlign(p5.CENTER, p5.CENTER);
+        p5.textSize(32);
+        p5.text("You Win!", 0, -boxHeight / 8);
+        p5.textSize(16);
+        p5.text("Click to continue.", 0, boxHeight / 4);
+    }
 }
