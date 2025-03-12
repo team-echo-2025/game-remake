@@ -1,6 +1,6 @@
 import Puzzle, { PuzzleState } from "../../../lib/Puzzle";
 import Scene from "../../../lib/Scene";
-import Square, {RGB} from "./Square";
+import Square, { RGB } from "./Square";
 import Cursor from "./Cursor";
 import SquareLine from "./SquareLine";
 
@@ -10,7 +10,7 @@ export default class DrawPuzzle extends Puzzle {
     scene: Scene;
     squareSize: number = 50; // Size of each square
     selectedSquares: Square[] = [];
-    totalPairs: number = 3; // Number of points to draw
+    totalPairs!: number; // Number of points to draw
     colors: RGB[] = [
         { r: 184, g: 76, b: 84 },
         { r: 79, g: 138, b: 31 },
@@ -26,48 +26,60 @@ export default class DrawPuzzle extends Puzzle {
         this.cursor = new Cursor(scene);
     }
 
-    preload(): any {}
+    preload(): any { }
 
     setup(): void {
+        this.state = PuzzleState.notStarted;
         this.generateBoard();
+        this.getBoardSize();
+        this.scene.p5.createCanvas(this.scene.p5.windowWidth, this.scene.p5.windowHeight);
+        this.scene.p5.rectMode(this.scene.p5.CENTER);
+    }
+    setDifficulty(difficulty: string): void {
+        Puzzle.difficulty = difficulty;  // Update the global difficulty
+        console.log(`Line Puzzle difficulty set to: ${Puzzle.difficulty}`);
+        this.setup();  // Restart puzzle with new difficulty
     }
 
 
     selectRandomSquares(): void {
+        //done by deafult for the large size
+        this.getBoardSize();
         const allSquares = this.squares.flat();
         this.selectedSquares = [];
         let colorIndex = 0;
 
-        while (this.selectedSquares.length < this.totalPairs*2 && allSquares.length > 0) {
+        while (this.selectedSquares.length < this.totalPairs * 2 && allSquares.length > 0) {
             const index = Math.floor(Math.random() * allSquares.length);
             const square = allSquares.splice(index, 1)[0];
             square.hasPoint = true;
             //console.log(Math.floor(this.selectedSquares.length/2));
             square.color = this.colors[colorIndex]; //changes dot color every two dots
             this.selectedSquares.push(square);
-            if(this.selectedSquares.length % 2 == 0)    colorIndex++;
+            if (this.selectedSquares.length % 2 == 0) colorIndex++;
         }
         this.selectedSquares = [];
     }
 
     draw(): void {
+        // this.generateBoard();
         this.drawBoard();
         this.cursor.draw();
-        if(this.lines.length!=0){
-            for(let i = 0; i < this.lines.length; i++){
+        if (this.lines.length != 0) {
+            for (let i = 0; i < this.lines.length; i++) {
                 this.lines[i].draw();
             }
         }
         const x = this.scene.p5.mouseX - this.scene.p5.width / 2;
         const y = this.scene.p5.mouseY - this.scene.p5.height / 2
 
-        if(this.cursor.validLineStart()){ //check if the stored square has a dot
-            let tempSelect = this.getSquareAtMousePosition(x,y); // null or a square at mouse position
-            if(this.currentLine!=null && tempSelect != null && this.cursor.currentSquare != null){ 
-                if(tempSelect.color == null)// check if allowed to recolor
-                    tempSelect.color=this.cursor.currentSquare.color; //recolor
-                if(this.currentLine){ //prove is defined
-                    if(tempSelect.matchingPoint(this.currentLine.head) && !(tempSelect===this.currentLine.head)){ //if temp select is OTHER colored point, finish line
+        if (this.cursor.validLineStart()) { //check if the stored square has a dot
+            let tempSelect = this.getSquareAtMousePosition(x, y); // null or a square at mouse position
+            if (this.currentLine != null && tempSelect != null && this.cursor.currentSquare != null) {
+                if (tempSelect.color == null)// check if allowed to recolor
+                    tempSelect.color = this.cursor.currentSquare.color; //recolor
+                if (this.currentLine) { //prove is defined
+                    if (tempSelect.matchingPoint(this.currentLine.head) && !(tempSelect === this.currentLine.head)) { //if temp select is OTHER colored point, finish line
                         this.currentLine.addTail(tempSelect);
                         console.log("finish line");
                         this.cursor.currentSquare = null;
@@ -75,12 +87,12 @@ export default class DrawPuzzle extends Puzzle {
                         this.currentLine = undefined;
                     }
                     else // add to body
-                        if(!tempSelect.hasPoint && !this.checkUsedInLine(tempSelect))
+                        if (!tempSelect.hasPoint && !this.checkUsedInLine(tempSelect))
                             this.currentLine.addToBody(tempSelect);
                 }
-                
+
             }
-            
+
         }
     }
 
@@ -89,12 +101,12 @@ export default class DrawPuzzle extends Puzzle {
         this.squareSize = this.scene.p5.height / 16.15;
         const offsetX = -(columns * this.squareSize) / 2;
         const offsetY = -(rows * this.squareSize) / 2;
-        
+
         for (let i = 0; i < rows; i++) {
             for (let j = 0; j < columns; j++) {
                 const square = this.squares[i][j];
-                square.x = offsetX + (j * this.squareSize)+(j*10);
-                square.y = offsetY + (i * this.squareSize)+(i*10);
+                square.x = offsetX + (j * this.squareSize) + (j * 10);
+                square.y = offsetY + (i * this.squareSize) + (i * 10);
                 square.draw();
             }
         }
@@ -121,11 +133,17 @@ export default class DrawPuzzle extends Puzzle {
     getBoardSize() {
         switch (DrawPuzzle.difficulty) {
             case "easy":
-                return { columns: 4, rows: 4 };
+                this.totalPairs = 2
+                return this.totalPairs, { columns: 4, rows: 4 };
             case "normal":
-                return { columns: 5, rows: 5 };
+                this.totalPairs = 3
+                return this.totalPairs, { columns: 5, rows: 5 };
+            case "hard":
+                this.totalPairs = 4
+                return this.totalPairs, { columns: 7, rows: 7 };
             default:
-                return { columns: 7, rows: 7 };
+                this.totalPairs = 2
+                return this.totalPairs, { columns: 4, rows: 4 };
         }
     }
 
@@ -146,20 +164,20 @@ export default class DrawPuzzle extends Puzzle {
         return null;
     }
 
-    checkWipeLines(check:Square){//clears the line(s) which have the passed square as an endpoint
-        if(this.lines.length!=0){
-            for(let i = 0; i < this.lines.length; i++){
-                if(this.lines[i].isEnd(check)){
+    checkWipeLines(check: Square) {//clears the line(s) which have the passed square as an endpoint
+        if (this.lines.length != 0) {
+            for (let i = 0; i < this.lines.length; i++) {
+                if (this.lines[i].isEnd(check)) {
                     this.lines[i].clearLine();
-                    this.lines = this.lines.filter(item => item !==this.lines[i])
+                    this.lines = this.lines.filter(item => item !== this.lines[i])
                 }
             }
         }
     }
-    checkUsedInLine(check:Square):boolean{ // returns false if the square is unused
-        if(this.lines.length!=0){
-            for(let i = 0; i < this.lines.length; i++){
-                if(this.lines[i].inLine(check)){
+    checkUsedInLine(check: Square): boolean { // returns false if the square is unused
+        if (this.lines.length != 0) {
+            for (let i = 0; i < this.lines.length; i++) {
+                if (this.lines[i].inLine(check)) {
                     console.log(check)
                     return true;
                 }
@@ -173,11 +191,11 @@ export default class DrawPuzzle extends Puzzle {
         const p5 = this.scene.p5;
         const x = this.scene.p5.mouseX - this.scene.p5.width / 2;
         const y = this.scene.p5.mouseY - this.scene.p5.height / 2;
-        let found = this.getSquareAtMousePosition(x,y); 
+        let found = this.getSquareAtMousePosition(x, y);
         this.cursor.setSquare(found);
-        if(found!=null){
+        if (found != null) {
             this.checkWipeLines(found);
-            this.currentLine= new SquareLine(found);
+            this.currentLine = new SquareLine(found);
         }
 
     }
