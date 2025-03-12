@@ -3,21 +3,27 @@ import Scene from "../../../lib/Scene";
 import Square from "./Square";
 
 export default class SquareLine {
-    scene: Scene
-    head: Square
-    tail?: Square
+    scene: Scene;
+    lastAdded: Square;
+    head: Square;
+    tail?: Square;
     body: Square [] = [];
 
     constructor(head:Square){
         this.head = head;
         this.scene = head.scene;
+        this.lastAdded = head;
     }
     addHead(nHead:Square){
         this.head = nHead;
     }
     addToBody(nBody:Square){
-        if(!this.body.includes(nBody))
+        if(!this.body.includes(nBody)){
             this.body.push(nBody);
+            this.lastAdded = nBody;
+            console.log(this.lastAdded);
+        }
+
         else{
             //console.log("already in line body", nBody)
         }
