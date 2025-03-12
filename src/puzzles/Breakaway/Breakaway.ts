@@ -1,6 +1,6 @@
 import Puzzle, { PuzzleState } from "../../lib/Puzzle";
 import Scene from "../../lib/Scene";
-import { Vector, Color } from "p5";
+import { Vector } from "p5";
 
 export default class Breakaway extends Puzzle {
     puzzlePieces: any[] = [];
@@ -9,7 +9,7 @@ export default class Breakaway extends Puzzle {
     gameResult: string = "";
 
     cols = Puzzle.difficulty === "easy" ? 3 : Puzzle.difficulty === "normal" ? 4 : 5;
-    rows = Puzzle.difficulty === "easy" ? 3 : Puzzle.difficulty === "normal" ? 4 : 5;
+    rows = this.cols;
     pieceThreshold = 20;
     rotationThreshold = 30;
     rotationStep = 90;
@@ -20,21 +20,19 @@ export default class Breakaway extends Puzzle {
     trayYMax = -100;
     boardWidth = 300;
     boardHeight = 300;
-    boardX!: number;
-    boardY!: number;
+    boardX = 0;
+    boardY = -100;
 
     constructor(scene: Scene) {
         super(scene);
     }
 
     setup(): void {
-        this.boardX = 0;
-        this.boardY = -100;
-        this.createPuzzle1();
+        this.createPuzzle();
         this.scatterPieces();
     }
 
-    createPuzzle1(): void {
+    createPuzzle(): void {
         this.puzzlePieces = [];
         let pieceW = this.boardWidth / this.cols;
         let pieceH = this.boardHeight / this.rows;
@@ -101,22 +99,12 @@ export default class Breakaway extends Puzzle {
         }
     }
 
-    checkSolution(): boolean {
-        let allCorrect = this.puzzlePieces.every(piece => {
-            let d = this.scene.p5.dist(piece.pos.x, piece.pos.y, piece.idealPos.x, piece.idealPos.y);
-            let r = this.angleDiff(piece.rot, piece.idealRot);
-            return d < this.pieceThreshold && r < this.rotationThreshold;
-        });
-
-        return allCorrect ? true : false;
-    }
-
     postDraw(): void {
         if (this.solved()) {
             this.displayWinMessage();
         } else {
             this.drawBody();
-            this.drawDottedOutlines();
+            this.drawOutlines();
 
             for (let i = 0; i < this.puzzlePieces.length; i++) {
                 let piece = this.puzzlePieces[i];
@@ -182,7 +170,7 @@ export default class Breakaway extends Puzzle {
         this.scene.p5.pop();
     }
 
-    drawDottedOutlines(): void {
+    drawOutlines(): void {
         for (let piece of this.puzzlePieces) {
             let d = this.scene.p5.dist(piece.pos.x, piece.pos.y, piece.idealPos.x, piece.idealPos.y);
             let angleErr = this.angleDiff(piece.rot, piece.idealRot);
@@ -190,47 +178,59 @@ export default class Breakaway extends Puzzle {
                 ? this.scene.p5.color(0, 255, 0)
                 : this.scene.p5.color(255, 0, 0);
             
-            this.drawOutline(piece.localVerts, piece.idealPos.x, piece.idealPos.y, piece.idealRot, outlineCol);
-        }
-    }
-
-    drawOutline(vertices: any[], offsetX: number, offsetY: number, outlineRot: number, col: Color): void {
-        let p5 = this.scene.p5;
-        p5.push();
-        p5.translate(offsetX, offsetY);
-        p5.rotate(p5.radians(outlineRot));
-    
-        p5.stroke(col);
-        p5.strokeWeight(2);
-        p5.noFill();
-    
-        let dashLength = 10;
-        let gapLength = 5;
-    
-        for (let i = 0; i < vertices.length; i++) {
-            let v1 = vertices[i];
-            let v2 = vertices[(i + 1) % vertices.length];
-    
-            let dist = p5.dist(v1.x, v1.y, v2.x, v2.y);
-            let numDashes = Math.floor(dist / (dashLength + gapLength));
-    
-            for (let j = 0; j < numDashes; j++) {
-                let t1 = j / numDashes;
-                let t2 = (j + 0.5) / numDashes;
-    
-                let x1 = p5.lerp(v1.x, v2.x, t1);
-                let y1 = p5.lerp(v1.y, v2.y, t1);
-                let x2 = p5.lerp(v1.x, v2.x, t2);
-                let y2 = p5.lerp(v1.y, v2.y, t2);
-    
-                p5.line(x1, y1, x2, y2);
+                this.scene.p5.push();
+                this.scene.p5.translate(piece.idealPos.x, piece.idealPos.y);
+                this.scene.p5.rotate(this.scene.p5.radians(piece.idealRot));
+        
+                this.scene.p5.stroke(outlineCol);
+                this.scene.p5.strokeWeight(2);
+                this.scene.p5.noFill();
+        
+                this.scene.p5.beginShape();
+            for (let v of piece.localVerts) {
+                this.scene.p5.vertex(v.x, v.y);
             }
+            this.scene.p5.endShape(this.scene.p5.CLOSE);
+        
+            this.scene.p5.pop();
         }
+    }
     
-        p5.pop();
+    angleDiff(a: number, b: number): number {
+        let diff = Math.abs(a - b) % 360;
+        return diff > 180 ? 360 - diff : diff;
     }
 
-    mousePressed(e: MouseEvent): void {
+    getGlobalVerts(piece: any): Vector[] {
+        let verts: Vector[] = [];
+        let angle = this.scene.p5.radians(piece.rot);
+        
+        for (let v of piece.localVerts) {
+            let rx = v.x * Math.cos(angle) - v.y * Math.sin(angle);
+            let ry = v.x * Math.sin(angle) + v.y * Math.cos(angle);
+            verts.push(this.scene.p5.createVector(rx + piece.pos.x, ry + piece.pos.y));
+        }
+    
+        return verts;
+    }
+
+    pointInPolygon(pt: Vector, polygon: Vector[]): boolean {
+        let inside = false;
+    
+        for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+            let xi = polygon[i].x, yi = polygon[i].y;
+            let xj = polygon[j].x, yj = polygon[j].y;
+            
+            let intersect = ((yi > pt.y) !== (yj > pt.y)) &&
+                            (pt.x < (xj - xi) * (pt.y - yi) / (yj - yi) + xi);
+            
+            if (intersect) inside = !inside;
+        }
+        
+        return inside;
+    }
+
+    mousePressed(): void {
         let mousePos = this.scene.p5.createVector(
             this.scene.p5.mouseX - this.scene.p5.width / 2,
             this.scene.p5.mouseY - this.scene.p5.height / 2
@@ -292,38 +292,14 @@ export default class Breakaway extends Puzzle {
         }
     }
 
-    angleDiff(a: number, b: number): number {
-        let diff = Math.abs(a - b) % 360;
-        return diff > 180 ? 360 - diff : diff;
-    }
+    checkSolution(): boolean {
+        let allCorrect = this.puzzlePieces.every(piece => {
+            let d = this.scene.p5.dist(piece.pos.x, piece.pos.y, piece.idealPos.x, piece.idealPos.y);
+            let r = this.angleDiff(piece.rot, piece.idealRot);
+            return d < this.pieceThreshold && r < this.rotationThreshold;
+        });
 
-    getGlobalVerts(piece: any): Vector[] {
-        let verts: Vector[] = [];
-        let angle = this.scene.p5.radians(piece.rot);
-        
-        for (let v of piece.localVerts) {
-            let rx = v.x * Math.cos(angle) - v.y * Math.sin(angle);
-            let ry = v.x * Math.sin(angle) + v.y * Math.cos(angle);
-            verts.push(this.scene.p5.createVector(rx + piece.pos.x, ry + piece.pos.y));
-        }
-    
-        return verts;
-    }
-
-    pointInPolygon(pt: Vector, polygon: Vector[]): boolean {
-        let inside = false;
-    
-        for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-            let xi = polygon[i].x, yi = polygon[i].y;
-            let xj = polygon[j].x, yj = polygon[j].y;
-            
-            let intersect = ((yi > pt.y) !== (yj > pt.y)) &&
-                            (pt.x < (xj - xi) * (pt.y - yi) / (yj - yi) + xi);
-            
-            if (intersect) inside = !inside;
-        }
-        
-        return inside;
+        return allCorrect ? true : false;
     }
 
     displayWinMessage(): void {
