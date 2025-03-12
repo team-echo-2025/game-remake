@@ -35,13 +35,7 @@ export default class DrawPuzzle extends Puzzle {
         this.scene.p5.createCanvas(this.scene.p5.windowWidth, this.scene.p5.windowHeight);
         this.scene.p5.rectMode(this.scene.p5.CENTER);
     }
-
-    setDifficulty(difficulty: string): void {
-        Puzzle.difficulty = difficulty;  // Update the global difficulty
-        console.log(`Line Puzzle difficulty set to: ${Puzzle.difficulty}`);
-        this.setup();  // Restart puzzle with new difficulty
-    }
-
+    
 
 
     draw(): void {
@@ -59,22 +53,27 @@ export default class DrawPuzzle extends Puzzle {
         const x = this.scene.p5.mouseX - this.scene.p5.width / 2;
         const y = this.scene.p5.mouseY - this.scene.p5.height / 2
 
-        if (this.cursor.validLineStart()) { //check if the stored square has a dot
-            let tempSelect = this.getSquareAtMousePosition(x, y); // null or a square at mouse position
-            if (this.currentLine != null && tempSelect != null && this.cursor.currentSquare != null) {
-                if (tempSelect.color == null)// check if allowed to recolor
-                    tempSelect.color = this.cursor.currentSquare.color; //recolor
-                if (this.currentLine) { //prove is defined
-                    if (tempSelect.matchingPoint(this.currentLine.head) && !(tempSelect === this.currentLine.head)) { //if temp select is OTHER colored point, finish line
+        if(this.cursor.validLineStart()){ //check if the stored square has a dot
+            let tempSelect = this.getSquareAtMousePosition(x,y); // null or a square at mouse position
+            if(this.currentLine!=null && tempSelect != null && this.cursor.currentSquare != null){ 
+
+                if(this.currentLine){ //prove is defined
+                    if(tempSelect.matchingPoint(this.currentLine.head) && !(tempSelect===this.currentLine.head)){ //if temp select is OTHER same colored point, finish line
                         this.currentLine.addTail(tempSelect);
                         console.log("finish line");
                         this.cursor.currentSquare = null;
                         this.lines.push(this.currentLine);
                         this.currentLine = undefined;
                     }
-                    else // add to body
-                        if (!tempSelect.hasPoint && !this.checkUsedInLine(tempSelect))
-                            this.currentLine.addToBody(tempSelect);
+                    else // try  add to body
+                        if(!tempSelect.hasPoint && !this.checkUsedInLine(tempSelect)){
+                            if(this.isAdjacent(this.currentLine.lastAdded,tempSelect)){
+                                console.log("adjacency");
+                                this.currentLine.addToBody(tempSelect);
+                                tempSelect.color=this.cursor.currentSquare.color; //recolor
+                            }
+                        }
+                        console.log("edge case ff")    
                 }
 
             }
@@ -162,6 +161,7 @@ export default class DrawPuzzle extends Puzzle {
                 const min_y = square.y - this.squareSize / 2;
                 const max_y = square.y + this.squareSize / 2;
                 if (mouseX > min_x && mouseX < max_x && mouseY > min_y && mouseY < max_y) {
+                    console.log(square)
                     return square;
                 }
             }
@@ -169,16 +169,62 @@ export default class DrawPuzzle extends Puzzle {
         return null;
     }
 
-    checkWipeLines(check: Square) {//clears the line(s) which have the passed square as an endpoint
-        if (this.lines.length != 0) {
-            for (let i = 0; i < this.lines.length; i++) {
-                if (this.lines[i].isEnd(check)) {
+    getAdjacentSquares(selected:Square):Square[]{
+        let adjacencies:Square[] = [];
+        let realSquare:Square;
+        
+        const p5 = this.scene.p5;
+        const mx = selected.x;
+        const my = selected.y;
+
+        let temp:Square|null = this.getSquareAtMousePosition(mx - this.squareSize, my); //left check
+        //console.log("getAdjacentSquares()", temp)
+        if(temp!=null){
+            realSquare = temp;
+            adjacencies.push(realSquare);
+        }
+            
+        temp = (this.getSquareAtMousePosition(mx + this.squareSize, my));//right check
+        //console.log("getAdjacentSquares()", temp)
+        if(temp!=null){
+            realSquare = temp;
+            adjacencies.push(realSquare);
+        }
+
+        temp = this.getSquareAtMousePosition(mx, my - this.squareSize);//up check
+        //console.log("getAdjacentSquares()", temp)
+        if(temp!=null){
+            realSquare = temp;
+            adjacencies.push(realSquare);
+        }
+
+        temp = this.getSquareAtMousePosition(mx, my + this.squareSize); //down check
+        if(temp!=null){
+            realSquare = temp;
+            adjacencies.push(realSquare);
+        }
+
+        return adjacencies;
+    }
+
+    isAdjacent(lineTip:Square, nSquare:Square):boolean{
+        let adjacencies:Square[] = this.getAdjacentSquares(lineTip);
+        console.log(adjacencies);
+        return adjacencies.includes(nSquare);
+    }
+
+    checkWipeLines(check:Square){//clears the line(s) which have the passed square as an endpoint
+        if(this.lines.length!=0){
+            for(let i = 0; i < this.lines.length; i++){
+                if(this.lines[i].isEnd(check)){
                     this.lines[i].clearLine();
-                    this.lines = this.lines.filter(item => item !== this.lines[i])
+                    this.lines = this.lines.filter(item => item !==this.lines[i])
+                    i--;
                 }
             }
         }
     }
+
     checkUsedInLine(check: Square): boolean { // returns false if the square is unused
         if (this.lines.length != 0) {
             for (let i = 0; i < this.lines.length; i++) {
@@ -241,5 +287,17 @@ export default class DrawPuzzle extends Puzzle {
         p5.text("You Win!", 0, -boxHeight / 8);
         p5.textSize(16);
         p5.text("Click to continue.", 0, boxHeight / 4);
+    }
+
+    setDifficulty(difficulty: string): void {
+        console.log(`Line Puzzle difficulty set to: ${Puzzle.difficulty}`);
+        Puzzle.difficulty = difficulty;
+        this.squares = [];
+        for(let i = 0; i < this.lines.length; i++){
+                this.lines[i].clearLine();
+                this.lines = this.lines.filter(item => item !==this.lines[i])
+                i--
+        }
+        this.setup();  // Restart puzzle with new difficulty
     }
 }
