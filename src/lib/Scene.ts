@@ -8,6 +8,7 @@ import Rectangle from "./physics/Rectangle";
 import { Howl } from "howler";
 
 export default class Scene implements GameObject {
+    zIndex?: number | undefined;
     private _name: string;
     private _scene_manager!: SceneManager;
     protected p!: p5;
@@ -269,10 +270,22 @@ export default class Scene implements GameObject {
 
     draw(): void { }
     draw_objects(): void {
+        let drawn: boolean = false;
+        if (this.objects.length > 0 && (this.zIndex ?? 0) < (this.objects[0].zIndex ?? 0)) {
+            this.draw();
+            drawn = true;
+        }
         for (const obj of this.objects) {
+            if (!drawn && (this.zIndex ?? 0) < (obj?.zIndex ?? 0)) {
+                drawn = true;
+                this.draw();
+            }
             if (!obj.hidden) {
                 obj.draw && obj.draw();
             }
+        }
+        if (!drawn) {
+            this.draw();
         }
         this.frames++;
         const now = this.p5.millis();
@@ -300,10 +313,22 @@ export default class Scene implements GameObject {
         this.p5.text("MouseX: " + Math.round(this.mouseX) + " MouseY: " + Math.round(this.mouseY), 20 - this.p5.width / 2, 40 - this.p5.height / 2);
         this.p5.text(`Frames:  ${this.display_frames.toFixed(1)}`, 20 - this.p5.width / 2, 60 - this.p5.height / 2);
         this.p5.pop();
+        let drawn: boolean = false;
+        if (this.objects.length > 0 && (this.zIndex ?? 0) < (this.objects[0].zIndex ?? 0)) {
+            this.postDraw();
+            drawn = true;
+        }
         for (const obj of this.objects) {
+            if (!drawn && (this.zIndex ?? 0) < (obj?.zIndex ?? 0)) {
+                drawn = true;
+                this.postDraw();
+            }
             if (!obj.hidden) {
                 obj.postDraw && obj.postDraw();
             }
+        }
+        if (!drawn) {
+            this.postDraw();
         }
     }
 

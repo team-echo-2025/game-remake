@@ -15,6 +15,7 @@ export default class MenuScene extends Scene {
     private background_music!: Sound;
     private bgm_manager!: SoundManager;
     private sfx_manager!: SoundManager;
+    zIndex?: number | undefined = -100;
     constructor() {
         super("menu-scene");
         this.pManager = new PageManager([
