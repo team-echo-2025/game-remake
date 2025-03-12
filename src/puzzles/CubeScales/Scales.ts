@@ -44,7 +44,7 @@ export default class CubeScales implements GameObject {
         let weightDifference = this.leftWeight - this.rightWeight;
         this.tiltAngle = this.scene.p5.map(weightDifference, -20, 20, maxTilt, -maxTilt, true);
     }
-    draw(): void {
+    postDraw(): void {
         let p5 = this.scene.p5;
         
         p5.fill(100);
