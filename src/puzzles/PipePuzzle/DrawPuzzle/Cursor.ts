@@ -28,7 +28,7 @@ export default class Cursor {
             else if(this.currentSquare.color){
                 p5.stroke(this.currentSquare.color.r, this.currentSquare.color.g, this.currentSquare.color.b); // Red color for the box
                 p5.noFill();
-                p5.strokeWeight(3); // Set stroke weight for the box
+                p5.strokeWeight(5); // Set stroke weight for the box
                 p5.rect(
                     this.currentSquare.x,
                     this.currentSquare.y,
