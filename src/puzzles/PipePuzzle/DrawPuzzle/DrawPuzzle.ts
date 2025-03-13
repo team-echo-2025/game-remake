@@ -35,10 +35,11 @@ export default class DrawPuzzle extends Puzzle {
         this.scene.p5.createCanvas(this.scene.p5.windowWidth, this.scene.p5.windowHeight);
         this.scene.p5.rectMode(this.scene.p5.CENTER);
     }
-    
+
 
 
     draw(): void {
+        this.scene.p5.background(255, 182, 193);
         // this.generateBoard();
         if (this.checkSolution())
             if (this.solved())
@@ -53,12 +54,12 @@ export default class DrawPuzzle extends Puzzle {
         const x = this.scene.p5.mouseX - this.scene.p5.width / 2;
         const y = this.scene.p5.mouseY - this.scene.p5.height / 2
 
-        if(this.cursor.validLineStart()){ //check if the stored square has a dot
-            let tempSelect = this.getSquareAtMousePosition(x,y); // null or a square at mouse position
-            if(this.currentLine!=null && tempSelect != null && this.cursor.currentSquare != null){ 
+        if (this.cursor.validLineStart()) { //check if the stored square has a dot
+            let tempSelect = this.getSquareAtMousePosition(x, y); // null or a square at mouse position
+            if (this.currentLine != null && tempSelect != null && this.cursor.currentSquare != null) {
 
-                if(this.currentLine){ //prove is defined
-                    if(tempSelect.matchingPoint(this.currentLine.head) && !(tempSelect===this.currentLine.head)){ //if temp select is OTHER same colored point, finish line
+                if (this.currentLine) { //prove is defined
+                    if (tempSelect.matchingPoint(this.currentLine.head) && !(tempSelect === this.currentLine.head)) { //if temp select is OTHER same colored point, finish line
                         this.currentLine.addTail(tempSelect);
                         console.log("finish line");
                         this.cursor.currentSquare = null;
@@ -66,14 +67,14 @@ export default class DrawPuzzle extends Puzzle {
                         this.currentLine = undefined;
                     }
                     else // try  add to body
-                        if(!tempSelect.hasPoint && !this.checkUsedInLine(tempSelect)){
-                            if(this.isAdjacent(this.currentLine.lastAdded,tempSelect)){
+                        if (!tempSelect.hasPoint && !this.checkUsedInLine(tempSelect)) {
+                            if (this.isAdjacent(this.currentLine.lastAdded, tempSelect)) {
                                 console.log("adjacency");
                                 this.currentLine.addToBody(tempSelect);
-                                tempSelect.color=this.cursor.currentSquare.color; //recolor
+                                tempSelect.color = this.cursor.currentSquare.color; //recolor
                             }
                         }
-                        console.log("edge case ff")    
+                    console.log("edge case ff")
                 }
 
             }
@@ -113,6 +114,19 @@ export default class DrawPuzzle extends Puzzle {
                 square.draw();
             }
         }
+        let p5 = this.scene.p5;
+        p5.fill(0);
+        p5.noStroke();
+        p5.textAlign(p5.CENTER, p5.CENTER);
+        p5.textSize((24+32)/2);
+        p5.text("Connect the matching colored dots!", 0, offsetY + rows / this.squareSize - 50);
+        p5.text("How To Play:", -(p5.windowWidth/3), -(offsetY + rows * this.squareSize + 50));
+        p5.text("Create a line by dragging from one colored ", -(p5.windowWidth/3), -(offsetY + rows * this.squareSize - 80));
+        p5.text("dot to the corresponding colored dot ", -(p5.windowWidth/3), -(offsetY + rows * this.squareSize - 100));
+        p5.text("Rules:", (p5.windowWidth/3), -(offsetY + rows * this.squareSize + 50));
+        p5.text("1. You can only create a line", (p5.windowWidth/3), -(offsetY + rows * this.squareSize - 80));
+        p5.text("   between horizontal and vertical squares", (p5.windowWidth/3), -(offsetY + rows * this.squareSize - 100));
+        p5.text("2. All squares must be filled", (p5.windowWidth/3), -(offsetY + rows * this.squareSize - 140));
     }
 
     generateBoard() {
@@ -136,17 +150,17 @@ export default class DrawPuzzle extends Puzzle {
     getBoardSize() {
         switch (DrawPuzzle.difficulty) {
             case "easy":
-                this.totalPairs = 2
-                return this.totalPairs, { columns: 4, rows: 4 };
-            case "normal":
-                this.totalPairs = 3
+                this.totalPairs = 5
                 return this.totalPairs, { columns: 5, rows: 5 };
-            case "hard":
-                this.totalPairs = 4
-                return this.totalPairs, { columns: 7, rows: 7 };
-            default:
-                this.totalPairs = 2
-                return this.totalPairs, { columns: 4, rows: 4 };
+                case "normal":
+                    this.totalPairs = 6
+                    return this.totalPairs, { columns: 6, rows: 6 };
+                case "hard":
+                    this.totalPairs = 7
+                    return this.totalPairs, { columns: 7, rows: 7 };
+                    default:
+                this.totalPairs = 5
+                return this.totalPairs, { columns: 5, rows: 5 };
         }
     }
 
@@ -169,37 +183,37 @@ export default class DrawPuzzle extends Puzzle {
         return null;
     }
 
-    getAdjacentSquares(selected:Square):Square[]{
-        let adjacencies:Square[] = [];
-        let realSquare:Square;
-        
+    getAdjacentSquares(selected: Square): Square[] {
+        let adjacencies: Square[] = [];
+        let realSquare: Square;
+
         const p5 = this.scene.p5;
         const mx = selected.x;
         const my = selected.y;
 
-        let temp:Square|null = this.getSquareAtMousePosition(mx - this.squareSize, my); //left check
+        let temp: Square | null = this.getSquareAtMousePosition(mx - this.squareSize, my); //left check
         //console.log("getAdjacentSquares()", temp)
-        if(temp!=null){
+        if (temp != null) {
             realSquare = temp;
             adjacencies.push(realSquare);
         }
-            
+
         temp = (this.getSquareAtMousePosition(mx + this.squareSize, my));//right check
         //console.log("getAdjacentSquares()", temp)
-        if(temp!=null){
+        if (temp != null) {
             realSquare = temp;
             adjacencies.push(realSquare);
         }
 
         temp = this.getSquareAtMousePosition(mx, my - this.squareSize);//up check
         //console.log("getAdjacentSquares()", temp)
-        if(temp!=null){
+        if (temp != null) {
             realSquare = temp;
             adjacencies.push(realSquare);
         }
 
         temp = this.getSquareAtMousePosition(mx, my + this.squareSize); //down check
-        if(temp!=null){
+        if (temp != null) {
             realSquare = temp;
             adjacencies.push(realSquare);
         }
@@ -207,18 +221,18 @@ export default class DrawPuzzle extends Puzzle {
         return adjacencies;
     }
 
-    isAdjacent(lineTip:Square, nSquare:Square):boolean{
-        let adjacencies:Square[] = this.getAdjacentSquares(lineTip);
+    isAdjacent(lineTip: Square, nSquare: Square): boolean {
+        let adjacencies: Square[] = this.getAdjacentSquares(lineTip);
         console.log(adjacencies);
         return adjacencies.includes(nSquare);
     }
 
-    checkWipeLines(check:Square){//clears the line(s) which have the passed square as an endpoint
-        if(this.lines.length!=0){
-            for(let i = 0; i < this.lines.length; i++){
-                if(this.lines[i].isEnd(check)){
+    checkWipeLines(check: Square) {//clears the line(s) which have the passed square as an endpoint
+        if (this.lines.length != 0) {
+            for (let i = 0; i < this.lines.length; i++) {
+                if (this.lines[i].isEnd(check)) {
                     this.lines[i].clearLine();
-                    this.lines = this.lines.filter(item => item !==this.lines[i])
+                    this.lines = this.lines.filter(item => item !== this.lines[i])
                     i--;
                 }
             }
@@ -255,7 +269,7 @@ export default class DrawPuzzle extends Puzzle {
         this.getBoardSize(); // find num pairs
         let found = false;
         let colRow = this.getBoardSize(); //get column & rows
-        if (this.totalPairs == this.lines.length){
+        if (this.totalPairs == this.lines.length) {
             for (let i = 0; i < colRow.columns; ++i)
                 for (let j = 0; j < colRow.rows; ++j)
                     if (this.squares[i][j].color == null)
@@ -264,9 +278,8 @@ export default class DrawPuzzle extends Puzzle {
             return true;
         }
         return false;
-       
+
     }
-    //changing color variable names to colored
 
     displayWinMessage(): void {
         let p5 = this.scene.p5;
@@ -293,11 +306,12 @@ export default class DrawPuzzle extends Puzzle {
         console.log(`Line Puzzle difficulty set to: ${Puzzle.difficulty}`);
         Puzzle.difficulty = difficulty;
         this.squares = [];
-        for(let i = 0; i < this.lines.length; i++){
-                this.lines[i].clearLine();
-                this.lines = this.lines.filter(item => item !==this.lines[i])
-                i--
+        for (let i = 0; i < this.lines.length; i++) {
+            this.lines[i].clearLine();
+            this.lines = this.lines.filter(item => item !== this.lines[i])
+            i--
         }
         this.setup();  // Restart puzzle with new difficulty
     }
+
 }
