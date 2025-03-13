@@ -97,6 +97,8 @@ export default class PlayScene extends Scene {
         this.player.body.x = args?.starting_pos?.x ?? -425;
         this.player.body.y = args?.starting_pos?.y ?? 218;
         this.physics.addObject(this.player);
+        this.set_time(300); // set time limit for scene
+        this.set_update_time(this.p5.millis()); // time since last update to timer
     }
 
     preload(): any {
@@ -219,6 +221,21 @@ export default class PlayScene extends Scene {
 
     postDraw(): void {
         this.access_circuit?.postDraw();
+        this.set_current_time(this.p5.millis());
+        this.set_delta_time((this.get_current_time() - this.get_update_time()) / 1000); // convert to seconds
+        this.set_update_time(this.get_current_time());
+        this.set_time(this.get_time() - this.get_delta_time());
+        if (this.get_time() <= 0) {
+            this.start("menu-scene");
+            return;
+        }
+        this.p5.push();
+        this.p5.fill(255, 0, 0);
+        this.p5.textSize(24);
+        this.p5.textAlign(this.p5.RIGHT, this.p5.TOP);
+        let timeDisplay = Math.ceil(this.get_time()); // rounding up to whole second
+        this.p5.text(`Time Left: ${timeDisplay}s`, this.p5.width / 2 - 20, -this.p5.height / 2 + 20);
+        this.p5.pop();
     }
 
     draw(): void {
