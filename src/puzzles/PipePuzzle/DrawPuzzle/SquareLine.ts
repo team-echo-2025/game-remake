@@ -53,7 +53,7 @@ export default class SquareLine {
         if(this.head.color!=null && this.tail?.color!=null){
             p5.stroke(this.head.color.r, this.head.color.g, this.head.color.b); // Red color for the box
             p5.noFill();
-            p5.strokeWeight(3); // Set stroke weight for the box
+            p5.strokeWeight(5); // Set stroke weight for the box
             p5.rect(
                 this.head.x,
                 this.head.y,
@@ -63,7 +63,7 @@ export default class SquareLine {
 
             p5.stroke(this.tail.color.r, this.tail.color.g, this.tail.color.b); // Red color for the box
             p5.noFill();
-            p5.strokeWeight(3); // Set stroke weight for the box
+            p5.strokeWeight(5); // Set stroke weight for the box
             p5.rect(
                 this.tail.x,
                 this.tail.y,

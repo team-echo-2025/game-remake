@@ -1,3 +1,4 @@
+import { textChangeRangeIsUnchanged } from "typescript";
 import GameObject from "../../../lib/GameObject";
 import Scene from "../../../lib/Scene";
 
