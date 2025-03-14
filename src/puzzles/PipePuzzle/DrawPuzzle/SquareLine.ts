@@ -1,4 +1,4 @@
-import GameObject from "../../../lib/GameObject";
+
 import Scene from "../../../lib/Scene";
 import Square from "./Square";
 

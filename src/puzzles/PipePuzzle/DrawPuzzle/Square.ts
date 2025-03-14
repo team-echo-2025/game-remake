@@ -39,13 +39,13 @@ export default class Square implements GameObject {
         const p5 = this.scene.p5;
         if (this.hasPoint) {
             p5.stroke(0);
-            p5.noFill();
+            p5.fill(255,255,255);
             p5.rect(0, 0, this.size, this.size);
             this.drawCenterPoint();
         }
         else{
             p5.stroke(0);
-            if(this.color == null)  p5.noFill();
+            if(this.color == null)  p5.fill(255,255,255);
             else    p5.fill(this.color.r,this.color.g,this.color.b)
             p5.rect(0, 0, this.size, this.size); 
         }
