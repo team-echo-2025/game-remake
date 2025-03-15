@@ -310,33 +310,43 @@ export default class Scene implements GameObject {
     keyPressed(_: KeyboardEvent): void { }
     keyPressed_objects(e: KeyboardEvent): void {
         for (const obj of this.objects) {
-            obj.keyPressed?.(e)
+            if (!obj.hidden) {
+                obj.keyPressed?.(e)
+            }
         }
     }
 
     keyReleased(_: KeyboardEvent): void { }
     keyReleased_objects(e: KeyboardEvent): void {
         for (const obj of this.objects) {
-            obj.keyReleased?.(e);
+            if (!obj.hidden) {
+                obj.keyReleased?.(e);
+            }
         }
     }
 
     mouseClicked(_: MouseEvent): void { }
     mouseClicked_objects(e: MouseEvent): void {
         for (const obj of this.objects) {
-            obj.mouseClicked?.(e);
+            if (!obj.hidden) {
+                obj.mouseClicked?.(e);
+            }
         }
     }
     mousePressed(_: MouseEvent): void { }
     mousePressed_objects(e: MouseEvent): void {
         for (const obj of this.objects) {
-            obj.mousePressed?.(e);
+            if (!obj.hidden) {
+                obj.mousePressed?.(e);
+            }
         }
     }
     mouseReleased(_: MouseEvent): void { }
     mouseReleased_objects(e: MouseEvent): void {
         for (const obj of this.objects) {
-            obj.mouseReleased?.(e);
+            if (!obj.hidden) {
+                obj.mouseReleased?.(e);
+            }
         }
     }
 
