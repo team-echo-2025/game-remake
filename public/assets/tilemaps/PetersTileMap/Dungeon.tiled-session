@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Dungeon Floor 1.tmx",
+    "activeFile": "Dungeon.tmx",
     "expandedProjectPaths": [
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
@@ -12,15 +12,15 @@
             "scale": 0.75,
             "selectedLayer": 8,
             "viewCenter": {
-                "x": 484.66666666666663,
-                "y": 259.33333333333326
+                "x": 1027.3333333333335,
+                "y": 284.66666666666663
             }
         },
         "Dungeon.tmx": {
             "scale": 1,
             "selectedLayer": 6,
             "viewCenter": {
-                "x": 107,
+                "x": 106.5,
                 "y": -0.5
             }
         },
@@ -67,13 +67,13 @@
     ],
     "project": "Dungeon.tiled-project",
     "recentFiles": [
+        "Dungeon Floor 1.tmx",
         "Trees.tsx",
         "Dungeonset.tsx",
         "Texture/TX Tileset Wall.tsx",
         "Texture/Stone Ground.tsx",
         "Texture/Grass.tsx",
-        "Dungeon.tmx",
-        "Dungeon Floor 1.tmx"
+        "Dungeon.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
