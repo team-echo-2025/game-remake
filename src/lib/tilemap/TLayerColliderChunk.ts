@@ -34,7 +34,7 @@ export default class TLayerColliderChunk extends TLayerChunk {
                 y -= this.tilemap.height / 2;
                 obj.body.x = x + tile.image.width / 2;
                 obj.body.y = y + tile.image.height / 2;
-                //this.scene.physics.addObject(obj)
+                this.scene.physics.addObject(obj)
                 this.bodies.push(obj);
             }
         }

@@ -45,11 +45,33 @@ export default class TLayerChunk {
                 this.miny = Math.min(this.tilemap.miny, tilePixelY);
                 this.maxx = Math.max(this.tilemap.maxx, tilePixelX + this.tilemap.tilewidth);
                 this.maxy = Math.max(this.tilemap.maxy, tilePixelY + this.tilemap.tileheight);
-                let x = (this.x + tile.x) * this.tilemap.tilewidth;
-                let y = (this.y + tile.y) * this.tilemap.tileheight;
-                this.buffer!.image(tile.image, tile.x * this.tilemap.tilewidth, tile.y * this.tilemap.tileheight);
-                tile.x = x;
-                tile.y = y;
+                let x = tile.x * this.tilemap.tilewidth;
+                let y = tile.y * this.tilemap.tileheight;
+                this.buffer?.push();
+                this.buffer?.translate(x, y);
+                if (tile.rotated) {
+                    this.buffer?.translate(this.tilemap.tilewidth / 2, this.tilemap.tileheight / 2);
+                    this.buffer?.rotate(this.scene.p5.HALF_PI); // 90° rotation
+                    this.buffer?.translate(-this.tilemap.tilewidth / 2, -this.tilemap.tileheight / 2);
+                    this.buffer?.translate(this.tilemap.tilewidth, 0);
+                    this.buffer?.scale(-1, 1);
+                }
+                if (tile.flipped_x) {
+                    this.buffer?.translate(this.tilemap.tilewidth, 0);
+                    this.buffer?.scale(-1, 1);
+                }
+                if (tile.flipped_y) {
+                    this.buffer?.translate(0, this.tilemap.tileheight);
+                    this.buffer?.scale(1, -1);
+                }
+
+                this.buffer!.image(tile.image, 0, 0);
+                this.buffer?.pop();
+
+                let _x = (this.x + tile.x) * this.tilemap.tilewidth;
+                let _y = (this.y + tile.y) * this.tilemap.tileheight;
+                tile.x = _x;
+                tile.y = _y;
             }
         }
     }
@@ -70,10 +92,8 @@ export default class TLayerChunk {
         } else {
             buffer = _buffer;
         }
-        console.log(this.topmost);
         buffer.push();
-        //buffer.translate(-this.tilemap.width / 2, -this.tilemap.height / 2);
-        buffer.translate(-this.tilemap.minx, -this.tilemap.miny)
+        buffer.translate(-this.tilemap.minx, -this.tilemap.miny);
         buffer.image(this.chunk_image!, this.x * this.tilemap.tilewidth, this.y * this.tilemap.tileheight);
         buffer.pop();
         this.loaded = true;
