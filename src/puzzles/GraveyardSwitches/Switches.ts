@@ -1,32 +1,34 @@
 import GameObject from "../../lib/GameObject";
-import PhysicsObject from "../../lib/physics/PhysicsObject";
+
 import Scene from "../../lib/Scene";
 
-
-
 export default class Switches implements GameObject {
-    private cols: number; // grid needs to be 17 x 5
-    private rows: number;
-    private cellWidth: number = 48.53;
-    private cellHeight: number = 66; // each box in grid needs to be 48.53 x 66
+    cols: number; // grid needs to be 17 x 5
+    rows: number;
+    boxWidth: number = 48.53;
+    boxHeight: number = 66; // each box in grid needs to be 48.53 x 66
+
+    startX: number = -1780; 
+    startY: number = -970;
+    isOn: boolean = false;
+    
     scene: Scene;
-
-
-    private startX: number = -1780; 
-    private startY: number = -970;
-    private isOn: boolean = false;
-    constructor(x: number, y: number){
-        this.cols = y;
-        this.rows = x;
+    constructor(scene: Scene){
+        this.cols = this.startY;
+        this.rows = this.startX;
+        this.scene = scene;
+    }
+    draw(): void {
+        this.scene.p5.noStroke();
+        this.scene.p5.rect(this.rows, this.cols, this.boxWidth, this.boxHeight);
     }
     toggle(): void {
         this.isOn = !this.isOn;
     }
-    draw(): void {
-        this.scene.p5.fill()
+   
+    containsPoint(px: number, py: number): boolean {
+        return px >= this.rows && px <= this.rows + this.boxWidth && py >= this.cols && py <= this.cols + this.boxHeight;
     }
-    
-    containsPoint() {}
     isSwitchOn(): boolean {
         return this.isOn;
     }
