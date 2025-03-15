@@ -194,7 +194,7 @@ export default class PuzzleDevScene extends Scene {
                 this.changeButtonVisibility();
             }
         });
-        this.pipeButton.y = -200;
+        this.pipeButton.y = -300;
 
         this.breakawayButton = this.add_new.button({
             label: "Breakaway",
