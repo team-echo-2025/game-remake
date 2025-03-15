@@ -25,34 +25,40 @@ export default class CubeScalesPuzzle extends Puzzle {
                 this.resetButton.hidden = true;
             }
         });
-        this.resetButton.hidden = true;
         this.resetButton.y = 200;
+        if (this.hidden) this.resetButton.hidden = true;
     }
 
-    draw(): void {
-        this.resetButton.hidden = false;
+    postDraw(): void {
+        console.log(this.resetButton.hidden);
         if (this.solved()) {
             this.displayWinMessage();
         } else {
-            this.scene.p5.background(255); // Clear the screen each frame
+            this.scene.p5.background(255);
             this.drawBody();
-            this.scales.draw();
-
-            // Draw all cubes except the one being dragged
+            this.scales.postDraw();
+    
             for (let cube of this.cubes) {
-                if (cube != this.draggingCube && cube.state != CubeState.left && cube.state != CubeState.right) {
-                    cube.draw();
+                if (cube !== this.draggingCube && cube.state !== CubeState.left && cube.state !== CubeState.right) {
+                    cube.postDraw();
                 }
             }
-
-            // Ensure the dragged cube is drawn **on top** while dragging
+    
             if (this.draggingCube) {
                 this.draggingCube.update();
             }
-
+    
             if (this.checkSolution()) {
                 this.displayWinMessage();
             }
+        }
+        if (this.hidden) {
+            this.resetButton.hidden = true;
+        } else if (this.resetButton.hidden) {
+            this.resetButton.hidden = false;
+        }
+        if (!this.resetButton.hidden) {
+            this.resetButton.postDraw();
         }
     }
 
@@ -132,8 +138,10 @@ export default class CubeScalesPuzzle extends Puzzle {
 
         this.scene.p5.fill(255);
         this.scene.p5.textAlign(this.scene.p5.CENTER, this.scene.p5.CENTER);
+        this.scene.p5.textSize(50);
+        this.scene.p5.text("Cube Scales\n", 0, -250);
         this.scene.p5.textSize(16);
-        this.scene.p5.text("Balance the scales.\nDrag cubes to the scales to apply weight.\nDrag cubes out of the scales and back to\ntheir original position to remove them.", 0, -200);
+        this.scene.p5.text("Balance the scales.\nDrag cubes to the scales to apply weight.\n", 0, -200);
     }
 
     mousePressed(): void {
@@ -157,16 +165,16 @@ export default class CubeScalesPuzzle extends Puzzle {
             this.draggingCube!.x = this.scene.p5.mouseX - this.scene.p5.width / 2;
             this.draggingCube!.y = this.scene.p5.mouseY - this.scene.p5.height / 2;
         }
-        this.draw();
+        this.postDraw();
     }
 
     mouseReleased(): void {
         if (this.draggingCube) {
-            if (this.isOnLeftScale(this.draggingCube)) {
+            if (this.isOnLeftScale()) {
                 this.draggingCube.x = -80;
                 this.draggingCube.y = 50;
                 this.draggingCube.state = CubeState.left;
-            } else if (this.isOnRightScale(this.draggingCube)) {
+            } else if (this.isOnRightScale()) {
                 this.draggingCube.x = 80;
                 this.draggingCube.y = 50;
                 this.draggingCube.state = CubeState.right;
@@ -188,11 +196,11 @@ export default class CubeScalesPuzzle extends Puzzle {
         return d < 20;
     }
 
-    isOnLeftScale(cube: Cube): boolean {
+    isOnLeftScale(): boolean {
         return this.scene.p5.mouseX < this.scene.p5.width / 2 - 50;
     }
 
-    isOnRightScale(cube: Cube): boolean {
+    isOnRightScale(): boolean {
         return this.scene.p5.mouseX > this.scene.p5.width / 2 + 50;
     }
 
@@ -213,11 +221,10 @@ export default class CubeScalesPuzzle extends Puzzle {
         }
     }
 
-    keyPressed = (e: KeyboardEvent) => {
-        if (e.key == "Escape") {
-            this.resetButton.hidden = true;
-        }
-    };
+    setDifficulty(difficulty: string): void {
+        Puzzle.difficulty = difficulty;
+        this.setup();
+    }
 
     displayWinMessage(): void {
         this.resetButton.hidden = true;
