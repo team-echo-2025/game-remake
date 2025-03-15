@@ -15,9 +15,11 @@ type StartArgs = Readonly<{
 }>
 
 export default class Dungeon2 extends Scene {
+    zIndex?: number | undefined = 1050;
     player?: Player;
     tilemap?: Tilemap;
     animating: boolean = false;
+    dark_backdrop!: Graphics;
     access_circuit1?: AccessCircuit;
     access_circuit2?: AccessCircuit;
     access_circuit3?: AccessCircuit;
@@ -52,7 +54,103 @@ export default class Dungeon2 extends Scene {
         this.loadSound("circuit_xposition_sfx", "assets/TInterfaceSounds/iciclesT.mp3");
     }
 
+    cubicBezier(p0: Vector2D, p1: Vector2D, p2: Vector2D, p3: Vector2D, t: number) {
+        const x = Math.pow(1 - t, 3) * p0.x +
+            3 * Math.pow(1 - t, 2) * t * p1.x +
+            3 * (1 - t) * t * t * p2.x +
+            Math.pow(t, 3) * p3.x;
+        const y = Math.pow(1 - t, 3) * p0.y +
+            3 * Math.pow(1 - t, 2) * t * p1.y +
+            3 * (1 - t) * Math.pow(t, 2) * p2.y +
+            Math.pow(t, 3) * p3.y;
+        return { x, y };
+    }
+    cubicBezierValue(p0: number, p1: number, p2: number, p3: number, t: number) {
+        return (1 - t) ** 3 * p0 +
+            3 * (1 - t) ** 2 * t * p1 +
+            3 * (1 - t) * t ** 2 * p2 +
+            t ** 3 * p3;
+    }
+    cubicBezierNew(
+        x1: number,
+        y1: number,
+        x2: number,
+        y2: number
+    ): (x: number) => number {
+        // Pre-calculate polynomial coefficients
+        const cx = 3 * x1;
+        const bx = 3 * (x2 - x1) - cx;
+        const ax = 1 - cx - bx;
+
+        const cy = 3 * y1;
+        const by = 3 * (y2 - y1) - cy;
+        const ay = 1 - cy - by;
+
+        // Calculate x for a given t
+        function sampleCurveX(t: number): number {
+            return ((ax * t + bx) * t + cx) * t;
+        }
+
+        // Calculate y for a given t
+        function sampleCurveY(t: number): number {
+            return ((ay * t + by) * t + cy) * t;
+        }
+
+        // Calculate the derivative of x with respect to t
+        function sampleCurveDerivativeX(t: number): number {
+            return (3 * ax * t + 2 * bx) * t + cx;
+        }
+
+        // Given an x value, find parameter t using Newton-Raphson iteration
+        function solveCurveX(x: number, epsilon = 1e-6): number {
+            let t = x;
+            for (let i = 0; i < 8; i++) {
+                const xEstimate = sampleCurveX(t) - x;
+                if (Math.abs(xEstimate) < epsilon) return t;
+                const dEstimate = sampleCurveDerivativeX(t);
+                if (Math.abs(dEstimate) < epsilon) break;
+                t = t - xEstimate / dEstimate;
+            }
+            // Fallback to binary search if Newton-Raphson fails
+            let t0 = 0;
+            let t1 = 1;
+            t = x;
+            while (t0 < t1) {
+                const xEstimate = sampleCurveX(t);
+                if (Math.abs(xEstimate - x) < epsilon) return t;
+                if (x > xEstimate) {
+                    t0 = t;
+                } else {
+                    t1 = t;
+                }
+                t = (t0 + t1) / 2;
+            }
+            return t;
+        }
+
+        // Return the easing function mapping an input time fraction (x) to the eased output (y)
+        return (x: number): number => {
+            const t = solveCurveX(x);
+            return sampleCurveY(t);
+        };
+    }
     setup(): void {
+        this.dark_backdrop = this.p5.createGraphics(this.p5.width, this.p5.height);
+        this.dark_backdrop.background(0, 1, 12);
+        this.dark_backdrop.erase();
+        this.dark_backdrop.translate(this.p5.width / 2, this.p5.height / 2);
+        this.dark_backdrop.noStroke();
+        this.dark_backdrop.fill(0);
+        this.dark_backdrop.circle(0, 0, 50);
+        const ease = this.cubicBezierNew(0, .83, .1, .98);
+        const ease2 = this.cubicBezierNew(.61, .67, .78, .98);
+        for (let i = 0; i < 150; i++) {
+            const amount = ease(i / 150);
+            this.dark_backdrop.fill(0, (50 - ease2((i) / 150) * 50) + 10 - amount * 10 - 5);
+            this.dark_backdrop.circle(0, 0, 50 + i);
+        }
+        this.dark_backdrop.noErase();
+
         this.tilemap = this.add_new.tilemap({
             tilemap_key: "tilemap",
         })
@@ -192,5 +290,8 @@ export default class Dungeon2 extends Scene {
         this.access_circuit2?.draw();
         this.access_circuit3?.draw();
         this.access_circuit4?.draw();
+        this.p5.push();
+        this.p5.image(this.dark_backdrop, -this.p5.width / 2 + this.player!.body.x, -this.p5.height / 2 + this.player!.body.y);
+        this.p5.pop();
     }
 }
