@@ -37,9 +37,9 @@ export default class CubeScales implements GameObject {
           this.x = this.scene.p5.mouseX + this.offsetX;
           this.y = this.scene.p5.mouseY + this.offsetY;
         }
-        this.draw();
+        this.postDraw();
     }
-    draw(): void {
+    postDraw(): void {
         this.scene.p5.fill(200);
         this.scene.p5.rect(this.x, this.y, this.scene.p5.width / 50)
     }
