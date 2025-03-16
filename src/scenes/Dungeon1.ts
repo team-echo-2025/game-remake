@@ -51,8 +51,8 @@ export default class Dungeon1 extends Scene {
         object.overlaps = true;
         object.onCollide = (other: RigidBody) => {
             if (other == this.player?.body) {
-                this.start('dungeon-2', {
-                    starting_pos: { x: 0, y: 348 }
+                this.start('iceMaze', {
+                    starting_pos: { x: -215, y: -215 }
                 });
             }
         }
