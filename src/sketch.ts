@@ -8,11 +8,12 @@ import PhysicsTestScene from "./scenes/PhysicsTestScene";
 import PuzzleDevScene from "./scenes/PuzzleDevScene";
 import Dungeon1 from './scenes/Dungeon1';
 import Dungeon2 from './scenes/Dungeon2';
+import iceMaze from "./scenes/IceMaze";
 
 let scene_manager: SceneManager;
 const sketch = (p: p5) => {
     p.preload = () => {
-        scene_manager = new SceneManager(p, [MenuScene, PlayScene, KDDevScene, PhysicsTestScene, PuzzleDevScene, Dungeon1, Dungeon2], LoadingScene);
+        scene_manager = new SceneManager(p, [MenuScene, PlayScene, KDDevScene, PhysicsTestScene, PuzzleDevScene, Dungeon1, Dungeon2, iceMaze], LoadingScene);
         scene_manager.preload();
     };
 
