@@ -6,9 +6,6 @@ import Switches from "./Switches";
 import Scene from "../../lib/Scene";
 
 
-
-
-
 export default class GraveyardSwitches extends Puzzle {
     cols : number; // grid 17x5
     rows : number;
@@ -30,6 +27,7 @@ export default class GraveyardSwitches extends Puzzle {
         this.startX = -1780;
         this.startY = -970;
 
+        
         document.addEventListener('keydown', (e) => {
             if (e.key.toLowerCase() === 'e') this.toggleSwitch();
         });
@@ -47,10 +45,12 @@ export default class GraveyardSwitches extends Puzzle {
     toggleSwitch(): void {
         const hoveredSwitch = this.getHoveredSwitch(this.lastMouseX, this.lastMouseY);
         if (hoveredSwitch !== -1) {
-            this.switches[hoveredSwitch] = !this.switches[hoveredSwitch];
+            this.switches[hoveredSwitch].toggle();
         }
     }
-    draw(): void {}
+    draw(): void {
+        this.switches.forEach((sw) => sw.draw());
+    }
 }
 
 
