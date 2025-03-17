@@ -17,8 +17,6 @@ export default class MenuPage extends Page {
     constructor() {
         super("menu-page")
     }
-    preload(): any {
-    }
     cleanup() {
         this.scene.remove(this.play);
         this.scene.remove(this.setting);
@@ -31,6 +29,7 @@ export default class MenuPage extends Page {
         this.scene.remove(this.dropdown);
     }
     setup() {
+        console.log("IN SETUP IN MENU")
         this.button_sfx = this.scene.add_new.sound("button_sfx")
         const button1: ButtonTestProps = {
             label: "Scene 1",

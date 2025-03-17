@@ -8,7 +8,7 @@ export type ButtonTestProps = Readonly<{
     callback?: (e: MouseEvent) => void;
     font_size?: number;
 }>;
-export default class ButtonTest implements GameObject {
+export default class Button implements GameObject {
     hidden: boolean = false;
     protected _x: number = 0;
     protected _y: number = 0;
