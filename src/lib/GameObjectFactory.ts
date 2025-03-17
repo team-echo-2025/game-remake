@@ -51,8 +51,8 @@ export default class GameObjectFactory {
     dropdown_menu = (props: DropdownMenuProps): DropdownMenu => {
         const _dropdown = new DropdownMenu(props);
         _dropdown.scene = this.scene;
-        _dropdown.setup();
         this.scene.add(_dropdown);
+        _dropdown.setup();
         return _dropdown;
     }
 
@@ -72,7 +72,7 @@ export default class GameObjectFactory {
         _slider.setup();
         return _slider;
     }
-    sound = (sound_key: string): Sound => {
+    sound = (sound_key: string): Sound =>{
         const _sound = new Sound(sound_key);
         console.log("sound factory call");
         _sound.scene = this.scene;
@@ -80,11 +80,11 @@ export default class GameObjectFactory {
         _sound.setup();
         return _sound;
     }
-    soundmanager = (props: SoundManagerProps): SoundManager => {
+    soundmanager = (props: SoundManagerProps): SoundManager =>{
         const _soundmanager = new SoundManager(props);
         console.log("soundmanager factory call");
         _soundmanager.scene = this.scene;
-        _soundmanager.sounds = props.sounds;
+        _soundmanager.sounds = props.sounds; 
         this.scene.add(_soundmanager);
         _soundmanager.setup();
         return _soundmanager;
