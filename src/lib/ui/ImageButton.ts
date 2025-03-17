@@ -1,7 +1,7 @@
-import Button, { ButtonTestProps } from "./ButtonTest";
+import Button, { ButtonProps } from "./Button";
 
 export default class ImageButton extends Button {
-    constructor(props: ButtonTestProps) {
+    constructor(props: ButtonProps) {
         super({ ...props });
     }
 

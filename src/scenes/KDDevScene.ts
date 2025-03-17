@@ -4,7 +4,7 @@ import Sound from "../lib/Sound";
 import DropdownMenu from "../lib/ui/DropdownMenu";
 import ButtonTest, { ButtonTestProps } from "../lib/ui/ButtonTest";
 import Slider from "../lib/ui/Slider";
-import SoundManager, { SoundManagerProps } from "../lib/SoundManager";
+import SoundManager,{ SoundManagerProps } from "../lib/SoundManager";
 
 export default class KDDevScene extends Scene {
     player!: Player;
@@ -28,6 +28,7 @@ export default class KDDevScene extends Scene {
     onStart(): void {
         this.player = new Player(this);
         this.physics.addObject(this.player);
+
     }
 
     preload(): any {
@@ -48,27 +49,27 @@ export default class KDDevScene extends Scene {
     setup(): void {
         this.background_music = this.add_new.sound("background_music");
         this.button_sfx = this.add_new.sound("button_sfx");
-        const bgm_props: SoundManagerProps = {
+        const bgm_props: SoundManagerProps= {
             group: "BGM",
             sounds: [this.background_music]
         }
-        const sfx_props: SoundManagerProps = {
+        const sfx_props: SoundManagerProps= {
             group: "SFX",
             sounds: [this.button_sfx]
-        }
+        } 
         this.bgm_manager = this.add_new.soundmanager(bgm_props);
         this.sfx_manager = this.add_new.soundmanager(sfx_props);
-        const button1: ButtonTestProps = {
+       const button1: ButtonTestProps = {
             label: "test nothing",
             font_key: "jersey",
             font_size: 50,
-            callback: () => {
+            callback: () => { 
                 this.button_sfx.play()
             }
         };
         const button2: ButtonTestProps = {
             ...button1,
-            callback: () => {
+            callback: () => { 
                 this.start("menu-scene");
                 this.button_sfx.play()
             },
@@ -87,13 +88,13 @@ export default class KDDevScene extends Scene {
                 button2,
                 button3
             ],
-            callback: () => { this.button_sfx.play() }
+            callback:()=> {this.button_sfx.play()}
         })
         this.return_button = this.add_new.button({
             label: "Exit Dev Scene",
             font_key: "jersey",
             font_size: 50,
-            callback: () => {
+            callback: () => { 
                 this.start("menu-scene");
                 this.button_sfx.play();
             }
@@ -102,7 +103,7 @@ export default class KDDevScene extends Scene {
             label: "Play Music",
             font_key: "jersey",
             font_size: 50,
-            callback: () => {
+            callback: () => { 
                 this.background_music.play();
                 this.button_sfx.play()
             }
@@ -111,8 +112,8 @@ export default class KDDevScene extends Scene {
             label: "Stop Music",
             font_key: "jersey",
             font_size: 50,
-            callback: () => {
-                this.background_music.stop()
+            callback: () => { 
+                this.background_music.stop() 
                 this.button_sfx.play()
             }
         })
@@ -120,8 +121,8 @@ export default class KDDevScene extends Scene {
             label: "Mute Music",
             font_key: "jersey",
             font_size: 50,
-            callback: () => {
-                this.background_music.mute()
+            callback: () => { 
+                this.background_music.mute() 
                 this.button_sfx.play()
             }
         })
@@ -129,7 +130,7 @@ export default class KDDevScene extends Scene {
             label: "Play Manager",
             font_key: "jersey",
             font_size: 50,
-            callback: () => {
+            callback: () => { 
                 this.bgm_manager.play();
                 this.button_sfx.play();
             }
@@ -138,16 +139,16 @@ export default class KDDevScene extends Scene {
             label: "Stop Manager",
             font_key: "jersey",
             font_size: 50,
-            callback: () => {
+            callback: () => { 
                 this.bgm_manager.stop();
                 this.button_sfx.play();
-            }
+             }
         })
         this.manager_mute_button = this.add_new.button({
             label: "Mute Manager",
             font_key: "jersey",
             font_size: 50,
-            callback: () => {
+            callback: () => { 
                 this.bgm_manager.mute();
                 this.button_sfx.play()
             }
@@ -155,12 +156,12 @@ export default class KDDevScene extends Scene {
         this.background_slider = this.add_new.slider({
             scene: this,
             key: "BGM",
-            callback: (volume: string) => {
+            callback: (volume: string) => { 
                 this.bgm_manager.updateVolume(volume)
                 this.button_sfx.play()
             }
         })
-
+        
 
         this.return_button.x = -300//this.p5.mouseX - this.p5.width / 2;
         this.return_button.y = 200//this.p5.mouseY - this.p5.height / 2;
@@ -188,7 +189,7 @@ export default class KDDevScene extends Scene {
         this.dropMenu.x = -200
         this.background_slider.x = 100
         this.background_slider.y = 100
-
+        
     }
     keyPressed = (e: KeyboardEvent) => {
         if (e.key === "Escape") {
