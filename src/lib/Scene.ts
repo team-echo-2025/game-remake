@@ -19,6 +19,10 @@ export default class Scene implements GameObject {
     private preloads: Promise<any>[] = []
     private _camera: Camera;
     private _bounds: Rectangle;
+    private timeRemaining: number = 300; // time in seconds
+     private lastUpdateTime: number = 0;
+     private currentTime!: number;
+     private deltaTime!: number;
 
     private start_time = 0;
     private frames = 0;
@@ -114,7 +118,6 @@ export default class Scene implements GameObject {
     }
 
     loadSound = (key: string, path: string) => {//
-        console.log("loading sound", key)
         if (this.get_asset(key)) {
             console.log("asset already loaded", key)
         }
@@ -233,14 +236,11 @@ export default class Scene implements GameObject {
 
     async preload(): Promise<any> { }
     async preload_objects(): Promise<any> {
-        console.log("in preload objects")
         const to_load = []
         for (const obj of this.objects) {
-            console.log(obj)
             obj.preload && to_load.push(obj.preload());
         }
         for (const pre of this.preloads) {
-            console.log(pre)
             to_load.push(pre);
         }
 
@@ -386,4 +386,35 @@ export default class Scene implements GameObject {
     }
 
     onStart(args?: any) { }
+    set_time(time: number): void {
+        this.timeRemaining = time;
+    }
+
+    get_time(): number {
+        return this.timeRemaining;
+    }
+
+    set_update_time(time: number): void {
+        this.lastUpdateTime = time;
+    }
+
+    get_update_time(): number {
+        return this.lastUpdateTime;
+    }
+
+    set_current_time(time: number): void {
+        this.currentTime = time;
+    }
+
+    get_current_time(): number {
+        return this.currentTime;
+    }
+
+    set_delta_time(time: number): void {
+        this.deltaTime = time;
+    }
+
+    get_delta_time(): number {
+        return this.deltaTime;
+    }
 }

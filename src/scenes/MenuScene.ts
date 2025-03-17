@@ -27,14 +27,14 @@ export default class MenuScene extends Scene {
             new CreditsPage(),
         ], this);
     }
-    onStart(args?: any): void {
-        this.add(this.pManager);
+    onStart(): void {
     }
     async preload(): Promise<any> {
         this.loadFont('jersey', 'assets/fonts/jersey.ttf')
         this.imgLogo = this.p5.loadImage('assets/background.png');  // Load the background image
         this.loadSound("background_music", "assets/background_music.mp3")
         this.loadSound("button_sfx", "assets/TInterfaceSounds/light-switch.mp3")
+        await this.pManager.preload();
     }
     setup(): void {
         this.background_music = this.add_new.sound("background_music");
@@ -45,6 +45,8 @@ export default class MenuScene extends Scene {
         }
         this.bgm_manager = this.add_new.soundmanager(bgm_props);
         this.bgm_manager.play();
+        this.pManager.setup();
+        this.add(this.pManager);
     }
     postDraw(): void {
         this.p5.push();  // Save the current transformation matrix

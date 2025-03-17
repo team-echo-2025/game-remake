@@ -1,5 +1,5 @@
 import Scene from "../lib/Scene";
-import ButtonTest from "../lib/ui/ButtonTest";
+import Button from "../lib/ui/ButtonTest";
 import AccessCircuit from "../puzzles/AccessCircuit/AccessCircuit";
 import BlockSlide from "../puzzles/BlockSlide/BlockSlide";
 import LightsOn from "../puzzles/LightsOn/LightsOn";
@@ -8,26 +8,25 @@ import Breakaway from "../puzzles/Breakaway/Breakaway";
 import Puzzle from "../lib/Puzzle"
 import Player from "../lib/Player";
 import PipePuzzle from "../puzzles/PipePuzzle/DrawPuzzle/DrawPuzzle";
-import Button from "../lib/ui/Button";
 import DrawPuzzle from "../puzzles/PipePuzzle/DrawPuzzle/DrawPuzzle";
 
 export default class PuzzleDevScene extends Scene {
-    easy!: ButtonTest;
-    normal!: ButtonTest;
-    hard!: ButtonTest;
+    easy!: Button;
+    normal!: Button;
+    hard!: Button;
     aCircuit!: AccessCircuit;
     bSlide!: BlockSlide;
     cScales!: CubeScales;
     lightsOn!: LightsOn;
     pipe!: DrawPuzzle;
-    pipeButton!: ButtonTest;
+    pipeButton!: Button;
     breakaway!: Breakaway;
-    aCircuitButton!: ButtonTest;
-    bSlideButton!: ButtonTest;
-    lightsOnButton!: ButtonTest;
-    cScalesButton!: ButtonTest;
-    bSlideSolveButton!: ButtonTest;
-    breakawayButton!: ButtonTest;
+    aCircuitButton!: Button;
+    bSlideButton!: Button;
+    lightsOnButton!: Button;
+    cScalesButton!: Button;
+    bSlideSolveButton!: Button;
+    breakawayButton!: Button;
     set_difficulty!: Puzzle;
     player!: Player;
 
@@ -266,10 +265,8 @@ export default class PuzzleDevScene extends Scene {
     onStop(): void { }
 
     postDraw(): void {
-        this.aCircuit?.postDraw();
     }
 
     draw(): void {
-        this.aCircuit?.draw();
     }
 }
