@@ -34,6 +34,7 @@ export default class KDDevScene extends Scene {
     preload(): any {
         console.log("begin preload of KD Dev scene")
         this.loadFont("jersey", 'assets/fonts/jersey.ttf');
+        this.loadFont("minecraftia", 'assets/fonts/Minecraftia-Regular.ttf')
         this.loadSound("background_music", "assets/background_music.mp3");
         this.loadSound("button_sfx", "assets/TInterfaceSounds/light-switch.mp3");
     }
