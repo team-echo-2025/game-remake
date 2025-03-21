@@ -2,6 +2,7 @@ import Page from "../lib/Page";
 import Sound from "../lib/Sound";
 import ButtonTest, { ButtonTestProps } from "../lib/ui/ButtonTest";
 import DropdownMenu from "../lib/ui/DropdownMenu";
+import SplashText, { SplashTextProps } from "../lib/ui/SplashText";
 
 export default class MenuPage extends Page {
     play!: ButtonTest;
@@ -13,6 +14,7 @@ export default class MenuPage extends Page {
     puzzleTest!: ButtonTest;
     button_sfx!: Sound;
     dropdown!: DropdownMenu;
+    splashtext!: SplashText;
 
     constructor() {
         super("menu-page")
@@ -29,6 +31,7 @@ export default class MenuPage extends Page {
         this.scene.remove(this.puzzleTest);
         this.scene.remove(this.button_sfx);
         this.scene.remove(this.dropdown);
+        this.scene.remove(this.splashtext);
     }
     setup() {
         this.button_sfx = this.scene.add_new.sound("button_sfx")
@@ -137,7 +140,16 @@ export default class MenuPage extends Page {
         })
         this.puzzleTest.x = 0
         this.puzzleTest.y = 300
-    }
+        
+        const splashprop: SplashTextProps= {
+            label: "test",
+            font_key: "minecraftia",
+            font_size: 28
+        }
+        this.splashtext = this.scene.add_new.splashtext(splashprop);
+        this.splashtext.x = 0;
+        this.splashtext.y = -300;
+    }   
     postDraw(): void {
         this.page_manager.scene.p5.fill(0);
         this.page_manager.scene.p5.textAlign(this.page_manager.scene.p5.CENTER, this.page_manager.scene.p5.CENTER);
