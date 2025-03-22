@@ -172,6 +172,7 @@ export default class AccessCircuit extends Puzzle {
     }
 
     keyPressed(e: KeyboardEvent): void {
+        // console.log("Reached");
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
         console.log("STATE", this.state);
         if (this.hidden && this.highlight && e.key == 'e') {

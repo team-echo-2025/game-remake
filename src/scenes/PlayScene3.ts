@@ -3,7 +3,7 @@ import PhysicsObject from "../lib/physics/PhysicsObject";
 import Rectangle from "../lib/physics/Rectangle";
 import RigidBody from "../lib/physics/RigidBody";
 import Player from "../lib/Player";
-import { PuzzleState } from "../lib/Puzzle";
+import Puzzle, { PuzzleState } from "../lib/Puzzle";
 import Scene from "../lib/Scene";
 import Spritesheet from "../lib/Spritesheet";
 import Tilemap from "../lib/tilemap/Tilemap";
@@ -13,7 +13,9 @@ import AccessCircuit from "../puzzles/AccessCircuit/AccessCircuit";
 type StartArgs = Readonly<{
     starting_pos: Vector2D
 }>
-
+// enum AllPuzzles{
+//     access_circuit: AccessCircuit;
+// }
 export default class Dungeon2 extends Scene {
     zIndex?: number | undefined = 1050;
     player?: Player;
@@ -26,7 +28,9 @@ export default class Dungeon2 extends Scene {
     access_circuit4?: AccessCircuit;
     background?: Graphics;
     portal?: Spritesheet;
-
+    // make a puzzles array [puzzle1, puzzle2, puzzle3] 
+    // then you can for loop through each puzzle and call mousepressed, mouse released, draw etc without needing to write them all individually.
+    // that way we can easilly swap out the puzzles
     constructor() {
         super("dungeon-2");
         this.physics.debug = false;
@@ -41,10 +45,10 @@ export default class Dungeon2 extends Scene {
     }
 
     preload(): any {
-        this.loadImage("puzzle", "assets/access_circuit.png");
-        this.loadImage("broken-puzzle", "assets/access_circuit_broken.png");
-        this.loadImage("success-puzzle", "assets/access_circuit_success.png");
-        this.loadImage("highlighted-puzzle", "assets/access_circuit_highlighted.png");
+        this.loadImage("puzzle", "assets/puzzleImages/access_circuit.png");
+        this.loadImage("broken-puzzle", "assets/puzzleImages/access_circuit_broken.png");
+        this.loadImage("success-puzzle", "assets/puzzleImages/access_circuit_success.png");
+        this.loadImage("highlighted-puzzle", "assets/puzzleImages/access_circuit_highlighted.png");
         this.loadFont("jersey", "assets/fonts/jersey.ttf");
         this.loadTilemap("tilemap", "assets/tilemaps/PetersTileMap/Dungeon Floor 1.tmx");
         this.loadImage("portal", "assets/tilemaps/LaythsTileMap/portal-sheet.png");

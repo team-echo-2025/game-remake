@@ -7,9 +7,8 @@ import CubeScales from "../puzzles/CubeScales/CubeScales";
 import Breakaway from "../puzzles/Breakaway/Breakaway";
 import Puzzle from "../lib/Puzzle"
 import Player from "../lib/Player";
-import PipePuzzle from "../puzzles/PipePuzzle/DrawPuzzle/DrawPuzzle";
 import Button from "../lib/ui/Button";
-import DrawPuzzle from "../puzzles/PipePuzzle/DrawPuzzle/DrawPuzzle";
+import DrawPuzzle from "../puzzles/DrawPuzzle/DrawPuzzle";
 
 export default class PuzzleDevScene extends Scene {
     easy!: ButtonTest;
@@ -40,8 +39,8 @@ export default class PuzzleDevScene extends Scene {
         this.player = new Player(this)
         this.add(this.player);
         this.physics.debug = false;
-        this.bSlide = new BlockSlide(this);
-        this.pipe = new PipePuzzle(this);
+        // this.bSlide = new BlockSlide(this);
+        this.pipe = new DrawPuzzle(this);
         this.lightsOn = new LightsOn(this);
         this.cScales = new CubeScales(this);
         this.breakaway = new Breakaway(this);
