@@ -9,13 +9,16 @@ import Spritesheet from "../lib/Spritesheet";
 import Tilemap from "../lib/tilemap/Tilemap";
 import { Vector2D } from "../lib/types/Physics";
 import AccessCircuit from "../puzzles/AccessCircuit/AccessCircuit";
+import BlockSlide from "../puzzles/BlockSlide/BlockSlide";
+import DrawPuzzle from "../puzzles/DrawPuzzle/DrawPuzzle";
+import Breakaway from "../puzzles/Breakaway/Breakaway";
+import LightsOn from "../puzzles/LightsOn/LightsOn";
+import CubeScalesPuzzle from "../puzzles/CubeScales/CubeScales";
 
 type StartArgs = Readonly<{
     starting_pos: Vector2D
 }>
-// enum AllPuzzles{
-//     access_circuit: AccessCircuit;
-// }
+
 export default class Dungeon2 extends Scene {
     zIndex?: number | undefined = 1050;
     player?: Player;
@@ -23,16 +26,16 @@ export default class Dungeon2 extends Scene {
     animating: boolean = false;
     dark_backdrop!: Graphics;
     access_circuit1?: AccessCircuit;
-    access_circuit2?: AccessCircuit;
-    access_circuit3?: AccessCircuit;
-    access_circuit4?: AccessCircuit;
+    block_slide?: BlockSlide;
+    draw_puzzle?: DrawPuzzle;
+    breakaway?: Breakaway;
+    cube_scales?: CubeScalesPuzzle;
+    lights_on?: LightsOn;
     background?: Graphics;
     portal?: Spritesheet;
-    // make a puzzles array [puzzle1, puzzle2, puzzle3] 
-    // then you can for loop through each puzzle and call mousepressed, mouse released, draw etc without needing to write them all individually.
-    // that way we can easilly swap out the puzzles
+    puzzles: (BlockSlide | DrawPuzzle | Breakaway | CubeScalesPuzzle | LightsOn)[] = [];
     constructor() {
-        super("dungeon-2");
+        super("playscene-3");
         this.physics.debug = false;
     }
 
@@ -42,6 +45,15 @@ export default class Dungeon2 extends Scene {
         this.player.body.x = args?.starting_pos?.x ?? 0;
         this.player.body.y = args?.starting_pos?.y ?? 348;
         this.physics.addObject(this.player);
+
+        this.puzzles.push(
+            new BlockSlide(this, 'puzzle', this.player!),
+            new DrawPuzzle(this, 'puzzle', this.player!),
+            new Breakaway(this, 'puzzle', this.player!),
+            new CubeScalesPuzzle(this, 'puzzle', this.player!)
+            // new LightsOn(this, 'puzzle', this.player!)
+        );
+        
     }
 
     preload(): any {
@@ -180,42 +192,68 @@ export default class Dungeon2 extends Scene {
         this.background = this.p5.createGraphics(this.p5.width, this.p5.height);
         this.portal = portal;
         this.physics.addObject(portal_body);
+        // /////////////////////////////////////////////////////////
+        // const access_circuit = new AccessCircuit(this, "puzzle", this.player!);
+        // access_circuit.setup();
+        // access_circuit.zIndex = 101;
+        // this.add(access_circuit);
+        // access_circuit.x = 100;
+        // access_circuit.y = 100;
+        this.puzzles[0].x = -435; //BlockSlide
+        this.puzzles[0].y = 213; //BlockSlide
+        this.puzzles[1].x = -24; // DrawPuzzle 
+        this.puzzles[1].y = -310; // DrawPuzzle 
+        this.puzzles[2].x = 425; // Breakaway 
+        this.puzzles[2].y = -15; // Breakaway 
+        this.puzzles[3].x = 200; // CubeScales
+        this.puzzles[3].y = 150; // CubeScales
+        //create puzzle , position , push to array post setup
+        // Setup each puzzle
+        this.puzzles.forEach(puzzle => {
+            puzzle.setup();
+            puzzle.hidden = true;
+            puzzle.asset.zIndex = 101;
+            puzzle.onCompleted = () => {
+                this.check_completed();
+            };
+        });
+        
+/////////////////////////////////////////////////////////////////////
+        // this.access_circuit1 = new AccessCircuit(this, 'puzzle', this.player!);
+        // this.access_circuit1.x = -435;
+        // this.access_circuit1.y = 213;
+        // this.access_circuit1?.setup();
+        // this.access_circuit1.asset.zIndex = 101;
+        // this.access_circuit1.onCompleted = () => {
+        //     this.check_completed();
+        // }
 
-        this.access_circuit1 = new AccessCircuit(this, 'puzzle', this.player!);
-        this.access_circuit1.x = -435;
-        this.access_circuit1.y = 213;
-        this.access_circuit1?.setup();
-        this.access_circuit1.asset.zIndex = 101;
-        this.access_circuit1.onCompleted = () => {
-            this.check_completed();
-        }
+        // this.access_circuit2 = new AccessCircuit(this, 'puzzle', this.player!);
+        // this.access_circuit2.x = -24;
+        // this.access_circuit2.y = -310;
+        // this.access_circuit2?.setup();
+        // this.access_circuit2.asset.zIndex = 101;
+        // this.access_circuit2.onCompleted = () => {
+        //     this.check_completed();
+        // }
 
-        this.access_circuit2 = new AccessCircuit(this, 'puzzle', this.player!);
-        this.access_circuit2.x = -24;
-        this.access_circuit2.y = -310;
-        this.access_circuit2?.setup();
-        this.access_circuit2.asset.zIndex = 101;
-        this.access_circuit2.onCompleted = () => {
-            this.check_completed();
-        }
+        // this.access_circuit3 = new AccessCircuit(this, 'puzzle', this.player!);
+        // this.access_circuit3.x = 425;
+        // this.access_circuit3.y = -15;
+        // this.access_circuit3?.setup();
+        // this.access_circuit3.asset.zIndex = 101;
+        // this.access_circuit3.onCompleted = () => {
+        //     this.check_completed();
+        // }
 
-        this.access_circuit3 = new AccessCircuit(this, 'puzzle', this.player!);
-        this.access_circuit3.x = 425;
-        this.access_circuit3.y = -15;
-        this.access_circuit3?.setup();
-        this.access_circuit3.asset.zIndex = 101;
-        this.access_circuit3.onCompleted = () => {
-            this.check_completed();
-        }
-
-        this.access_circuit4 = new AccessCircuit(this, 'puzzle', this.player!);
-        this.access_circuit4.x = 200;
-        this.access_circuit4.y = 150;
-        this.access_circuit4?.setup();
-        this.access_circuit4.asset.zIndex = 101;
-        this.access_circuit4.onCompleted = () => {
-            this.check_completed();
-        }
+        // this.access_circuit4 = new AccessCircuit(this, 'puzzle', this.player!);
+        // this.access_circuit4.x = 200;
+        // this.access_circuit4.y = 150;
+        // this.access_circuit4?.setup();
+        // this.access_circuit4.asset.zIndex = 101;
+        // this.access_circuit4.onCompleted = () => {
+        //     this.check_completed();
+        // }
 
         const object = new PhysicsObject({
             width: 100,
@@ -227,7 +265,7 @@ export default class Dungeon2 extends Scene {
         object.overlaps = true;
         object.onCollide = (other: RigidBody) => {
             if (other == this.player?.body) {
-                this.start('dungeon-1', {
+                this.start('playscene-2', {
                     starting_pos: { x: -103, y: -636 }
                 });
             }
@@ -236,10 +274,7 @@ export default class Dungeon2 extends Scene {
     }
 
     check_completed = () => {
-        if (this.access_circuit1?.state == PuzzleState.completed &&
-            this.access_circuit2?.state == PuzzleState.completed &&
-            this.access_circuit3?.state == PuzzleState.completed &&
-            this.access_circuit4?.state == PuzzleState.completed) {
+        if (this.puzzles.every(puzzle => puzzle.state === PuzzleState.completed)) {
             this.player!.body.x = 0;
             this.player!.body.y = 0;
             this.portal?.once(true);
@@ -248,54 +283,40 @@ export default class Dungeon2 extends Scene {
 
     // We may want this to be a pause menu eventually
     keyPressed = (e: KeyboardEvent) => {
-        this.access_circuit1?.keyPressed(e);
-        this.access_circuit2?.keyPressed(e);
-        this.access_circuit3?.keyPressed(e);
-        this.access_circuit4?.keyPressed(e);
+        this.puzzles.forEach(puzzle => puzzle.keyPressed(e));
         if (e.key === "Escape") {
             this.start("menu-scene");
         }
     };
 
-    mousePressed(_: MouseEvent): void {
-        this.access_circuit1?.mousePressed();
-        this.access_circuit2?.mousePressed();
-        this.access_circuit3?.mousePressed();
-        this.access_circuit4?.mousePressed();
+    mousePressed(e: MouseEvent): void {
+        this.puzzles.forEach(puzzle => puzzle.mousePressed());
     }
 
-    mouseReleased(_: MouseEvent): void {
-        this.access_circuit1?.mouseReleased();
-        this.access_circuit2?.mouseReleased();
-        this.access_circuit3?.mouseReleased();
-        this.access_circuit4?.mouseReleased();
+    mouseReleased(e: MouseEvent): void {
+        this.puzzles.forEach(puzzle => puzzle.mouseReleased && puzzle.mouseReleased(e));
     }
 
     onStop(): void {
         this.player = undefined;
         this.tilemap = undefined;
-        this.access_circuit1 = undefined;
-        this.access_circuit2 = undefined;
-        this.access_circuit3 = undefined;
-        this.access_circuit4 = undefined;
+        // this.access_circuit1 = undefined;
+        // this.access_circuit2 = undefined;
+        // this.access_circuit3 = undefined;
+        // this.access_circuit4 = undefined;
+        this.puzzles.forEach(puzzle => undefined);
         this.portal = undefined;
         this.background = undefined;
     }
 
     postDraw(): void {
-        this.access_circuit1?.postDraw();
-        this.access_circuit2?.postDraw();
-        this.access_circuit3?.postDraw();
-        this.access_circuit4?.postDraw();
+        this.puzzles.forEach(puzzle => !puzzle.hidden && puzzle.postDraw());
     }
 
     draw(): void {
-        this.access_circuit1?.draw();
-        this.access_circuit2?.draw();
-        this.access_circuit3?.draw();
-        this.access_circuit4?.draw();
+        this.puzzles.forEach(puzzle => !puzzle.hidden && puzzle.draw());
         this.p5.push();
-        this.p5.image(this.dark_backdrop, -this.p5.width / 2 + this.player!.body.x, -this.p5.height / 2 + this.player!.body.y);
+        // this.p5.image(this.dark_backdrop, -this.p5.width / 2 + this.player!.body.x, -this.p5.height / 2 + this.player!.body.y);
         this.p5.pop();
     }
 }

@@ -40,10 +40,10 @@ export default class PuzzleDevScene extends Scene {
         this.add(this.player);
         this.physics.debug = false;
         // this.bSlide = new BlockSlide(this);
-        this.pipe = new DrawPuzzle(this);
-        this.lightsOn = new LightsOn(this);
-        this.cScales = new CubeScales(this);
-        this.breakaway = new Breakaway(this);
+        // this.pipe = new DrawPuzzle(this);
+        // this.lightsOn = new LightsOn(this);
+        // this.cScales = new CubeScales(this);
+        // this.breakaway = new Breakaway(this);
         this.bSlide.hidden = true;
         this.pipe.hidden = true;
         this.lightsOn.hidden = true;
