@@ -18,10 +18,6 @@ export default class Scene implements GameObject {
     private preloads: Promise<any>[] = []
     private _camera: Camera;
     private _bounds: Rectangle;
-    private timeRemaining: number = 300; // time in seconds
-     private lastUpdateTime: number = 0;
-     private currentTime!: number;
-     private deltaTime!: number;
 
     private start_time = 0;
     private frames = 0;
@@ -65,6 +61,9 @@ export default class Scene implements GameObject {
 
     set scene_manager(manager: SceneManager) {
         this._scene_manager = manager;
+    }
+    get scene_manager() {
+        return this._scene_manager;
     }
 
     get name() {
@@ -309,6 +308,17 @@ export default class Scene implements GameObject {
                 obj.postDraw && obj.postDraw();
             }
         }
+
+        if (this.name != "menu-scene" && this.name != "loading-scene") { // timer should not run on certian scenes
+            this.scene_manager.updateTimer();
+            this.p5.push();
+            this.p5.fill(255, 0, 0);
+            this.p5.textSize(24);
+            this.p5.textAlign(this.p5.RIGHT, this.p5.TOP);
+            let timeDisplay = Math.ceil(this.scene_manager.get_time()); // rounding up to whole second
+            this.p5.text(`Time Left: ${timeDisplay}s`, this.p5.width / 2 - 20, -this.p5.height / 2 + 20);
+            this.p5.pop();
+        }
     }
 
     keyPressed(_: KeyboardEvent): void { }
@@ -364,36 +374,8 @@ export default class Scene implements GameObject {
         this.assets = new Map();
     }
 
-    onStart(args?: any) { }
-    set_time(time: number): void {
-        this.timeRemaining = time;
-    }
-
-    get_time(): number {
-        return this.timeRemaining;
-    }
-
-    set_update_time(time: number): void {
-        this.lastUpdateTime = time;
-    }
-
-    get_update_time(): number {
-        return this.lastUpdateTime;
-    }
-
-    set_current_time(time: number): void {
-        this.currentTime = time;
-    }
-
-    get_current_time(): number {
-        return this.currentTime;
-    }
-
-    set_delta_time(time: number): void {
-        this.deltaTime = time;
-    }
-
-    get_delta_time(): number {
-        return this.deltaTime;
+    onStart(args?: any) {
+        this.scene_manager.set_time(this.scene_manager.get_time()); // sets time if no limit was defined in the scene
+        this.scene_manager.set_update_time(this.p5.millis()); // time since last update to timer
     }
 }
