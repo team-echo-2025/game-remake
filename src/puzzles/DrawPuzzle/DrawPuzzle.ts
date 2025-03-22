@@ -1,5 +1,5 @@
-import Puzzle, { PuzzleState } from "../../../lib/Puzzle";
-import Scene from "../../../lib/Scene";
+import Puzzle, { PuzzleState } from "../../lib/Puzzle";
+import Scene from "../../lib/Scene";
 import Square, { RGB } from "./Square";
 import Cursor from "./Cursor";
 import SquareLine from "./SquareLine";

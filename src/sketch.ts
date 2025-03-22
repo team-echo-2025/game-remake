@@ -6,8 +6,8 @@ import LoadingScene from './scenes/LoadingScene';
 import KDDevScene from './scenes/KDDevScene';
 import PhysicsTestScene from "./scenes/PhysicsTestScene";
 import PuzzleDevScene from "./scenes/PuzzleDevScene";
-import Dungeon1 from './scenes/Dungeon1';
-import Dungeon2 from './scenes/Dungeon2';
+import Dungeon1 from './scenes/PlayScene2';
+import Dungeon2 from './scenes/PlayScene3';
 
 let scene_manager: SceneManager;
 const sketch = (p: p5) => {

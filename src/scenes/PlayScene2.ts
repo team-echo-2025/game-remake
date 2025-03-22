@@ -31,9 +31,9 @@ export default class Dungeon1 extends Scene {
         this.loadFont("jersey", "assets/fonts/jersey.ttf");
         this.loadTilemap("tilemap", "assets/tilemaps/PetersTileMap/Dungeon.tmx")
         this.loadImage("door", "assets/doors/prison_door.png");
-        this.loadImage("puzzle", "assets/access_circuit.png");
-        this.loadImage("broken-puzzle", "assets/access_circuit_broken.png");
-        this.loadImage("success-puzzle", "assets/access_circuit_success.png");
+        this.loadImage("puzzle", "assets/puzzleImages/access_circuit.png");
+        this.loadImage("broken-puzzle", "assets/puzzleImages/access_circuit_broken.png");
+        this.loadImage("success-puzzle", "assets/puzzleImages/access_circuit_success.png");
     }
 
     setup(): void {

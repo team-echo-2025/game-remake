@@ -1,6 +1,6 @@
 import { textChangeRangeIsUnchanged } from "typescript";
-import GameObject from "../../../lib/GameObject";
-import Scene from "../../../lib/Scene";
+import GameObject from "../../lib/GameObject";
+import Scene from "../../lib/Scene";
 
 export type RGB = Readonly<{
     r: number;
