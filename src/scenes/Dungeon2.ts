@@ -185,6 +185,8 @@ export default class Dungeon2 extends Scene {
         this.access_circuit2?.postDraw();
         this.access_circuit3?.postDraw();
         this.access_circuit4?.postDraw();
+        if (this.scene_manager.get_time() <= 0)
+            this.start("menu-scene");
     }
 
     draw(): void {

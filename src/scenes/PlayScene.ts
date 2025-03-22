@@ -193,7 +193,7 @@ export default class PlayScene extends Scene {
     }
 
     postSetup() {
-        this.scene_manager.set_time(5);
+        this.scene_manager.set_time(300);
     }
 
     mousePressed(_: MouseEvent): void {
