@@ -275,7 +275,7 @@ export default class AccessCircuit extends Puzzle {
         const solved = this.checkSolution();
         if (!solved && this.current_row >= this.board.length) {
             this.state = PuzzleState.failed;
-            this.scene.set_time(this.scene.get_time() - 60); // subtract 60 seconds from player's time
+            this.scene.scene_manager.set_time(this.scene.scene_manager.get_time() - 60); // subtract 60 seconds from player's time
             this.hidden = true;
             this.player.disabled = false;
             this.scene.physics.remove(this.physics_object);
