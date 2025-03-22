@@ -1,4 +1,9 @@
+import PhysicsObject from "../../lib/physics/PhysicsObject";
+import RigidBody from "../../lib/physics/RigidBody";
+import Player from "../../lib/Player";
 import Puzzle, { PuzzleState } from "../../lib/Puzzle";
+import Scene from "../../lib/Scene";
+import Sprite from "../../lib/Sprite";
 
 type Position = { row: number; col: number };
 
@@ -8,13 +13,72 @@ export default class LightsOn extends Puzzle {
     tileSize: number = 0;
     boardSize: number = 300;
     lastClicked: Position | null = null; // Track last clicked tile
+    //Game references
+    physics_object!: PhysicsObject;
+    highlight: boolean = false;
+    asset_key: string;
+    asset!: Sprite;
+    player: Player;
+    private collider_timeout: any;
+    x: number = 0;
+    y: number = 0;
 
+    constructor(scene: Scene, puzzle_asset_key: string, player: Player) {
+        super(scene);
+        this.asset_key = puzzle_asset_key;
+        this.hidden = true;
+        this.player = player;
+    }
+
+    force_solve() {
+        this.state = PuzzleState.completed;
+        this.hidden = true;
+        this.player.disabled = false;
+        this.asset.change_asset('success-puzzle');
+        this.scene.physics.remove(this.physics_object);
+    }
+
+    force_fail() {
+        this.state = PuzzleState.failed;
+        this.hidden = true;
+        this.player.disabled = false;
+        this.asset.change_asset('broken-puzzle');
+        this.scene.physics.remove(this.physics_object);
+    }
 
 
     async preload(): Promise<void> { }
 
     setup(): void {
-
+        //putting into game itself
+        this.physics_object = new PhysicsObject({
+            width: 100,
+            height: 100,
+            mass: Infinity
+        });
+        this.physics_object.overlaps = true;
+        this.physics_object.body.x = this.x;
+        this.physics_object.body.y = this.y;
+        this.scene.physics.addObject(this.physics_object);
+        this.physics_object.onCollide = (other: RigidBody) => {
+            if (other == this.player.body) {
+                clearTimeout(this.collider_timeout);
+                if (!this.highlight) {
+                    this.highlight = true
+                    this.asset.change_asset("highlighted-puzzle");
+                }
+                this.collider_timeout = setTimeout(() => {
+                    this.highlight = false;
+                    this.asset.change_asset("puzzle");
+                }, 100);
+            }
+        }
+        this.asset = this.scene.add_new.sprite(this.asset_key);
+        this.asset.x = this.x;
+        this.asset.y = this.y;
+        this.asset.width = 32;
+        this.asset.height = 48;
+        //Puzzle Setup
         this.state = PuzzleState.notStarted;  // Reset puzzle state to allow a new game
         this.setGridSize();
         this.generateSolvableGrid();
@@ -47,16 +111,16 @@ export default class LightsOn extends Puzzle {
                 this.gridSize = 5;
         }
     }
-
+    draw() {
+        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
+    }
     postDraw(): void {
-        if (this.solved()) {
-            this.displayWinMessage();
-        } else {
-            this.draw_body();
-            this.draw_board();
-            this.draw_footer();
-            this.draw_header();
-        }
+        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
+        if (this.hidden) return;
+        this.draw_body();
+        this.draw_board();
+        this.draw_footer();
+        this.draw_header();
     }
 
     draw_body(): void {
@@ -154,6 +218,15 @@ export default class LightsOn extends Puzzle {
 
         if (checkWin && this.checkWin()) {
             this.state = PuzzleState.completed;
+        }
+    }
+    keyPressed(e: KeyboardEvent): void {
+        console.log("Reached");
+        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
+        console.log("STATE", this.state);
+        if (this.hidden && this.highlight && e.key == 'e') {
+            this.player.disabled = true;
+            this.hidden = false;
         }
     }
 

@@ -15,7 +15,7 @@ export default class Dungeon1 extends Scene {
     tilemap?: Tilemap;
 
     constructor() {
-        super("dungeon-1");
+        super("playscene-2");
         this.physics.debug = false;
     }
 
@@ -51,7 +51,7 @@ export default class Dungeon1 extends Scene {
         object.overlaps = true;
         object.onCollide = (other: RigidBody) => {
             if (other == this.player?.body) {
-                this.start('dungeon-2', {
+                this.start('playscene-3', {
                     starting_pos: { x: 0, y: 348 }
                 });
             }

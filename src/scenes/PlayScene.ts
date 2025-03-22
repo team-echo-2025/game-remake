@@ -191,7 +191,7 @@ export default class PlayScene extends Scene {
         portal1.body.y = -360;
         portal1.onCollide = (other: RigidBody) => {
             if (other == this.player?.body) {
-                this.start("dungeon-1", {
+                this.start("playscene-2", {
                     starting_pos: { x: -1767, y: 863 }
                 });
             }
@@ -204,8 +204,8 @@ export default class PlayScene extends Scene {
         }
     }
 
-    mousePressed(_: MouseEvent): void {
-        this.access_circuit?.mousePressed();
+    mousePressed(e: MouseEvent): void {
+        this.access_circuit?.mousePressed(e);
         // this.block_slide?.mousePressed();
     }
 

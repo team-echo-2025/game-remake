@@ -1,6 +1,10 @@
+import PhysicsObject from "../../lib/physics/PhysicsObject";
+import RigidBody from "../../lib/physics/RigidBody";
+import Player from "../../lib/Player";
 import Puzzle, { PuzzleState } from "../../lib/Puzzle";
 import Scene from "../../lib/Scene";
 import { Vector } from "p5";
+import Sprite from "../../lib/Sprite";
 
 export default class Breakaway extends Puzzle {
     puzzlePieces: any[] = [];
@@ -23,11 +27,68 @@ export default class Breakaway extends Puzzle {
     boardX = 0;
     boardY = -100;
 
-    constructor(scene: Scene) {
+    //Game references
+    physics_object!: PhysicsObject;
+    highlight: boolean = false;
+    asset_key: string;
+    asset!: Sprite;
+    player: Player;
+    private collider_timeout: any;
+    x: number = 0;
+    y: number = 0;
+
+    constructor(scene: Scene, puzzle_asset_key: string, player: Player) {
         super(scene);
+        this.asset_key = puzzle_asset_key;
+        this.hidden = true;
+        this.player = player;
     }
 
+    force_solve() {
+        this.state = PuzzleState.completed;
+        this.hidden = true;
+        this.player.disabled = false;
+        this.asset.change_asset('success-puzzle');
+        this.scene.physics.remove(this.physics_object);
+    }
+
+    force_fail() {
+        this.state = PuzzleState.failed;
+        this.hidden = true;
+        this.player.disabled = false;
+        this.asset.change_asset('broken-puzzle');
+        this.scene.physics.remove(this.physics_object);
+    }
     setup(): void {
+        //putting into game itself
+        this.physics_object = new PhysicsObject({
+            width: 100,
+            height: 100,
+            mass: Infinity
+        });
+        this.physics_object.overlaps = true;
+        this.physics_object.body.x = this.x;
+        this.physics_object.body.y = this.y;
+        this.scene.physics.addObject(this.physics_object);
+        this.physics_object.onCollide = (other: RigidBody) => {
+            if (other == this.player.body) {
+                clearTimeout(this.collider_timeout);
+                if (!this.highlight) {
+                    this.highlight = true
+                    this.asset.change_asset("highlighted-puzzle");
+                }
+                this.collider_timeout = setTimeout(() => {
+                    this.highlight = false;
+                    this.asset.change_asset("puzzle");
+                }, 100);
+            }
+        }
+        this.asset = this.scene.add_new.sprite(this.asset_key);
+        this.asset.x = this.x;
+        this.asset.y = this.y;
+        this.asset.width = 32;
+        this.asset.height = 48;
+        //puzzle setup
         this.createPuzzle();
         this.scatterPieces();
     }
@@ -37,35 +98,35 @@ export default class Breakaway extends Puzzle {
         let pieceW = this.boardWidth / this.cols;
         let pieceH = this.boardHeight / this.rows;
         let perturbAmt = pieceW * 0.2;
-    
+
         let intersections: Vector[][] = [];
-    
+
         for (let i = 0; i <= this.cols; i++) {
             intersections[i] = [];
             for (let j = 0; j <= this.rows; j++) {
                 let x = this.boardX + i * pieceW;
                 let y = this.boardY + j * pieceH;
-    
+
                 x += this.scene.p5.random(-perturbAmt, perturbAmt);
                 y += this.scene.p5.random(-perturbAmt, perturbAmt);
-    
+
                 intersections[i][j] = this.scene.p5.createVector(x, y);
             }
         }
-    
+
         for (let i = 0; i < this.cols; i++) {
             for (let j = 0; j < this.rows; j++) {
                 let tl = intersections[i][j];
                 let tr = intersections[i + 1][j];
                 let br = intersections[i + 1][j + 1];
                 let bl = intersections[i][j + 1];
-    
+
                 let color = this.scene.p5.color(
                     this.scene.p5.random(50, 255),
                     this.scene.p5.random(50, 255),
                     this.scene.p5.random(50, 255)
                 );
-    
+
                 let piece = {
                     localVerts: [
                         { x: 0, y: 0 },
@@ -82,11 +143,11 @@ export default class Breakaway extends Puzzle {
                     dragging: false,
                     rotating: false
                 };
-    
+
                 this.puzzlePieces.push(piece);
             }
         }
-    }    
+    }
 
     scatterPieces(): void {
         for (let piece of this.puzzlePieces) {
@@ -98,44 +159,45 @@ export default class Breakaway extends Puzzle {
             piece.targetRot = piece.rot;
         }
     }
-
+    draw() {
+        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
+    }
     postDraw(): void {
-        if (this.solved()) {
-            this.displayWinMessage();
-        } else {
-            this.drawBody();
-            this.drawOutlines();
+        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
+        if (this.hidden) return;
+        this.drawBody();
+        this.drawOutlines();
 
-            for (let i = 0; i < this.puzzlePieces.length; i++) {
-                let piece = this.puzzlePieces[i];
+        for (let i = 0; i < this.puzzlePieces.length; i++) {
+            let piece = this.puzzlePieces[i];
 
-                let diff = (piece.targetRot - piece.rot + 360) % 360;
-                if (diff > 180) {
-                    let negDiff = 360 - diff;
-                    piece.rot = negDiff < this.rotationAnimStep ? piece.targetRot : (piece.rot - this.rotationAnimStep + 360) % 360;
-                } else {
-                    piece.rot = diff < this.rotationAnimStep ? piece.targetRot : (piece.rot + this.rotationAnimStep) % 360;
-                }
-
-                if (piece.rot === piece.targetRot) piece.rotating = false;
-
-                if (piece.dragging) {
-                    piece.pos.x = this.scene.p5.mouseX - this.scene.p5.width / 2 - this.dragOffset.x;
-                    piece.pos.y = this.scene.p5.mouseY - this.scene.p5.height / 2 - this.dragOffset.y;
-                }
-        
-                this.drawPiece(piece, i === this.selectedPieceIndex);
+            let diff = (piece.targetRot - piece.rot + 360) % 360;
+            if (diff > 180) {
+                let negDiff = 360 - diff;
+                piece.rot = negDiff < this.rotationAnimStep ? piece.targetRot : (piece.rot - this.rotationAnimStep + 360) % 360;
+            } else {
+                piece.rot = diff < this.rotationAnimStep ? piece.targetRot : (piece.rot + this.rotationAnimStep) % 360;
             }
 
-            this.scene.p5.fill(255);
-            this.scene.p5.textAlign(this.scene.p5.CENTER, this.scene.p5.CENTER);
-            this.scene.p5.textSize(50);
-            this.scene.p5.text("Breakaway", 0, -250);
-            this.scene.p5.textSize(16);
-            this.scene.p5.text("Rotation:\nPress U (or u) to rotate clockwise\nPress D (or d) to rotate counterclockwise", 0, -175);
+            if (piece.rot === piece.targetRot) piece.rotating = false;
 
-            if (this.checkSolution()) this.state = PuzzleState.completed;
+            if (piece.dragging) {
+                piece.pos.x = this.scene.p5.mouseX - this.scene.p5.width / 2 - this.dragOffset.x;
+                piece.pos.y = this.scene.p5.mouseY - this.scene.p5.height / 2 - this.dragOffset.y;
+            }
+
+            this.drawPiece(piece, i === this.selectedPieceIndex);
         }
+
+        this.scene.p5.fill(255);
+        this.scene.p5.textAlign(this.scene.p5.CENTER, this.scene.p5.CENTER);
+        this.scene.p5.textSize(50);
+        this.scene.p5.text("Breakaway", 0, -250);
+        this.scene.p5.textSize(16);
+        this.scene.p5.text("Rotation:\nPress U (or u) to rotate clockwise\nPress D (or d) to rotate counterclockwise", 0, -175);
+
+        if (this.checkSolution()) this.state = PuzzleState.completed;
+
     }
 
     drawBody(): void {
@@ -147,7 +209,7 @@ export default class Breakaway extends Puzzle {
 
         this.scene.p5.fill(0);
         this.scene.p5.rect(rectX, rectY, rectWidth, rectHeight);
-    }    
+    }
 
     drawPiece(piece: any, highlight: boolean): void {
         this.scene.p5.push();
@@ -177,25 +239,25 @@ export default class Breakaway extends Puzzle {
             let outlineCol = (d < this.pieceThreshold && angleErr < this.rotationThreshold)
                 ? this.scene.p5.color(0, 255, 0)
                 : this.scene.p5.color(255, 0, 0);
-            
-                this.scene.p5.push();
-                this.scene.p5.translate(piece.idealPos.x, piece.idealPos.y);
-                this.scene.p5.rotate(this.scene.p5.radians(piece.idealRot));
-        
-                this.scene.p5.stroke(outlineCol);
-                this.scene.p5.strokeWeight(2);
-                this.scene.p5.noFill();
-        
-                this.scene.p5.beginShape();
+
+            this.scene.p5.push();
+            this.scene.p5.translate(piece.idealPos.x, piece.idealPos.y);
+            this.scene.p5.rotate(this.scene.p5.radians(piece.idealRot));
+
+            this.scene.p5.stroke(outlineCol);
+            this.scene.p5.strokeWeight(2);
+            this.scene.p5.noFill();
+
+            this.scene.p5.beginShape();
             for (let v of piece.localVerts) {
                 this.scene.p5.vertex(v.x, v.y);
             }
             this.scene.p5.endShape(this.scene.p5.CLOSE);
-        
+
             this.scene.p5.pop();
         }
     }
-    
+
     angleDiff(a: number, b: number): number {
         let diff = Math.abs(a - b) % 360;
         return diff > 180 ? 360 - diff : diff;
@@ -204,29 +266,29 @@ export default class Breakaway extends Puzzle {
     getGlobalVerts(piece: any): Vector[] {
         let verts: Vector[] = [];
         let angle = this.scene.p5.radians(piece.rot);
-        
+
         for (let v of piece.localVerts) {
             let rx = v.x * Math.cos(angle) - v.y * Math.sin(angle);
             let ry = v.x * Math.sin(angle) + v.y * Math.cos(angle);
             verts.push(this.scene.p5.createVector(rx + piece.pos.x, ry + piece.pos.y));
         }
-    
+
         return verts;
     }
 
     pointInPolygon(pt: Vector, polygon: Vector[]): boolean {
         let inside = false;
-    
+
         for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
             let xi = polygon[i].x, yi = polygon[i].y;
             let xj = polygon[j].x, yj = polygon[j].y;
-            
+
             let intersect = ((yi > pt.y) !== (yj > pt.y)) &&
-                            (pt.x < (xj - xi) * (pt.y - yi) / (yj - yi) + xi);
-            
+                (pt.x < (xj - xi) * (pt.y - yi) / (yj - yi) + xi);
+
             if (intersect) inside = !inside;
         }
-        
+
         return inside;
     }
 
@@ -235,11 +297,11 @@ export default class Breakaway extends Puzzle {
             this.scene.p5.mouseX - this.scene.p5.width / 2,
             this.scene.p5.mouseY - this.scene.p5.height / 2
         );
-    
+
         for (let i = this.puzzlePieces.length - 1; i >= 0; i--) {
             let piece = this.puzzlePieces[i];
             let globalVerts = this.getGlobalVerts(piece);
-    
+
             if (this.pointInPolygon(mousePos, globalVerts)) {
                 console.log(`Selected piece ${i}`);
                 this.selectedPieceIndex = i;
@@ -253,7 +315,7 @@ export default class Breakaway extends Puzzle {
             this.scene.start(this.scene.name);
             return;
         }
-    }    
+    }
 
     mouseDragged(): void {
         if (this.selectedPieceIndex !== null) {
@@ -275,12 +337,12 @@ export default class Breakaway extends Puzzle {
             piece.dragging = false;
             this.selectedPieceIndex = null;
         }
-    }    
+    }
 
     keyPressed(e: KeyboardEvent): void {
         if (this.selectedPieceIndex !== null) {
             let piece = this.puzzlePieces[this.selectedPieceIndex];
-    
+
             if (piece.rotating) return;
 
             if (e.key === "u" || e.key === "U") {
@@ -289,6 +351,13 @@ export default class Breakaway extends Puzzle {
                 piece.targetRot = (piece.targetRot - this.rotationStep + 360) % 360;
             }
             piece.rotating = true;
+        }
+        console.log("Reached");
+        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
+        console.log("STATE", this.state);
+        if (this.hidden && this.highlight && e.key == 'e') {
+            this.player.disabled = true;
+            this.hidden = false;
         }
     }
 
@@ -325,15 +394,15 @@ export default class Breakaway extends Puzzle {
 
     setDifficulty(difficulty: string): void {
         Puzzle.difficulty = difficulty;
-    
+
         this.cols = Puzzle.difficulty === "easy" ? 3 : Puzzle.difficulty === "normal" ? 4 : 5;
         this.rows = Puzzle.difficulty === "easy" ? 3 : Puzzle.difficulty === "normal" ? 4 : 5;
-    
+
         this.puzzlePieces = [];
-    
+
         this.selectedPieceIndex = null;
         this.gameResult = "";
-    
+
         this.setup();
     }
 }
