@@ -48,7 +48,7 @@ export default class Breakaway extends Puzzle {
         this.state = PuzzleState.completed;
         this.hidden = true;
         this.player.disabled = false;
-        this.asset.change_asset('success-puzzle');
+        this.asset.change_asset('breakaway-success');
         this.scene.physics.remove(this.physics_object);
     }
 
@@ -311,10 +311,10 @@ export default class Breakaway extends Puzzle {
             }
         }
 
-        if (this.solved()) {
-            this.scene.start(this.scene.name);
-            return;
-        }
+        // if (this.solved()) {
+        //     this.scene.start(this.scene.name);
+        //     return;
+        // }
     }
 
     mouseDragged(): void {
@@ -352,9 +352,9 @@ export default class Breakaway extends Puzzle {
             }
             piece.rotating = true;
         }
-        console.log("Reached");
+        // console.log("Reached");
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
-        console.log("STATE", this.state);
+        // console.log("STATE", this.state);
         if (this.hidden && this.highlight && e.key == 'e') {
             this.player.disabled = true;
             this.hidden = false;
@@ -374,7 +374,7 @@ export default class Breakaway extends Puzzle {
                 this.player.disabled = false;
                 this.scene.physics.remove(this.physics_object);
                 clearTimeout(this.collider_timeout);
-                this.asset.change_asset('success-puzzle');
+                this.asset.change_asset('breakaway-success');
                 return true;
         }
         return false;

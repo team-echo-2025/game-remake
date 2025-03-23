@@ -43,7 +43,7 @@ export default class BlockSlide extends Puzzle {
         this.state = PuzzleState.completed;
         this.hidden = true;
         this.player.disabled = false;
-        this.asset.change_asset('success-puzzle');
+        this.asset.change_asset('blockslide-success');
         this.scene.physics.remove(this.physics_object);
     }
 
@@ -99,9 +99,9 @@ export default class BlockSlide extends Puzzle {
     }
 
     keyPressed(e: KeyboardEvent): void {
-        console.log("Reached");
+        // console.log("Reached");
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
-        console.log("STATE", this.state);
+        // console.log("STATE", this.state);
         if (this.hidden && this.highlight && e.key == 'e') {
             this.player.disabled = true;
             this.hidden = false;
@@ -272,10 +272,10 @@ export default class BlockSlide extends Puzzle {
         if (this.isAnimating) return;
 
         // If the puzzle is solved, clicking anywhere will hide it
-        if (this.solved()) {
-            this.scene.start(this.scene.name);
-            return;
-        }
+        // if (this.solved()) {
+        //     this.scene.start(this.scene.name);
+        //     return;
+        // }
 
         // Get the top-left corner of the board
         let gridSizePixels = this.tileSize * this.gridSize;
@@ -376,7 +376,17 @@ export default class BlockSlide extends Puzzle {
         for (let row = 0; row < this.gridSize; row++) {
             for (let col = 0; col < this.gridSize; col++) {
                 if (row === this.gridSize - 1 && col === this.gridSize - 1) {
-                    return this.grid[row][col] === 0; // Ensure last tile is empty
+                    if (this.grid[row][col] === 0) { // Ensure last tile is empty
+                        this.state = PuzzleState.completed;
+                        this.hidden = true;
+                        this.onCompleted && this.onCompleted();
+                        this.player.disabled = false;
+                        this.scene.physics.remove(this.physics_object);
+                        clearTimeout(this.collider_timeout);
+                        this.asset.change_asset('blockslide-success');
+                        return true;
+                    }
+                    return false;
                 }
                 if (this.grid[row][col] !== correct) {
                     return false;
@@ -390,30 +400,10 @@ export default class BlockSlide extends Puzzle {
         this.player.disabled = false;
         this.scene.physics.remove(this.physics_object);
         clearTimeout(this.collider_timeout);
-        this.asset.change_asset('success-puzzle');
+        this.asset.change_asset('blockslide-success');
         return true;
     }
 
-    displayWinMessage(): void {
-        let p5 = this.scene.p5;
-
-        p5.fill(0, 0, 0, 150);
-        p5.rect(0, 0, p5.width, p5.height);
-
-        let boxWidth = p5.width / 3;
-        let boxHeight = p5.height / 6;
-        p5.fill(255);
-        p5.stroke(0);
-        p5.rect(0, 0, boxWidth, boxHeight, 10);
-
-        p5.fill(0);
-        p5.noStroke();
-        p5.textAlign(p5.CENTER, p5.CENTER);
-        p5.textSize(32);
-        p5.text("Puzzle Solved!", 0, -boxHeight / 8);
-        p5.textSize(16);
-        p5.text("Click to continue.", 0, boxHeight / 4);
-    }
 
     // Dynamic grid based on difficulty
     setGridSize(): void {
@@ -432,19 +422,5 @@ export default class BlockSlide extends Puzzle {
         }
     }
 
-    // DEBUGGING: auto-solve the puzzle
-    solvePuzzle(): void {
-        let correct = 1;
-        for (let row = 0; row < this.gridSize; row++) {
-            for (let col = 0; col < this.gridSize; col++) {
-                if (row === this.gridSize - 1 && col === this.gridSize - 1) {
-                    this.grid[row][col] = 0; // Empty tile at the end
-                } else {
-                    this.grid[row][col] = correct++;
-                }
-            }
-        }
-        this.emptyPos = { row: this.gridSize - 1, col: this.gridSize - 1 };
-        this.state = PuzzleState.completed; // Mark puzzle as solved
-    }
+
 }

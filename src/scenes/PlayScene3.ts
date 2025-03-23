@@ -58,10 +58,10 @@ export default class Dungeon2 extends Scene {
     }
 
     preload(): any {
-        this.loadImage("puzzle", "assets/puzzleImages/access_circuit.png");
-        this.loadImage("broken-puzzle", "assets/puzzleImages/access_circuit_broken.png");
-        this.loadImage("success-puzzle", "assets/puzzleImages/access_circuit_success.png");
-        this.loadImage("highlighted-puzzle", "assets/puzzleImages/access_circuit_highlighted.png");
+        // this.loadImage("puzzle", "assets/puzzleImages/access_circuit.png");
+        // this.loadImage("broken-puzzle", "assets/puzzleImages/access_circuit_broken.png");
+        // this.loadImage("success-puzzle", "assets/puzzleImages/access_circuit_success.png");
+        // this.loadImage("highlighted-puzzle", "assets/puzzleImages/access_circuit_highlighted.png");
         this.loadImage("drawPuzzle", "assets/puzzleImages/drawPuzzleBase.png");
         this.loadImage("breakaway", "assets/puzzleImages/breakawayBase.png");
         this.loadImage("blockslide", "assets/puzzleImages/blockSlideBase.png");
@@ -70,13 +70,17 @@ export default class Dungeon2 extends Scene {
         this.loadImage("breakaway-highlight", "assets/puzzleImages/breakawayBase-highlight.png");
         this.loadImage("blockslide-highlight", "assets/puzzleImages/blockSlideBase-highlight.png");
         this.loadImage("scales-highlight", "assets/puzzleImages/scalesBase-highlight.png");
+        this.loadImage("drawPuzzle-success", "assets/puzzleImages/drawPuzzleBase-success.png");
+        this.loadImage("breakaway-success", "assets/puzzleImages/breakawayBase-success.png");
+        this.loadImage("blockslide-success", "assets/puzzleImages/blockSlideBase-success.png");
+        this.loadImage("scales-success", "assets/puzzleImages/scalesBase-success.png");
         this.loadFont("jersey", "assets/fonts/jersey.ttf");
         this.loadTilemap("tilemap", "assets/tilemaps/PetersTileMap/Dungeon Floor 1.tmx");
         this.loadImage("portal", "assets/tilemaps/LaythsTileMap/portal-sheet.png");
-        this.loadSound("button_sfx", "assets/TInterfaceSounds/light-switch.mp3");
-        this.loadSound("circuit_correct_sfx", "assets/TInterfaceSounds/greanpatchT.mp3");
-        this.loadSound("circuit_incorrect_sfx", "assets/TInterfaceSounds/all-processorsT.mp3");
-        this.loadSound("circuit_xposition_sfx", "assets/TInterfaceSounds/iciclesT.mp3");
+        // this.loadSound("button_sfx", "assets/TInterfaceSounds/light-switch.mp3");
+        // this.loadSound("circuit_correct_sfx", "assets/TInterfaceSounds/greanpatchT.mp3");
+        // this.loadSound("circuit_incorrect_sfx", "assets/TInterfaceSounds/all-processorsT.mp3");
+        // this.loadSound("circuit_xposition_sfx", "assets/TInterfaceSounds/iciclesT.mp3");
     }
 
     cubicBezier(p0: Vector2D, p1: Vector2D, p2: Vector2D, p3: Vector2D, t: number) {
@@ -214,8 +218,8 @@ export default class Dungeon2 extends Scene {
         this.puzzles[1].y = -310; // DrawPuzzle 
         this.puzzles[2].x = 425; // Breakaway 
         this.puzzles[2].y = -15; // Breakaway 
-        this.puzzles[3].x = 200; // CubeScales
-        this.puzzles[3].y = 150; // CubeScales
+        this.puzzles[3].x = 200; // Path Puzzle
+        this.puzzles[3].y = 150; // Path Puzzle
         //create puzzle , position , push to array post setup
         // Setup each puzzle
         this.puzzles.forEach(puzzle => {
@@ -322,7 +326,7 @@ export default class Dungeon2 extends Scene {
         // this.access_circuit2 = undefined;
         // this.access_circuit3 = undefined;
         // this.access_circuit4 = undefined;
-        this.puzzles.forEach(puzzle => undefined);
+        this.puzzles = [];
         this.portal = undefined;
         this.background = undefined;
     }

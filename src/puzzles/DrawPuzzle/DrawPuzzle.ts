@@ -49,7 +49,7 @@ export default class DrawPuzzle extends Puzzle {
         this.state = PuzzleState.completed;
         this.hidden = true;
         this.player.disabled = false;
-        this.asset.change_asset('success-puzzle');
+        this.asset.change_asset('drawPuzzle-success');
         this.scene.physics.remove(this.physics_object);
     }
 
@@ -371,9 +371,9 @@ export default class DrawPuzzle extends Puzzle {
         p5.text("2. All squares must be filled", (p5.windowWidth / 3), -(offsetY + rows * this.squareSize - 140));
     }
     keyPressed(e: KeyboardEvent): void {
-        console.log("Reached");
+        // console.log("Reached");0
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
-        console.log("STATE", this.state);
+        // console.log("STATE", this.state);
         if (this.hidden && this.highlight && e.key == 'e') {
             this.player.disabled = true;
             this.hidden = false;
@@ -531,7 +531,7 @@ export default class DrawPuzzle extends Puzzle {
             this.player.disabled = false;
             this.scene.physics.remove(this.physics_object);
             clearTimeout(this.collider_timeout);
-            this.asset.change_asset('success-puzzle');
+            this.asset.change_asset('drawPuzzle-success');
             return true;
         }
         return false;
