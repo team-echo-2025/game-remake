@@ -1,4 +1,4 @@
-import Scene from "../../../lib/Scene";
+import Scene from "../../lib/Scene";
 import Square from "./Square"; // Assuming you have the Square class in this location
 
 export default class Cursor {
