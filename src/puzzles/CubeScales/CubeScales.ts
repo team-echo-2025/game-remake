@@ -66,7 +66,7 @@ export default class CubeScalesPuzzle extends Puzzle {
                         }
                         this.collider_timeout = setTimeout(() => {
                             this.highlight = false;
-                            this.asset.change_asset("puzzle");
+                            this.asset.change_asset("scales");
                         }, 100);
                     }
                 }
