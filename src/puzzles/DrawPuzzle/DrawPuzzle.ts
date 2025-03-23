@@ -113,7 +113,7 @@ export default class DrawPuzzle extends Puzzle {
                 clearTimeout(this.collider_timeout);
                 if (!this.highlight) {
                     this.highlight = true
-                    this.asset.change_asset("highlighted-puzzle");
+                    this.asset.change_asset("drawPuzzle-highlight");
                 }
                 this.collider_timeout = setTimeout(() => {
                     this.highlight = false;

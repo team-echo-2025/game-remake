@@ -71,7 +71,7 @@ export default class BlockSlide extends Puzzle {
                 clearTimeout(this.collider_timeout);
                 if (!this.highlight) {
                     this.highlight = true
-                    this.asset.change_asset("highlighted-puzzle");
+                    this.asset.change_asset("blockslide-highlight");
                 }
                 this.collider_timeout = setTimeout(() => {
                     this.highlight = false;

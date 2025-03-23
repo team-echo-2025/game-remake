@@ -73,7 +73,7 @@ export default class PathPuzzle extends Puzzle {
         clearTimeout(this.collider_timeout);
         if (!this.highlight) {
           this.highlight = true;
-          this.asset.change_asset("highlighted-puzzle");
+          this.asset.change_asset("scales-highlight");
         }
         this.collider_timeout = setTimeout(() => {
           this.highlight = false;
@@ -84,8 +84,8 @@ export default class PathPuzzle extends Puzzle {
     this.asset = this.scene.add_new.sprite(this.asset_key);
     this.asset.x = this.x;
     this.asset.y = this.y;
-    this.asset.width = 32;
-    this.asset.height = 48;
+    this.asset.width = 24;
+    this.asset.height = 36;
     // Puzzle setup
     this.state = PuzzleState.notStarted;
     this.setGridSize();
