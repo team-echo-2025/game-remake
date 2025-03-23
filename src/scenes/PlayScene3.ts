@@ -57,8 +57,8 @@ export default class Dungeon2 extends Scene {
     }
 
     preload(): any {
-        // this.loadImage("puzzle", "assets/puzzleImages/access_circuit.png");
-        // this.loadImage("broken-puzzle", "assets/puzzleImages/access_circuit_broken.png");
+        this.loadImage("puzzle", "assets/puzzleImages/access_circuit.png");
+        this.loadImage("broken-puzzle", "assets/puzzleImages/access_circuit_broken.png");
         this.loadImage("success-puzzle", "assets/puzzleImages/access_circuit_success.png");
         this.loadImage("highlighted-puzzle", "assets/puzzleImages/access_circuit_highlighted.png");
         this.loadImage("drawPuzzle", "assets/puzzleImages/drawPuzzleBase.png");
