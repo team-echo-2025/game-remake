@@ -33,7 +33,7 @@ export default class Dungeon2 extends Scene {
     lights_on?: LightsOn;
     background?: Graphics;
     portal?: Spritesheet;
-    puzzles: (BlockSlide | DrawPuzzle | Breakaway | CubeScalesPuzzle | LightsOn)[] = [];
+    puzzles: (BlockSlide | DrawPuzzle | Breakaway | AccessCircuit | LightsOn)[] = [];
     constructor() {
         super("playscene-3");
         this.physics.debug = false;
@@ -47,10 +47,10 @@ export default class Dungeon2 extends Scene {
         this.physics.addObject(this.player);
 
         this.puzzles.push(
-            new BlockSlide(this, 'puzzle', this.player!),
-            new DrawPuzzle(this, 'puzzle', this.player!),
-            new Breakaway(this, 'puzzle', this.player!),
-            new CubeScalesPuzzle(this, 'puzzle', this.player!)
+            new BlockSlide(this, 'blockslide', this.player!),
+            new DrawPuzzle(this, 'drawPuzzle', this.player!),
+            new Breakaway(this, 'breakaway', this.player!),
+            new AccessCircuit(this, 'puzzle', this.player!)
             // new LightsOn(this, 'puzzle', this.player!)
         );
         
@@ -68,10 +68,10 @@ export default class Dungeon2 extends Scene {
         this.loadFont("jersey", "assets/fonts/jersey.ttf");
         this.loadTilemap("tilemap", "assets/tilemaps/PetersTileMap/Dungeon Floor 1.tmx");
         this.loadImage("portal", "assets/tilemaps/LaythsTileMap/portal-sheet.png");
-        // this.loadSound("button_sfx", "assets/TInterfaceSounds/light-switch.mp3");
-        // this.loadSound("circuit_correct_sfx", "assets/TInterfaceSounds/greanpatchT.mp3");
-        // this.loadSound("circuit_incorrect_sfx", "assets/TInterfaceSounds/all-processorsT.mp3");
-        // this.loadSound("circuit_xposition_sfx", "assets/TInterfaceSounds/iciclesT.mp3");
+        this.loadSound("button_sfx", "assets/TInterfaceSounds/light-switch.mp3");
+        this.loadSound("circuit_correct_sfx", "assets/TInterfaceSounds/greanpatchT.mp3");
+        this.loadSound("circuit_incorrect_sfx", "assets/TInterfaceSounds/all-processorsT.mp3");
+        this.loadSound("circuit_xposition_sfx", "assets/TInterfaceSounds/iciclesT.mp3");
     }
 
     cubicBezier(p0: Vector2D, p1: Vector2D, p2: Vector2D, p3: Vector2D, t: number) {
@@ -303,7 +303,7 @@ export default class Dungeon2 extends Scene {
     };
 
     mousePressed(e: MouseEvent): void {
-        this.puzzles.forEach(puzzle => puzzle.mousePressed());
+        this.puzzles.forEach(puzzle => puzzle.mousePressed(e));
     }
 
     mouseReleased(e: MouseEvent): void {

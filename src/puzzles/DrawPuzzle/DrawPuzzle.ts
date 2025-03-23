@@ -124,8 +124,8 @@ export default class DrawPuzzle extends Puzzle {
         this.asset = this.scene.add_new.sprite(this.asset_key);
         this.asset.x = this.x;
         this.asset.y = this.y;
-        this.asset.width = 32;
-        this.asset.height = 48;
+        this.asset.width = 24;
+        this.asset.height = 36;
         //setting up puzzle
         this.generateBoard();
         this.getBoardSize();
