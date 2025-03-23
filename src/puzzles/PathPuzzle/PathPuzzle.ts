@@ -40,7 +40,7 @@ export default class PathPuzzle extends Puzzle {
     this.state = PuzzleState.completed;
     this.hidden = true;
     this.player.disabled = false;
-    this.asset.change_asset('success-puzzle');
+    this.asset.change_asset('scales-success');
     this.scene.physics.remove(this.physics_object);
   }
 
@@ -140,10 +140,10 @@ export default class PathPuzzle extends Puzzle {
 
   mousePressed(): void {
     const p5 = this.scene.p5;
-    if (this.solved()) {
-      this.scene.start(this.scene.name);
-      return;
-    }
+    // if (this.solved()) {
+    //   this.scene.start(this.scene.name);
+    //   return;
+    // }
 
     // Figure out which tile was clicked
     const col = Math.floor(
@@ -161,8 +161,10 @@ export default class PathPuzzle extends Puzzle {
         this.state = PuzzleState.completed;
         this.hidden = true;
         this.player.disabled = false;
-        this.asset.change_asset('success-puzzle');
+        this.asset.change_asset('scales-success');
         this.scene.physics.remove(this.physics_object);
+        this.onCompleted && this.onCompleted();
+        clearTimeout(this.collider_timeout);
       }
     }
   }
