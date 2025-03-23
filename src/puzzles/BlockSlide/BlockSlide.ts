@@ -384,6 +384,13 @@ export default class BlockSlide extends Puzzle {
                 correct++;
             }
         }
+        this.state = PuzzleState.completed;
+        this.hidden = true;
+        this.onCompleted && this.onCompleted();
+        this.player.disabled = false;
+        this.scene.physics.remove(this.physics_object);
+        clearTimeout(this.collider_timeout);
+        this.asset.change_asset('success-puzzle');
         return true;
     }
 

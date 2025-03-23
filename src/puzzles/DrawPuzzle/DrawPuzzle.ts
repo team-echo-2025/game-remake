@@ -132,7 +132,7 @@ export default class DrawPuzzle extends Puzzle {
         this.scene.p5.createCanvas(this.scene.p5.windowWidth, this.scene.p5.windowHeight);
         this.scene.p5.rectMode(this.scene.p5.CENTER);
     }
-    draw(){
+    draw() {
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
     }
 
@@ -525,7 +525,13 @@ export default class DrawPuzzle extends Puzzle {
                 for (let j = 0; j < colRow.rows; ++j)
                     if (this.squares[i][j].color == null)
                         return false;
-            this.state = PuzzleState.completed
+            this.state = PuzzleState.completed;
+            this.hidden = true;
+            this.onCompleted && this.onCompleted();
+            this.player.disabled = false;
+            this.scene.physics.remove(this.physics_object);
+            clearTimeout(this.collider_timeout);
+            this.asset.change_asset('success-puzzle');
             return true;
         }
         return false;

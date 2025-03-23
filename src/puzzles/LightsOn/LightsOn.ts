@@ -231,6 +231,19 @@ export default class LightsOn extends Puzzle {
     }
 
     checkWin(): boolean {
+        //Future Implementation???????
+        
+        // if (this.grid.every(row => row.every(tile => tile))) {
+        //     this.state = PuzzleState.completed;
+        //     this.hidden = true;
+        //     this.onCompleted && this.onCompleted();
+        //     this.player.disabled = false;
+        //     this.scene.physics.remove(this.physics_object);
+        //     clearTimeout(this.collider_timeout);
+        //     this.asset.change_asset('success-puzzle');
+        //     return true;
+        // }
+        // return false;
         return this.grid.every(row => row.every(tile => tile));
     }
 
