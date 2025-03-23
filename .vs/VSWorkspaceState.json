@@ -1,0 +1,11 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\puzzles",
+    "\\src\\puzzles\\AccessCircuit",
+    "\\src\\puzzles\\Breakaway"
+  ],
+  "SelectedNode": "\\src\\puzzles\\AccessCircuit\\AccessCircuit.ts",
+  "PreviewInSolutionExplorer": false
+}

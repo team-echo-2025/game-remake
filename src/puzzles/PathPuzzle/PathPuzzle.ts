@@ -1,4 +1,9 @@
+import PhysicsObject from "../../lib/physics/PhysicsObject";
+import RigidBody from "../../lib/physics/RigidBody";
+import Player from "../../lib/Player";
 import Puzzle, { PuzzleState } from "../../lib/Puzzle";
+import Scene from "../../lib/Scene";
+import Sprite from "../../lib/Sprite";
 import {
   PathCell,
   generateRandomPath,
@@ -9,19 +14,79 @@ import {
   getOpenEdges,
 } from "./PathUtils";
 
-
 export default class PathPuzzle extends Puzzle {
   grid: PathCell[][] = [];
   gridSize: number = 5;
   tileSize: number = 0;
   boardSize: number = 300;
+  // Game references
+  physics_object!: PhysicsObject;
+  highlight: boolean = false;
+  asset_key: string;
+  asset!: Sprite;
+  player: Player;
+  private collider_timeout: any;
+  x: number = 0;
+  y: number = 0;
+
+  constructor(scene: Scene, puzzle_asset_key: string, player: Player) {
+    super(scene);
+    this.asset_key = puzzle_asset_key;
+    this.hidden = true;
+    this.player = player;
+  }
+
+  force_solve() {
+    this.state = PuzzleState.completed;
+    this.hidden = true;
+    this.player.disabled = false;
+    this.asset.change_asset('scales-success');
+    this.scene.physics.remove(this.physics_object);
+  }
+
+  force_fail() {
+    this.state = PuzzleState.failed;
+    this.hidden = true;
+    this.player.disabled = false;
+    this.asset.change_asset('broken-puzzle');
+    this.scene.physics.remove(this.physics_object);
+  }
 
   // The set of cell coordinates (e.g. "0,0") that define the solution path
   solutionSet: Set<string> = new Set();
 
-  async preload(): Promise<void> {}
+  async preload(): Promise<void> { }
 
   setup(): void {
+    // Putting the puzzle into the game
+    this.physics_object = new PhysicsObject({
+      width: 100,
+      height: 100,
+      mass: Infinity
+    });
+    this.physics_object.overlaps = true;
+    this.physics_object.body.x = this.x;
+    this.physics_object.body.y = this.y;
+    this.scene.physics.addObject(this.physics_object);
+    this.physics_object.onCollide = (other: RigidBody) => {
+      if (other == this.player.body) {
+        clearTimeout(this.collider_timeout);
+        if (!this.highlight) {
+          this.highlight = true;
+          this.asset.change_asset("scales-highlight");
+        }
+        this.collider_timeout = setTimeout(() => {
+          this.highlight = false;
+          this.asset.change_asset("scales");
+        }, 100);
+      }
+    }
+    this.asset = this.scene.add_new.sprite(this.asset_key);
+    this.asset.x = this.x;
+    this.asset.y = this.y;
+    this.asset.width = 24;
+    this.asset.height = 36;
+    // Puzzle setup
     this.state = PuzzleState.notStarted;
     this.setGridSize();
 
@@ -75,10 +140,10 @@ export default class PathPuzzle extends Puzzle {
 
   mousePressed(): void {
     const p5 = this.scene.p5;
-    if (this.solved()) {
-      this.scene.start(this.scene.name);
-      return;
-    }
+    // if (this.solved()) {
+    //   this.scene.start(this.scene.name);
+    //   return;
+    // }
 
     // Figure out which tile was clicked
     const col = Math.floor(
@@ -92,8 +157,23 @@ export default class PathPuzzle extends Puzzle {
     if (row >= 0 && row < this.gridSize && col >= 0 && col < this.gridSize) {
       rotateTile(this.grid[row][col]);
       if (this.checkWin()) {
+        // Puzzle is solved
         this.state = PuzzleState.completed;
+        this.hidden = true;
+        this.player.disabled = false;
+        this.asset.change_asset('scales-success');
+        this.scene.physics.remove(this.physics_object);
+        this.onCompleted && this.onCompleted();
+        clearTimeout(this.collider_timeout);
       }
+    }
+  }
+
+  keyPressed(e: KeyboardEvent): void {
+    if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return;
+    if (this.hidden && this.highlight && e.key == 'e') {
+      this.player.disabled = true;
+      this.hidden = false;
     }
   }
 
@@ -112,23 +192,19 @@ export default class PathPuzzle extends Puzzle {
     return this.state === PuzzleState.completed;
   }
 
-  
-  solvePuzzle(): void {
-    this.state = PuzzleState.completed;
+  draw() {
+    if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return;
   }
 
-
   postDraw(): void {
+    this.solved();
+    if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return;
+    if (this.hidden) return;
     // Always draw the board
     this.draw_body();
     this.draw_board();
     this.draw_footer();
     this.draw_header();
-
-    // If solved, show the win message 
-    if (this.solved()) {
-      this.displayWinMessage();
-    }
   }
 
   draw_body(): void {
@@ -174,7 +250,6 @@ export default class PathPuzzle extends Puzzle {
           p5.fill(255);
           p5.textAlign(p5.CENTER, p5.CENTER);
           p5.textSize(12);
-          
         }
         // Draw end marker 
         else if (r === this.gridSize - 1 && c === this.gridSize - 1) {
@@ -183,7 +258,6 @@ export default class PathPuzzle extends Puzzle {
           p5.fill(255);
           p5.textAlign(p5.CENTER, p5.CENTER);
           p5.textSize(12);
-         
         }
       }
     }
