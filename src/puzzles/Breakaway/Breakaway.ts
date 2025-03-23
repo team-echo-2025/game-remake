@@ -79,7 +79,7 @@ export default class Breakaway extends Puzzle {
                 }
                 this.collider_timeout = setTimeout(() => {
                     this.highlight = false;
-                    this.asset.change_asset("puzzle");
+                    this.asset.change_asset("breakaway");
                 }, 100);
             }
         }
