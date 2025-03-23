@@ -367,8 +367,17 @@ export default class Breakaway extends Puzzle {
             let r = this.angleDiff(piece.rot, piece.idealRot);
             return d < this.pieceThreshold && r < this.rotationThreshold;
         });
-
-        return allCorrect ? true : false;
+        if(allCorrect){
+            this.state = PuzzleState.completed;
+                this.hidden = true;
+                this.onCompleted && this.onCompleted();
+                this.player.disabled = false;
+                this.scene.physics.remove(this.physics_object);
+                clearTimeout(this.collider_timeout);
+                this.asset.change_asset('success-puzzle');
+                return true;
+        }
+        return false;
     }
 
     displayWinMessage(): void {

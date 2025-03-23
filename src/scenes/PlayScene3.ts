@@ -285,8 +285,17 @@ export default class Dungeon2 extends Scene {
     keyPressed = (e: KeyboardEvent) => {
         this.puzzles.forEach(puzzle => puzzle.keyPressed(e));
         if (e.key === "Escape") {
-            this.start("menu-scene");
+            const containsHidden = this.puzzles.some(puzzle => !puzzle.hidden);
+            if(containsHidden){
+                this.puzzles.forEach(puzzle => puzzle.hidden = true);
+                //@ts-ignore
+                this.player?.disabled = false;
+            }
+            else{
+                this.start("menu-scene");
+            }
         }
+        
     };
 
     mousePressed(e: MouseEvent): void {
