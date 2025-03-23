@@ -51,7 +51,7 @@ export default class Dungeon2 extends Scene {
             new BlockSlide(this, 'blockslide', this.player!),
             new DrawPuzzle(this, 'drawPuzzle', this.player!),
             new Breakaway(this, 'breakaway', this.player!),
-            new PathPuzzle(this, 'puzzle', this.player!)
+            new PathPuzzle(this, 'scales', this.player!)
             // new LightsOn(this, 'puzzle', this.player!)
         );
         
@@ -66,6 +66,10 @@ export default class Dungeon2 extends Scene {
         this.loadImage("breakaway", "assets/puzzleImages/breakawayBase.png");
         this.loadImage("blockslide", "assets/puzzleImages/blockSlideBase.png");
         this.loadImage("scales", "assets/puzzleImages/scalesBase.png");
+        this.loadImage("drawPuzzle-highlight", "assets/puzzleImages/drawPuzzleBase-highlight.png");
+        this.loadImage("breakaway-highlight", "assets/puzzleImages/breakawayBase-highlight.png");
+        this.loadImage("blockslide-highlight", "assets/puzzleImages/blockSlideBase-highlight.png");
+        this.loadImage("scales-highlight", "assets/puzzleImages/scalesBase-highlight.png");
         this.loadFont("jersey", "assets/fonts/jersey.ttf");
         this.loadTilemap("tilemap", "assets/tilemaps/PetersTileMap/Dungeon Floor 1.tmx");
         this.loadImage("portal", "assets/tilemaps/LaythsTileMap/portal-sheet.png");
