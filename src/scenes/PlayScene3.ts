@@ -14,6 +14,7 @@ import DrawPuzzle from "../puzzles/DrawPuzzle/DrawPuzzle";
 import Breakaway from "../puzzles/Breakaway/Breakaway";
 import LightsOn from "../puzzles/LightsOn/LightsOn";
 import CubeScalesPuzzle from "../puzzles/CubeScales/CubeScales";
+import PathPuzzle from "../puzzles/PathPuzzle/PathPuzzle";
 
 type StartArgs = Readonly<{
     starting_pos: Vector2D
@@ -33,7 +34,7 @@ export default class Dungeon2 extends Scene {
     lights_on?: LightsOn;
     background?: Graphics;
     portal?: Spritesheet;
-    puzzles: (BlockSlide | DrawPuzzle | Breakaway | AccessCircuit | LightsOn)[] = [];
+    puzzles: (BlockSlide | DrawPuzzle | Breakaway | PathPuzzle | LightsOn)[] = [];
     constructor() {
         super("playscene-3");
         this.physics.debug = false;
@@ -50,7 +51,7 @@ export default class Dungeon2 extends Scene {
             new BlockSlide(this, 'blockslide', this.player!),
             new DrawPuzzle(this, 'drawPuzzle', this.player!),
             new Breakaway(this, 'breakaway', this.player!),
-            new AccessCircuit(this, 'puzzle', this.player!)
+            new PathPuzzle(this, 'puzzle', this.player!)
             // new LightsOn(this, 'puzzle', this.player!)
         );
         
@@ -303,7 +304,7 @@ export default class Dungeon2 extends Scene {
     };
 
     mousePressed(e: MouseEvent): void {
-        this.puzzles.forEach(puzzle => puzzle.mousePressed(e));
+        this.puzzles.forEach(puzzle => puzzle.mousePressed());
     }
 
     mouseReleased(e: MouseEvent): void {
