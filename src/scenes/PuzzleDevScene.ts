@@ -7,8 +7,8 @@ import CubeScales from "../puzzles/CubeScales/CubeScales";
 import Breakaway from "../puzzles/Breakaway/Breakaway";
 import Puzzle from "../lib/Puzzle"
 import Player from "../lib/Player";
-import Button from "../lib/ui/Button";
 import DrawPuzzle from "../puzzles/DrawPuzzle/DrawPuzzle";
+import PathPuzzle from "../puzzles/PathPuzzle/PathPuzzle";
 
 export default class PuzzleDevScene extends Scene {
     easy!: ButtonTest;
@@ -19,6 +19,7 @@ export default class PuzzleDevScene extends Scene {
     cScales!: CubeScales;
     lightsOn!: LightsOn;
     pipe!: DrawPuzzle;
+    path!: PathPuzzle;
     pipeButton!: ButtonTest;
     breakaway!: Breakaway;
     aCircuitButton!: ButtonTest;
@@ -27,6 +28,7 @@ export default class PuzzleDevScene extends Scene {
     cScalesButton!: ButtonTest;
     bSlideSolveButton!: ButtonTest;
     breakawayButton!: ButtonTest;
+    pathButton!: ButtonTest;
     set_difficulty!: Puzzle;
     player!: Player;
 
@@ -49,9 +51,11 @@ export default class PuzzleDevScene extends Scene {
         this.lightsOn.hidden = true;
         this.cScales.hidden = true;
         this.breakaway.hidden = true;
+        this.path.hidden = true;
         this.add(this.bSlide);
         this.add(this.pipe);
         this.add(this.lightsOn);
+        this.add(this.path);
     }
 
     preload(): any {
@@ -114,6 +118,7 @@ export default class PuzzleDevScene extends Scene {
             callback: () => {
                 this.aCircuit.hidden = false;
                 this.bSlide.hidden = true;
+                this.path.hidden = true;
                 this.pipe.hidden = true;
                 this.lightsOn.hidden = true;
                 this.cScales.hidden = true;
@@ -128,6 +133,7 @@ export default class PuzzleDevScene extends Scene {
             callback: () => {
                 this.bSlide.hidden = false;
                 this.pipe.hidden = true;
+                this.path.hidden = true;
                 this.aCircuit.hidden = true;
                 this.lightsOn.hidden = true;
                 this.bSlideSolveButton.hidden = false;
@@ -156,6 +162,7 @@ export default class PuzzleDevScene extends Scene {
             callback: () => {
                 this.lightsOn.hidden = false;
                 this.aCircuit.hidden = true;
+                this.path.hidden = true;
                 this.bSlide.hidden = true;
                 this.pipe.hidden = true;
                 this.cScales.hidden = true;
@@ -171,6 +178,7 @@ export default class PuzzleDevScene extends Scene {
             callback: () => {
                 this.bSlide.hidden = true;
                 this.pipe.hidden = true;
+                this.path.hidden = true;
                 this.aCircuit.hidden = true;
                 this.lightsOn.hidden = true;
                 this.cScales.hidden = false;
@@ -186,6 +194,7 @@ export default class PuzzleDevScene extends Scene {
             callback: () => {
                 this.bSlide.hidden = true;
                 this.pipe.hidden = false;
+                this.path.hidden = true;
                 this.aCircuit.hidden = true;
                 this.lightsOn.hidden = true;
                 this.bSlideSolveButton.hidden = true;
@@ -200,6 +209,7 @@ export default class PuzzleDevScene extends Scene {
             font_key: "jersey",
             callback: () => {
                 this.bSlide.hidden = true;
+                this.path.hidden = true;
                 this.aCircuit.hidden = true;
                 this.lightsOn.hidden = true;
                 this.cScales.hidden = true;
@@ -208,7 +218,24 @@ export default class PuzzleDevScene extends Scene {
             }
         });
         this.breakawayButton.y = -200;
+
+        this.pathButton = this.add_new.button({
+            label: "Path",
+            font_key: "jersey",
+            callback: () => {
+                this.path.hidden = false;
+                this.lightsOn.hidden = true;
+                this.aCircuit.hidden = true;
+                this.bSlide.hidden = true;
+                this.pipe.hidden = true;
+                this.cScales.hidden = true;
+                this.breakaway.hidden = true;
+                this.changeButtonVisibility();
+            }
+        });
+        this.pathButton.y = 300;
     }
+    
 
     keyPressed = (e: KeyboardEvent) => {
         if (e.key == "Escape" && !this.aCircuit.hidden) {
@@ -231,6 +258,9 @@ export default class PuzzleDevScene extends Scene {
         else if (e.key == "Escape" && !this.pipe.hidden) {
             this.pipe.hidden = true;
             this.changeButtonVisibility();
+        } else if (e.key == "Escape" && !this.path.hidden) {
+            this.path.hidden = true;
+            this.changeButtonVisibility()
         } else if (e.key === "Escape") {
             this.start("menu-scene");
         }
@@ -248,6 +278,7 @@ export default class PuzzleDevScene extends Scene {
         this.pipe.setDifficulty(difficulty);
         this.cScales.setDifficulty(difficulty);
         this.breakaway.setDifficulty(difficulty);
+        this.path.setDifficulty(difficulty);
     }
 
     changeButtonVisibility(): void {
@@ -260,6 +291,7 @@ export default class PuzzleDevScene extends Scene {
         this.cScalesButton.hidden = !this.cScalesButton.hidden;
         this.pipeButton.hidden = !this.pipeButton.hidden;
         this.breakawayButton.hidden = !this.breakawayButton.hidden;
+        this.pathButton.hidden = !this.pathButton.hidden;
     }
 
     onStop(): void { }

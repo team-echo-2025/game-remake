@@ -17,7 +17,7 @@ export default class Player extends PhysicsObject {
     private anim_index: number = 0;
     private anim_row: number = 6;
     private start_anim_time: number = 0;
-    private moving: boolean = false;
+    public moving: boolean = false;
     private scene: Scene;
     private forwardKey: string = 'w';
     private leftKey: string = 'a';
@@ -80,6 +80,7 @@ export default class Player extends PhysicsObject {
 
 
     keyPressed(e: KeyboardEvent): void {
+        //if (this.disabled) { return; }
         if (!this.pressed_keys[this.forwardKey] && e.key == this.forwardKey) {
             this.direction.y -= 1;
         }
@@ -96,6 +97,7 @@ export default class Player extends PhysicsObject {
     }
 
     keyReleased(e: KeyboardEvent): void {
+        //if (this.disabled) { return; }
         if (e.key == 'm') {
             this.shooting = !this.shooting;
         }
@@ -155,7 +157,7 @@ export default class Player extends PhysicsObject {
         } else {
             this.moving = true;
         }
-        if (this.moving && this.scene.p5.millis() - this.start_anim_time > 100) {
+        if (!this.disabled && this.moving && this.scene.p5.millis() - this.start_anim_time > 100) {
             this.start_anim_time = this.scene.p5.millis();
             this.anim_index = (this.anim_index + 1) % 6;
         }
@@ -174,7 +176,7 @@ export default class Player extends PhysicsObject {
         if (this.pressed_keys[this.rightKey]) {
             this.anim_row = 6;
         }
-        if (!this.disabled) {
+        if (!this.disabled && !(this.direction.x == 0 && this.direction.y == 0)) {
             this.body.velocity.x = this.direction.x * this.speed;
             this.body.velocity.y = this.direction.y * this.speed;
         }
