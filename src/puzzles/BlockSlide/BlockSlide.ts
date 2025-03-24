@@ -1,4 +1,10 @@
 import Puzzle, { PuzzleState } from "../../lib/Puzzle";
+//Needed to put into game
+import Sprite from "../../lib/Sprite";
+import PhysicsObject from "../../lib/physics/PhysicsObject";
+import RigidBody from "../../lib/physics/RigidBody";
+import Scene from "../../lib/Scene";
+import Player from "../../lib/Player";
 
 type Position = { row: number; col: number };
 
@@ -16,9 +22,70 @@ export default class BlockSlide extends Puzzle {
             progress: number;
         }
     } = {};
+    //Game references
+    physics_object!: PhysicsObject;
+    highlight: boolean = false;
+    asset_key: string;
+    asset!: Sprite;
+    player: Player;
+    private collider_timeout: any;
+    x: number = 0;
+    y: number = 0;
 
+    constructor(scene: Scene, puzzle_asset_key: string, player: Player) {
+        super(scene);
+        this.asset_key = puzzle_asset_key;
+        this.hidden = true;
+        this.player = player;
+    }
+
+    force_solve() {
+        this.state = PuzzleState.completed;
+        this.hidden = true;
+        this.player.disabled = false;
+        this.asset.change_asset('blockslide-success');
+        this.scene.physics.remove(this.physics_object);
+    }
+
+    force_fail() {
+        this.state = PuzzleState.failed;
+        this.hidden = true;
+        this.player.disabled = false;
+        this.asset.change_asset('broken-puzzle');
+        this.scene.physics.remove(this.physics_object);
+    }
 
     setup(): void {
+        //putting into game itself
+        this.physics_object = new PhysicsObject({
+            width: 100,
+            height: 100,
+            mass: Infinity
+        });
+        this.physics_object.overlaps = true;
+        this.physics_object.body.x = this.x;
+        this.physics_object.body.y = this.y;
+        this.scene.physics.addObject(this.physics_object);
+        this.physics_object.onCollide = (other: RigidBody) => {
+            if (other == this.player.body) {
+                clearTimeout(this.collider_timeout);
+                if (!this.highlight) {
+                    this.highlight = true
+                    this.asset.change_asset("blockslide-highlight");
+                }
+                this.collider_timeout = setTimeout(() => {
+                    this.highlight = false;
+                    this.asset.change_asset("blockslide");
+                }, 100);
+            }
+        }
+        this.asset = this.scene.add_new.sprite(this.asset_key);
+        this.asset.x = this.x;
+        this.asset.y = this.y;
+        this.asset.width = 32;
+        this.asset.height = 48;
+
+        //puzzle setup
         this.setGridSize();  // Adjusted based on difficulty
         this.generateGrid();
         this.tileSize = this.scene.p5.width / 25; // One 25th the width of screen, change to adjust tile size
@@ -27,15 +94,27 @@ export default class BlockSlide extends Puzzle {
         this.scene.p5.rectMode(this.scene.p5.CENTER);
     }
 
-    postDraw(): void {
-        if (this.solved()) {
-            this.displayWinMessage();
-        } else {
-            this.draw_body();
-            this.draw_board();
-            this.draw_footer();
-            this.draw_header();
+    draw() {
+        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
+    }
+
+    keyPressed(e: KeyboardEvent): void {
+        // console.log("Reached");
+        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
+        // console.log("STATE", this.state);
+        if (this.hidden && this.highlight && e.key == 'e') {
+            this.player.disabled = true;
+            this.hidden = false;
         }
+    }
+
+    postDraw(): void {
+        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
+        if (this.hidden) return;
+        this.draw_body();
+        this.draw_board();
+        this.draw_footer();
+        this.draw_header();
     }
 
     generateGrid(): void {
@@ -193,10 +272,10 @@ export default class BlockSlide extends Puzzle {
         if (this.isAnimating) return;
 
         // If the puzzle is solved, clicking anywhere will hide it
-        if (this.solved()) {
-            this.scene.start(this.scene.name);
-            return;
-        }
+        // if (this.solved()) {
+        //     this.scene.start(this.scene.name);
+        //     return;
+        // }
 
         // Get the top-left corner of the board
         let gridSizePixels = this.tileSize * this.gridSize;
@@ -297,7 +376,17 @@ export default class BlockSlide extends Puzzle {
         for (let row = 0; row < this.gridSize; row++) {
             for (let col = 0; col < this.gridSize; col++) {
                 if (row === this.gridSize - 1 && col === this.gridSize - 1) {
-                    return this.grid[row][col] === 0; // Ensure last tile is empty
+                    if (this.grid[row][col] === 0) { // Ensure last tile is empty
+                        this.state = PuzzleState.completed;
+                        this.hidden = true;
+                        this.onCompleted && this.onCompleted();
+                        this.player.disabled = false;
+                        this.scene.physics.remove(this.physics_object);
+                        clearTimeout(this.collider_timeout);
+                        this.asset.change_asset('blockslide-success');
+                        return true;
+                    }
+                    return false;
                 }
                 if (this.grid[row][col] !== correct) {
                     return false;
@@ -305,29 +394,16 @@ export default class BlockSlide extends Puzzle {
                 correct++;
             }
         }
+        this.state = PuzzleState.completed;
+        this.hidden = true;
+        this.onCompleted && this.onCompleted();
+        this.player.disabled = false;
+        this.scene.physics.remove(this.physics_object);
+        clearTimeout(this.collider_timeout);
+        this.asset.change_asset('blockslide-success');
         return true;
     }
 
-    displayWinMessage(): void {
-        let p5 = this.scene.p5;
-
-        p5.fill(0, 0, 0, 150);
-        p5.rect(0, 0, p5.width, p5.height);
-
-        let boxWidth = p5.width / 3;
-        let boxHeight = p5.height / 6;
-        p5.fill(255);
-        p5.stroke(0);
-        p5.rect(0, 0, boxWidth, boxHeight, 10);
-
-        p5.fill(0);
-        p5.noStroke();
-        p5.textAlign(p5.CENTER, p5.CENTER);
-        p5.textSize(32);
-        p5.text("Puzzle Solved!", 0, -boxHeight / 8);
-        p5.textSize(16);
-        p5.text("Click to continue.", 0, boxHeight / 4);
-    }
 
     // Dynamic grid based on difficulty
     setGridSize(): void {
@@ -346,19 +422,5 @@ export default class BlockSlide extends Puzzle {
         }
     }
 
-    // DEBUGGING: auto-solve the puzzle
-    solvePuzzle(): void {
-        let correct = 1;
-        for (let row = 0; row < this.gridSize; row++) {
-            for (let col = 0; col < this.gridSize; col++) {
-                if (row === this.gridSize - 1 && col === this.gridSize - 1) {
-                    this.grid[row][col] = 0; // Empty tile at the end
-                } else {
-                    this.grid[row][col] = correct++;
-                }
-            }
-        }
-        this.emptyPos = { row: this.gridSize - 1, col: this.gridSize - 1 };
-        this.state = PuzzleState.completed; // Mark puzzle as solved
-    }
+
 }

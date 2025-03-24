@@ -330,8 +330,16 @@ export default class Scene implements GameObject {
                 obj.postDraw && obj.postDraw();
             }
         }
-        if (!drawn) {
-            this.postDraw();
+
+        if (this.name != "menu-scene" && this.name != "loading-scene") { // timer should not run on certian scenes
+            this.scene_manager.updateTimer();
+            this.p5.push();
+            this.p5.fill(255, 0, 0);
+            this.p5.textSize(24);
+            this.p5.textAlign(this.p5.RIGHT, this.p5.TOP);
+            let timeDisplay = Math.ceil(this.scene_manager.get_time()); // rounding up to whole second
+            this.p5.text(`Time Left: ${timeDisplay}s`, this.p5.width / 2 - 20, -this.p5.height / 2 + 20);
+            this.p5.pop();
         }
     }
 
@@ -388,5 +396,8 @@ export default class Scene implements GameObject {
         this.assets = new Map();
     }
 
-    onStart(args?: any) { }
+    onStart(args?: any) {
+        this.scene_manager.set_time(this.scene_manager.get_time()); // sets time if no limit was defined in the scene
+        this.scene_manager.set_update_time(this.p5.millis()); // time since last update to timer
+    }
 }
