@@ -13,6 +13,7 @@ export default class DriveToSurvive extends Scene {
 
     onStart(): void {
         this.player = new PlayerDriver(this);
+        this.camera.zoom = .2;
     }
 
     preload(): any {

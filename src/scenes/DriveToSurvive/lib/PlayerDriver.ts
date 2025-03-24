@@ -75,7 +75,7 @@ export default class PlayerDriver extends PhysicsObject {
         console.log("DIR: ", this.direction.x, this.direction.y);
         this.asset.x = this.body.x;
         this.asset.y = this.body.y;
-        this.body.velocity.y = this.direction.y * 100;
-        this.body.velocity.x = this.direction.x * 100;
+        this.body.velocity.y = this.direction.y * 1000;
+        this.body.velocity.x = this.direction.x * 1000;
     }
 }
