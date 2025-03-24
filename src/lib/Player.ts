@@ -12,7 +12,14 @@ export default class Player extends PhysicsObject {
     zIndex?: number = 50;
     private pressed_keys: any = {};
     private spritesheet?: Image;
+    private hairTemplate!: Image;
+    private clothes!: Image;
+    private hat!: Image;
+    private hairColor = { r: 255, g: 255, b: 255 };
     private frames: Image[][] = [];
+    private hairFrames: Image[][] = [];
+    private clothesFrames: Image[][] = [];
+    private hatFrames: Image[][] = [];
     private direction: Velocity;
     private anim_index: number = 0;
     private anim_row: number = 6;
@@ -43,10 +50,36 @@ export default class Player extends PhysicsObject {
 
     async preload(): Promise<void> {
         await new Promise((resolve, reject) => {
-            this.spritesheet = this.scene.p5.loadImage('assets/player.png', (_: Image) => {
+            this.spritesheet = this.scene.p5.loadImage("assets/player.png", (_: Image) => {
                 resolve(true);
             }, (err) => reject(err));
         })
+        if (this.scene.scene_manager.playerHair != "none") {
+            await new Promise((resolve, reject) => {
+                this.scene.p5.loadImage(this.scene.scene_manager.playerHair, (img) => {
+                    this.hairTemplate = img;
+                    resolve(true);
+                }, reject);
+            });
+        }
+        await new Promise((resolve, reject) => {
+            this.scene.p5.loadImage(this.scene.scene_manager.playerClothes, (img) => {
+                this.clothes = img;
+                resolve(true);
+            }, reject);
+        });
+        if (this.scene.scene_manager.playerHat != "none") {
+            await new Promise((resolve, reject) => {
+                this.scene.p5.loadImage(this.scene.scene_manager.playerHat, (img) => {
+                    this.hat = img;
+                    resolve(true);
+                }, reject);
+            });
+        }
+        const savedHairColor = localStorage.getItem("hairColor");
+        if (savedHairColor) {
+            this.hairColor = JSON.parse(savedHairColor);
+        }
         this.forwardKey = localStorage.getItem("forward") ?? 'w';
         this.leftKey = localStorage.getItem("left") ?? 'a';
         this.downKey = localStorage.getItem("down") ?? 's';
@@ -55,6 +88,9 @@ export default class Player extends PhysicsObject {
 
     setup(): void {
         this.#setup_frames(this.spritesheet);
+        if (this.hairTemplate) this.#setup_hair_frames(this.hairTemplate);
+        this.#setup_clothes_frames(this.clothes);
+        if (this.hat) this.#setup_hat_frames(this.hat);
         this.scene.camera.follow(this.body);
     }
 
@@ -66,7 +102,25 @@ export default class Player extends PhysicsObject {
             this.frames.push(this.#get_row(i, spritesheet));
         }
     }
-
+    #setup_hair_frames(spritesheet?: Image) {
+        if (!spritesheet) return;
+        for (let i = 0; i < 8; i++) {
+            this.hairFrames.push(this.#get_row(i, spritesheet));
+        }
+    }
+    #setup_clothes_frames(spritesheet?: Image) {
+        if (!spritesheet) return;
+        for (let i = 0; i < 8; i++) {
+            this.clothesFrames.push(this.#get_row(i, spritesheet));
+        }
+    }
+    #setup_hat_frames(spritesheet?: Image) {
+        if (!spritesheet) return;
+        for (let i = 0; i < 8; i++) {
+            this.hatFrames.push(this.#get_row(i, spritesheet));
+        }
+    }
+    
     #get_row = (row: number, spritesheet?: Image) => {
         if (!spritesheet) {
             return []
@@ -77,7 +131,6 @@ export default class Player extends PhysicsObject {
         }
         return _sprites;
     }
-
 
     keyPressed(e: KeyboardEvent): void {
         //if (this.disabled) { return; }
@@ -179,6 +232,55 @@ export default class Player extends PhysicsObject {
         if (!this.disabled && !(this.direction.x == 0 && this.direction.y == 0)) {
             this.body.velocity.x = this.direction.x * this.speed;
             this.body.velocity.y = this.direction.y * this.speed;
+        }
+        if (this.frames.length > 0 && this.frames[0].length > 0) {
+            this.scene.p5.image(
+                this.frames[this.anim_row][this.anim_index],
+                this.body.x - this.width / 2,
+                this.body.y - this.height / 1.8,
+                this.width,
+                this.height
+            );
+        }        
+        if (this.hairTemplate) {
+            if (this.hairFrames.length > 0 && this.hairFrames[this.anim_row].length > 0) {
+                const shirtFrame = this.hairFrames[this.anim_row][this.anim_index];
+                this.scene.p5.tint(this.hairColor.r, this.hairColor.g, this.hairColor.b);
+                this.scene.p5.image(
+                    shirtFrame,
+                    this.body.x - this.width / 2,
+                    this.body.y - this.height / 1.8,
+                    this.width,
+                    this.height
+                );
+                this.scene.p5.noTint();
+            }
+        }
+        if (this.clothesFrames.length > 0 && this.clothesFrames[this.anim_row].length > 0) {
+            const clothesFrame = this.clothesFrames[this.anim_row][this.anim_index];
+            this.scene.p5.tint(255, 255, 255);
+            this.scene.p5.image(
+                clothesFrame,
+                this.body.x - this.width / 2,
+                this.body.y - this.height / 1.8,
+                this.width,
+                this.height
+            );
+            this.scene.p5.noTint();
+        }
+        if (this.hat) {
+            if (this.hatFrames.length > 0 && this.hatFrames[this.anim_row].length > 0) {
+                const hatFrame = this.hatFrames[this.anim_row][this.anim_index];
+                this.scene.p5.tint(255, 255, 255);
+                this.scene.p5.image(
+                    hatFrame,
+                    this.body.x - this.width / 2,
+                    this.body.y - this.height / 1.8,
+                    this.width,
+                    this.height
+                );
+                this.scene.p5.noTint();
+            }
         }
         this.scene.p5.pop();
     }

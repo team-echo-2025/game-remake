@@ -8,11 +8,13 @@ export default class SceneManager implements GameObject {
     private loading_scene: Scene;
     private scenes: Map<string, Scene>;
     public difficulty: string;
+    public playerHair = "none";
+    public playerClothes = "assets/player_tunic.png";
+    public playerHat = "none";
     private timeRemaining!: number; // in-game time remaining (in seconds)
     private lastUpdateTime: number = 0; // last time in-game time was updated (in p5.millis())
     private currentTime!: number; // current time at the time of the last update (in p5.millis())
     private deltaTime!: number; // time between updates
-
     constructor(p: p5, scenes: (new (name: string) => Scene)[], LoadingScene: new (name: string) => Scene) {
         this.scenes = new Map<string, Scene>();
         this.loading_scene = new LoadingScene(LoadingScene.name);
