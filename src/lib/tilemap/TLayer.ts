@@ -19,8 +19,6 @@ export default class TLayer {
     private scene: Scene;
     private id!: string;
     private name!: string;
-    private width!: number;
-    private height!: number;
     private chunks: TLayerChunk[];
     private offsetx!: number;
     private offsety!: number;
@@ -29,12 +27,15 @@ export default class TLayer {
     private tilemap: Tilemap;
     private is_collider: boolean = false;
     private top_layer: boolean = false;
+    width!: number;
+    height!: number;
     minx: number = 0;
     maxx: number = 0;
     miny: number = 0;
     maxy: number = 0;
     buffer!: Framebuffer;
     start_offset: Vector2D = { x: 0, y: 0 };
+
 
     set x(x: number) {
         this._x = x;
@@ -91,6 +92,7 @@ export default class TLayer {
         this.name = this.layer.getString("name");
         this.offsetx = this.layer.getNum("offsetx");
         this.offsety = this.layer.getNum("offsety");
+        console.log(this.layer);
         const children = this.layer.getChildren();
         for (const child of children) {
             const name = child.getName();
@@ -139,6 +141,16 @@ export default class TLayer {
                 }
             }
         }
+        this.width = (this.chunks.length / 2) * this.tilemap.tilewidth * 16;
+        this.height = (this.chunks.length / 2) * this.tilemap.tilewidth * 16;
+        console.log(this.chunks.length);
+        //this.maxx = (-((this.chunks.length / 2) * this.tilemap.tilewidth * 16) / 2) + (this.chunks.length / 2) * this.tilemap.tilewidth * 16;
+        //this.maxy = (-((this.chunks.length / 2) * this.tilemap.tileheight * 16) / 2) + (this.chunks.length / 2) * this.tilemap.tileheight * 16;
+        //this.minx = (-((this.chunks.length / 2) * this.tilemap.tileheight * 16) / 2);
+        //this.miny = (-((this.chunks.length / 2) * this.tilemap.tileheight * 16) / 2);
+        console.log(this.maxx);
+        console.log(this.minx);
+        //this.maxy = (this.chunks.length / 2) * this.tilemap.tileheight * 16;
         for (const chunk of this.chunks) {
             chunk.precalculate();
             const found = this.tilemap.chunks.get(this.tilemap.key_for({ x: chunk.x, y: chunk.y }))
@@ -152,7 +164,5 @@ export default class TLayer {
             this.tilemap.maxx = Math.max(this.tilemap.maxx, chunk.maxx);
             this.tilemap.maxy = Math.max(this.tilemap.maxy, chunk.maxy);
         }
-        this.width = this.maxx - this.minx;
-        this.height = this.maxy - this.miny;
     }
 }

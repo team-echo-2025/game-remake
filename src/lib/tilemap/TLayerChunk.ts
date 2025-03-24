@@ -1,4 +1,4 @@
-import p5, { Graphics, Image, XML } from "p5";
+import { Graphics, Image, XML } from "p5";
 import Tile from "./Tile";
 import Scene from "../Scene";
 import Tilemap from "./Tilemap";
@@ -68,10 +68,8 @@ export default class TLayerChunk {
                 this.buffer!.image(tile.image, 0, 0);
                 this.buffer?.pop();
 
-                let _x = (this.x + tile.x) * this.tilemap.tilewidth;
-                let _y = (this.y + tile.y) * this.tilemap.tileheight;
-                tile.x = _x;
-                tile.y = _y;
+                tile.x = (this.x + tile.x) * this.tilemap.tilewidth;
+                tile.y = (this.y + tile.y) * this.tilemap.tileheight;
             }
         }
     }
@@ -93,8 +91,10 @@ export default class TLayerChunk {
             buffer = _buffer;
         }
         buffer.push();
+        //buffer.translate(this.tilemap.width / 2, this.tilemap.height / 2);
         buffer.translate(-this.tilemap.minx, -this.tilemap.miny);
         buffer.image(this.chunk_image!, this.x * this.tilemap.tilewidth, this.y * this.tilemap.tileheight);
+        //buffer.image(this.chunk_image!, this.x * this.tilemap.tilewidth, this.y * this.tilemap.tileheight);
         buffer.pop();
         this.loaded = true;
         for (const layer of this.layers) {
