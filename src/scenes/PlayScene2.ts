@@ -85,11 +85,6 @@ export default class Dungeon1 extends Scene {
             this.start("menu-scene");
         }
     };
-    
-    postDraw(): void {
-        if (this.scene_manager.get_time() <= 0)
-            this.start("menu-scene");
-    }
 
     onStop(): void {
         this.tilemap = undefined;

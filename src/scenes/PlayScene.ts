@@ -204,12 +204,9 @@ export default class PlayScene extends Scene {
         }
     }
 
-    postSetup() {
-        this.scene_manager.set_time(300);
-    }
-
     mousePressed(e: MouseEvent): void {
         this.access_circuit?.mousePressed(e);
+        // this.block_slide?.mousePressed();
     }
 
     mouseReleased(_: MouseEvent): void {
@@ -237,8 +234,7 @@ export default class PlayScene extends Scene {
 
     postDraw(): void {
         this.access_circuit?.postDraw();
-        if (this.scene_manager.get_time() <= 0)
-            this.start("menu-scene");
+        // this.block_slide?.postDraw();
     }
 
     draw(): void {
