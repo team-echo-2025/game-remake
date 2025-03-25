@@ -1,5 +1,5 @@
 
-import Scene from "../../../lib/Scene";
+import Scene from "../../lib/Scene";
 import Square from "./Square";
 
 export default class SquareLine {
