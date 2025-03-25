@@ -57,7 +57,7 @@ export default class IceMaze extends Scene {
         mazeBeginning.overlaps = true;
         mazeBeginning.onCollide = (other: RigidBody) => {
             if (other == this.player?.body) {
-                this.start('playscene-2', { starting_pos: { x: -103, y: -636 } });
+                this.start('dungeon-1', { starting_pos: { x: -103, y: -636 } });
             }
         }
         this.physics.addObject(mazeBeginning);
@@ -73,7 +73,7 @@ export default class IceMaze extends Scene {
         mazeEnding.overlaps = true;
         mazeEnding.onCollide = (other: RigidBody) => {
             if (other == this.player?.body) {
-                this.start('playscene-3', { starting_pos: { x: 0, y: 348 } });
+                this.start('dungeon-2', { starting_pos: { x: 0, y: 348 } });
             }
         }
         this.physics.addObject(mazeEnding);

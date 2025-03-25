@@ -14,6 +14,7 @@ import {
   getOpenEdges,
 } from "./PathUtils";
 
+
 export default class PathPuzzle extends Puzzle {
   grid: PathCell[][] = [];
   gridSize: number = 5;
@@ -58,35 +59,6 @@ export default class PathPuzzle extends Puzzle {
   async preload(): Promise<void> { }
 
   setup(): void {
-    // Putting the puzzle into the game
-    this.physics_object = new PhysicsObject({
-      width: 100,
-      height: 100,
-      mass: Infinity
-    });
-    this.physics_object.overlaps = true;
-    this.physics_object.body.x = this.x;
-    this.physics_object.body.y = this.y;
-    this.scene.physics.addObject(this.physics_object);
-    this.physics_object.onCollide = (other: RigidBody) => {
-      if (other == this.player.body) {
-        clearTimeout(this.collider_timeout);
-        if (!this.highlight) {
-          this.highlight = true;
-          this.asset.change_asset("scales-highlight");
-        }
-        this.collider_timeout = setTimeout(() => {
-          this.highlight = false;
-          this.asset.change_asset("scales");
-        }, 100);
-      }
-    }
-    this.asset = this.scene.add_new.sprite(this.asset_key);
-    this.asset.x = this.x;
-    this.asset.y = this.y;
-    this.asset.width = 24;
-    this.asset.height = 36;
-    // Puzzle setup
     this.state = PuzzleState.notStarted;
     this.setGridSize();
 
@@ -159,12 +131,6 @@ export default class PathPuzzle extends Puzzle {
       if (this.checkWin()) {
         // Puzzle is solved
         this.state = PuzzleState.completed;
-        this.hidden = true;
-        this.player.disabled = false;
-        this.asset.change_asset('scales-success');
-        this.scene.physics.remove(this.physics_object);
-        this.onCompleted && this.onCompleted();
-        clearTimeout(this.collider_timeout);
       }
     }
   }
@@ -195,6 +161,12 @@ export default class PathPuzzle extends Puzzle {
   draw() {
     if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return;
   }
+
+
+  solvePuzzle(): void {
+    this.state = PuzzleState.completed;
+  }
+
 
   postDraw(): void {
     this.solved();
@@ -246,14 +218,6 @@ export default class PathPuzzle extends Puzzle {
         // Draw start marker 
         if (r === 0 && c === 0) {
           p5.fill(0, 200, 0);
-          p5.ellipse(cx, cy, this.tileSize / 3);
-          p5.fill(255);
-          p5.textAlign(p5.CENTER, p5.CENTER);
-          p5.textSize(12);
-        }
-        // Draw end marker 
-        else if (r === this.gridSize - 1 && c === this.gridSize - 1) {
-          p5.fill(200, 0, 0);
           p5.ellipse(cx, cy, this.tileSize / 3);
           p5.fill(255);
           p5.textAlign(p5.CENTER, p5.CENTER);

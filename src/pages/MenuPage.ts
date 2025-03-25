@@ -39,13 +39,13 @@ export default class MenuPage extends Page {
         };
         const button2: ButtonTestProps = {
             ...button1,
-            callback: () => { this.scene.start("playscene-2") },
+            callback: () => { this.scene.start("dungeon-1") },
             label: "Scene 2"
         }
         const button3: ButtonTestProps = {
             ...button1,
             label: "Scene 3",
-            callback: () => { this.scene.start("playscene-3") },
+            callback: () => { this.scene.start("dungeon-2") },
         }
 
         this.dropdown = this.scene.add_new.dropdown_menu({

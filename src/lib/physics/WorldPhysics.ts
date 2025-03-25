@@ -17,14 +17,6 @@ export default class WorldPhysics implements GameObject {
     private accumulator: number = 0;
     private fixedTimeStep: number = 1 / 60;
     private _paused: boolean = false;
-    private _friction: number = 0.9;
-    get friction() {
-        return this._friction;
-    }
-
-    set friction(num: number) {
-        this._friction = num;
-    }
 
     set scene(scene: Scene) {
         this._scene = scene;
@@ -212,7 +204,7 @@ export default class WorldPhysics implements GameObject {
             this.quad_tree.clear();
             for (const obj of this.physic_objects) {
                 obj.update(this.fixedTimeStep * 1000)
-                this.apply_ground_friction(obj.body, this._friction, this.fixedTimeStep * 1000);
+                this.apply_ground_friction(obj.body, 0.2, this.fixedTimeStep * 1000);
                 this.quad_tree.insert({ rect: obj.body, data: obj });
             }
             for (const obj of this.physic_objects) {
