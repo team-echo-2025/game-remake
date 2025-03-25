@@ -54,7 +54,7 @@ export default class Dungeon2 extends Scene {
             new PathPuzzle(this, 'scales', this.player!)
             // new LightsOn(this, 'puzzle', this.player!)
         );
-        
+
     }
 
     preload(): any {
@@ -230,8 +230,8 @@ export default class Dungeon2 extends Scene {
                 this.check_completed();
             };
         });
-        
-/////////////////////////////////////////////////////////////////////
+
+        /////////////////////////////////////////////////////////////////////
         // this.access_circuit1 = new AccessCircuit(this, 'puzzle', this.player!);
         // this.access_circuit1.x = -435;
         // this.access_circuit1.y = 213;
@@ -299,16 +299,16 @@ export default class Dungeon2 extends Scene {
         this.puzzles.forEach(puzzle => puzzle.keyPressed(e));
         if (e.key === "Escape") {
             const containsHidden = this.puzzles.some(puzzle => !puzzle.hidden);
-            if(containsHidden){
+            if (containsHidden) {
                 this.puzzles.forEach(puzzle => puzzle.hidden = true);
                 //@ts-ignore
                 this.player?.disabled = false;
             }
-            else{
+            else {
                 this.start("menu-scene");
             }
         }
-        
+
     };
 
     mousePressed(e: MouseEvent): void {
@@ -338,7 +338,7 @@ export default class Dungeon2 extends Scene {
     draw(): void {
         this.puzzles.forEach(puzzle => !puzzle.hidden && puzzle.draw());
         this.p5.push();
-        // this.p5.image(this.dark_backdrop, -this.p5.width / 2 + this.player!.body.x, -this.p5.height / 2 + this.player!.body.y);
+        this.p5.image(this.dark_backdrop, -this.p5.width / 2 + this.player!.body.x, -this.p5.height / 2 + this.player!.body.y);
         this.p5.pop();
     }
 }
