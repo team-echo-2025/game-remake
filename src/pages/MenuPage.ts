@@ -142,18 +142,20 @@ export default class MenuPage extends Page {
         this.puzzleTest.y = 300
         
         const splashprop: SplashTextProps= {
-            label: "test",
+            label: "testtesttesttest",
             font_key: "minecraftia",
-            font_size: 28
+            font_size: 22
         }
         this.splashtext = this.scene.add_new.splashtext(splashprop);
-        this.splashtext.x = 0;
-        this.splashtext.y = -300;
+        this.splashtext.x = 160;
+        this.splashtext.y = -230;
     }   
     postDraw(): void {
         this.page_manager.scene.p5.fill(0);
         this.page_manager.scene.p5.textAlign(this.page_manager.scene.p5.CENTER, this.page_manager.scene.p5.CENTER);
-        this.page_manager.scene.p5.textSize(75);
+        this.page_manager.scene.p5.push();
+        this.page_manager.scene.p5.textSize(95);
         this.page_manager.scene.p5.text('EXIT PARADOX', 0, -300);
+        this.page_manager.scene.p5.pop();
     }
 }
