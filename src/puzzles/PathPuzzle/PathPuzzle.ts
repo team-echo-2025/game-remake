@@ -177,6 +177,7 @@ export default class PathPuzzle extends Puzzle {
     this.draw_board();
     this.draw_footer();
     this.draw_header();
+
   }
 
   draw_body(): void {
