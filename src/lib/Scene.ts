@@ -64,6 +64,10 @@ export default class Scene implements GameObject {
         this._scene_manager = manager;
     }
 
+    get scene_manager() {
+        return this._scene_manager;
+    }
+
     get name() {
         return this._name;
     }
