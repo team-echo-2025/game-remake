@@ -6,6 +6,7 @@ import Camera from "./Camera";
 import WorldPhysics from "./physics/WorldPhysics";
 import Rectangle from "./physics/Rectangle";
 import { Howl } from "howler";
+import Timer from "./Timer";
 
 export default class Scene implements GameObject {
     zIndex?: number | undefined;
@@ -62,6 +63,10 @@ export default class Scene implements GameObject {
 
     set scene_manager(manager: SceneManager) {
         this._scene_manager = manager;
+    }
+
+    get scene_manager() {
+        return this._scene_manager;
     }
 
     get name() {
@@ -221,6 +226,10 @@ export default class Scene implements GameObject {
         })
     }
 
+    setTimer(timer: Timer): void {
+        this._scene_manager.timer = timer;
+    }
+
     remove(object: GameObject) {
         this.objects = this.objects.filter(obj => {
             if (obj === object) {
@@ -330,6 +339,7 @@ export default class Scene implements GameObject {
         if (!drawn) {
             this.postDraw();
         }
+        this._scene_manager.timer?.postDraw();
     }
 
     keyPressed(_: KeyboardEvent): void { }
