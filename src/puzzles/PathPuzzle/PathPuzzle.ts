@@ -1,4 +1,3 @@
-import Puzzle, { PuzzleState } from "../../lib/Puzzle";
 import PhysicsObject from "../../lib/physics/PhysicsObject";
 import RigidBody from "../../lib/physics/RigidBody";
 import Player from "../../lib/Player";
@@ -19,7 +18,7 @@ export default class PathPuzzle extends Puzzle {
   grid: PathCell[][] = [];
   gridSize: number = 5;
   tileSize: number = 0;
-  boardSize: number = 300; 
+  boardSize: number = 300;
   // Game references
   physics_object!: PhysicsObject;
   highlight: boolean = false;
@@ -51,7 +50,7 @@ export default class PathPuzzle extends Puzzle {
     this.player.disabled = false;
     this.asset.change_asset('broken-puzzle');
     this.scene.physics.remove(this.physics_object);
-  } 
+  }
 
   // The set of cell coordinates (e.g. "0,0") that define the solution path
   solutionSet: Set<string> = new Set();
@@ -140,11 +139,11 @@ export default class PathPuzzle extends Puzzle {
   }
 
   mousePressed(): void {
-    const p5 = this.scene.p5; 
+    const p5 = this.scene.p5;
     // if (this.solved()) {
     //   this.scene.start(this.scene.name);
     //   return;
-    // } 
+    // }
 
     // Figure out which tile was clicked
     const col = Math.floor(
@@ -157,7 +156,7 @@ export default class PathPuzzle extends Puzzle {
     // If it’s in range, rotate that tile
     if (row >= 0 && row < this.gridSize && col >= 0 && col < this.gridSize) {
       rotateTile(this.grid[row][col]);
-      if (this.checkWin()) { 
+      if (this.checkWin()) {
         // Puzzle is solved
         this.state = PuzzleState.completed;
         this.hidden = true;
@@ -177,7 +176,7 @@ export default class PathPuzzle extends Puzzle {
       this.hidden = false;
     }
   }
- 
+
   checkWin(): boolean {
     return isSolutionPathComplete(
       this.grid,
@@ -191,7 +190,8 @@ export default class PathPuzzle extends Puzzle {
 
   solved(): boolean {
     return this.state === PuzzleState.completed;
-  } 
+  }
+
   draw() {
     if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return;
   }
@@ -199,12 +199,12 @@ export default class PathPuzzle extends Puzzle {
   postDraw(): void {
     this.solved();
     if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return;
-    if (this.hidden) return; 
+    if (this.hidden) return;
     // Always draw the board
     this.draw_body();
     this.draw_board();
     this.draw_footer();
-    this.draw_header();  
+    this.draw_header();
   }
 
   draw_body(): void {
@@ -249,7 +249,7 @@ export default class PathPuzzle extends Puzzle {
           p5.ellipse(cx, cy, this.tileSize / 3);
           p5.fill(255);
           p5.textAlign(p5.CENTER, p5.CENTER);
-          p5.textSize(12); 
+          p5.textSize(12);
         }
         // Draw end marker 
         else if (r === this.gridSize - 1 && c === this.gridSize - 1) {
@@ -257,7 +257,7 @@ export default class PathPuzzle extends Puzzle {
           p5.ellipse(cx, cy, this.tileSize / 3);
           p5.fill(255);
           p5.textAlign(p5.CENTER, p5.CENTER);
-          p5.textSize(12); 
+          p5.textSize(12);
         }
       }
     }
