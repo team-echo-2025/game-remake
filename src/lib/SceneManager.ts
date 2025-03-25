@@ -1,6 +1,7 @@
 import p5 from "p5";
 import GameObject from "./GameObject";
 import Scene from "./Scene";
+import Timer from "./Timer";
 
 export default class SceneManager implements GameObject {
     private p: p5;
@@ -11,6 +12,7 @@ export default class SceneManager implements GameObject {
     public playerHair = "none";
     public playerClothes = "assets/player_tunic.png";
     public playerHat = "none";
+    public timer?: Timer;
     constructor(p: p5, scenes: (new (name: string) => Scene)[], LoadingScene: new (name: string) => Scene) {
         this.scenes = new Map<string, Scene>();
         this.loading_scene = new LoadingScene(LoadingScene.name);
@@ -78,10 +80,19 @@ export default class SceneManager implements GameObject {
         this.current_scene?.draw_objects();
         this.current_scene?.update();
         this.current_scene?.update_objects();
+        this.timer?.update();
         this.current_scene?.p5.pop()
         this.current_scene?.p5.push();
         this.current_scene?.postDraw_objects();
         this.current_scene?.p5.pop();
+    }
+
+    setTimer(timer: Timer) {
+        this.timer = timer;
+    }
+
+    clearTimer() {
+        this.timer = undefined;
     }
 
     postSetup(): void {
