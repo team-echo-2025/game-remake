@@ -13,6 +13,10 @@ export default class Timer {
         this.isActive = true;
     }
 
+    deductTime(penalty: number): void {
+        this.timeRemaining -= penalty;
+    }
+
     update(): void {
         if (!this.isActive) return;
         const now = this.scene.p5.millis();
