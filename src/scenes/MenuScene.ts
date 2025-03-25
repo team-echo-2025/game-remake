@@ -7,6 +7,7 @@ import MenuPage from "../pages/MenuPage";
 import SettingPage from "../pages/SettingsPage";
 import WorldSelectPage from "../pages/WordSelect";
 import CreditsPage from "../pages/CreditsPage";
+import CharacterPage from "../pages/CharacterPage";
 import Sound from "../lib/Sound";
 import SoundManager, { SoundManagerProps } from "../lib/SoundManager";
 export default class MenuScene extends Scene {
@@ -22,6 +23,7 @@ export default class MenuScene extends Scene {
             new MenuPage(),
             new KeybindsPage(),
             new SettingPage(),
+            new CharacterPage(),
             new WorldSelectPage(),
             new DifficultyPage(),
             new CreditsPage(),
