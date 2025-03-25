@@ -1,5 +1,4 @@
 import GameObject from "../../lib/GameObject";
-
 import Scene from "../../lib/Scene";
 
 export default class Switches implements GameObject {
