@@ -1,35 +1,40 @@
-import GameObject from './GameObject';
 import Scene from './Scene';
 
-export default class Timer implements GameObject {
-    private scene!: Scene;
-    private timeRemaining!: number; // in-game time remaining (in seconds)
-    private lastUpdateTime: number = 0; // last time in-game time was updated (in p5.millis())
-    private currentTime!: number; // current time at the time of the last update (in p5.millis())
-    private deltaTime!: number; // time between updates
+export default class Timer {
+    private scene: Scene;
+    private timeRemaining: number;
+    private lastUpdateTime: number = 0;
+    private isActive: boolean = false;
 
-    constructor(scene: Scene, timeRemaining: number) {
+    constructor(scene: Scene, duration: number) {
         this.scene = scene;
-        this.timeRemaining = timeRemaining;
+        this.timeRemaining = duration;
+        this.lastUpdateTime = scene.p5.millis();
+        this.isActive = true;
     }
 
-    updateTimer(): void {
+    update(): void {
+        if (!this.isActive) return;
         const now = this.scene.p5.millis();
-        this.deltaTime = (now - this.lastUpdateTime) / 1000;
+        const delta = (now - this.lastUpdateTime) / 1000;
         this.lastUpdateTime = now;
-        this.timeRemaining -= this.deltaTime;
+        this.timeRemaining -= delta;
+
+        if (this.timeRemaining <= 0) {
+            this.isActive = false;
+            this.scene.scene_manager.clearTimer();
+            this.scene.start("menu-scene");
+        }
     }
 
     postDraw(): void {
-        if (this.scene.name != "menu-scene" && this.scene.name != "loading-scene") { // timer should not run on certian scenes
-            this.updateTimer();
-            this.scene.p5.push();
-            this.scene.p5.fill(255, 0, 0);
-            this.scene.p5.textSize(24);
-            this.scene.p5.textAlign(this.scene.p5.RIGHT, this.scene.p5.TOP);
-            let timeDisplay = Math.ceil(this.timeRemaining); // rounding up to whole second
-            this.scene.p5.text(`Time Left: ${timeDisplay}s`, this.scene.p5.width / 2 - 20, -this.scene.p5.height / 2 + 20);
-            this.scene.p5.pop();
-        }
+        if (!this.isActive) return;
+        const p = this.scene.p5;
+        p.push();
+        p.fill(255, 0, 0);
+        p.textSize(24);
+        p.textAlign(p.RIGHT, p.TOP);
+        p.text(`Time Left: ${Math.ceil(this.timeRemaining)}s`, p.width / 2 - 20, -p.height / 2 + 20);
+        p.pop();
     }
 }
