@@ -7,6 +7,7 @@ import MenuPage from "../pages/MenuPage";
 import SettingPage from "../pages/SettingsPage";
 import WorldSelectPage from "../pages/WordSelect";
 import CreditsPage from "../pages/CreditsPage";
+import CharacterPage from "../pages/CharacterPage";
 import Sound from "../lib/Sound";
 import SoundManager, { SoundManagerProps } from "../lib/SoundManager";
 export default class MenuScene extends Scene {
@@ -22,6 +23,7 @@ export default class MenuScene extends Scene {
             new MenuPage(),
             new KeybindsPage(),
             new SettingPage(),
+            new CharacterPage(),
             new WorldSelectPage(),
             new DifficultyPage(),
             new CreditsPage(),
@@ -32,6 +34,7 @@ export default class MenuScene extends Scene {
     }
     async preload(): Promise<any> {
         this.loadFont('jersey', 'assets/fonts/jersey.ttf')
+        this.loadFont("minecraftia", 'assets/fonts/Minecraftia-Regular.ttf')
         this.imgLogo = this.p5.loadImage('assets/background.png');  // Load the background image
         this.loadSound("background_music", "assets/background_music.mp3")
         this.loadSound("button_sfx", "assets/TInterfaceSounds/light-switch.mp3")

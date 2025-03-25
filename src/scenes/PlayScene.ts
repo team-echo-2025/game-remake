@@ -9,8 +9,10 @@ import Spritesheet from "../lib/Spritesheet";
 import Tilemap from "../lib/tilemap/Tilemap";
 import { Vector2D } from "../lib/types/Physics";
 import AccessCircuit from "../puzzles/AccessCircuit/AccessCircuit";
+// import BlockSlide from "../puzzles/BlockSlide/BlockSlide";
 import Sound from "../lib/Sound";
 import SoundManager, { SoundManagerProps } from "../lib/SoundManager";
+import Timer from "../lib/Timer";
 
 class Door implements GameObject {
     private _x: number = 0;
@@ -77,6 +79,8 @@ export default class PlayScene extends Scene {
     tilemap?: Tilemap;
     door?: Door;
     access_circuit?: AccessCircuit;
+    timer!: Timer;
+    // block_slide?: BlockSlide;
     private background_music!: Sound;
     private button_sfx!: Sound;
     private bgm_manager!: SoundManager;
@@ -97,16 +101,17 @@ export default class PlayScene extends Scene {
         this.player.body.x = args?.starting_pos?.x ?? -425;
         this.player.body.y = args?.starting_pos?.y ?? 218;
         this.physics.addObject(this.player);
+        this.scene_manager.setTimer(new Timer(this, 300));
     }
 
     preload(): any {
         this.loadFont("jersey", "assets/fonts/jersey.ttf");
         this.loadTilemap("tilemap", "assets/tilemaps/LaythsTileMap/world-1.tmx")
         this.loadImage("door", "assets/doors/prison_door.png");
-        this.loadImage("puzzle", "assets/access_circuit.png");
-        this.loadImage("broken-puzzle", "assets/access_circuit_broken.png");
-        this.loadImage("success-puzzle", "assets/access_circuit_success.png");
-        this.loadImage("highlighted-puzzle", "assets/access_circuit_highlighted.png");
+        this.loadImage("puzzle", "assets/puzzleImages/access_circuit.png");
+        this.loadImage("broken-puzzle", "assets/puzzleImages/access_circuit_broken.png");
+        this.loadImage("success-puzzle", "assets/puzzleImages/access_circuit_success.png");
+        this.loadImage("highlighted-puzzle", "assets/puzzleImages/access_circuit_highlighted.png");
         this.loadSound("background_music", "assets/background_music.mp3");
         this.loadSound("button_sfx", "assets/TInterfaceSounds/light-switch.mp3");
         this.loadSound("circuit_correct_sfx", "assets/TInterfaceSounds/greanpatchT.mp3");
@@ -154,6 +159,11 @@ export default class PlayScene extends Scene {
         this.access_circuit.y = 70;
         this.access_circuit?.setup();
         this.access_circuit.asset.zIndex = 101;
+        // this.block_slide = new BlockSlide(this, 'puzzle', this.player!);
+        // this.block_slide.x = -280;
+        // this.block_slide.y = 70;
+        // this.block_slide?.setup();
+        // this.block_slide.asset.zIndex = 101;
 
         this.tilemap = this.add_new.tilemap({
             tilemap_key: "tilemap",
@@ -170,6 +180,10 @@ export default class PlayScene extends Scene {
             this.door!.open();
             this.state.access_puzzle = PuzzleState.completed;
         }
+        // this.block_slide.onCompleted = () => {
+        //     this.door!.open();
+        //     this.state.access_puzzle = PuzzleState.completed;
+        // }
         const portal1 = new PhysicsObject({
             width: 300,
             height: 32,
@@ -180,7 +194,7 @@ export default class PlayScene extends Scene {
         portal1.body.y = -360;
         portal1.onCollide = (other: RigidBody) => {
             if (other == this.player?.body) {
-                this.start("dungeon-1", {
+                this.start("playscene-2", {
                     starting_pos: { x: -1767, y: 863 }
                 });
             }
@@ -188,12 +202,14 @@ export default class PlayScene extends Scene {
         this.physics.addObject(portal1);
         if (this.state.access_puzzle == PuzzleState.completed) {
             this.access_circuit.force_solve();
+            // this.block_slide.force_solve();
             this.door.open();
         }
     }
 
-    mousePressed(_: MouseEvent): void {
-        this.access_circuit?.mousePressed();
+    mousePressed(e: MouseEvent): void {
+        this.access_circuit?.mousePressed(e);
+        // this.block_slide?.mousePressed();
     }
 
     mouseReleased(_: MouseEvent): void {
@@ -205,7 +221,9 @@ export default class PlayScene extends Scene {
     // We may want this to be a pause menu eventually
     keyPressed = (e: KeyboardEvent) => {
         this.access_circuit?.keyPressed(e);
+        // this.block_slide?.keyPressed(e);
         if (e.key === "Escape") {
+            this.scene_manager.clearTimer();
             this.start("menu-scene");
         }
     };
@@ -215,13 +233,16 @@ export default class PlayScene extends Scene {
         this.tilemap = undefined;
         this.door = undefined;
         this.access_circuit = undefined;
+        // this.block_slide = undefined;
     }
 
     postDraw(): void {
         this.access_circuit?.postDraw();
+        // this.block_slide?.postDraw();
     }
 
     draw(): void {
         this.access_circuit?.draw();
+        // this.block_slide?.draw();
     }
 }

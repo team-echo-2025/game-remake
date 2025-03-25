@@ -44,6 +44,8 @@ export default class Puzzle implements GameObject {
     mouseClicked(_: MouseEvent): void { }
 
     onDestroy(): void { }
+    mousePressed(e: MouseEvent): void { }
+    mouseReleased(e: MouseEvent): void { }
 
     keyPressed(e: KeyboardEvent): void { }
 
