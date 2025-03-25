@@ -12,6 +12,7 @@ import AccessCircuit from "../puzzles/AccessCircuit/AccessCircuit";
 // import BlockSlide from "../puzzles/BlockSlide/BlockSlide";
 import Sound from "../lib/Sound";
 import SoundManager, { SoundManagerProps } from "../lib/SoundManager";
+import Timer from "../lib/Timer";
 
 class Door implements GameObject {
     private _x: number = 0;
@@ -78,6 +79,7 @@ export default class PlayScene extends Scene {
     tilemap?: Tilemap;
     door?: Door;
     access_circuit?: AccessCircuit;
+    timer!: Timer;
     // block_slide?: BlockSlide;
     private background_music!: Sound;
     private button_sfx!: Sound;
@@ -91,6 +93,7 @@ export default class PlayScene extends Scene {
         super("play-scene");
         this.physics.debug = false;
         //this.physics.debug = true;
+        this.timer = new Timer(this, 300);
     }
 
     onStart(args: StartArgs): void {
@@ -235,6 +238,7 @@ export default class PlayScene extends Scene {
     postDraw(): void {
         this.access_circuit?.postDraw();
         // this.block_slide?.postDraw();
+        this.timer.postDraw();
     }
 
     draw(): void {
