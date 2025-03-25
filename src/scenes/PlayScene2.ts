@@ -5,6 +5,7 @@ import Player from "../lib/Player";
 import Scene from "../lib/Scene";
 import Tilemap from "../lib/tilemap/Tilemap";
 import { Vector2D } from "../lib/types/Physics";
+import Timer from "../lib/Timer";
 
 type StartArgs = Readonly<{
     starting_pos: Vector2D
@@ -13,9 +14,10 @@ type StartArgs = Readonly<{
 export default class Dungeon1 extends Scene {
     player?: Player;
     tilemap?: Tilemap;
+    timer?: Timer;
 
     constructor() {
-        super("dungeon-1");
+        super("playscene-2");
         this.physics.debug = false;
     }
 
@@ -31,9 +33,9 @@ export default class Dungeon1 extends Scene {
         this.loadFont("jersey", "assets/fonts/jersey.ttf");
         this.loadTilemap("tilemap", "assets/tilemaps/PetersTileMap/Dungeon.tmx")
         this.loadImage("door", "assets/doors/prison_door.png");
-        this.loadImage("puzzle", "assets/access_circuit.png");
-        this.loadImage("broken-puzzle", "assets/access_circuit_broken.png");
-        this.loadImage("success-puzzle", "assets/access_circuit_success.png");
+        this.loadImage("puzzle", "assets/puzzleImages/access_circuit.png");
+        this.loadImage("broken-puzzle", "assets/puzzleImages/access_circuit_broken.png");
+        this.loadImage("success-puzzle", "assets/puzzleImages/access_circuit_success.png");
     }
 
     setup(): void {

@@ -9,6 +9,7 @@ import ButtonTest, { ButtonTestProps } from "./ui/ButtonTest";
 import DropdownMenu, { DropdownMenuProps } from "./ui/DropdownMenu";
 import Slider, { SliderProps } from "./ui/Slider";
 import Sound from "./Sound";
+import SplashText, { SplashTextProps } from "./ui/SplashText";
 
 export default class GameObjectFactory {
     private scene: Scene;
@@ -89,4 +90,13 @@ export default class GameObjectFactory {
         _soundmanager.setup();
         return _soundmanager;
     }
+
+    splashtext = (props: SplashTextProps): SplashText=>{
+        const _splashtext = new SplashText(props);
+        console.log("splashtext factory call");
+        _splashtext.scene = this.scene;
+        _splashtext.setup();
+        this.scene.add(_splashtext);
+        return _splashtext;
+    }   
 }
