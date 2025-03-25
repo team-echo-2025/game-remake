@@ -83,6 +83,8 @@ export default class AccessCircuit extends Puzzle {
                     break;
                 }
             }
+            //IMPLEMENT IN EV PUZ
+            //success state
             if (rowIsCorrect) {
                 this.state = PuzzleState.completed;
                 this.hidden = true;
@@ -172,6 +174,7 @@ export default class AccessCircuit extends Puzzle {
     }
 
     keyPressed(e: KeyboardEvent): void {
+        // console.log("Reached");
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
         console.log("STATE", this.state);
         if (this.hidden && this.highlight && e.key == 'e') {
@@ -179,7 +182,7 @@ export default class AccessCircuit extends Puzzle {
             this.hidden = false;
         }
     }
-    mousePressed() {
+    mousePressed(_: MouseEvent) {
         if (this.hidden) return;
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
         const x = this.scene.p5.mouseX - this.scene.p5.width / 2;
@@ -271,6 +274,7 @@ export default class AccessCircuit extends Puzzle {
             }
             this.dragging = null;
         }
+        //Fail State
         const solved = this.checkSolution();
         if (!solved && this.current_row >= this.board.length) {
             this.state = PuzzleState.failed;
