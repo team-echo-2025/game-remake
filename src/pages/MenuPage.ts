@@ -87,7 +87,7 @@ export default class MenuPage extends Page {
             callback: () => {
                 this.button_sfx.play();
                 this.cleanup();
-                this.set_page("settings-page");
+                this.set_page("character-page");
             }
         })
         this.carCuz.x = 0;
