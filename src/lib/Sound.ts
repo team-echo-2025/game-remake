@@ -25,13 +25,11 @@ export default class Sound implements GameObject {
     }
 
     setup(): void {
-        console.log(this.sound_key, " SOUND KEY");
         const sound = this._scene.get_asset(this.sound_key);
         if (sound == undefined) {
             console.error(`Howler "${this.sound_key}" not found.`)
         }
         this.sound = sound;
-        console.log(this.sound);
     }
 
     toggleMute(): boolean {
@@ -53,7 +51,6 @@ export default class Sound implements GameObject {
     }
 
     play(): void {
-        console.log(this, "sound playing");
         if (this.sound.playing()) return;
         this.sound.play();
     }

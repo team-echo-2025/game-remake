@@ -67,36 +67,32 @@ export default class GameObjectFactory {
 
     slider = (props: SliderProps): Slider => {
         const _slider = new Slider(props);
-        console.log("slider factory call");
         _slider.scene = this.scene;
         this.scene.add(_slider);
         _slider.setup();
         return _slider;
     }
-    sound = (sound_key: string): Sound =>{
+    sound = (sound_key: string): Sound => {
         const _sound = new Sound(sound_key);
-        console.log("sound factory call");
         _sound.scene = this.scene;
         this.scene.add(_sound);
         _sound.setup();
         return _sound;
     }
-    soundmanager = (props: SoundManagerProps): SoundManager =>{
+    soundmanager = (props: SoundManagerProps): SoundManager => {
         const _soundmanager = new SoundManager(props);
-        console.log("soundmanager factory call");
         _soundmanager.scene = this.scene;
-        _soundmanager.sounds = props.sounds; 
+        _soundmanager.sounds = props.sounds;
         this.scene.add(_soundmanager);
         _soundmanager.setup();
         return _soundmanager;
     }
 
-    splashtext = (props: SplashTextProps): SplashText=>{
+    splashtext = (props: SplashTextProps): SplashText => {
         const _splashtext = new SplashText(props);
-        console.log("splashtext factory call");
         _splashtext.scene = this.scene;
         _splashtext.setup();
         this.scene.add(_splashtext);
         return _splashtext;
-    }   
+    }
 }

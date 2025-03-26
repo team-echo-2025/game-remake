@@ -120,20 +120,17 @@ export default class Tilemap implements GameObject {
         this._tilesets.sort((item1, item2) => item1.firstgid > item2.firstgid ? 1 : item1.firstgid == item2.firstgid ? 0 : -1)
 
         for (const layer of this.layers) {
-            if (-layer.width / 2 < this.minx) {
-                //this.minx = layer.minx;
-                this.minx = -layer.width / 2;
+            if (layer.minx < this.minx) {
+                this.minx = layer.minx;
             }
-            if (layer.width - (layer.width / 2) > this.maxx) {
-                this.maxx = layer.width - (layer.width / 2);
+            if (layer.maxx > this.maxx) {
+                this.maxx = layer.maxx;
             }
-            if (-layer.height / 2 < this.miny) {
-                //this.miny = layer.miny;
-                this.miny = -layer.height / 2;
+            if (layer.miny < this.miny) {
+                this.miny = layer.miny;
             }
-            if (layer.height - (layer.height / 2) > this.maxy) {
-                //this.maxy = layer.maxy;
-                this.maxy = layer.height - (layer.height / 2);
+            if (layer.maxy > this.maxy) {
+                this.maxy = layer.maxy;
             }
         }
 
@@ -144,8 +141,6 @@ export default class Tilemap implements GameObject {
             chunk.preload();
         }
 
-        console.log(this.chunks);
-        //this.load_chunks();
         this.buffer = this._scene.p5.createGraphics(this._width, this._height);
         this.player_buffer = this._scene.p5.createGraphics(this._width, this._height);
     }
@@ -162,21 +157,12 @@ export default class Tilemap implements GameObject {
         this.buffer.remove();
         this.player_buffer_image = this.player_buffer.get();
         this.player_buffer.remove();
-        //this._scene.set_asset("buffer_image", this.buffer_image);
-        //this._scene.set_asset("player_buffer_image", this.player_buffer_image);
-        //const _ = this._scene.add_new.sprite("buffer_image");
-        //const player_sprite = this._scene.add_new.sprite("player_buffer_image");
-        //player_sprite.zIndex = 100
-    }
-    draw(): void {
-        this._scene.p5.push();
-        this._scene.p5.noFill();
-        //this._scene.p5.rectMode(this._scene.p5.CENTER);
-        this._scene.p5.rect(0, 0, this.buffer.width, this.buffer.height);
-        //this._scene.p5.translate(-this._scene.p5.width / 2, -this._scene.p5.height / 2);
-        this._scene.p5.image(this.buffer_image, 0, 0);
-        this._scene.p5.image(this.player_buffer_image, 0, 0);
-        this._scene.p5.pop();
+        this._scene.set_asset("buffer_image", this.buffer_image);
+        this._scene.set_asset("player_buffer_image", this.player_buffer_image);
+
+        this._scene.add_new.sprite("buffer_image");
+        const player_sprite = this._scene.add_new.sprite("player_buffer_image");
+        player_sprite.zIndex = 100
     }
 
     get_camera_index = (): Vector2D => {
