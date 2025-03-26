@@ -9,11 +9,12 @@ import PhysicsTestScene from "./scenes/PhysicsTestScene";
 import Dungeon1 from './scenes/PlayScene2';
 import Dungeon2 from './scenes/PlayScene3';
 import iceMaze from "./scenes/IceMaze";
+import DriveToSurvive from './scenes/DriveToSurvive/DriveToSurvive';
 
 let scene_manager: SceneManager;
 const sketch = (p: p5) => {
     p.preload = () => {
-        scene_manager = new SceneManager(p, [MenuScene, PlayScene, KDDevScene, PhysicsTestScene, /*PuzzleDevScene,*/ Dungeon1, Dungeon2, iceMaze], LoadingScene);
+        scene_manager = new SceneManager(p, [MenuScene, PlayScene, KDDevScene, PhysicsTestScene, Dungeon1, Dungeon2, iceMaze, DriveToSurvive], LoadingScene);
         scene_manager.preload();
     };
 

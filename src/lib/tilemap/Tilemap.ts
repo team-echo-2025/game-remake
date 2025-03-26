@@ -170,7 +170,7 @@ export default class Tilemap implements GameObject {
         this.player_buffer.remove();
         this._scene.set_asset("buffer_image", this.buffer_image);
         this._scene.set_asset("player_buffer_image", this.player_buffer_image);
-        const sprite = this._scene.add_new.sprite("buffer_image");
+        const _ = this._scene.add_new.sprite("buffer_image");
         const player_sprite = this._scene.add_new.sprite("player_buffer_image");
         player_sprite.zIndex = 100
     }
