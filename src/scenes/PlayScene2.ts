@@ -1,3 +1,5 @@
+import Sound from "../lib/Sound";
+import SoundManager, { SoundManagerProps } from "../lib/SoundManager";
 import PhysicsObject from "../lib/physics/PhysicsObject";
 import Rectangle from "../lib/physics/Rectangle";
 import RigidBody from "../lib/physics/RigidBody";
@@ -15,6 +17,8 @@ export default class Dungeon1 extends Scene {
     player?: Player;
     tilemap?: Tilemap;
     timer?: Timer;
+    background_music?: Sound;
+    backgroundMusicManager?: SoundManager;
 
     constructor() {
         super("playscene-2");
@@ -31,23 +35,31 @@ export default class Dungeon1 extends Scene {
 
     preload(): any {
         this.loadFont("jersey", "assets/fonts/jersey.ttf");
-        this.loadTilemap("tilemap", "assets/tilemaps/PetersTileMap/Dungeon.tmx")
+        this.loadTilemap("tilemap", "assets/tilemaps/PetersTileMap/Dungeon.tmx");
         this.loadImage("door", "assets/doors/prison_door.png");
         this.loadImage("puzzle", "assets/puzzleImages/access_circuit.png");
         this.loadImage("broken-puzzle", "assets/puzzleImages/access_circuit_broken.png");
         this.loadImage("success-puzzle", "assets/puzzleImages/access_circuit_success.png");
+        // Load the background music file
+        this.loadSound("background5", "assets/background5.mp3");
     }
 
     setup(): void {
         this.tilemap = this.add_new.tilemap({
             tilemap_key: "tilemap",
-        })
-        this.bounds = new Rectangle({ x: this.tilemap.x, y: this.tilemap.y, w: this.tilemap.width, h: this.tilemap.height });
+        });
+        this.bounds = new Rectangle({
+            x: this.tilemap.x,
+            y: this.tilemap.y,
+            w: this.tilemap.width,
+            h: this.tilemap.height
+        });
+
         const object = new PhysicsObject({
             width: 100,
             height: 100,
             mass: Infinity
-        })
+        });
         object.body.x = -104;
         object.body.y = -725;
         object.overlaps = true;
@@ -57,12 +69,13 @@ export default class Dungeon1 extends Scene {
                     starting_pos: { x: -215, y: -215 }
                 });
             }
-        }
+        };
+
         const enter_portal = new PhysicsObject({
             width: 50,
             height: 300,
             mass: Infinity
-        })
+        });
         enter_portal.body.x = -1810;
         enter_portal.body.y = 863;
         enter_portal.overlaps = true;
@@ -70,17 +83,28 @@ export default class Dungeon1 extends Scene {
             if (other == this.player?.body) {
                 this.start("play-scene", {
                     starting_pos: { x: 319, y: -300 }
-                })
+                });
             }
-        }
+        };
 
         this.physics.addObject(object);
         this.physics.addObject(enter_portal);
+
+        // Initialize the background music using Sound and SoundManager
+        this.background_music = this.add_new.sound("background5");
+        // Call the loop method to enable looping, rather than setting a boolean property.
+        this.background_music.loop();
+
+        const bgmProps: SoundManagerProps = {
+            group: "BGM",
+            sounds: [this.background_music]
+        };
+        this.backgroundMusicManager = this.add_new.soundmanager(bgmProps);
+        this.backgroundMusicManager.play();
     }
 
-    // We may want this to be a pause menu eventually
     keyPressed = (e: KeyboardEvent) => {
-        if (e.key == "b") {
+        if (e.key === "b") {
             this.player!.teleporting = !this.player?.teleporting;
         }
         if (e.key === "Escape") {
@@ -91,6 +115,8 @@ export default class Dungeon1 extends Scene {
     onStop(): void {
         this.tilemap = undefined;
         this.player = undefined;
+        if (this.background_music) {
+            this.background_music.stop();
+        }
     }
-
 }
