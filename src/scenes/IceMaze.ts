@@ -6,22 +6,30 @@ import Player from "../lib/Player";
 import Scene from "../lib/Scene";
 import Tilemap from "../lib/tilemap/Tilemap";
 import { Vector2D } from "../lib/types/Physics";
+import PageManager from "../lib/PageManager";
+import IcemazePage from "../pages/icemazePage";
 
 type StartArgs = Readonly<{
     starting_pos: Vector2D;
 }>;
 
 export default class IceMaze extends Scene {
+    pManager : PageManager;
     player?: Player;
     tilemap?: Tilemap;
 
     constructor() {
         super("iceMaze");
         this.physics.debug = false;
+        this.pManager = new PageManager([new IcemazePage()], this)
     }
 
     onStart(args?: StartArgs): void {
         this.camera.zoom = 4;
+
+        this.add(this.pManager);
+        this.pManager.set_page("icemazePage");
+        this.pManager.postDraw();
 
         // Create the player
         this.player = new Player(this);
@@ -80,6 +88,21 @@ export default class IceMaze extends Scene {
         }
         this.physics.addObject(mazeEnding);
     }
+
+    keyPressed = (e: KeyboardEvent) =>
+    {
+        if (e.key === 'r')
+        {
+            if (!this.player || !this.player.body) return;
+            this.player.body.x = -215;
+            this.player.body.y = -215;
+        }
+
+        if (e.key === "Escape")
+        {
+            this.pManager?.keyPressed(e);
+        }
+    };
 
     onStop(): void {
         this.tilemap = undefined;
