@@ -13,7 +13,7 @@ export default class CubeScalesPuzzle extends Puzzle {
     scales!: Scales;
     draggingCube: Cube | null = null;
     resetButton!: ButtonTest;
-//Game references
+    //Game references
     physics_object!: PhysicsObject;
     highlight: boolean = false;
     asset_key: string;
@@ -46,35 +46,34 @@ export default class CubeScalesPuzzle extends Puzzle {
         this.scene.physics.remove(this.physics_object);
     }
     setup(): void {
-        console.log("SETUP STARTED");
         //putting into game itself
-                this.physics_object = new PhysicsObject({
-                    width: 100,
-                    height: 100,
-                    mass: Infinity
-                });
-                this.physics_object.overlaps = true;
-                this.physics_object.body.x = this.x;
-                this.physics_object.body.y = this.y;
-                this.scene.physics.addObject(this.physics_object);
-                this.physics_object.onCollide = (other: RigidBody) => {
-                    if (other == this.player.body) {
-                        clearTimeout(this.collider_timeout);
-                        if (!this.highlight) {
-                            this.highlight = true
-                            this.asset.change_asset("highlighted-puzzle");
-                        }
-                        this.collider_timeout = setTimeout(() => {
-                            this.highlight = false;
-                            this.asset.change_asset("scales");
-                        }, 100);
-                    }
+        this.physics_object = new PhysicsObject({
+            width: 100,
+            height: 100,
+            mass: Infinity
+        });
+        this.physics_object.overlaps = true;
+        this.physics_object.body.x = this.x;
+        this.physics_object.body.y = this.y;
+        this.scene.physics.addObject(this.physics_object);
+        this.physics_object.onCollide = (other: RigidBody) => {
+            if (other == this.player.body) {
+                clearTimeout(this.collider_timeout);
+                if (!this.highlight) {
+                    this.highlight = true
+                    this.asset.change_asset("highlighted-puzzle");
                 }
-                this.asset = this.scene.add_new.sprite(this.asset_key);
-                this.asset.x = this.x;
-                this.asset.y = this.y;
-                this.asset.width = 32;
-                this.asset.height = 48;
+                this.collider_timeout = setTimeout(() => {
+                    this.highlight = false;
+                    this.asset.change_asset("scales");
+                }, 100);
+            }
+        }
+        this.asset = this.scene.add_new.sprite(this.asset_key);
+        this.asset.x = this.x;
+        this.asset.y = this.y;
+        this.asset.width = 32;
+        this.asset.height = 48;
         //Puzzle Setup
         this.scales = new Scales(this.scene);
         this.cubes = [];
@@ -93,35 +92,32 @@ export default class CubeScalesPuzzle extends Puzzle {
         this.resetButton.y = 200;
         if (this.hidden) this.resetButton.hidden = true;
     }
-    
+
     keyPressed(e: KeyboardEvent): void {
-        // console.log("Reached");
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
-        console.log("STATE", this.state);
         if (this.hidden && this.highlight && e.key == 'e') {
             this.player.disabled = true;
             this.hidden = false;
         }
     }
     postDraw(): void {
-        console.log(this.resetButton.hidden);
         if (this.solved()) {
             this.displayWinMessage();
         } else {
             this.scene.p5.background(255);
             this.drawBody();
             this.scales.postDraw();
-    
+
             for (let cube of this.cubes) {
                 if (cube !== this.draggingCube && cube.state !== CubeState.left && cube.state !== CubeState.right) {
                     cube.postDraw();
                 }
             }
-    
+
             if (this.draggingCube) {
                 this.draggingCube.update();
             }
-    
+
             if (this.checkSolution()) {
                 this.displayWinMessage();
             }
@@ -139,7 +135,6 @@ export default class CubeScalesPuzzle extends Puzzle {
     generateSolvableCubes(cubeCount: number): Cube[] {
         let weights: number[] = [];
         let totalWeight: number;
-        console.log("IN");
 
         do {
             totalWeight = Math.floor(this.scene.p5.random(6, 20)) * 2; // Ensures even number
@@ -162,9 +157,7 @@ export default class CubeScalesPuzzle extends Puzzle {
             let cube = new Cube(this.scene, -100 + i * 60, -50, weights[i]);
             this.cubes.push(cube);
         }
-        console.log("DONE GENERATING");
 
-        console.log("Generated Cubes:", this.cubes.map(cube => cube.weight), "Target Balance:", totalWeight / 2);
         return this.cubes;
     }
 

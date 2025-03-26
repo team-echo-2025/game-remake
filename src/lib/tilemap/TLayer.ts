@@ -19,8 +19,6 @@ export default class TLayer {
     private scene: Scene;
     private id!: string;
     private name!: string;
-    private width!: number;
-    private height!: number;
     private chunks: TLayerChunk[];
     private offsetx!: number;
     private offsety!: number;
@@ -29,12 +27,15 @@ export default class TLayer {
     private tilemap: Tilemap;
     private is_collider: boolean = false;
     private top_layer: boolean = false;
+    width!: number;
+    height!: number;
     minx: number = 0;
     maxx: number = 0;
     miny: number = 0;
     maxy: number = 0;
     buffer!: Framebuffer;
     start_offset: Vector2D = { x: 0, y: 0 };
+
 
     set x(x: number) {
         this._x = x;
@@ -139,6 +140,7 @@ export default class TLayer {
                 }
             }
         }
+
         for (const chunk of this.chunks) {
             chunk.precalculate();
             const found = this.tilemap.chunks.get(this.tilemap.key_for({ x: chunk.x, y: chunk.y }))
@@ -147,10 +149,6 @@ export default class TLayer {
             } else {
                 this.tilemap.chunks.set(this.tilemap.key_for({ x: chunk.x, y: chunk.y }), chunk);
             }
-            this.tilemap.minx = Math.min(this.tilemap.minx, chunk.minx);
-            this.tilemap.miny = Math.min(this.tilemap.miny, chunk.miny);
-            this.tilemap.maxx = Math.max(this.tilemap.maxx, chunk.maxx);
-            this.tilemap.maxy = Math.max(this.tilemap.maxy, chunk.maxy);
         }
         this.width = this.maxx - this.minx;
         this.height = this.maxy - this.miny;

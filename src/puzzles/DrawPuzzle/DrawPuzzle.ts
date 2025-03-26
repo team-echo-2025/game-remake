@@ -158,7 +158,6 @@ export default class DrawPuzzle extends Puzzle {
                 if (this.currentLine) { //prove is defined
                     if (tempSelect.matchingPoint(this.currentLine.head) && !(tempSelect === this.currentLine.head)) { //if temp select is OTHER same colored point, finish line
                         this.currentLine.addTail(tempSelect);
-                        console.log("finish line");
                         this.cursor.currentSquare = null;
                         this.lines.push(this.currentLine);
                         this.currentLine = undefined;
@@ -194,7 +193,6 @@ export default class DrawPuzzle extends Puzzle {
                     let first = pointSet[i][0];
                     let second = pointSet[i][1];
                     if (flipped) {
-                        console.log("board flipped")
                         firstX = this.getBoardSize().columns - first[0] - 1;
                         firstY = this.getBoardSize().rows - first[1] - 1;
                         secondX = this.getBoardSize().columns - second[0] - 1;
@@ -222,35 +220,6 @@ export default class DrawPuzzle extends Puzzle {
                     let first = pointSet[i][0];
                     let second = pointSet[i][1];
                     if (flipped) {
-                        console.log("board flipped")
-                        firstX = this.getBoardSize().columns - first[0] - 1;
-                        firstY = this.getBoardSize().rows - first[1] - 1;
-                        secondX = this.getBoardSize().columns - second[0] - 1;
-                        secondY = this.getBoardSize().rows - second[1] - 1;
-                    }
-                    else {
-                        firstX = first[0];
-                        firstY = first[1];
-                        secondX = second[0];
-                        secondY = second[1];
-                    }
-                    const square1 = this.squares[firstX][firstY];
-                    const square2 = this.squares[secondX][secondY];
-                    square1.hasPoint = true;
-                    square1.color = this.colors[i];
-                    square2.hasPoint = true;
-                    square2.color = this.colors[i];
-                }
-                //this.selectRandomSquares();
-                break;
-            case "hard":
-                pointSet = this.hardPuzzleSets[Math.floor(Math.random() * this.hardPuzzleSets.length)];
-
-                for (let i = 0; i < pointSet.length; i++) {// i indexes point pairs
-                    let first = pointSet[i][0];
-                    let second = pointSet[i][1];
-                    if (flipped) {
-                        console.log("board flipped")
                         firstX = this.getBoardSize().columns - first[0] - 1;
                         firstY = this.getBoardSize().rows - first[1] - 1;
                         secondX = this.getBoardSize().columns - second[0] - 1;
@@ -278,7 +247,6 @@ export default class DrawPuzzle extends Puzzle {
                     let first = pointSet[i][0];
                     let second = pointSet[i][1];
                     if (flipped) {
-                        console.log("board flipped")
                         firstX = this.getBoardSize().columns - first[0] - 1;
                         firstY = this.getBoardSize().rows - first[1] - 1;
                         secondX = this.getBoardSize().columns - second[0] - 1;
@@ -371,9 +339,7 @@ export default class DrawPuzzle extends Puzzle {
         p5.text("2. All squares must be filled", (p5.windowWidth / 3), -(offsetY + rows * this.squareSize - 140));
     }
     keyPressed(e: KeyboardEvent): void {
-        // console.log("Reached");0
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
-        // console.log("STATE", this.state);
         if (this.hidden && this.highlight && e.key == 'e') {
             this.player.disabled = true;
             this.hidden = false;
@@ -426,7 +392,6 @@ export default class DrawPuzzle extends Puzzle {
                 const min_y = square.y - this.squareSize / 2;
                 const max_y = square.y + this.squareSize / 2;
                 if (mouseX > min_x && mouseX < max_x && mouseY > min_y && mouseY < max_y) {
-                    console.log(square)
                     return square;
                 }
             }
@@ -443,21 +408,18 @@ export default class DrawPuzzle extends Puzzle {
         const my = selected.y;
 
         let temp: Square | null = this.getSquareAtMousePosition(mx - this.squareSize, my); //left check
-        //console.log("getAdjacentSquares()", temp)
         if (temp != null) {
             realSquare = temp;
             adjacencies.push(realSquare);
         }
 
         temp = (this.getSquareAtMousePosition(mx + this.squareSize, my));//right check
-        //console.log("getAdjacentSquares()", temp)
         if (temp != null) {
             realSquare = temp;
             adjacencies.push(realSquare);
         }
 
         temp = this.getSquareAtMousePosition(mx, my - this.squareSize);//up check
-        //console.log("getAdjacentSquares()", temp)
         if (temp != null) {
             realSquare = temp;
             adjacencies.push(realSquare);
@@ -474,7 +436,6 @@ export default class DrawPuzzle extends Puzzle {
 
     isAdjacent(lineTip: Square, nSquare: Square): boolean {
         let adjacencies: Square[] = this.getAdjacentSquares(lineTip);
-        console.log(adjacencies);
         return adjacencies.includes(nSquare);
     }
 
@@ -494,7 +455,6 @@ export default class DrawPuzzle extends Puzzle {
         if (this.lines.length != 0) {
             for (let i = 0; i < this.lines.length; i++) {
                 if (this.lines[i].inLine(check)) {
-                    console.log("used in line", check)
                     return true;
                 }
             }
@@ -598,7 +558,6 @@ export default class DrawPuzzle extends Puzzle {
     }
 
     setDifficulty(difficulty: string): void {
-        console.log(`Line Puzzle difficulty set to: ${Puzzle.difficulty}`);
         Puzzle.difficulty = difficulty;
         this.squares = [];
         for (let i = 0; i < this.lines.length; i++) {
