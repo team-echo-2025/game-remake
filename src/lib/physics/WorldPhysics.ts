@@ -208,26 +208,26 @@ export default class WorldPhysics implements GameObject {
         if (!this.quad_tree) return;
         const dtSec = this._scene.p5.deltaTime / 1000;
         this.accumulator += this.accumulator >= 1 ? 0 : dtSec;
-        while (this.accumulator >= this.fixedTimeStep) {
-            this.quad_tree.clear();
-            for (const obj of this.physic_objects) {
-                obj.update(this.fixedTimeStep * 1000)
-                this.apply_ground_friction(obj.body, this._friction, this.fixedTimeStep * 1000);
-                this.quad_tree.insert({ rect: obj.body, data: obj });
-            }
-            for (const obj of this.physic_objects) {
-                const candidates = this.quad_tree.query(obj.body);
-                for (const candidate of candidates) {
-                    if (candidate.data.body == obj.body) continue;
-                    const collision_data = this.check_collision(obj.body, candidate.data.body);
-                    if (!this.quad_tree) { return };
-                    if (collision_data) {
-                        this.resolve_collision(collision_data);
-                    }
+        //while (this.accumulator >= this.fixedTimeStep) {
+        this.quad_tree.clear();
+        for (const obj of this.physic_objects) {
+            obj.update(this.fixedTimeStep * 1000)
+            this.apply_ground_friction(obj.body, this._friction, this.fixedTimeStep * 1000);
+            this.quad_tree.insert({ rect: obj.body, data: obj });
+        }
+        for (const obj of this.physic_objects) {
+            const candidates = this.quad_tree.query(obj.body);
+            for (const candidate of candidates) {
+                if (candidate.data.body == obj.body) continue;
+                const collision_data = this.check_collision(obj.body, candidate.data.body);
+                if (!this.quad_tree) { return };
+                if (collision_data) {
+                    this.resolve_collision(collision_data);
                 }
             }
-            this.accumulator -= this.fixedTimeStep;
         }
+        this.accumulator -= this.fixedTimeStep;
+        //}
         if (this._debug) {
             this._scene.p5.push();
             for (const obj of this.physic_objects) {
@@ -268,7 +268,6 @@ export default class WorldPhysics implements GameObject {
         if (!this.quad_tree) return null;
         const rect = new Rectangle({ h: 1, w: 1, x: this._scene.p5.mouseX + this._scene.camera.x - this._scene.p5.width / 2, y: this._scene.p5.mouseY + this._scene.camera.y - this._scene.p5.height / 2 });
         const found = this.quad_tree.query(rect)
-        console.log(found)
         if (found.length <= 0) return null;
         return found[0].data;
     }

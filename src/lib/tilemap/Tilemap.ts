@@ -137,26 +137,15 @@ export default class Tilemap implements GameObject {
         this._width = this.maxx - this.minx;
         this._height = this.maxy - this.miny;
 
-        this._scene.p5.push();
-        this._scene.p5.rectMode("corner");
-        this._scene.p5.noFill();
-        this._scene.p5.stroke(255, 0, 0);
-        this._scene.p5.rect(this.x - this._width / 2, this.y - this._height / 2, this._width, this._height);
-        this._scene.p5.pop();
-
         for (const [_, chunk] of this.chunks) {
             chunk.preload();
         }
 
-        console.log(this.chunks);
-        //this.load_chunks();
         this.buffer = this._scene.p5.createGraphics(this._width, this._height);
         this.player_buffer = this._scene.p5.createGraphics(this._width, this._height);
     }
 
     postSetup(): void {
-        this.cam_chunksx = Math.ceil(this._scene.camera.bounds.halfWidth * 2 / (16 * this.tilewidth));
-        this.cam_chunksy = Math.ceil(this._scene.camera.bounds.halfHeight * 2 / (16 * this.tilewidth));
         for (const [_, chunk] of this.chunks) {
             if (chunk.topmost) {
                 chunk.load(this.buffer, this.player_buffer);
@@ -170,7 +159,8 @@ export default class Tilemap implements GameObject {
         this.player_buffer.remove();
         this._scene.set_asset("buffer_image", this.buffer_image);
         this._scene.set_asset("player_buffer_image", this.player_buffer_image);
-        const sprite = this._scene.add_new.sprite("buffer_image");
+
+        this._scene.add_new.sprite("buffer_image");
         const player_sprite = this._scene.add_new.sprite("player_buffer_image");
         player_sprite.zIndex = 100
     }
