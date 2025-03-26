@@ -46,6 +46,8 @@ export default class IceMaze extends Scene {
 
     setup(): void {
         this.tilemap = this.add_new.tilemap({ tilemap_key: "tilemap" });
+        if (this.player)
+            this.player.body.friction = 0;
         this.bounds = new Rectangle
             ({
                 x: this.tilemap.x,

@@ -52,7 +52,7 @@ export default class MenuPage extends Page {
         }
         const button4: ButtonTestProps = {
             ...button1,
-            label: "3cene 4",
+            label: "Scene 4",
             callback: () => { this.scene.start("drive-to-survive") },
         }
         this.dropdown = this.scene.add_new.dropdown_menu({
@@ -117,7 +117,6 @@ export default class MenuPage extends Page {
             callback: () => {
                 this.button_sfx.play();
                 this.cleanup();
-                console.log("switching to credits");
                 this.set_page("credits-page");
             }
         })
@@ -145,22 +144,31 @@ export default class MenuPage extends Page {
         })
         this.puzzleTest.x = 0
         this.puzzleTest.y = 300
-        
-        const splashprop: SplashTextProps= {
+
+        const splashprop: SplashTextProps = {
             label: "testtesttesttest",
             font_key: "minecraftia",
             font_size: 22
         }
         this.splashtext = this.scene.add_new.splashtext(splashprop);
-        this.splashtext.x = 160;
-        this.splashtext.y = -230;
-    }   
+        this.scene.p5.push();
+        this.scene.p5.textAlign(this.page_manager.scene.p5.CENTER, this.page_manager.scene.p5.CENTER);
+        this.scene.p5.textSize(150);
+        const width = this.scene.p5.textWidth("EXIT PARADOX");
+        this.scene.p5.pop();
+        this.splashtext.x = width / 2 - 70;
+        this.splashtext.y = -250;
+    }
     postDraw(): void {
-        this.page_manager.scene.p5.fill(0);
-        this.page_manager.scene.p5.textAlign(this.page_manager.scene.p5.CENTER, this.page_manager.scene.p5.CENTER);
-        this.page_manager.scene.p5.push();
-        this.page_manager.scene.p5.textSize(95);
-        this.page_manager.scene.p5.text('EXIT PARADOX', 0, -300);
-        this.page_manager.scene.p5.pop();
+        this.scene.p5.textAlign(this.page_manager.scene.p5.CENTER, this.page_manager.scene.p5.CENTER);
+        this.scene.p5.push();
+        this.scene.p5.textSize(150);
+        this.scene.p5.fill(0);
+        this.scene.p5.text('EXIT PARADOX', -10, -290);
+        this.scene.p5.text('EXIT PARADOX', -5, -295);
+
+        this.scene.p5.fill(255);
+        this.scene.p5.text('EXIT PARADOX', 0, -300);
+        this.scene.p5.pop();
     }
 }
