@@ -14,10 +14,10 @@ export default class TLayerChunk {
     tilemap: Tilemap;
     topmost: boolean;
     debug: boolean = true;
-    minx: number = 0;
-    maxx: number = 0;
-    miny: number = 0;
-    maxy: number = 0;
+    minx?: number;
+    maxx?: number;
+    miny?: number;
+    maxy?: number;
     layers: TLayerChunk[] = [];
     chunk_image?: Image;
     loaded: boolean = false;
@@ -41,10 +41,28 @@ export default class TLayerChunk {
                 if (!tile) continue;
                 const tilePixelX = (this.x + tile.x) * this.tilemap.tilewidth;
                 const tilePixelY = (this.y + tile.y) * this.tilemap.tileheight;
-                this.minx = Math.min(this.tilemap.minx, tilePixelX);
-                this.miny = Math.min(this.tilemap.miny, tilePixelY);
-                this.maxx = Math.max(this.tilemap.maxx, tilePixelX + this.tilemap.tilewidth);
-                this.maxy = Math.max(this.tilemap.maxy, tilePixelY + this.tilemap.tileheight);
+                if (!this.minx) {
+                    this.minx = tilePixelX;
+                }
+                if (!this.maxx) {
+                    this.maxx = tilePixelX + this.tilemap.tilewidth;
+                }
+                if (!this.miny) {
+                    this.miny = tilePixelY;
+                }
+                if (!this.maxy) {
+                    this.maxy = tilePixelY + this.tilemap.tileheight;
+                }
+
+                this.minx = Math.min(this.minx, tilePixelX);
+                this.miny = Math.min(this.miny, tilePixelY);
+                this.maxx = Math.max(this.maxx, tilePixelX + this.tilemap.tilewidth);
+                this.maxy = Math.max(this.maxy, tilePixelY + this.tilemap.tileheight);
+
+                this.tilemap.minx = Math.min(this.tilemap.minx, tilePixelX);
+                this.tilemap.miny = Math.min(this.tilemap.miny, tilePixelY);
+                this.tilemap.maxx = Math.max(this.tilemap.maxx, tilePixelX + this.tilemap.tilewidth);
+                this.tilemap.maxy = Math.max(this.tilemap.maxy, tilePixelY + this.tilemap.tileheight);
                 let x = tile.x * this.tilemap.tilewidth;
                 let y = tile.y * this.tilemap.tileheight;
                 this.buffer?.push();
@@ -91,10 +109,8 @@ export default class TLayerChunk {
             buffer = _buffer;
         }
         buffer.push();
-        //buffer.translate(this.tilemap.width / 2, this.tilemap.height / 2);
         buffer.translate(-this.tilemap.minx, -this.tilemap.miny);
         buffer.image(this.chunk_image!, this.x * this.tilemap.tilewidth, this.y * this.tilemap.tileheight);
-        //buffer.image(this.chunk_image!, this.x * this.tilemap.tilewidth, this.y * this.tilemap.tileheight);
         buffer.pop();
         this.loaded = true;
         for (const layer of this.layers) {

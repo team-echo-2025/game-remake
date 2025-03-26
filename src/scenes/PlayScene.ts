@@ -12,7 +12,6 @@ import AccessCircuit from "../puzzles/AccessCircuit/AccessCircuit";
 // import BlockSlide from "../puzzles/BlockSlide/BlockSlide";
 import Sound from "../lib/Sound";
 import SoundManager, { SoundManagerProps } from "../lib/SoundManager";
-import Timer from "../lib/Timer";
 
 class Door implements GameObject {
     private _x: number = 0;
@@ -79,7 +78,6 @@ export default class PlayScene extends Scene {
     tilemap?: Tilemap;
     door?: Door;
     access_circuit?: AccessCircuit;
-    timer!: Timer;
     // block_slide?: BlockSlide;
     private background_music!: Sound;
     private button_sfx!: Sound;
@@ -101,7 +99,6 @@ export default class PlayScene extends Scene {
         this.player.body.x = args?.starting_pos?.x ?? -425;
         this.player.body.y = args?.starting_pos?.y ?? 218;
         this.physics.addObject(this.player);
-        this.scene_manager.setTimer(new Timer(this, 300));
     }
 
     preload(): any {
@@ -223,7 +220,6 @@ export default class PlayScene extends Scene {
         this.access_circuit?.keyPressed(e);
         // this.block_slide?.keyPressed(e);
         if (e.key === "Escape") {
-            this.scene_manager.clearTimer();
             this.start("menu-scene");
         }
     };

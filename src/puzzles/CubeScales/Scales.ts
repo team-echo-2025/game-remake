@@ -30,7 +30,6 @@ export default class CubeScales implements GameObject {
             if (cube.state == CubeState.left) this.leftWeight += cube.weight;
             if (cube.state == CubeState.right) this.rightWeight += cube.weight;
         }
-        console.log("Left: " + this.leftWeight + " Right: " + this.rightWeight);
 
         if (this.leftWeight > this.rightWeight) {
             this.state = ScalesState.leanLeft;
@@ -46,33 +45,33 @@ export default class CubeScales implements GameObject {
     }
     postDraw(): void {
         let p5 = this.scene.p5;
-        
+
         p5.fill(100);
         p5.rect(0, this.baseY - 80, 10, 20); // Pivot beam
-        
+
         p5.push();
         p5.translate(0, this.baseY);
         p5.rotate(p5.radians(this.tiltAngle));
-    
+
         let beamWidth = 250;
         let beamHeight = 20;
         let squareSize = 30;
-        
+
         p5.fill(150);
         p5.rect(0, -100, beamWidth, beamHeight, 10); // Scales
-        
+
         let topLeftX = 15 - beamWidth / 2;
         let topLeftY = -85 - beamHeight / 2;
-        
+
         p5.fill(50);
         p5.rect(topLeftX, topLeftY - squareSize, squareSize, squareSize); // Left container
 
         let topRightX = 235 - beamWidth / 2;
         let topRightY = -85 - beamHeight / 2;
-        
+
         p5.fill(50);
         p5.rect(topRightX, topRightY - squareSize, squareSize, squareSize); // Right container
-    
+
         p5.pop();
     }
     preload(): any { }

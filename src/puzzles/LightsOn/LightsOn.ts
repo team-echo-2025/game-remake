@@ -91,7 +91,6 @@ export default class LightsOn extends Puzzle {
 
     setDifficulty(difficulty: string): void {
         Puzzle.difficulty = difficulty;  // Update the global difficulty
-        console.log(`Lights On difficulty set to: ${Puzzle.difficulty}`);
         this.setup();  // Restart puzzle with new difficulty
     }
 
@@ -221,9 +220,7 @@ export default class LightsOn extends Puzzle {
         }
     }
     keyPressed(e: KeyboardEvent): void {
-        console.log("Reached");
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
-        console.log("STATE", this.state);
         if (this.hidden && this.highlight && e.key == 'e') {
             this.player.disabled = true;
             this.hidden = false;
@@ -232,7 +229,7 @@ export default class LightsOn extends Puzzle {
 
     checkWin(): boolean {
         //Future Implementation???????
-        
+
         // if (this.grid.every(row => row.every(tile => tile))) {
         //     this.state = PuzzleState.completed;
         //     this.hidden = true;

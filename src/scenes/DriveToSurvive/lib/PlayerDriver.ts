@@ -14,9 +14,9 @@ export default class PlayerDriver extends PhysicsObject {
 
     constructor(scene: Scene) {
         super({
-            width: 100,
-            height: 100,
-            mass: 100 * 100
+            width: 20,
+            height: 20,
+            mass: 20 * 20
         });
         this.scene = scene
         this.scene.physics.addObject(this);
@@ -31,9 +31,10 @@ export default class PlayerDriver extends PhysicsObject {
     }
 
     setup(): void {
-        console.log("IN SETUP");
         this.asset = this.scene.add_new.sprite("player-driver");
-        this.asset.zIndex = 1;
+        this.asset.zIndex = 50;
+        this.asset.width = 20;
+        this.asset.height = 20 * 1.8;
         this.scene.camera.follow(this.body);
     }
 
@@ -72,10 +73,9 @@ export default class PlayerDriver extends PhysicsObject {
     }
 
     draw(): void {
-        console.log("DIR: ", this.direction.x, this.direction.y);
         this.asset.x = this.body.x;
         this.asset.y = this.body.y;
-        this.body.velocity.y = this.direction.y * 1000;
-        this.body.velocity.x = this.direction.x * 1000;
+        this.body.velocity.y = this.direction.y * 500;
+        this.body.velocity.x = this.direction.x * 500;
     }
 }

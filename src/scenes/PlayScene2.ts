@@ -5,7 +5,6 @@ import Player from "../lib/Player";
 import Scene from "../lib/Scene";
 import Tilemap from "../lib/tilemap/Tilemap";
 import { Vector2D } from "../lib/types/Physics";
-import Timer from "../lib/Timer";
 
 type StartArgs = Readonly<{
     starting_pos: Vector2D
@@ -14,7 +13,6 @@ type StartArgs = Readonly<{
 export default class Dungeon1 extends Scene {
     player?: Player;
     tilemap?: Tilemap;
-    timer?: Timer;
 
     constructor() {
         super("playscene-2");

@@ -177,7 +177,6 @@ export default class Player extends PhysicsObject {
             this.body.y = this.scene.mouseY;
         }
         if (!this.shooting) return;
-        console.log('clicked')
 
         // Simple "cooldown": only launch if >1 second has passed
         if (this.scene.p5.millis() - this.launch_delay_start > 100) {
@@ -243,7 +242,7 @@ export default class Player extends PhysicsObject {
                 this.width,
                 this.height
             );
-        }        
+        }
         if (this.hairTemplate) {
             if (this.hairFrames.length > 0 && this.hairFrames[this.anim_row].length > 0) {
                 const shirtFrame = this.hairFrames[this.anim_row][this.anim_index];

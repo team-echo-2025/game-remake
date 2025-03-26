@@ -303,7 +303,6 @@ export default class Breakaway extends Puzzle {
             let globalVerts = this.getGlobalVerts(piece);
 
             if (this.pointInPolygon(mousePos, globalVerts)) {
-                console.log(`Selected piece ${i}`);
                 this.selectedPieceIndex = i;
                 piece.dragging = true;
                 this.dragOffset = this.scene.p5.createVector(mousePos.x - piece.pos.x, mousePos.y - piece.pos.y);
@@ -352,9 +351,7 @@ export default class Breakaway extends Puzzle {
             }
             piece.rotating = true;
         }
-        // console.log("Reached");
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
-        // console.log("STATE", this.state);
         if (this.hidden && this.highlight && e.key == 'e') {
             this.player.disabled = true;
             this.hidden = false;
@@ -367,15 +364,15 @@ export default class Breakaway extends Puzzle {
             let r = this.angleDiff(piece.rot, piece.idealRot);
             return d < this.pieceThreshold && r < this.rotationThreshold;
         });
-        if(allCorrect){
+        if (allCorrect) {
             this.state = PuzzleState.completed;
-                this.hidden = true;
-                this.onCompleted && this.onCompleted();
-                this.player.disabled = false;
-                this.scene.physics.remove(this.physics_object);
-                clearTimeout(this.collider_timeout);
-                this.asset.change_asset('breakaway-success');
-                return true;
+            this.hidden = true;
+            this.onCompleted && this.onCompleted();
+            this.player.disabled = false;
+            this.scene.physics.remove(this.physics_object);
+            clearTimeout(this.collider_timeout);
+            this.asset.change_asset('breakaway-success');
+            return true;
         }
         return false;
     }
