@@ -1,7 +1,7 @@
 import Page from "../lib/Page";
 import ButtonTest from "../lib/ui/ButtonTest";
 import Sound from "../lib/Sound";
-import SoundManager, {SoundManagerProps} from "../lib/SoundManager";
+import SoundManager, { SoundManagerProps } from "../lib/SoundManager";
 import Slider from "../lib/ui/Slider"
 
 export default class CharacterPage extends Page {
@@ -52,7 +52,7 @@ export default class CharacterPage extends Page {
     }
     setup(): void {
         this.button_sfx = this.scene.add_new.sound("button_sfx")
-        const sfx_props: SoundManagerProps= {
+        const sfx_props: SoundManagerProps = {
             group: "SFX",
             sounds: [this.button_sfx]
         }
@@ -242,7 +242,7 @@ export default class CharacterPage extends Page {
         this.blueHairSlider.slider.elt.hidden = !show;
     }
 
-    setDifficulty(difficulty: string) {
-        console.log(difficulty);
-    }
+//setDifficulty(difficulty: string) {
+//    console.log(difficulty);
+//}
 }

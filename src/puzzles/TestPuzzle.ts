@@ -1,10 +1,8 @@
-import Page from "../lib/Page";
-import Scene from "../lib/Scene";
 import Puzzle from "../lib/Puzzle"
-import {PuzzleState} from "../lib/Puzzle"
+import { PuzzleState } from "../lib/Puzzle"
 
 export default class TestPuzzle extends Puzzle {
-    checkSolution(e: KeyboardEvent): boolean { 
+    checkSolution(e: KeyboardEvent): boolean {
         if (this.state == PuzzleState.completed) {
             return true;
         }
@@ -18,8 +16,6 @@ export default class TestPuzzle extends Puzzle {
     }
 
     keyPressed = (e: KeyboardEvent) => {
-        const solved = this.checkSolution(e);
-        console.log(solved);
-        console.log(this.solved());
+        const _ = this.checkSolution(e);
     };
 }

@@ -25,7 +25,6 @@ export default class MusicManager implements GameObject {
     setup(): void {
         sound.play();
         document.addEventListener(this.event_name, (e: any) => {
-            console.log(e.detail)
             if (e.detail.mute) {
                 sound.pause();
             } else {

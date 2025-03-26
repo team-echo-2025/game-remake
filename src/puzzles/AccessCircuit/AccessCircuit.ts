@@ -174,9 +174,7 @@ export default class AccessCircuit extends Puzzle {
     }
 
     keyPressed(e: KeyboardEvent): void {
-        // console.log("Reached");
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
-        console.log("STATE", this.state);
         if (this.hidden && this.highlight && e.key == 'e') {
             this.player.disabled = true;
             this.hidden = false;
@@ -197,7 +195,6 @@ export default class AccessCircuit extends Puzzle {
     }
     setDifficulty(difficulty: string): void {
         Puzzle.difficulty = difficulty;
-        console.log(`Access Circuit: Difficulty changed to ${Puzzle.difficulty}`);
         this.setup();  // Restart puzzle
     }
 
@@ -253,7 +250,6 @@ export default class AccessCircuit extends Puzzle {
                                     filled_positions++;
                                 }
                             }
-                            console.log(filled_positions, solution_count)
                             if (solution_count > 0 && filled_positions <= solution_count) {
                                 cell.state = CellState.WRONG_POSITION;
                                 this.circuit_xposition_sfx.play()
@@ -278,7 +274,7 @@ export default class AccessCircuit extends Puzzle {
         const solved = this.checkSolution();
         if (!solved && this.current_row >= this.board.length) {
             this.state = PuzzleState.failed;
-            this.scene.scene_manager.timer?.deductTime(60);
+            //this.scene.timer?.deductTime(60);
             this.hidden = true;
             this.player.disabled = false;
             this.scene.physics.remove(this.physics_object);

@@ -10,18 +10,15 @@ export default class DropdownMenu extends ButtonTest {
 
     set x(x: number) {
         this._x = x;
-        console.log("this._x")
         this.positionChildren();
     }
     set y(y: number) {
         this._y = y;
-        console.log("this._y", this._y)
         this.positionChildren();
     }
 
     constructor(props: DropdownMenuProps) {
         super(props);
-        console.log(props.buttons)
         this._callback = this.toggleMenu;
         this.menuOpen = false;
         this.button_props = props.buttons;
@@ -43,6 +40,7 @@ export default class DropdownMenu extends ButtonTest {
     }
     setup(): void {
         super.setup();
+        this.buttons = [];
         for (let i = 0; i < this.button_props.length; i++) {
             const button = this.scene.add_new.button(this.button_props[i])
             button.hidden = true;
@@ -54,6 +52,7 @@ export default class DropdownMenu extends ButtonTest {
             };
             button.callback = newCallback
         }
+        this.positionChildren();
     }
     toggleMenu(): void {
         this.menuOpen = !this.menuOpen;

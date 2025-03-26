@@ -67,6 +67,6 @@ export default class Sprite implements GameObject {
     }
 
     draw(): void {
-        this.scene.p5.image(this.asset, this.x - this.asset.width / 2, this.y - this.asset.height / 2, this.width ?? this.asset.width, this.height ?? this.asset.height);
+        this.scene.p5.image(this.asset, this.x - this.width / 2, this.y - this.height / 2, this.width ?? this.asset.width, this.height ?? this.asset.height);
     }
 }
