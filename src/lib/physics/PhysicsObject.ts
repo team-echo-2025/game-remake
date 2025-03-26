@@ -36,4 +36,6 @@ export default class PhysicsObject implements GameObject {
     }
     postDraw(): void { }
     onDestroy(): void { }
+    keyPressed(_e: KeyboardEvent): void { }
+    keyReleased(_e: KeyboardEvent): void { }
 }
