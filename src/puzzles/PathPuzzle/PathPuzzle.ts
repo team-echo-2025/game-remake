@@ -246,7 +246,7 @@ export default class PathPuzzle extends Puzzle {
         // Draw start marker 
         if (r === 0 && c === 0) {
           p5.fill(0, 200, 0);
-          p5.ellipse(cx, cy, this.tileSize / 3);
+          p5.ellipse(cx, cy, this.tileSize /2);
           p5.fill(255);
           p5.textAlign(p5.CENTER, p5.CENTER);
           p5.textSize(12);
@@ -254,7 +254,7 @@ export default class PathPuzzle extends Puzzle {
         // Draw end marker 
         else if (r === this.gridSize - 1 && c === this.gridSize - 1) {
           p5.fill(200, 0, 0);
-          p5.ellipse(cx, cy, this.tileSize / 3);
+          p5.ellipse(cx, cy, this.tileSize / 2);
           p5.fill(255);
           p5.textAlign(p5.CENTER, p5.CENTER);
           p5.textSize(12);
@@ -271,7 +271,7 @@ export default class PathPuzzle extends Puzzle {
     p5.textAlign(p5.CENTER, p5.CENTER);
     p5.textSize(16);
     p5.text(
-      "Only one unique path connects the green\nand red. Find the right path!",
+      "Click a tile to rotate it. Multiple paths between \ngreen and red may exist. Find the right path!",
       0,
       this.boardSize / 2 + 40
     );
