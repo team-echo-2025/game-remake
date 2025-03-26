@@ -21,9 +21,14 @@ export default class Scene implements GameObject {
     private _camera: Camera;
     private _bounds: Rectangle;
 
+    private _timer?: Timer;
     private start_time = 0;
     private frames = 0;
     private display_frames = 0;
+
+    get timer(): Timer {
+        return this._timer as Timer;
+    }
 
     get _objects() {
         return this.objects;
@@ -119,10 +124,6 @@ export default class Scene implements GameObject {
     }
 
     loadSound = (key: string, path: string) => {//
-        console.log("loading sound", key)
-        if (this.get_asset(key)) {
-            console.log("asset already loaded", key)
-        }
         if (this.get_asset(key) == undefined) {
             const sound: Promise<Howl> = new Promise<Howl>(res => {
                 const temp: Howl = new Howl({
@@ -226,10 +227,6 @@ export default class Scene implements GameObject {
         })
     }
 
-    setTimer(timer: Timer): void {
-        this._scene_manager.timer = timer;
-    }
-
     remove(object: GameObject) {
         this.objects = this.objects.filter(obj => {
             if (obj === object) {
@@ -242,14 +239,11 @@ export default class Scene implements GameObject {
 
     async preload(): Promise<any> { }
     async preload_objects(): Promise<any> {
-        console.log("in preload objects")
         const to_load = []
         for (const obj of this.objects) {
-            console.log(obj)
             obj.preload && to_load.push(obj.preload());
         }
         for (const pre of this.preloads) {
-            console.log(pre)
             to_load.push(pre);
         }
 
@@ -339,7 +333,16 @@ export default class Scene implements GameObject {
         if (!drawn) {
             this.postDraw();
         }
-        this._scene_manager.timer?.postDraw();
+    }
+
+    disableTimer() {
+        this.timer.hidden = true;
+        this._scene_manager.disableTimer()
+    }
+
+    enableTimer() {
+        this.timer.hidden = false;
+        this._scene_manager.enableTimer()
     }
 
     keyPressed(_: KeyboardEvent): void { }
@@ -387,6 +390,7 @@ export default class Scene implements GameObject {
 
     onStop() { }
     onStop_objects() {
+        this._timer = undefined;
         this._physics.onDestroy();
         for (const obj of this.objects) {
             obj.onDestroy?.();
@@ -396,4 +400,8 @@ export default class Scene implements GameObject {
     }
 
     onStart(args?: any) { }
+    onStart_objects(args?: any) {
+        this._timer = new Timer(this);
+        this.add(this._timer);
+    }
 }

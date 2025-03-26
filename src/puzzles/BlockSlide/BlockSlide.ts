@@ -99,9 +99,7 @@ export default class BlockSlide extends Puzzle {
     }
 
     keyPressed(e: KeyboardEvent): void {
-        // console.log("Reached");
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
-        // console.log("STATE", this.state);
         if (this.hidden && this.highlight && e.key == 'e') {
             this.player.disabled = true;
             this.hidden = false;
@@ -213,7 +211,6 @@ export default class BlockSlide extends Puzzle {
     }
     setDifficulty(difficulty: string): void {
         Puzzle.difficulty = difficulty;
-        console.log(`Block Slide: Difficulty changed to ${Puzzle.difficulty}`);
         this.setup();  // Restart puzzle
     }
 

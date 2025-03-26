@@ -2,6 +2,7 @@ import PhysicsObject from "../lib/physics/PhysicsObject";
 import Rectangle from "../lib/physics/Rectangle";
 import Player from "../lib/Player";
 import Scene from "../lib/Scene";
+
 export class TestObject extends PhysicsObject {
     private scene: Scene;
     private color: { r: number, b: number, g: number };
@@ -51,15 +52,8 @@ export default class PhysicsTestScene extends Scene {
         }
     }
 
-    setup(): void { }
-
-    preload(): any {
-        console.log("begin preload of Physics scene");
-    }
-
     keyPressed(e: KeyboardEvent): void {
         if (e.key == "Escape") {
-            console.log("leaving physics, going to menu")
             this.start('menu-scene');
         }
     }
