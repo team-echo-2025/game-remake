@@ -2,6 +2,7 @@ import p5 from "p5";
 import GameObject from "./GameObject";
 import Scene from "./Scene";
 
+const DURATION = 300;
 export default class SceneManager implements GameObject {
     private p: p5;
     private current_scene?: Scene;
@@ -51,7 +52,7 @@ export default class SceneManager implements GameObject {
             this.start(new_scene.name);
         });
         this.timer_start = p.millis();
-        this._time_remaining = 300;
+        this._time_remaining = DURATION;
     }
 
     async start(name: string, args?: any) {
@@ -94,6 +95,7 @@ export default class SceneManager implements GameObject {
 
                 if (this._time_remaining <= 0) {
                     this.timer_paused = true;
+                    this._time_remaining = DURATION;
                     this.start("menu-scene");
                 }
             }
