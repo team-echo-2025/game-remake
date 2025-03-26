@@ -50,7 +50,6 @@ class GraveyardPuzzle extends Puzzle {
         else if (direction === "right" && x < this.gridSize.width - 1) x++;
 
         this.playerPosition = { x, y };
-        console.log(`Moved ${direction} to (${x}, ${y})`);
     }
 
     // Player interacts with a tombstone
@@ -58,9 +57,7 @@ class GraveyardPuzzle extends Puzzle {
         let { x, y } = this.playerPosition;
 
         if (this.correctTombstones.some(t => t.x === x && t.y === y)) {
-            console.log(this.activateTombstone());
         } else {
-            console.log("The air grows cold... The puzzle resets.");
             this.resetPuzzle();
         }
     }
@@ -85,7 +82,6 @@ class GraveyardPuzzle extends Puzzle {
         this.secondTombstoneActivated = false;
         this.attempts++;
         this.correctTombstones = this.getRandomTombstones();
-        console.log("The graveyard shifts... the puzzle resets.");
     }
 
     // Check if the puzzle is solved

@@ -11,7 +11,7 @@ import CharacterPage from "../pages/CharacterPage";
 import Sound from "../lib/Sound";
 import SoundManager, { SoundManagerProps } from "../lib/SoundManager";
 export default class MenuScene extends Scene {
-    pManager: PageManager;
+    pManager!: PageManager;
     imgLogo!: p5.Image;  // Declare imgLogo variable
     private background_music!: Sound;
     private bgm_manager!: SoundManager;
@@ -19,6 +19,8 @@ export default class MenuScene extends Scene {
     zIndex?: number | undefined = -100;
     constructor() {
         super("menu-scene");
+    }
+    onStart(args?: any): void {
         this.pManager = new PageManager([
             new MenuPage(),
             new KeybindsPage(),
@@ -28,9 +30,8 @@ export default class MenuScene extends Scene {
             new DifficultyPage(),
             new CreditsPage(),
         ], this);
-    }
-    onStart(args?: any): void {
         this.add(this.pManager);
+        this.disableTimer();
     }
     async preload(): Promise<any> {
         this.loadFont('jersey', 'assets/fonts/jersey.ttf')
