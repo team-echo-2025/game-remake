@@ -1,4 +1,4 @@
-import p5, { Framebuffer, Graphics, XML } from "p5";
+import { Graphics, XML } from "p5";
 import Scene from "../Scene";
 import Tilemap from "./Tilemap";
 import TLayerChunk from "./TLayerChunk";
@@ -13,7 +13,7 @@ export default class TLayerColliderChunk extends TLayerChunk {
 
     precalculate() {
         super.precalculate()
-        this.buffer?.clear();
+        //this.buffer?.clear();
     }
 
     preload(): void {
@@ -24,16 +24,16 @@ export default class TLayerColliderChunk extends TLayerChunk {
             for (const tile of row) {
                 if (!tile) continue;
                 const obj = new PhysicsObject({
-                    width: tile.image.width,
-                    height: tile.image.height,
+                    width: this.tilemap.tilewidth,
+                    height: this.tilemap.tileheight,
                     mass: Infinity
                 });
                 let x = tile.x - this.tilemap.minx;
                 x -= this.tilemap.width / 2;
                 let y = tile.y - this.tilemap.miny;
                 y -= this.tilemap.height / 2;
-                obj.body.x = x + tile.image.width / 2;
-                obj.body.y = y + tile.image.height / 2;
+                obj.body.x = x + this.tilemap.tilewidth / 2;
+                obj.body.y = y + this.tilemap.tileheight / 2;
                 this.scene.physics.addObject(obj)
                 this.bodies.push(obj);
             }
