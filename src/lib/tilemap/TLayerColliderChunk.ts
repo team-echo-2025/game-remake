@@ -20,27 +20,28 @@ export default class TLayerColliderChunk extends TLayerChunk {
         for (const layer of this.layers) {
             layer.preload();
         }
+    }
+
+    load(buffer: Graphics, topmost: Graphics) {
         for (const row of this.tiles) {
             for (const tile of row) {
                 if (!tile) continue;
+
                 const obj = new PhysicsObject({
                     width: this.tilemap.tilewidth,
                     height: this.tilemap.tileheight,
                     mass: Infinity
                 });
                 let x = tile.x - this.tilemap.minx;
-                x -= this.tilemap.width / 2;
+                //x -= this.tilemap.width / 2;
                 let y = tile.y - this.tilemap.miny;
-                y -= this.tilemap.height / 2;
-                obj.body.x = x + this.tilemap.tilewidth / 2;
-                obj.body.y = y + this.tilemap.tileheight / 2;
+                //y -= this.tilemap.height / 2;
+                obj.body.x = x - this.tilemap.width / 2 + this.tilemap.tilewidth / 2;
+                obj.body.y = y - this.tilemap.height / 2 + this.tilemap.tileheight / 2;
                 this.scene.physics.addObject(obj)
                 this.bodies.push(obj);
             }
         }
-    }
-
-    load(buffer: Graphics, topmost: Graphics) {
         if (this.bodies.length != 0) {
             this.loaded = true;
             for (const layer of this.layers) {
