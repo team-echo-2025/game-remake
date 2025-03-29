@@ -1,4 +1,3 @@
-import { Font } from "p5";
 import Scene from "../Scene";
 import PhysicsObject from "../physics/PhysicsObject";
 import RigidBody from "../physics/RigidBody";
@@ -50,7 +49,8 @@ export default class Dialogue extends PhysicsObject {
         //use player offset for position of text
         if (this.printText) {
             this.scene.p5.fill(255);
-            this.scene.p5.rect(this.player.body.x-50, this.player.body.y - 25, 125, 15, 20)
+            let aWidth = this.scene.p5.textWidth(this.currentText);
+            this.scene.p5.rect(this.player.body.x, this.player.body.y - 25, aWidth, 15, 20)
             this.scene.p5.fill(0);
             this.scene.p5.textSize(10);
             this.scene.p5.text(this.currentText, this.player.body.x-50, this.player.body.y - 25);
