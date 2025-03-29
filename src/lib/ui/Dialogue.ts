@@ -17,7 +17,7 @@ export default class Dialogue extends PhysicsObject {
     currentText: string = "";
     zIndex: number = 200;
     font!: Font;
-    static font_key: string = "courier";
+    static font_key: string = "jersey";
     
     
     constructor(scene: Scene, player: Player) {
@@ -26,9 +26,6 @@ export default class Dialogue extends PhysicsObject {
         this.scene = scene;
         this.player = player;
         this.font = this.scene.get_asset(Dialogue.font_key);
-        if(this.font === undefined){
-            console.error("Dialogue font: Courier not loaded in scene");
-        }
     }
 
     setup(): void {
@@ -52,18 +49,14 @@ export default class Dialogue extends PhysicsObject {
     }
 
     draw(): void {
-        //add thought bubble with a background so text doesnt get lost in scene
-        //use player offset for position of text
         if (this.printText) {
-            this.scene.p5.push();
-            this.scene.p5.textFont(this.font);
-            this.scene.p5.textSize(10);
+
             this.scene.p5.fill(255);
-            let aWidth = this.scene.p5.textWidth(this.currentText);
-            this.scene.p5.rect(this.player.body.x, this.player.body.y - 25, aWidth, 15, 20)
+            this.scene.p5.textSize(10);
+            const width = this.scene.p5.textWidth(this.currentText);
+            this.scene.p5.rect(this.player.body.x, this.player.body.y-25, width + 10, 15, 20)
             this.scene.p5.fill(0);
-            this.scene.p5.text(this.currentText, this.player.body.x-50, this.player.body.y - 25);
-            this.scene.p5.push();
+            this.scene.p5.text(this.currentText, this.player.body.x - width/2, this.player.body.y-25);
         }
     }
 
