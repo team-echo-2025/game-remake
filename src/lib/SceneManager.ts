@@ -9,9 +9,6 @@ export default class SceneManager implements GameObject {
     private loading_scene: Scene;
     private scenes: Map<string, Scene>;
     public difficulty: string;
-    public playerHair = "none";
-    public playerClothes = "assets/player_tunic.png";
-    public playerHat = "none";
     public timer?: Timer;
     constructor(p: p5, scenes: (new (name: string) => Scene)[], LoadingScene: new (name: string) => Scene) {
         this.scenes = new Map<string, Scene>();
