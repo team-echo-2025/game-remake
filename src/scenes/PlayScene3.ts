@@ -15,6 +15,7 @@ import Breakaway from "../puzzles/Breakaway/Breakaway";
 import LightsOn from "../puzzles/LightsOn/LightsOn";
 import CubeScalesPuzzle from "../puzzles/CubeScales/CubeScales";
 import PathPuzzle from "../puzzles/PathPuzzle/PathPuzzle";
+import Dialogue from "../lib/ui/Dialogue";
 
 type StartArgs = Readonly<{
     starting_pos: Vector2D
@@ -35,6 +36,7 @@ export default class Dungeon2 extends Scene {
     background?: Graphics;
     portal?: Spritesheet;
     puzzles: (BlockSlide | DrawPuzzle | Breakaway | PathPuzzle | LightsOn)[] = [];
+    dialogue!: Dialogue;
     constructor() {
         super("playscene-3");
         this.physics.debug = false;
@@ -239,6 +241,13 @@ export default class Dungeon2 extends Scene {
             }
         }
         this.physics.addObject(object);
+
+        this.dialogue = new Dialogue(this, this.player!);
+        this.dialogue.addDialogue(0, 348, "There's puzzles around that need solved to escape");
+        if(!(this.puzzles.every(puzzle => puzzle.state === PuzzleState.completed))){
+            this.dialogue.addDialogue(-18, 0, "Solve the puzzles first to escape");
+        }
+        this.dialogue.setup();
     }
 
     check_completed = () => {
@@ -289,7 +298,8 @@ export default class Dungeon2 extends Scene {
     draw(): void {
         this.puzzles.forEach(puzzle => !puzzle.hidden && puzzle.draw());
         this.p5.push();
-        this.p5.image(this.dark_backdrop, -this.p5.width / 2 + this.player!.body.x, -this.p5.height / 2 + this.player!.body.y);
+        // this.p5.image(this.dark_backdrop, -this.p5.width / 2 + this.player!.body.x, -this.p5.height / 2 + this.player!.body.y);
         this.p5.pop();
+        this.dialogue.draw();
     }
 }

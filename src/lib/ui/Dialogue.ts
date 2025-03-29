@@ -50,7 +50,6 @@ export default class Dialogue extends PhysicsObject {
 
     draw(): void {
         if (this.printText) {
-
             this.scene.p5.fill(255);
             this.scene.p5.textSize(10);
             const width = this.scene.p5.textWidth(this.currentText);
@@ -58,6 +57,22 @@ export default class Dialogue extends PhysicsObject {
             this.scene.p5.fill(0);
             this.scene.p5.text(this.currentText, this.player.body.x - width/2, this.player.body.y-25);
         }
+        // for (let i = 0; i < this.scene.p5.textWidth(this.currentText); ++i) {
+        //     let c = this.currentText[i]
+        //     if (c == '\n') {
+                
+        //     }
+        //     else {
+        //         if (this.printText) {
+        //             this.scene.p5.fill(255);
+        //             this.scene.p5.textSize(10);
+        //             const width = this.scene.p5.textWidth(this.currentText);
+        //             this.scene.p5.rect(this.player.body.x, this.player.body.y - 25, width + 10, 15, 20)
+        //             this.scene.p5.fill(0);
+        //             this.scene.p5.text(this.currentText, this.player.body.x - width / 2, this.player.body.y - 25);
+        //         }
+        //     }
+        // }
     }
 
     addDialogue(x: number, y: number, text: string): void {
