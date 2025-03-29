@@ -207,7 +207,7 @@ export default class PlayScene extends Scene {
             this.access_circuit.force_solve();
             this.door.open();
         }
-
+        this.dialogue = new Dialogue(this, this.player!);
         this.dialogue.addDialogue(-329, 168, "Find a way to open the door");
         this.dialogue.addDialogue(-331, -19, "Follow the path and you'll find your way eventually");
         this.dialogue.addDialogue(200, -250, "Is there something up there?");
