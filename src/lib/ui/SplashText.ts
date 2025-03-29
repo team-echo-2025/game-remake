@@ -7,7 +7,25 @@ export type SplashTextProps = Readonly<{
     font_key: string;
     font_size?: number;
 }>;
-export default class SplashText implements GameObject {
+export default class SplashText implements GameObject{
+
+    static quotes:string[] = [    "I don't know how happen but happen did",
+        "All white people suck.",
+        "This week is just a continuation of the last",
+        "whatever boats ur float",
+        //"they actually try, \nthey’re just not as good as y’all",
+        "feels good.. I like it.\nWhy arent more people like this",
+        "Hail developer, Philosopher King Eli",
+        "This feature was made by Konnor Duncan",
+        "Inspired by Minecraft",
+        "James broke everything",
+        "Now with a blue shield bar!",
+        "I'll just pull the race card",
+        "Brought to you by Team Echo!",
+        "The ice cream truck music is racist",
+        "Does anyone else think Delozier\nlooks like Mark Hamil?"
+    ]
+
     hidden: boolean = false;
     protected _x: number = 0;
     protected _y: number = 0;
