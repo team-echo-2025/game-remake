@@ -1,4 +1,4 @@
-import { Framebuffer, XML } from "p5";
+import { XML } from "p5";
 import Scene from "../Scene";
 import TLayerChunk from "./TLayerChunk";
 import Tilemap from "./Tilemap";
@@ -33,7 +33,6 @@ export default class TLayer {
     maxx: number = 0;
     miny: number = 0;
     maxy: number = 0;
-    buffer!: Framebuffer;
     start_offset: Vector2D = { x: 0, y: 0 };
 
 
@@ -130,8 +129,7 @@ export default class TLayer {
                         x: x,
                         y: y,
                         scene: this.scene,
-                        image: tile_data.image.get(tile_data.x, tile_data.y, tile_data.width, tile_data.height,
-                        ),
+                        data: tile_data,
                         flipped_y: flipped_y != 0,
                         flipped_x: flipped_x != 0,
                         rotated: rotated != 0,
