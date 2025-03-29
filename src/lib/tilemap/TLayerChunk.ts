@@ -21,7 +21,7 @@ export default class TLayerChunk {
     layers: TLayerChunk[] = [];
     chunk_image?: Image;
     loaded: boolean = false;
-    buffer?: Graphics;
+    //buffer?: Graphics;
 
     constructor(chunk: XML, tilemap: Tilemap, scene: Scene, topmost?: boolean) {
         this.data = chunk.getContent().split(',').map(item => parseInt(item));
@@ -32,7 +32,7 @@ export default class TLayerChunk {
         this.scene = scene;
         this.tilemap = tilemap;
         this.topmost = topmost ?? false;
-        this.buffer = scene.p5.createGraphics(this.width * tilemap.tilewidth, this.height * tilemap.tileheight);
+        //this.buffer = scene.p5.createGraphics(this.width * tilemap.tilewidth, this.height * tilemap.tileheight);
     }
 
     precalculate() {
@@ -63,28 +63,8 @@ export default class TLayerChunk {
                 this.tilemap.miny = Math.min(this.tilemap.miny, tilePixelY);
                 this.tilemap.maxx = Math.max(this.tilemap.maxx, tilePixelX + this.tilemap.tilewidth);
                 this.tilemap.maxy = Math.max(this.tilemap.maxy, tilePixelY + this.tilemap.tileheight);
-                let x = tile.x * this.tilemap.tilewidth;
-                let y = tile.y * this.tilemap.tileheight;
-                this.buffer?.push();
-                this.buffer?.translate(x, y);
-                if (tile.rotated) {
-                    this.buffer?.translate(this.tilemap.tilewidth / 2, this.tilemap.tileheight / 2);
-                    this.buffer?.rotate(this.scene.p5.HALF_PI); // 90° rotation
-                    this.buffer?.translate(-this.tilemap.tilewidth / 2, -this.tilemap.tileheight / 2);
-                    this.buffer?.translate(this.tilemap.tilewidth, 0);
-                    this.buffer?.scale(-1, 1);
-                }
-                if (tile.flipped_x) {
-                    this.buffer?.translate(this.tilemap.tilewidth, 0);
-                    this.buffer?.scale(-1, 1);
-                }
-                if (tile.flipped_y) {
-                    this.buffer?.translate(0, this.tilemap.tileheight);
-                    this.buffer?.scale(1, -1);
-                }
-
-                this.buffer!.image(tile.image, 0, 0);
-                this.buffer?.pop();
+                //this.buffer!.image(tile.image, 0, 0);
+                //this.buffer?.pop();
 
                 tile.x = (this.x + tile.x) * this.tilemap.tilewidth;
                 tile.y = (this.y + tile.y) * this.tilemap.tileheight;
@@ -93,12 +73,12 @@ export default class TLayerChunk {
     }
 
     preload() {
-        for (const layer of this.layers) {
-            layer.preload();
-        }
-        this.chunk_image = this.buffer!.get();
-        this.buffer!.remove();
-        this.buffer = undefined;
+        //for (const layer of this.layers) {
+        //    layer.preload();
+        //}
+        //this.chunk_image = this.buffer!.get();
+        //this.buffer!.remove();
+        //this.buffer = undefined;
     }
 
     load(_buffer: Graphics, topmost: Graphics) {
@@ -108,10 +88,35 @@ export default class TLayerChunk {
         } else {
             buffer = _buffer;
         }
-        buffer.push();
-        buffer.translate(-this.tilemap.minx, -this.tilemap.miny);
-        buffer.image(this.chunk_image!, this.x * this.tilemap.tilewidth, this.y * this.tilemap.tileheight);
-        buffer.pop();
+        //buffer.push();
+        for (let row of this.tiles) {
+            for (let tile of row) {
+                if (!tile) continue;
+                buffer.push();
+                buffer.translate(tile.x, tile.y);
+                buffer.translate(-this.tilemap.minx, -this.tilemap.miny);
+                if (tile.rotated) {
+                    buffer.translate(this.tilemap.tilewidth / 2, this.tilemap.tileheight / 2);
+                    buffer.rotate(this.scene.p5.HALF_PI); // 90° rotation
+                    buffer.translate(-this.tilemap.tilewidth / 2, -this.tilemap.tileheight / 2);
+                    buffer.translate(this.tilemap.tilewidth, 0);
+                    buffer.scale(-1, 1);
+                }
+                if (tile.flipped_x) {
+                    buffer.translate(this.tilemap.tilewidth, 0);
+                    buffer.scale(-1, 1);
+                }
+                if (tile.flipped_y) {
+                    buffer.translate(0, this.tilemap.tileheight);
+                    buffer.scale(1, -1);
+                }
+                buffer.image(tile.data.image, 0, 0, this.tilemap.tilewidth, this.tilemap.tileheight, tile.data.x, tile.data.y, tile.data.width, tile.data.height);
+                buffer.pop();
+            }
+        }
+
+        //buffer.image(this.chunk_image!, this.x * this.tilemap.tilewidth, this.y * this.tilemap.tileheight);
+        //buffer.pop();
         this.loaded = true;
         for (const layer of this.layers) {
             layer.load(_buffer, topmost);

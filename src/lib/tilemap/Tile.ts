@@ -1,14 +1,13 @@
-import { Image } from "p5";
 import Scene from "../Scene";
 
 
 type TileProps = Readonly<{
     x: number;
     y: number;
-    image: Image;
     scene: Scene;
     flipped_x?: boolean;
     flipped_y?: boolean;
+    data: any;
     rotated?: boolean;
 }>
 
@@ -18,13 +17,13 @@ export default class Tile {
     rotated: boolean;
     x: number;
     y: number;
-    image: Image;
     scene: Scene;
+    data: any;
 
     constructor(props: TileProps) {
         this.x = props.x;
         this.y = props.y;
-        this.image = props.image;
+        this.data = props.data;
         this.scene = props.scene;
         this.flipped_x = props.flipped_x ?? false;
         this.flipped_y = props.flipped_y ?? false;
