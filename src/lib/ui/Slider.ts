@@ -5,6 +5,7 @@ import { debug } from "webpack";
 export type SliderProps = Readonly<{
     scene: Scene;
     key: string;
+    color?: string;
     callback?: (e: string) => void;
 }>;
 
@@ -16,6 +17,7 @@ export default class Slider implements GameObject {
     private previous: string = "";
     protected callback?: (e: string) => void;
     protected key: string = "";
+    protected color?: string;
 
     constructor(props: SliderProps){
         this._scene = props.scene;
@@ -23,7 +25,13 @@ export default class Slider implements GameObject {
         this._slider.position(this._x,this._y)
         this._slider.size(200);
         this.key = props.key;
+        this.color = props.color;
         this.callback = props.callback;
+
+        // lets us specify the color (must be a web color: https://htmlcolorcodes.com/color-names/)
+        if (this.color && this.isValidCSSColor(this.color)) {
+            this._slider.elt.style.setProperty("accent-color", this.color);
+        }        
     }
     set x(x: number) {
         this._x = x;
@@ -71,6 +79,12 @@ export default class Slider implements GameObject {
         }
         this.previous = ""+(this._slider.value());
         this._scene.p5.pop();
+    }
+    private isValidCSSColor(color: string): boolean {
+        const s = new Option().style;
+        s.color = '';
+        s.color = color;
+        return s.color !== '';
     }
     preload(): any {
     }
