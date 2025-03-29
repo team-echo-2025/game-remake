@@ -111,7 +111,7 @@ export default class PlayScene extends Scene {
 
     preload(): any {
         this.loadFont("jersey", "assets/fonts/jersey.ttf");
-        this.loadFont("jersey", "assets/fonts/cour.ttf");
+        this.loadFont("courier", "assets/fonts/cour.ttf");
         this.loadTilemap("tilemap", "assets/tilemaps/LaythsTileMap/world-1.tmx")
         this.loadImage("door", "assets/doors/prison_door.png");
         this.loadImage("puzzle", "assets/puzzleImages/access_circuit.png");
