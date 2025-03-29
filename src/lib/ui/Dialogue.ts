@@ -9,16 +9,17 @@ import Player from "../Player";
 //or this.body.x .y
 export default class Dialogue extends PhysicsObject {
     hidden: boolean = true;
-    private font_size: number = 24;
     private scene: Scene;
     printText: boolean = false;
     private collider_timeout: any;
     player: Player;
     dialogues: { x: number; y: number; text: string }[] = [];
     currentText: string = "";
+    zIndex: number = 200;
+    
     
     constructor(scene: Scene, player: Player) {
-        super({ width: 50, height: 50, mass: Infinity }); // Adjust collision size
+        super({ width: 50, height: 50, mass: Infinity });
         this.body.overlaps = true;
         this.scene = scene;
         this.player = player;
@@ -26,7 +27,7 @@ export default class Dialogue extends PhysicsObject {
 
     setup(): void {
         this.dialogues.forEach(dialogue => {
-            const dialogueTrigger = new PhysicsObject({ width: 50, height: 50, mass: Infinity });
+            const dialogueTrigger = new PhysicsObject({ width: 25, height: 25, mass: Infinity });
             dialogueTrigger.body.x = dialogue.x;
             dialogueTrigger.body.y = dialogue.y;
             dialogueTrigger.overlaps = true;
@@ -45,7 +46,11 @@ export default class Dialogue extends PhysicsObject {
     }
 
     draw(): void {
+        //add thought bubble with a background so text doesnt get lost in scene
+        //use player offset for position of text
         if (this.printText) {
+            this.scene.p5.fill(255);
+            this.scene.p5.rect(this.player.body.x-50, this.player.body.y - 25, 125, 15, 20)
             this.scene.p5.fill(0);
             this.scene.p5.textSize(10);
             this.scene.p5.text(this.currentText, this.player.body.x-50, this.player.body.y - 25);

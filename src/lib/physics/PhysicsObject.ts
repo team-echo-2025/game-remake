@@ -13,6 +13,7 @@ export type PhysicsObjectProps = Readonly<{
 export default class PhysicsObject implements GameObject {
     id: any;
     body: RigidBody;
+    zIndex?: number | undefined;
 
     set overlaps(v: boolean) {
         this.body.overlaps = v;

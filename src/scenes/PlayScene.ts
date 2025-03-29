@@ -111,6 +111,7 @@ export default class PlayScene extends Scene {
 
     preload(): any {
         this.loadFont("jersey", "assets/fonts/jersey.ttf");
+        this.loadFont("jersey", "assets/fonts/cour.ttf");
         this.loadTilemap("tilemap", "assets/tilemaps/LaythsTileMap/world-1.tmx")
         this.loadImage("door", "assets/doors/prison_door.png");
         this.loadImage("puzzle", "assets/puzzleImages/access_circuit.png");
@@ -207,9 +208,7 @@ export default class PlayScene extends Scene {
             this.door.open();
         }
 
-
-        this.dialogue = new Dialogue(this, this.player!);
-        this.dialogue.addDialogue(-329, 168, "Find A way to open the door");
+        this.dialogue.addDialogue(-329, 168, "Find a way to open the door");
         this.dialogue.addDialogue(-331, -19, "Follow the path and you'll find your way eventually");
         this.dialogue.addDialogue(200, -250, "Is there something up there?");
         this.dialogue.setup();

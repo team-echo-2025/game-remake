@@ -63,6 +63,7 @@ export default class Dungeon2 extends Scene {
         // this.loadImage("success-puzzle", "assets/puzzleImages/access_circuit_success.png");
         // this.loadImage("highlighted-puzzle", "assets/puzzleImages/access_circuit_highlighted.png");
         this.loadImage("drawPuzzle", "assets/puzzleImages/drawPuzzleBase.png");
+        this.loadFont("jersey", "assets/fonts/cour.ttf");
         this.loadImage("breakaway", "assets/puzzleImages/breakawayBase.png");
         this.loadImage("blockslide", "assets/puzzleImages/blockSlideBase.png");
         this.loadImage("scales", "assets/puzzleImages/scalesBase.png");
