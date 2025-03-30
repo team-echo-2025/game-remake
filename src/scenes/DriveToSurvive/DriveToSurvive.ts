@@ -15,6 +15,9 @@ export default class DriveToSurvive extends Scene {
     onStart(): void {
         this.player = new PlayerDriver(this);
         this.camera.zoom = 2;
+        this.player.body.x = 0;
+        this.player.body.y = 0;
+        this.physics.friction = 0;
     }
 
     preload(): any {
@@ -26,8 +29,8 @@ export default class DriveToSurvive extends Scene {
             tilemap_key: "map",
         });
         this.bounds = new Rectangle({
-            x: 0,
-            y: 0,
+            x: this.tilemap.x,
+            y: this.tilemap.y,
             w: this.tilemap.width,
             h: this.tilemap.height,
         })
