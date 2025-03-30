@@ -9,8 +9,9 @@
 // import Player from "../lib/Player";
 // import DrawPuzzle from "../puzzles/DrawPuzzle/DrawPuzzle";
 // import PathPuzzle from "../puzzles/PathPuzzle/PathPuzzle";
+// import Switches from "./Switches";
 
-// export default class PuzzleDevScene extends Scene {
+//export default class PuzzleDevScene extends Scene {
 //     easy!: ButtonTest;
 //     normal!: ButtonTest;
 //     hard!: ButtonTest;
@@ -31,6 +32,7 @@
 //     pathButton!: ButtonTest;
 //     set_difficulty!: Puzzle;
 //     player!: Player;
+
 
 //     constructor() {
 //         super("puzzle-dev-scene");

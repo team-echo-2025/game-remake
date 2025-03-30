@@ -55,7 +55,7 @@ export default class Switches extends Scene {
     }
 
     onStart(args?: any): void {
-        this.camera.zoom = 4;
+        this.camera.zoom = 3;
 
         this.add(this.pManager);
         this.pManager.set_page("SwitchesPage");
@@ -88,7 +88,7 @@ export default class Switches extends Scene {
         gridSize.body.y = -215;
         gridSize.onCollide = (other: RigidBody) => {
             if (other == this.player?.body) {
-                this.start('playscene-2', {starting_pos : { x: -103, y: -636 } }); 
+                this.start('playscene-2', {starting_pos : { x: 140, y: -120 } }); 
             }
         }
         this.physics.addObject(gridSize);

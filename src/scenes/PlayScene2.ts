@@ -22,7 +22,7 @@ export default class Dungeon1 extends Scene {
     onStart(args?: StartArgs): void {
         this.camera.zoom = 3;
         this.player = new Player(this);
-        this.player.body.x = args?.starting_pos?.x ?? -1767;
+        this.player.body.x = args?.starting_pos?.x ?? -1100;
         this.player.body.y = args?.starting_pos?.y ?? 863;
         this.physics.addObject(this.player);
     }
@@ -51,7 +51,7 @@ export default class Dungeon1 extends Scene {
         object.overlaps = true;
         object.onCollide = (other: RigidBody) => {
             if (other == this.player?.body) {
-                this.start('iceMaze', {
+                this.start('Switches', {
                     starting_pos: { x: -215, y: -215 }
                 });
             }
