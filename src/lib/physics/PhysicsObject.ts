@@ -1,4 +1,5 @@
 import GameObject from '../GameObject';
+import Scene from '../Scene';
 import RigidBody from './RigidBody';
 
 export type PhysicsObjectProps = Readonly<{
@@ -30,7 +31,7 @@ export default class PhysicsObject implements GameObject {
     setup(): void { }
     async preload(): Promise<void> { }
     draw(): void { }
-    update(dt: number): void {
+    update(dt: number, _: Scene): void {
         this.body.x += this.body.velocity.x * dt / 1000;
         this.body.y += this.body.velocity.y * dt / 1000;
     }

@@ -112,7 +112,7 @@ export default class SplashText implements GameObject {
         this._label = "test456"
         const quotes = [
             "I don't know how happen\n but happen did",
-            "All white people suck.",
+            //"All white people suck.",
             "This week is just a \ncontinuation of the last",
             "whatever boats ur float",
             "feels good.. I like it.\nWhy arent more people like this",

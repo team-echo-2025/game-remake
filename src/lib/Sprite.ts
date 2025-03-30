@@ -3,6 +3,7 @@ import GameObject from "./GameObject";
 import Scene from "./Scene";
 
 export default class Sprite implements GameObject {
+    protected _rotation: number = 0;
     protected _zIndex?: number | undefined = 0;
     protected _x: number;
     protected _y: number;
@@ -21,6 +22,13 @@ export default class Sprite implements GameObject {
         return this._zIndex;
     }
 
+    get rotation() {
+        return this._rotation;
+    }
+
+    set rotation(num: number) {
+        this._rotation = num;
+    }
 
     get x() {
         return this._x;
@@ -66,7 +74,19 @@ export default class Sprite implements GameObject {
         this.setup();
     }
 
+
     draw(): void {
-        this.scene.p5.image(this.asset, this.x - this.width / 2, this.y - this.height / 2, this.width ?? this.asset.width, this.height ?? this.asset.height);
+        const p = this.scene.p5;
+        p.push();
+        p.translate(this.x + this.width / 2, this.y + this.height / 2);
+        p.rotate(-this._rotation);
+        p.image(
+            this.asset,
+            -this.width / 2,
+            -this.height / 2,
+            this.width,
+            this.height
+        );
+        p.pop();
     }
 }
