@@ -246,7 +246,6 @@ export default class Dungeon2 extends Scene {
         this.dialogue.addDialogue(0, 348, "There's puzzles around that need solved to escape");
         this.dialogue.addDialogue(-262, -188, "HURRY UP!!");
         this.dialogue.addDialogue(189, 14, "You are going super slow");
-        this.dialogue.addDialogue(-374, -351, "LGTBQ IS A MENTAL DISORDER", 1,1);
         this.dialogue.setup();
     }
 
