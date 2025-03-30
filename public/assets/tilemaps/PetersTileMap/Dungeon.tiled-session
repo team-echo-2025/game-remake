@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "GraveyardSwitch/graveyardSwitch.tmx",
+    "activeFile": "graveyardSwitch.tmx",
     "expandedProjectPaths": [
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
@@ -47,8 +47,8 @@
             "scale": 0.75,
             "selectedLayer": 7,
             "viewCenter": {
-                "x": 185.33333333333326,
-                "y": -214
+                "x": 163.33333333333331,
+                "y": 127.33333333333337
             }
         },
         "Stone walls.tsx": {
@@ -76,6 +76,14 @@
         "dungeonset2.tsx": {
             "scaleInDock": 2
         },
+        "graveyardSwitch.tmx": {
+            "scale": 0.75,
+            "selectedLayer": 7,
+            "viewCenter": {
+                "x": 38.66666666666663,
+                "y": -163.33333333333337
+            }
+        },
         "props.tsx": {
             "scaleInDock": 1.5
         }
@@ -91,7 +99,7 @@
         "Texture/TX Tileset Wall.tsx",
         "Dungeonset.tsx",
         "Trees.tsx",
-        "GraveyardSwitch/graveyardSwitch.tmx",
+        "graveyardSwitch.tmx",
         "GraveyardSwitch/Stairs.tsx",
         "GraveyardSwitch/Graveyard.tsx",
         "GraveyardSwitch/Set 1.tsx",
@@ -108,6 +116,7 @@
         "GraveyardSwitch/Set 1.tsx",
         "GraveyardSwitch/Graveyard.tsx",
         "GraveyardSwitch/Stairs.tsx",
+        "graveyardSwitch.tmx",
         "GraveyardSwitch/graveyardSwitch.tmx",
         "Dungeon Floor 1.tmx"
     ],
