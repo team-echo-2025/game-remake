@@ -19,6 +19,8 @@ export default class Switches extends Scene {
     firstSwitch: [number, number] | null;
     secondSwitch: [number, number] | null;
     foundSwitch: boolean;
+    positions: [number, number][];
+    switchState: number;
 
     constructor() {
         super("Switches");
@@ -27,7 +29,29 @@ export default class Switches extends Scene {
         this.firstSwitch = null;
         this.secondSwitch = null;
         this.foundSwitch = false;
-        
+        this.positions = [ 
+            [-18,-16], //top left
+            [-18, -4], //bottom left
+            [15, -16], // top right
+            [15, -4], // bottom right
+        ]
+        this.switchState = 0;
+        this.initializePuzzle();
+    }
+    initializePuzzle() { // 8x3
+        const row = Math.floor(Math.random() * 8);
+        const col = Math.floor(Math.random() * 3);
+        this.firstSwitch = [row, col];
+
+        const neighbors: [ number, number ][] = [];
+
+        if (row > 0) neighbors.push([row - 1, col]);
+        if (row < 7) neighbors.push([row + 1, col]);
+        if (col > 0) neighbors.push([row, col - 1]);
+        if (col < 2) neighbors.push([row, col + 1]);
+
+        this.secondSwitch = neighbors[Math.floor(Math.random() * neighbors.length)];
+        this.switchState = 0;
     }
 
     onStart(args?: any): void {
@@ -72,13 +96,45 @@ export default class Switches extends Scene {
         //Ending
 
     }
+
     keyPressed = (e: KeyboardEvent) => {
         if(e.key === 'e'){
             if(!this.player || !this.player.body) return;
+            this.pressSwitch(this.player.body.x, this.player.body.y);
         }
         if (e.key === "Escape"){
             this.pManager?.keyPressed(e);
         } 
+    }
+    pressSwitch(x: number, y: number) {
+        if (!this.firstSwitch || !this.secondSwitch) {
+            this.switchState = -1;
+            return;
+        }
+
+        const row = Math.round((x + 18) / 10);
+        const col = Math.round((y + 16) / 10);
+
+        if (!this.foundSwitch) {
+            if (row === this.firstSwitch[0] && col === this.firstSwitch[1]) {
+                this.foundSwitch = true;
+                this.switchState = 1;
+            } else {
+                this.resetPuzzle();
+                this.switchState = -1;
+            }
+        } else {
+            if (row === this.secondSwitch[0] && col === this.secondSwitch[1]) {
+                this.switchState = 2;
+            } else {
+                this.resetPuzzle();
+                this.switchState = -1;
+            }
+        }
+    }
+    resetPuzzle() {
+        this.foundSwitch = false;
+        this.initializePuzzle;
     }
     onStop(): void {
         this.tilemap = undefined;
