@@ -5,6 +5,7 @@ import Player from "../lib/Player";
 import Scene from "../lib/Scene";
 import Tilemap from "../lib/tilemap/Tilemap";
 import { Vector2D } from "../lib/types/Physics";
+import Dialogue from "../lib/ui/Dialogue";
 
 type StartArgs = Readonly<{
     starting_pos: Vector2D
@@ -13,6 +14,7 @@ type StartArgs = Readonly<{
 export default class Dungeon1 extends Scene {
     player?: Player;
     tilemap?: Tilemap;
+    dialogue!: Dialogue;
 
     constructor() {
         super("playscene-2");
@@ -38,6 +40,7 @@ export default class Dungeon1 extends Scene {
     }
 
     setup(): void {
+        // this.physics.debug = true;
         this.tilemap = this.add_new.tilemap({
             tilemap_key: "tilemap",
         })
@@ -75,6 +78,12 @@ export default class Dungeon1 extends Scene {
 
         this.physics.addObject(object);
         this.physics.addObject(enter_portal);
+
+        this.dialogue = new Dialogue(this, this.player!);
+        this.dialogue.addDialogue(-1572, 870, "I heard there's a graveyard far north",100,100);
+        this.dialogue.addDialogue(-1546, 725, "There's a city to the east",500,45);
+        this.dialogue.addDialogue(-1203, 497, "Is that an ice maze to the northeast??",45,500);
+        this.dialogue.setup();
     }
 
     // We may want this to be a pause menu eventually
@@ -90,6 +99,10 @@ export default class Dungeon1 extends Scene {
     onStop(): void {
         this.tilemap = undefined;
         this.player = undefined;
+    }
+
+    draw(): void {
+        this.dialogue.draw();
     }
 
 }
