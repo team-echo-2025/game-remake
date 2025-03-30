@@ -23,8 +23,8 @@
             "scale": 1.5,
             "selectedLayer": 10,
             "viewCenter": {
-                "x": -1241.6666666666665,
-                "y": -888.3333333333333
+                "x": -128.33333333333331,
+                "y": -0.3333333333333144
             }
         },
         "Dungeonset.tsx": {
@@ -44,11 +44,11 @@
             "scaleInEditor": 1
         },
         "GraveyardSwitch/graveyardSwitch.tmx": {
-            "scale": 1,
+            "scale": 0.75,
             "selectedLayer": 7,
             "viewCenter": {
-                "x": 27.5,
-                "y": 205.5
+                "x": 185.33333333333326,
+                "y": -214
             }
         },
         "Stone walls.tsx": {

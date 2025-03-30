@@ -12,11 +12,12 @@ export default class GraveyardPage extends Page
     {
         this.scene.loadFont('jersey', 'assets/fonts/jersey.ttf');
     }
-    
+
     cleanup(): void
     {
         this._active = false;
     }
+    postDraw(): void { }
     keyPressed = (e: KeyboardEvent) =>
     {
         if(e.key === "Escape")
