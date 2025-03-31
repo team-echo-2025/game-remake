@@ -57,6 +57,11 @@ export default class MenuPage extends Page {
             label: "Scene 4",
             callback: () => { this.scene.start("drive-to-survive") },
         }
+        const button5: ButtonTestProps = {
+            ...button1,
+            label: "Scene 5",
+            callback: () => { this.scene.start("new-scene") },
+        }
         this.dropdown = this.scene.add_new.dropdown_menu({
             label: "Show Dev Scenes",
             font_key: "jersey",
@@ -65,6 +70,7 @@ export default class MenuPage extends Page {
                 button2,
                 button3,
                 button4,
+                button5,
             ]
         })
         this.dropdown.y = -200
