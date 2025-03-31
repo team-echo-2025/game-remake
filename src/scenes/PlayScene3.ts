@@ -110,6 +110,7 @@ export default class Dungeon2 extends Scene {
         this.loadSound("snap", "assets/TInterfaceSounds/snap-264680.mp3");
         this.loadSound("lightSwitch", "assets/TInterfaceSounds/light-switch.mp3");
         this.loadSound("swish", "assets/TInterfaceSounds/swish-sound-94707.mp3");
+        this.loadSound("draw", "assets/TInterfaceSounds/draw.mp3");
     }
 
     cubicBezier(p0: Vector2D, p1: Vector2D, p2: Vector2D, p3: Vector2D, t: number) {

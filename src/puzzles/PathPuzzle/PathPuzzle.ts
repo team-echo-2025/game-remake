@@ -14,6 +14,9 @@ import {
   getOpenEdges,
 } from "./PathUtils";
 
+import Sound from "../../lib/Sound";
+
+
 export default class PathPuzzle extends Puzzle {
   grid: PathCell[][] = [];
   gridSize: number = 5;
@@ -28,6 +31,8 @@ export default class PathPuzzle extends Puzzle {
   private collider_timeout: any;
   x: number = 0;
   y: number = 0;
+
+  click_sfx!: Sound;
 
   constructor(scene: Scene, puzzle_asset_key: string, player: Player) {
     super(scene);
@@ -55,7 +60,9 @@ export default class PathPuzzle extends Puzzle {
   // The set of cell coordinates (e.g. "0,0") that define the solution path
   solutionSet: Set<string> = new Set();
 
-  async preload(): Promise<void> { }
+  preload(): any { 
+    
+  }
 
   setup(): void {
     // Putting the puzzle into the game
@@ -115,6 +122,8 @@ export default class PathPuzzle extends Puzzle {
       this.scene.p5.windowHeight
     );
     this.scene.p5.rectMode(this.scene.p5.CENTER);
+
+    this.click_sfx = this.scene.add_new.sound("lightSwitch");
   }
 
   setDifficulty(difficulty: string): void {
@@ -139,6 +148,11 @@ export default class PathPuzzle extends Puzzle {
   }
 
   mousePressed(): void {
+    if (this.hidden || 
+      this.state === PuzzleState.failed || 
+      this.state === PuzzleState.completed) {
+    return;
+    }
     const p5 = this.scene.p5;
     // if (this.solved()) {
     //   this.scene.start(this.scene.name);
@@ -156,6 +170,9 @@ export default class PathPuzzle extends Puzzle {
     // If it’s in range, rotate that tile
     if (row >= 0 && row < this.gridSize && col >= 0 && col < this.gridSize) {
       rotateTile(this.grid[row][col]);
+      if (this.click_sfx && typeof this.click_sfx.play == "function"){
+        this.click_sfx.play();
+      }
       if (this.checkWin()) {
         // Puzzle is solved
         this.state = PuzzleState.completed;
@@ -246,7 +263,7 @@ export default class PathPuzzle extends Puzzle {
         // Draw start marker 
         if (r === 0 && c === 0) {
           p5.fill(0, 200, 0);
-          p5.ellipse(cx, cy, this.tileSize /2);
+          p5.ellipse(cx, cy, this.tileSize / 3);
           p5.fill(255);
           p5.textAlign(p5.CENTER, p5.CENTER);
           p5.textSize(12);
@@ -254,7 +271,7 @@ export default class PathPuzzle extends Puzzle {
         // Draw end marker 
         else if (r === this.gridSize - 1 && c === this.gridSize - 1) {
           p5.fill(200, 0, 0);
-          p5.ellipse(cx, cy, this.tileSize / 2);
+          p5.ellipse(cx, cy, this.tileSize / 3);
           p5.fill(255);
           p5.textAlign(p5.CENTER, p5.CENTER);
           p5.textSize(12);
