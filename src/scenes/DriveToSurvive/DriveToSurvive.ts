@@ -21,7 +21,7 @@ export default class DriveToSurvive extends Scene {
     }
 
     preload(): any {
-        this.loadTilemap("map", "assets/tilemaps/racing/racetrack.tmx");
+        this.loadTilemap("map", "assets/tilemaps/racing/BoatMap.tmx");
     }
 
     setup(): void {
