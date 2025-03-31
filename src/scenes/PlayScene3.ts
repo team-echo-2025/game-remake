@@ -244,8 +244,10 @@ export default class Dungeon2 extends Scene {
 
         this.dialogue = new Dialogue(this, this.player!);
         this.dialogue.addDialogue(0, 348, "There's puzzles around that need solved to escape");
-        this.dialogue.addDialogue(-262, -188, "HURRY UP!!");
-        this.dialogue.addDialogue(189, 14, "You are going super slow");
+        this.dialogue.addDialogue(-262, -188, "HURRY UP!!", 50, 50 );
+        this.dialogue.addDialogue(189, 14, "You are going super slow", 35, 35);
+        this.dialogue.addDialogue(-312, 303, "Why are you wasting time reading this? GET GOING" , 35 , 35);
+        this.dialogue.addDialogue(359, 243, "My grandma is faster than you", 35, 35 );
         this.dialogue.setup();
     }
 

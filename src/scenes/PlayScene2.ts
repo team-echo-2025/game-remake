@@ -83,6 +83,13 @@ export default class Dungeon1 extends Scene {
         this.dialogue.addDialogue(-1572, 870, "I heard there's a graveyard far north",100,100);
         this.dialogue.addDialogue(-1546, 725, "There's a city to the east",500,45);
         this.dialogue.addDialogue(-1203, 497, "Is that an ice maze to the northeast??",45,500);
+        this.dialogue.addDialogue(-1572, 557, "Fahoo forays, dahoo dorays",100,100);
+        this.dialogue.addDialogue(-1572, 307, "Welcome Christmas! Come this way",100,100);
+        this.dialogue.addDialogue(-1441, 0, "Fahoo forays, dahoo dorays",110,110);
+        this.dialogue.addDialogue(-1476, -281, "Welcome Christmas, Christmas Day",100,100);
+        this.dialogue.addDialogue(-1526, -586, "Finally, you're here",500,45);
+        this.dialogue.addDialogue(-943, -152, "Seriously, can you move any faster?",100,100);
+        this.dialogue.addDialogue(-234, -507, "Good you're here. I hope you get lost in the maze",100,100);
         this.dialogue.setup();
     }
 
