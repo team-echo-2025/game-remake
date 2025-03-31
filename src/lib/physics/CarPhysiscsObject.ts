@@ -13,7 +13,7 @@ export default class CarPhysicsObject extends PhysicsObject {
     private mass = 10;
     private enginePower = 5000;
     private brakePower = 4000;
-    private sideFrictionConstant = 50;
+    private sideFrictionConstant = 100;
     private rollingFrictionConstant = 10;
     private maxSteerAngle = 2;
 
