@@ -1,6 +1,5 @@
 import GameObject from "../lib/GameObject";
 import PhysicsObject from "../lib/physics/PhysicsObject";
-import Rectangle from "../lib/physics/Rectangle";
 import RigidBody from "../lib/physics/RigidBody";
 import Player from "../lib/Player";
 import { PuzzleState } from "../lib/Puzzle";
@@ -11,8 +10,8 @@ import { Vector2D } from "../lib/types/Physics";
 import AccessCircuit from "../puzzles/AccessCircuit/AccessCircuit";
 import Sound from "../lib/Sound";
 import SoundManager, { SoundManagerProps } from "../lib/SoundManager";
+import BoxCollider from "../lib/physics/BoxCollider";
 import Dialogue from "../lib/ui/Dialogue";
-
 
 class Door implements GameObject {
     private _x: number = 0;
@@ -176,7 +175,7 @@ export default class PlayScene extends Scene {
         })
         const offsetX = 32;
         const offsetY = 32;
-        this.bounds = new Rectangle({ x: this.tilemap.x + offsetX / 2 - 16, y: this.tilemap.y + offsetY / 2, w: this.tilemap.width - offsetX - 32, h: this.tilemap.height - offsetX });
+        this.bounds = new BoxCollider({ x: this.tilemap.x + offsetX / 2 - 16, y: this.tilemap.y + offsetY / 2, w: this.tilemap.width - offsetX - 32, h: this.tilemap.height - offsetX });
 
 
         this.door = new Door(this, "door");

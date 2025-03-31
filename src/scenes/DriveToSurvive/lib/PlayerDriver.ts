@@ -1,8 +1,8 @@
-import PhysicsObject from "../../../lib/physics/PhysicsObject";
+import CarPhysicsObject from "../../../lib/physics/CarPhysiscsObject";
 import Scene from "../../../lib/Scene";
 import Sprite from "../../../lib/Sprite";
 import { Vector2D } from "../../../lib/types/Physics";
-export default class PlayerDriver extends PhysicsObject {
+export default class PlayerDriver extends CarPhysicsObject {
     private asset!: Sprite;
     private pressed_keys: any = {};
     private scene!: Scene;
@@ -15,15 +15,15 @@ export default class PlayerDriver extends PhysicsObject {
     constructor(scene: Scene) {
         super({
             width: 20,
-            height: 20,
+            height: 20 * 1.8,
             mass: 20 * 20
         });
         this.scene = scene
-        this.scene.physics.addObject(this);
         this.upKey = localStorage.getItem("forward") ?? 'w';
         this.leftKey = localStorage.getItem("left") ?? 'a';
         this.downKey = localStorage.getItem("down") ?? 's';
         this.rightKey = localStorage.getItem("right") ?? 'd';
+        this.scene.physics.addObject(this);
     }
 
     preload(): any {
@@ -39,43 +39,53 @@ export default class PlayerDriver extends PhysicsObject {
     }
 
     keyPressed(e: KeyboardEvent): void {
-        //if (this.disabled) { return; }
-        if (!this.pressed_keys[this.upKey] && e.key == this.upKey) {
-            this.direction.y -= 1;
-        }
-        if (!this.pressed_keys[this.leftKey] && e.key == this.leftKey) {
-            this.direction.x -= 1;
-        }
-        if (!this.pressed_keys[this.downKey] && e.key == this.downKey) {
+        const key = e.key.toLowerCase();
+        if (!this.pressed_keys[this.upKey] && key == this.upKey) {
             this.direction.y += 1;
         }
-        if (!this.pressed_keys[this.rightKey] && e.key == this.rightKey) {
+        if (!this.pressed_keys[this.leftKey] && key == this.leftKey) {
+            this.direction.x -= 1;
+        }
+        if (!this.pressed_keys[this.downKey] && key == this.downKey) {
+            this.direction.y -= 1;
+        }
+        if (!this.pressed_keys[this.rightKey] && key == this.rightKey) {
             this.direction.x += 1;
         }
-        this.pressed_keys[e?.key] = true;
+        if (!this.pressed_keys['shift'] && key == "shift") {
+            this.handbreak = 1;
+        }
+        this.pressed_keys[key] = true;
     }
 
     keyReleased(e: KeyboardEvent): void {
-        //if (this.disabled) { return; }
-        if (this.pressed_keys[this.upKey] && e.key == this.upKey) {
-            this.direction.y += 1;
-        }
-        if (this.pressed_keys[this.leftKey] && e.key == this.leftKey) {
-            this.direction.x += 1;
-        }
-        if (this.pressed_keys[this.downKey] && e.key == this.downKey) {
+        const key = e.key.toLowerCase();
+        if (this.pressed_keys[this.upKey] && key == this.upKey) {
             this.direction.y -= 1;
         }
-        if (this.pressed_keys[this.rightKey] && e.key == this.rightKey) {
+        if (this.pressed_keys[this.leftKey] && key == this.leftKey) {
+            this.direction.x += 1;
+        }
+        if (this.pressed_keys[this.downKey] && key == this.downKey) {
+            this.direction.y += 1;
+        }
+        if (this.pressed_keys[this.rightKey] && key == this.rightKey) {
             this.direction.x -= 1;
         }
-        this.pressed_keys[e?.key] = false;
+        if (this.pressed_keys['shift'] && key == "shift") {
+            this.handbreak = 0;
+        }
+        this.pressed_keys[key] = false;
     }
 
     draw(): void {
-        this.asset.x = this.body.x;
-        this.asset.y = this.body.y;
-        this.body.velocity.y = this.direction.y * 500;
-        this.body.velocity.x = this.direction.x * 500;
+        this.gas = this.direction.y > 0 ? 1 : 0;
+        this.brake = this.direction.y < 0 ? 1 : 0;
+        this.steer = this.direction.x;
+        this.body.rotation = -this.heading + 270 * (Math.PI / 180);
+        this.asset.rotation = -this.heading + 270 * (Math.PI / 180);
+        this.asset.x = this.body.x - this.asset.width / 2;
+        this.asset.y = this.body.y - this.asset.height / 2;
+        //this.scene.camera.rotation = this.heading + (90 * (Math.PI / 180));
     }
 }
