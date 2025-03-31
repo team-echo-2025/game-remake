@@ -7,7 +7,25 @@ export type SplashTextProps = Readonly<{
     font_key: string;
     font_size?: number;
 }>;
-export default class SplashText implements GameObject {
+export default class SplashText implements GameObject{
+
+    static quotes:string[] = [    /*"I don't know how happen but happen did",*/
+        // "All white people suck.",
+        // "This week is just a continuation of the last",
+        // "whatever boats ur float",
+        // //"they actually try, \nthey’re just not as good as y’all",
+        // "feels good.. I like it.\nWhy arent more people like this",
+        // "Hail developer, Philosopher King Eli",
+        // "This feature was made by Konnor Duncan",
+        // "Inspired by Minecraft",
+        // "James broke everything",
+        // "Now with a blue shield bar!",
+        // "I'll just pull the race card",
+        // "Brought to you by Team Echo!",
+        "Delozier looks like Mark Hamill",
+        "The ice cream truck song is racist"
+    ]
+
     hidden: boolean = false;
     protected _x: number = 0;
     protected _y: number = 0;
@@ -17,7 +35,7 @@ export default class SplashText implements GameObject {
     private _scene!: Scene;
     private font!: Font;
 
-    constructor(props: SplashTextProps) {
+    constructor(props: SplashTextProps){
         this._label = props.label;
         this.font_size = props.font_size ?? this.font_size;
         this.font_key = props.font_key;
@@ -48,14 +66,14 @@ export default class SplashText implements GameObject {
     }
 
     set scene(s: Scene) {
-        this._scene = s;
-    }
-
+            this._scene = s;
+        }
+    
     get scene() {
         return this._scene;
     }
 
-    preload(): any { }
+    preload(): any {}
 
     setup(): void {
         this._scene.p5.push();
@@ -108,22 +126,12 @@ export default class SplashText implements GameObject {
     draw(): void {
         this._draw();
     }
-    getQuote(): void {
-        this._label = "test456"
-        const quotes = [
-            "I don't know how happen\n but happen did",
-            //"All white people suck.",
-            "This week is just a \ncontinuation of the last",
-            "whatever boats ur float",
-            "feels good.. I like it.\nWhy arent more people like this",
-            //"they actually try, \nthey’re just not as good as y’all",
-        ]
-        const randomIndex = Math.floor(Math.random() * quotes.length);
-
+    getQuote():void {
+        const randomIndex = Math.floor(Math.random() * SplashText.quotes.length);
         // Get the random string from the array
-        this._label = quotes[randomIndex];
+        this._label = SplashText.quotes[randomIndex];
 
-        if ((this._scene.p5.hour() == 20 || this._scene.p5.hour() == 8) && this.scene.p5.minute() == 14) //8:14 override
+        if((this._scene.p5.hour() == 20 || this._scene.p5.hour() == 8) && this.scene.p5.minute() == 14) //8:14 override
             this._label = "I'm gonna whip it out at 8:14"
     }
 }

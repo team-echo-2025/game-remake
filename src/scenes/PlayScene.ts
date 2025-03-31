@@ -8,10 +8,10 @@ import Spritesheet from "../lib/Spritesheet";
 import Tilemap from "../lib/tilemap/Tilemap";
 import { Vector2D } from "../lib/types/Physics";
 import AccessCircuit from "../puzzles/AccessCircuit/AccessCircuit";
-// import BlockSlide from "../puzzles/BlockSlide/BlockSlide";
 import Sound from "../lib/Sound";
 import SoundManager, { SoundManagerProps } from "../lib/SoundManager";
 import BoxCollider from "../lib/physics/BoxCollider";
+import Dialogue from "../lib/ui/Dialogue";
 
 class Door implements GameObject {
     private _x: number = 0;
@@ -21,6 +21,7 @@ class Door implements GameObject {
     asset!: Spritesheet;
     scene: Scene;
     physics_object!: PhysicsObject;
+
 
     get x() {
         return this._x;
@@ -59,6 +60,7 @@ class Door implements GameObject {
         this.scene.physics.addObject(this.physics_object);
     }
 
+
     open() {
         this.asset.once(true);
         this.scene.physics.remove(this.physics_object);
@@ -69,29 +71,33 @@ type StartArgs = Readonly<{
     starting_pos: Vector2D
 }>
 
+
 type SceneState = {
     access_puzzle: PuzzleState;
 }
+
 
 export default class PlayScene extends Scene {
     player?: Player;
     tilemap?: Tilemap;
     door?: Door;
     access_circuit?: AccessCircuit;
-    // block_slide?: BlockSlide;
     private background_music!: Sound;
     private button_sfx!: Sound;
     private bgm_manager!: SoundManager;
     private sfx_manager!: SoundManager;
+    dialogue!: Dialogue;
     state: SceneState = {
         access_puzzle: PuzzleState.notStarted,
     }
 
+
     constructor() {
         super("play-scene");
-        this.physics.debug = true;
+        this.physics.debug = false;
         //this.physics.debug = true;
     }
+
 
     onStart(args: StartArgs): void {
         this.camera.zoom = 3;
@@ -101,8 +107,10 @@ export default class PlayScene extends Scene {
         this.physics.addObject(this.player);
     }
 
+
     preload(): any {
         this.loadFont("jersey", "assets/fonts/jersey.ttf");
+        this.loadFont("courier", "assets/fonts/cour.ttf");
         this.loadTilemap("tilemap", "assets/tilemaps/LaythsTileMap/world-1.tmx")
         this.loadImage("door", "assets/doors/prison_door.png");
         this.loadImage("puzzle", "assets/puzzleImages/access_circuit.png");
@@ -118,9 +126,11 @@ export default class PlayScene extends Scene {
         this.loadImage("fire", "assets/effects/fire.png");
     }
 
+
     setup(): void {
         this.background_music = this.add_new.sound("background_music");
         this.button_sfx = this.add_new.sound("button_sfx");
+
 
         const bgm_props: SoundManagerProps = {
             group: "BGM",
@@ -133,6 +143,7 @@ export default class PlayScene extends Scene {
         this.bgm_manager = this.add_new.soundmanager(bgm_props);
         this.sfx_manager = this.add_new.soundmanager(sfx_props);
         this.bgm_manager.play();
+
 
         const tree_test = this.add_new.spritesheet("tree", 8, 8, 1000);
         tree_test.start_col = 1;
@@ -151,16 +162,13 @@ export default class PlayScene extends Scene {
         fire.y = 160;
         fire.play();
 
+
         this.access_circuit = new AccessCircuit(this, 'puzzle', this.player!);
         this.access_circuit.x = -280;
         this.access_circuit.y = 70;
         this.access_circuit?.setup();
         this.access_circuit.asset.zIndex = 101;
-        // this.block_slide = new BlockSlide(this, 'puzzle', this.player!);
-        // this.block_slide.x = -280;
-        // this.block_slide.y = 70;
-        // this.block_slide?.setup();
-        // this.block_slide.asset.zIndex = 101;
+
 
         this.tilemap = this.add_new.tilemap({
             tilemap_key: "tilemap",
@@ -168,6 +176,7 @@ export default class PlayScene extends Scene {
         const offsetX = 32;
         const offsetY = 32;
         this.bounds = new BoxCollider({ x: this.tilemap.x + offsetX / 2 - 16, y: this.tilemap.y + offsetY / 2, w: this.tilemap.width - offsetX - 32, h: this.tilemap.height - offsetX });
+
 
         this.door = new Door(this, "door");
         this.door.setup();
@@ -177,10 +186,6 @@ export default class PlayScene extends Scene {
             this.door!.open();
             this.state.access_puzzle = PuzzleState.completed;
         }
-        // this.block_slide.onCompleted = () => {
-        //     this.door!.open();
-        //     this.state.access_puzzle = PuzzleState.completed;
-        // }
         const portal1 = new PhysicsObject({
             width: 300,
             height: 32,
@@ -199,26 +204,28 @@ export default class PlayScene extends Scene {
         this.physics.addObject(portal1);
         if (this.state.access_puzzle == PuzzleState.completed) {
             this.access_circuit.force_solve();
-            // this.block_slide.force_solve();
             this.door.open();
         }
+        this.dialogue = new Dialogue(this, this.player!);
+        this.dialogue.addDialogue(-329, 168, "Find a way to open the door");
+        this.dialogue.addDialogue(-331, -19, "Follow the path and you'll find your way eventually");
+        this.dialogue.addDialogue(170, -237, "Is there something up there?");
+        this.dialogue.setup();
     }
+
 
     mousePressed(e: MouseEvent): void {
         this.access_circuit?.mousePressed(e);
-        // this.block_slide?.mousePressed();
     }
+
 
     mouseReleased(_: MouseEvent): void {
         this.access_circuit?.mouseReleased();
     }
 
-
-
     // We may want this to be a pause menu eventually
     keyPressed = (e: KeyboardEvent) => {
         this.access_circuit?.keyPressed(e);
-        // this.block_slide?.keyPressed(e);
         if (e.key === "Escape") {
             this.start("menu-scene");
         }
@@ -229,16 +236,15 @@ export default class PlayScene extends Scene {
         this.tilemap = undefined;
         this.door = undefined;
         this.access_circuit = undefined;
-        // this.block_slide = undefined;
     }
-
     postDraw(): void {
         this.access_circuit?.postDraw();
-        // this.block_slide?.postDraw();
     }
-
     draw(): void {
         this.access_circuit?.draw();
-        // this.block_slide?.draw();
+        this.dialogue.draw();
     }
 }
+
+
+
