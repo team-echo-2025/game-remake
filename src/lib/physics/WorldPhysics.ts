@@ -1,10 +1,11 @@
 import GameObject from "../GameObject";
 import Scene from "../Scene";
 import { Vector2D } from "../types/Physics";
+import BoxCollider from "./BoxCollider";
+import { ColliderProps } from "./Collider";
 import { CollisionResult } from "./CollisionResult";
 import DynamicQuadTree from "./DynamicQuadTree";
 import PhysicsObject from "./PhysicsObject";
-import Rectangle, { RectangleProps } from "./Rectangle";
 import RigidBody from "./RigidBody";
 
 export default class WorldPhysics implements GameObject {
@@ -50,7 +51,7 @@ export default class WorldPhysics implements GameObject {
     }
 
     setup() {
-        const quad_rect: RectangleProps = {
+        const quad_rect: ColliderProps = {
             x: 0,
             y: 0,
             w: window.innerWidth,
@@ -66,43 +67,19 @@ export default class WorldPhysics implements GameObject {
     }
 
     check_collision(a: RigidBody, b: RigidBody): CollisionResult | undefined {
-        if (a.overlaps) {
-            a.onOverlap && a.onOverlap(b);
-        }
-        if (b.overlaps) {
-            b.onOverlap && b.onOverlap(a);
-        }
-        if (a.overlaps || b.overlaps) {
-            return undefined;
-        };
-        const distX = b.x - a.x;
-        const distY = b.y - a.y;
+        if (a.overlaps) { a.onOverlap && a.onOverlap(b) }
+        if (b.overlaps) { b.onOverlap && b.onOverlap(a) }
+        if (a.overlaps || b.overlaps) return undefined;
 
-        const sumHalfWidth = a.halfWidth + b.halfWidth;
-        const sumHalfHeight = a.halfHeight + b.halfHeight;
+        const ACollider = a.collider as BoxCollider;
+        const BCollider = b.collider as BoxCollider;
 
-        if (Math.abs(distX) > sumHalfWidth) return undefined;
-        if (Math.abs(distY) > sumHalfHeight) return undefined;
-
-        const overlapX = sumHalfWidth - Math.abs(distX);
-        const overlapY = sumHalfHeight - Math.abs(distY);
-
-        let normal: Vector2D = { x: 0, y: 0 };
-        let penetration = 0;
-
-        if (overlapX < overlapY) {
-            penetration = overlapX;
-            normal.x = distX > 0 ? 1 : -1;
-            normal.y = 0;
-        } else {
-            penetration = overlapY;
-            normal.x = 0;
-            normal.y = distY > 0 ? 1 : -1;
+        const manifold = ACollider.getManifold(BCollider);
+        if (!manifold) {
+            return undefined; // No collision
         }
 
-        const length = Math.sqrt(normal.x * normal.x + normal.y * normal.y);
-        normal.x /= length;
-        normal.y /= length;
+        const { normal, penetration } = manifold;
         const result: CollisionResult = {
             a,
             b,
@@ -112,6 +89,53 @@ export default class WorldPhysics implements GameObject {
         };
         return result;
     }
+    //check_collision(a: RigidBody, b: RigidBody): CollisionResult | undefined {
+    //    if (a.overlaps) {
+    //        a.onOverlap && a.onOverlap(b);
+    //    }
+    //    if (b.overlaps) {
+    //        b.onOverlap && b.onOverlap(a);
+    //    }
+    //    if (a.overlaps || b.overlaps) {
+    //        return undefined;
+    //    };
+    //    const distX = b.x - a.x;
+    //    const distY = b.y - a.y;
+
+    //    const sumHalfWidth = a.halfWidth + b.halfWidth;
+    //    const sumHalfHeight = a.halfHeight + b.halfHeight;
+
+    //    if (Math.abs(distX) > sumHalfWidth) return undefined;
+    //    if (Math.abs(distY) > sumHalfHeight) return undefined;
+
+    //    const overlapX = sumHalfWidth - Math.abs(distX);
+    //    const overlapY = sumHalfHeight - Math.abs(distY);
+
+    //    let normal: Vector2D = { x: 0, y: 0 };
+    //    let penetration = 0;
+
+    //    if (overlapX < overlapY) {
+    //        penetration = overlapX;
+    //        normal.x = distX > 0 ? 1 : -1;
+    //        normal.y = 0;
+    //    } else {
+    //        penetration = overlapY;
+    //        normal.x = 0;
+    //        normal.y = distY > 0 ? 1 : -1;
+    //    }
+
+    //    const length = Math.sqrt(normal.x * normal.x + normal.y * normal.y);
+    //    normal.x /= length;
+    //    normal.y /= length;
+    //    const result: CollisionResult = {
+    //        a,
+    //        b,
+    //        normal,
+    //        penetration,
+    //        contactPoints: []
+    //    };
+    //    return result;
+    //}
 
     resolve_collision(collision: CollisionResult) {
         const { a, b, normal, penetration } = collision;
@@ -208,45 +232,52 @@ export default class WorldPhysics implements GameObject {
         if (!this.quad_tree) return;
         const dtSec = this._scene.p5.deltaTime / 1000;
         this.accumulator += this.accumulator >= 1 ? 0 : dtSec;
-        //while (this.accumulator >= this.fixedTimeStep) {
-        this.quad_tree.clear();
-        for (const obj of this.physic_objects) {
-            obj.update(this.fixedTimeStep * 1000, this._scene);
-            this.apply_ground_friction(obj.body, this._friction, this.fixedTimeStep * 1000);
-            this.quad_tree.insert({ rect: obj.body, data: obj });
-        }
-        for (const obj of this.physic_objects) {
-            const candidates = this.quad_tree.query(obj.body);
-            for (const candidate of candidates) {
-                if (candidate.data.body == obj.body) continue;
-                const collision_data = this.check_collision(obj.body, candidate.data.body);
-                if (!this.quad_tree) { return };
-                if (collision_data) {
-                    this.resolve_collision(collision_data);
+        while (this.accumulator >= this.fixedTimeStep) {
+            this.quad_tree.clear();
+            for (const obj of this.physic_objects) {
+                obj.update(this.fixedTimeStep * 1000, this._scene);
+                this.apply_ground_friction(obj.body, this._friction, this.fixedTimeStep * 1000);
+                this.quad_tree.insert({ rect: obj.body.collider, data: obj });
+            }
+            for (const obj of this.physic_objects) {
+                const candidates = this.quad_tree.query(obj.body.collider);
+                for (const candidate of candidates) {
+                    if (candidate.data.body == obj.body) continue;
+                    const collision_data = this.check_collision(obj.body, candidate.data.body);
+                    if (!this.quad_tree) { return };
+                    if (collision_data) {
+                        this.resolve_collision(collision_data);
+                    }
                 }
             }
+            this.accumulator -= this.fixedTimeStep;
         }
-        this.accumulator -= this.fixedTimeStep;
-        //}
         if (this._debug) {
-            this._scene.p5.push();
             for (const obj of this.physic_objects) {
+                this._scene.p5.push();
                 this._scene.p5.rectMode("center");
                 this._scene.p5.stroke(255, 0, 0);
                 this._scene.p5.noFill();
-                this._scene.p5.rect(obj.body.x, obj.body.y, obj.body.w, obj.body.h);
+                this._scene.p5.translate(obj.body.x, obj.body.y);
+                this._scene.p5.rotate(-obj.body.collider.rotation);
+                this._scene.p5.rect(0, 0, obj.body.w, obj.body.h);
                 const speed = Math.sqrt(obj.body.velocity.x ** 2 + obj.body.velocity.y ** 2);
                 const normX = speed === 0 ? 0 : obj.body.velocity.x / speed;
                 const normY = speed === 0 ? 0 : obj.body.velocity.y / speed;
                 const magnitude = 50;
+                this._scene.p5.pop();
+                this._scene.p5.push();
+                this._scene.p5.translate(obj.body.x, obj.body.y);
                 this._scene.p5.line(
-                    obj.body.x,
-                    obj.body.y,
-                    obj.body.x + normX * magnitude,
-                    obj.body.y + normY * magnitude
+                    0,
+                    0,
+                    normX * magnitude,
+                    normY * magnitude
                 );
 
+                this._scene.p5.pop();
             }
+            this._scene.p5.push();
             this._scene.p5.stroke(0);
             this.quad_tree.debug_draw(this._scene);
             this._scene.p5.pop();
@@ -266,7 +297,7 @@ export default class WorldPhysics implements GameObject {
 
     raycast(): PhysicsObject | null {
         if (!this.quad_tree) return null;
-        const rect = new Rectangle({ h: 1, w: 1, x: this._scene.p5.mouseX + this._scene.camera.x - this._scene.p5.width / 2, y: this._scene.p5.mouseY + this._scene.camera.y - this._scene.p5.height / 2 });
+        const rect = new BoxCollider({ h: 1, w: 1, x: this._scene.p5.mouseX + this._scene.camera.x - this._scene.p5.width / 2, y: this._scene.p5.mouseY + this._scene.camera.y - this._scene.p5.height / 2 });
         const found = this.quad_tree.query(rect)
         if (found.length <= 0) return null;
         return found[0].data;

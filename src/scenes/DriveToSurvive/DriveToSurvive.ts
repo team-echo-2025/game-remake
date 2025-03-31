@@ -1,6 +1,8 @@
-import Rectangle from "../../lib/physics/Rectangle";
+import BoxCollider from "../../lib/physics/BoxCollider";
+import PhysicsObject from "../../lib/physics/PhysicsObject";
 import Scene from "../../lib/Scene";
 import Tilemap from "../../lib/tilemap/Tilemap";
+import { TestObject } from "../PhysicsTestScene2";
 import PlayerDriver from "./lib/PlayerDriver";
 
 export default class DriveToSurvive extends Scene {
@@ -28,7 +30,9 @@ export default class DriveToSurvive extends Scene {
         this.tilemap = this.add_new.tilemap({
             tilemap_key: "map",
         });
-        this.bounds = new Rectangle({
+        const obj = new TestObject(this, 100, 100);
+        this.physics.addObject(obj);
+        this.bounds = new BoxCollider({
             x: this.tilemap.x,
             y: this.tilemap.y,
             w: this.tilemap.width,

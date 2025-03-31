@@ -1,13 +1,13 @@
 import Scene from "../Scene";
 import { Point } from "../types/Physics";
+import Collider, { ColliderProps } from "./Collider";
 import QuadTree from "./QuadTree";
-import Rectangle, { RectangleProps } from "./Rectangle";
 
 export default class DynamicQuadTree {
     root: QuadTree;
     capacity: number;
 
-    constructor(initialRect: RectangleProps, capacity: number) {
+    constructor(initialRect: ColliderProps, capacity: number) {
         this.root = new QuadTree(initialRect, capacity);
         this.capacity = capacity;
     }
@@ -52,7 +52,7 @@ export default class DynamicQuadTree {
         this.root.clear();
     }
 
-    query(range: Rectangle) {
+    query(range: Collider) {
         return this.root.query(range);
     }
 
