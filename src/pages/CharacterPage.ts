@@ -338,6 +338,7 @@ export default class CharacterPage extends Page {
         this.greenHairSlider.slider.elt.hidden = !show;
         this.blueHairSlider.slider.elt.hidden = !show;
     }
+    //konnor commits to main
 
 //setDifficulty(difficulty: string) {
 //    console.log(difficulty);
