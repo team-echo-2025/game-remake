@@ -231,7 +231,7 @@ export default class WorldPhysics implements GameObject {
         if (this._paused) return;
         if (!this.quad_tree) return;
         const dtSec = this._scene.p5.deltaTime / 1000;
-        this.accumulator += this.accumulator >= 1 ? 0 : dtSec;
+        this.accumulator += this.accumulator >= 1 ? 0 : dtSec; 
         while (this.accumulator >= this.fixedTimeStep) {
             this.quad_tree.clear();
             for (const obj of this.physic_objects) {
@@ -247,11 +247,12 @@ export default class WorldPhysics implements GameObject {
                     if (!this.quad_tree) { return };
                     if (collision_data) {
                         this.resolve_collision(collision_data);
-                    }
+                    } 
                 }
             }
-            this.accumulator -= this.fixedTimeStep;
         }
+        this.accumulator -= this.fixedTimeStep;
+        //}
         if (this._debug) {
             for (const obj of this.physic_objects) {
                 this._scene.p5.push();
