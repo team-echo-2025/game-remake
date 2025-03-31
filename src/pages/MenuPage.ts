@@ -33,6 +33,7 @@ export default class MenuPage extends Page {
         this.scene.remove(this.button_sfx);
         this.scene.remove(this.dropdown);
         this.scene.remove(this.splashtext);
+        this.scene.remove(this.physicsTest2);
     }
     setup() {
         this.button_sfx = this.scene.add_new.sound("button_sfx")
