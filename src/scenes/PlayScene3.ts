@@ -1,9 +1,8 @@
 import { Graphics } from "p5";
 import PhysicsObject from "../lib/physics/PhysicsObject";
-import Rectangle from "../lib/physics/Rectangle";
 import RigidBody from "../lib/physics/RigidBody";
 import Player from "../lib/Player";
-import Puzzle, { PuzzleState } from "../lib/Puzzle";
+import { PuzzleState } from "../lib/Puzzle";
 import Scene from "../lib/Scene";
 import Spritesheet from "../lib/Spritesheet";
 import Tilemap from "../lib/tilemap/Tilemap";
@@ -15,6 +14,7 @@ import Breakaway from "../puzzles/Breakaway/Breakaway";
 import LightsOn from "../puzzles/LightsOn/LightsOn";
 import CubeScalesPuzzle from "../puzzles/CubeScales/CubeScales";
 import PathPuzzle from "../puzzles/PathPuzzle/PathPuzzle";
+import BoxCollider from "../lib/physics/BoxCollider";
 import Dialogue from "../lib/ui/Dialogue";
 
 type StartArgs = Readonly<{
@@ -186,7 +186,7 @@ export default class Dungeon2 extends Scene {
         this.tilemap = this.add_new.tilemap({
             tilemap_key: "tilemap",
         })
-        this.bounds = new Rectangle({ x: this.tilemap.x, y: this.tilemap.y, w: this.tilemap.width, h: this.tilemap.height });
+        this.bounds = new BoxCollider({ x: this.tilemap.x, y: this.tilemap.y, w: this.tilemap.width, h: this.tilemap.height });
         const portal = this.add_new.spritesheet("portal", 4, 3, 1000);
         portal.zIndex = 49;
         portal.end_row = 2;

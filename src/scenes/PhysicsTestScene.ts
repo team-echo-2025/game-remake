@@ -1,5 +1,5 @@
+import BoxCollider from "../lib/physics/BoxCollider";
 import PhysicsObject from "../lib/physics/PhysicsObject";
-import Rectangle from "../lib/physics/Rectangle";
 import Player from "../lib/Player";
 import Scene from "../lib/Scene";
 
@@ -59,7 +59,7 @@ export default class PhysicsTestScene extends Scene {
     }
 
     mousePressed(_: MouseEvent): void {
-        const rect = new Rectangle({ h: 1, w: 1, x: this.p5.mouseX + this.camera.x - this.p5.width / 2, y: this.p5.mouseY + this.camera.y - this.p5.height / 2 });
+        const rect = new BoxCollider({ h: 1, w: 1, x: this.p5.mouseX + this.camera.x - this.p5.width / 2, y: this.p5.mouseY + this.camera.y - this.p5.height / 2 });
         console.log(rect)
         if (!this.player?.shooting) {
             const obj = this.physics.raycast();

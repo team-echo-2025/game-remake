@@ -1,4 +1,4 @@
-import Rectangle from "./physics/Rectangle";
+import BoxCollider from "./physics/BoxCollider";
 import RigidBody from "./physics/RigidBody";
 import Scene from "./Scene";
 
@@ -7,8 +7,8 @@ export default class Camera {
     y: number = 0;
     scene: Scene;
     private _follow: RigidBody | undefined;
-    private _zoom: number = 1;
-    private _bounds!: Rectangle;
+    private _zoom: number = 1; 
+    private _bounds!: BoxCollider; 
     private _rotation: number = 0;
 
     set zoom(zoom: number) {
@@ -36,7 +36,7 @@ export default class Camera {
     }
 
     setup() {
-        this._bounds = new Rectangle({ x: this.x, y: this.y, w: this.scene.p5.width, h: this.scene.p5.height })
+        this._bounds = new BoxCollider({ x: this.x, y: this.y, w: this.scene.p5.width, h: this.scene.p5.height })
     }
 
     lookAt(x: number, y: number) {

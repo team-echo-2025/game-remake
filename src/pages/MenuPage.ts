@@ -11,6 +11,7 @@ export default class MenuPage extends Page {
     KDbutton!: ButtonTest;
     credits!: ButtonTest;
     physicsTest!: ButtonTest;
+    physicsTest2!: ButtonTest;
     puzzleTest!: ButtonTest;
     button_sfx!: Sound;
     dropdown!: DropdownMenu;
@@ -32,6 +33,7 @@ export default class MenuPage extends Page {
         this.scene.remove(this.button_sfx);
         this.scene.remove(this.dropdown);
         this.scene.remove(this.splashtext);
+        this.scene.remove(this.physicsTest2);
     }
     setup() {
         this.button_sfx = this.scene.add_new.sound("button_sfx")
@@ -133,6 +135,17 @@ export default class MenuPage extends Page {
         })
         this.physicsTest.x = 150
         this.physicsTest.y = 300
+        this.physicsTest2 = this.scene.add_new.button({
+            label: "Physics2",
+            font_key: "jersey",
+            callback: () => {
+                this.button_sfx.play();
+                this.cleanup();
+                this.scene.start("physics-scene2");
+            }
+        })
+        this.physicsTest2.x = 150
+        this.physicsTest2.y = 400
         this.puzzleTest = this.scene.add_new.button({
             label: "Puzzles",
             font_key: "jersey",
