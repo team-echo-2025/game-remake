@@ -22,7 +22,7 @@ export default class Dungeon1 extends Scene {
     onStart(args?: StartArgs): void {
         this.camera.zoom = 3;
         this.player = new Player(this);
-        this.player.body.x = args?.starting_pos?.x ?? -1260;
+        this.player.body.x = args?.starting_pos?.x ?? -1767;
         this.player.body.y = args?.starting_pos?.y ?? 863;
         this.physics.addObject(this.player);
     }
@@ -46,8 +46,8 @@ export default class Dungeon1 extends Scene {
             height: 100,
             mass: Infinity
         })
-        object.body.x = 409;
-        object.body.y = -677;
+        object.body.x = -104;
+        object.body.y = -725;
         object.overlaps = true;
         object.onCollide = (other: RigidBody) => {
             if (other == this.player?.body) {
