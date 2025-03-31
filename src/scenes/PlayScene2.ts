@@ -1,7 +1,7 @@
 import Sound from "../lib/Sound";
 import SoundManager, { SoundManagerProps } from "../lib/SoundManager";
+import BoxCollider from "../lib/physics/BoxCollider";
 import PhysicsObject from "../lib/physics/PhysicsObject";
-import Rectangle from "../lib/physics/Rectangle";
 import RigidBody from "../lib/physics/RigidBody";
 import Player from "../lib/Player";
 import Scene from "../lib/Scene";
@@ -49,14 +49,8 @@ export default class Dungeon1 extends Scene {
         // this.physics.debug = true;
         this.tilemap = this.add_new.tilemap({
             tilemap_key: "tilemap",
-        });
-        this.bounds = new Rectangle({
-            x: this.tilemap.x,
-            y: this.tilemap.y,
-            w: this.tilemap.width,
-            h: this.tilemap.height
-        });
-
+        })
+        this.bounds = new BoxCollider({ x: this.tilemap.x, y: this.tilemap.y, w: this.tilemap.width, h: this.tilemap.height });
         const object = new PhysicsObject({
             width: 100,
             height: 100,
