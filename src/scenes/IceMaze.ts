@@ -51,17 +51,19 @@ export default class IceMaze extends Scene {
             h: this.tilemap.height,
         });
 
-        // Initialize and loop the background music using Sound and SoundManager
+        // Initialize and loop the background music using Sound and SoundManager.
         this.background_music = this.add_new.sound("background5");
-        this.background_music.loop(); // Call loop method to enable continuous playback
+        this.background_music.loop(); // Enable continuous playback
 
+        // Wrap the background music in a SoundManager with group set to "SFX"
         const bgmProps: SoundManagerProps = {
-            group: "BGM",
+            group: "SFX",
             sounds: [this.background_music]
         };
         this.backgroundMusicManager = this.add_new.soundmanager(bgmProps);
         this.backgroundMusicManager.play();
 
+        // Maze transition objects remain unchanged.
         const mazeBeginning = new PhysicsObject({
             width: 25,
             height: 25,
@@ -103,10 +105,10 @@ export default class IceMaze extends Scene {
 
     draw(): void {
         if (!this.player || !this.player.body) return;
-        if (!(this.player.body.velocity.x == 0 && this.player.body.velocity.y == 0)) {
+        if (!(this.player.body.velocity.x === 0 && this.player.body.velocity.y === 0)) {
             this.player.disabled = true;
         }
-        if (this.player.body.velocity.x == 0 && this.player.body.velocity.y == 0) {
+        if (this.player.body.velocity.x === 0 && this.player.body.velocity.y === 0) {
             this.player.disabled = false;
         }
     }

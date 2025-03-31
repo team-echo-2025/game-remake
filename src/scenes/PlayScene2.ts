@@ -92,14 +92,15 @@ export default class Dungeon1 extends Scene {
 
         // Initialize the background music using Sound and SoundManager
         this.background_music = this.add_new.sound("background5");
-        // Call the loop method to enable looping, rather than setting a boolean property.
+        // Enable continuous looping
         this.background_music.loop();
 
-        const bgmProps: SoundManagerProps = {
-            group: "BGM",
+        // Create a SoundManager with group set to "SFX" so that volume preloads from local storage
+        const sfxProps: SoundManagerProps = {
+            group: "SFX",
             sounds: [this.background_music]
         };
-        this.backgroundMusicManager = this.add_new.soundmanager(bgmProps);
+        this.backgroundMusicManager = this.add_new.soundmanager(sfxProps);
         this.backgroundMusicManager.play();
     }
 

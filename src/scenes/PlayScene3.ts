@@ -16,7 +16,7 @@ import LightsOn from "../puzzles/LightsOn/LightsOn";
 import CubeScalesPuzzle from "../puzzles/CubeScales/CubeScales";
 import PathPuzzle from "../puzzles/PathPuzzle/PathPuzzle";
 
-// Add Sound and SoundManager imports for background music
+// Add Sound and SoundManager imports for background music and puzzle sounds
 import Sound from "../lib/Sound";
 import SoundManager, { SoundManagerProps } from "../lib/SoundManager";
 
@@ -36,9 +36,18 @@ export default class Dungeon2 extends Scene {
     public portal?: Spritesheet;
     public puzzles: (BlockSlide | DrawPuzzle | Breakaway | PathPuzzle | LightsOn)[] = [];
     
-    // Background music fields added without removing any original code or comments
+    // Background music fields (sound-related changes)
     public background_music?: Sound;
     public backgroundMusicManager?: SoundManager;
+    
+    // Puzzle sound fields (sound-related changes)
+    public clack_sound?: Sound;
+    public rotate_sound?: Sound;
+    public click_sound?: Sound;
+    public snap_sound?: Sound;
+    public lightSwitch_sound?: Sound;
+    public swish_sound?: Sound;
+    public puzzleSfxManager?: SoundManager;
     
     constructor() {
         super("playscene-3");
@@ -90,13 +99,13 @@ export default class Dungeon2 extends Scene {
         // Note: The background music file should be located at "assets/backgorund7.mp3"
         this.loadSound("background7", "assets/backgorund7.mp3");
 
-        // NEW: Preload the "clack" sound asset for BlockSlide moves (if needed)
+        // NEW: Preload the puzzle sound assets
         this.loadSound("clack", "assets/TInterfaceSounds/clack-85854.mp3");
         this.loadSound("rotate", "assets/TInterfaceSounds/click-234708.mp3");
         this.loadSound("click", "assets/TInterfaceSounds/mouse-click-290204.mp3");
         this.loadSound("snap", "assets/TInterfaceSounds/snap-264680.mp3");
         this.loadSound("lightSwitch", "assets/TInterfaceSounds/light-switch.mp3");
-
+        this.loadSound("swish", "assets/TInterfaceSounds/swish-sound-94707.mp3");
     }
 
     cubicBezier(p0: Vector2D, p1: Vector2D, p2: Vector2D, p3: Vector2D, t: number) {
@@ -239,7 +248,6 @@ export default class Dungeon2 extends Scene {
         this.puzzles[2].y = -15; // Breakaway 
         this.puzzles[3].x = 200; // Path Puzzle
         this.puzzles[3].y = 150; // Path Puzzle
-        //create puzzle , position , push to array post setup
         // Setup each puzzle
         this.puzzles.forEach(puzzle => {
             puzzle.setup();
@@ -259,7 +267,6 @@ export default class Dungeon2 extends Scene {
         // this.access_circuit1.onCompleted = () => {
         //     this.check_completed();
         // }
-
         // this.access_circuit2 = new AccessCircuit(this, 'puzzle', this.player!);
         // this.access_circuit2.x = -24;
         // this.access_circuit2.y = -310;
@@ -268,7 +275,6 @@ export default class Dungeon2 extends Scene {
         // this.access_circuit2.onCompleted = () => {
         //     this.check_completed();
         // }
-
         // this.access_circuit3 = new AccessCircuit(this, 'puzzle', this.player!);
         // this.access_circuit3.x = 425;
         // this.access_circuit3.y = -15;
@@ -277,7 +283,6 @@ export default class Dungeon2 extends Scene {
         // this.access_circuit3.onCompleted = () => {
         //     this.check_completed();
         // }
-
         // this.access_circuit4 = new AccessCircuit(this, 'puzzle', this.player!);
         // this.access_circuit4.x = 200;
         // this.access_circuit4.y = 150;
@@ -304,17 +309,45 @@ export default class Dungeon2 extends Scene {
         }
         this.physics.addObject(object);
 
-        // Initialize background music
+        // -----------------------
+        // Sound-related changes for background music:
+        // Initialize background music.
         // The background music file "assets/backgorund7.mp3" is loaded in preload.
-        // Enable looping for continuous playback.
-        this.background_music = this.add_new.sound("background7");
+        // Enable gapless looping by accessing the underlying audio element.
+        this.background_music = this.add_new.sound("background7")!;
         this.background_music.loop();
+        const audioEl = (this.background_music as any).audio as HTMLAudioElement | undefined;
+        if (audioEl) {
+            audioEl.addEventListener("ended", () => {
+                audioEl.currentTime = 0;
+                audioEl.play();
+            });
+        }
+        // Wrap the background music in a SoundManager with the grouping variable set to "SFX"
         const bgmProps: SoundManagerProps = {
-            group: "BGM",
+            group: "SFX",
             sounds: [this.background_music]
         };
         this.backgroundMusicManager = this.add_new.soundmanager(bgmProps);
         this.backgroundMusicManager.play();
+        // -----------------------
+        
+        // -----------------------
+        // Sound-related changes for puzzle sounds:
+        // Initialize puzzle sound assets and wrap them in a SoundManager with group "SFX"
+        this.clack_sound = this.add_new.sound("clack")!;
+        this.rotate_sound = this.add_new.sound("rotate")!;
+        this.click_sound = this.add_new.sound("click")!;
+        this.snap_sound = this.add_new.sound("snap")!;
+        this.lightSwitch_sound = this.add_new.sound("lightSwitch")!;
+        this.swish_sound = this.add_new.sound("swish")!;
+
+        const puzzleSfxProps: SoundManagerProps = {
+            group: "SFX",
+            sounds: [this.clack_sound, this.rotate_sound, this.click_sound, this.snap_sound, this.lightSwitch_sound, this.swish_sound]
+        };
+        this.puzzleSfxManager = this.add_new.soundmanager(puzzleSfxProps);
+        // -----------------------
     }
 
     check_completed = () => {
@@ -325,7 +358,6 @@ export default class Dungeon2 extends Scene {
         }
     }
 
-    // We may want this to be a pause menu eventually
     keyPressed = (e: KeyboardEvent) => {
         this.puzzles.forEach(puzzle => puzzle.keyPressed(e));
         if (e.key === "Escape") {
@@ -359,7 +391,6 @@ export default class Dungeon2 extends Scene {
         this.puzzles = [];
         this.portal = undefined;
         this.background = undefined;
-        // Stop background music if it exists
         if (this.background_music) {
             this.background_music.stop();
         }
