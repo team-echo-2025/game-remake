@@ -15,6 +15,7 @@ import Breakaway from "../puzzles/Breakaway/Breakaway";
 import LightsOn from "../puzzles/LightsOn/LightsOn";
 import CubeScalesPuzzle from "../puzzles/CubeScales/CubeScales";
 import PathPuzzle from "../puzzles/PathPuzzle/PathPuzzle";
+import Dialogue from "../lib/ui/Dialogue";
 
 type StartArgs = Readonly<{
     starting_pos: Vector2D
@@ -35,6 +36,7 @@ export default class Dungeon2 extends Scene {
     background?: Graphics;
     portal?: Spritesheet;
     puzzles: (BlockSlide | DrawPuzzle | Breakaway | PathPuzzle | LightsOn)[] = [];
+    dialogue!: Dialogue;
     constructor() {
         super("playscene-3");
         this.physics.debug = false;
@@ -63,6 +65,7 @@ export default class Dungeon2 extends Scene {
         // this.loadImage("success-puzzle", "assets/puzzleImages/access_circuit_success.png");
         // this.loadImage("highlighted-puzzle", "assets/puzzleImages/access_circuit_highlighted.png");
         this.loadImage("drawPuzzle", "assets/puzzleImages/drawPuzzleBase.png");
+        this.loadFont("jersey", "assets/fonts/cour.ttf");
         this.loadImage("breakaway", "assets/puzzleImages/breakawayBase.png");
         this.loadImage("blockslide", "assets/puzzleImages/blockSlideBase.png");
         this.loadImage("scales", "assets/puzzleImages/scalesBase.png");
@@ -205,13 +208,6 @@ export default class Dungeon2 extends Scene {
         this.background = this.p5.createGraphics(this.p5.width, this.p5.height);
         this.portal = portal;
         this.physics.addObject(portal_body);
-        // /////////////////////////////////////////////////////////
-        // const access_circuit = new AccessCircuit(this, "puzzle", this.player!);
-        // access_circuit.setup();
-        // access_circuit.zIndex = 101;
-        // this.add(access_circuit);
-        // access_circuit.x = 100;
-        // access_circuit.y = 100;
         this.puzzles[0].x = -435; //BlockSlide
         this.puzzles[0].y = 213; //BlockSlide
         this.puzzles[1].x = -24; // DrawPuzzle 
@@ -220,7 +216,6 @@ export default class Dungeon2 extends Scene {
         this.puzzles[2].y = -15; // Breakaway 
         this.puzzles[3].x = 200; // Path Puzzle
         this.puzzles[3].y = 150; // Path Puzzle
-        //create puzzle , position , push to array post setup
         // Setup each puzzle
         this.puzzles.forEach(puzzle => {
             puzzle.setup();
@@ -230,44 +225,6 @@ export default class Dungeon2 extends Scene {
                 this.check_completed();
             };
         });
-
-        /////////////////////////////////////////////////////////////////////
-        // this.access_circuit1 = new AccessCircuit(this, 'puzzle', this.player!);
-        // this.access_circuit1.x = -435;
-        // this.access_circuit1.y = 213;
-        // this.access_circuit1?.setup();
-        // this.access_circuit1.asset.zIndex = 101;
-        // this.access_circuit1.onCompleted = () => {
-        //     this.check_completed();
-        // }
-
-        // this.access_circuit2 = new AccessCircuit(this, 'puzzle', this.player!);
-        // this.access_circuit2.x = -24;
-        // this.access_circuit2.y = -310;
-        // this.access_circuit2?.setup();
-        // this.access_circuit2.asset.zIndex = 101;
-        // this.access_circuit2.onCompleted = () => {
-        //     this.check_completed();
-        // }
-
-        // this.access_circuit3 = new AccessCircuit(this, 'puzzle', this.player!);
-        // this.access_circuit3.x = 425;
-        // this.access_circuit3.y = -15;
-        // this.access_circuit3?.setup();
-        // this.access_circuit3.asset.zIndex = 101;
-        // this.access_circuit3.onCompleted = () => {
-        //     this.check_completed();
-        // }
-
-        // this.access_circuit4 = new AccessCircuit(this, 'puzzle', this.player!);
-        // this.access_circuit4.x = 200;
-        // this.access_circuit4.y = 150;
-        // this.access_circuit4?.setup();
-        // this.access_circuit4.asset.zIndex = 101;
-        // this.access_circuit4.onCompleted = () => {
-        //     this.check_completed();
-        // }
-
         const object = new PhysicsObject({
             width: 100,
             height: 50,
@@ -284,6 +241,14 @@ export default class Dungeon2 extends Scene {
             }
         }
         this.physics.addObject(object);
+
+        this.dialogue = new Dialogue(this, this.player!);
+        this.dialogue.addDialogue(0, 348, "There's puzzles around that need solved to escape");
+        this.dialogue.addDialogue(-262, -188, "HURRY UP!!", 50, 50 );
+        this.dialogue.addDialogue(189, 14, "You are going super slow", 35, 35);
+        this.dialogue.addDialogue(-312, 303, "Why are you wasting time reading this? GET GOING" , 35 , 35);
+        this.dialogue.addDialogue(359, 243, "My grandma is faster than you", 35, 35 );
+        this.dialogue.setup();
     }
 
     check_completed = () => {
@@ -322,10 +287,6 @@ export default class Dungeon2 extends Scene {
     onStop(): void {
         this.player = undefined;
         this.tilemap = undefined;
-        // this.access_circuit1 = undefined;
-        // this.access_circuit2 = undefined;
-        // this.access_circuit3 = undefined;
-        // this.access_circuit4 = undefined;
         this.puzzles = [];
         this.portal = undefined;
         this.background = undefined;
@@ -340,5 +301,6 @@ export default class Dungeon2 extends Scene {
         this.p5.push();
         this.p5.image(this.dark_backdrop, -this.p5.width / 2 + this.player!.body.x, -this.p5.height / 2 + this.player!.body.y);
         this.p5.pop();
+        this.dialogue.draw();
     }
 }
