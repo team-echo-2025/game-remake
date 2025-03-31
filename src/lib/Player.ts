@@ -55,7 +55,7 @@ export default class Player extends PhysicsObject {
             }, (err) => reject(err));
         })
         const hairPath = localStorage.getItem("playerHair");
-        if(!hairPath) {
+        if (!hairPath) {
             await new Promise((resolve, reject) => {
                 this.scene.p5.loadImage('assets/player_hair_short.png', (img) => {
                     this.hairTemplate = img;
@@ -72,7 +72,7 @@ export default class Player extends PhysicsObject {
             });
         }
         const clothesPath = localStorage.getItem("playerClothes");
-        if(!clothesPath) {
+        if (!clothesPath) {
             await new Promise((resolve, reject) => {
                 this.scene.p5.loadImage('assets/player_tunic.png', (img) => {
                     this.clothes = img;

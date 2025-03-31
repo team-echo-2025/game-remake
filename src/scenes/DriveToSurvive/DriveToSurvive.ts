@@ -1,6 +1,8 @@
-import Rectangle from "../../lib/physics/Rectangle";
+import BoxCollider from "../../lib/physics/BoxCollider";
+import PhysicsObject from "../../lib/physics/PhysicsObject";
 import Scene from "../../lib/Scene";
 import Tilemap from "../../lib/tilemap/Tilemap";
+import { TestObject } from "../PhysicsTestScene2";
 import PlayerDriver from "./lib/PlayerDriver";
 
 export default class DriveToSurvive extends Scene {
@@ -15,19 +17,24 @@ export default class DriveToSurvive extends Scene {
     onStart(): void {
         this.player = new PlayerDriver(this);
         this.camera.zoom = 2;
+        this.player.body.x = 0;
+        this.player.body.y = 0;
+        this.physics.friction = 0;
     }
 
     preload(): any {
-        this.loadTilemap("map", "assets/tilemaps/racing/racetrack.tmx");
+        this.loadTilemap("map", "assets/tilemaps/racing/BoatMap.tmx");
     }
 
     setup(): void {
         this.tilemap = this.add_new.tilemap({
             tilemap_key: "map",
-        });
-        this.bounds = new Rectangle({
-            x: 0,
-            y: 0,
+        }); 
+        const obj = new TestObject(this, 100, 100);
+        this.physics.addObject(obj);
+        this.bounds = new BoxCollider({ 
+            x: this.tilemap.x,
+            y: this.tilemap.y,
             w: this.tilemap.width,
             h: this.tilemap.height,
         })

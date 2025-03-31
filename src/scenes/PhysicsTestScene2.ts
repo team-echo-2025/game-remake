@@ -1,4 +1,3 @@
-import BoxCollider from "../lib/physics/BoxCollider";
 import PhysicsObject from "../lib/physics/PhysicsObject";
 import Player from "../lib/Player";
 import Scene from "../lib/Scene";
@@ -8,9 +7,9 @@ export class TestObject extends PhysicsObject {
     private color: { r: number, b: number, g: number };
     constructor(scene: Scene, width?: number, height?: number) {
         super({
-            width: width ?? 100,
-            height: height ?? 100,
-            mass: (width ?? 100) * (height ?? 100),
+            width: width ?? 50,
+            height: height ?? 50,
+            mass: (width ?? 50) * (height ?? 50),
             friction: 0.5
         })
         this.scene = scene;
@@ -27,45 +26,25 @@ export class TestObject extends PhysicsObject {
     }
 
 }
-export default class PhysicsTestScene extends Scene {
+export default class PhysicsTestScene2 extends Scene {
     player?: Player;
     testObj?: TestObject;
 
     constructor() {
-        super("physics-scene");
+        super("physics-scene2");
     }
 
     onStart(): void {
         this.player = new Player(this);
-        this.player.body.x = 1;
         this.physics.addObject(this.player);
         this.testObj = new TestObject(this);
         this.physics.addObject(this.testObj);
-        const obj_count = 1000;
-        for (let i = 0; i < obj_count; i++) {
-            const obj = new TestObject(this);
-            obj.body.w = Math.random() * (200 - 100) + 50;
-            obj.body.h = Math.random() * (200 - 100) + 50;
-            obj.body.x = Math.random() * obj_count - Math.random() * obj_count;
-            obj.body.y = Math.random() * obj_count - Math.random() * obj_count;
-            this.physics.addObject(obj);
-        }
+        this.physics.debug = true;
     }
 
     keyPressed(e: KeyboardEvent): void {
         if (e.key == "Escape") {
             this.start('menu-scene');
-        }
-    }
-
-    mousePressed(_: MouseEvent): void {
-        const rect = new BoxCollider({ h: 1, w: 1, x: this.p5.mouseX + this.camera.x - this.p5.width / 2, y: this.p5.mouseY + this.camera.y - this.p5.height / 2 });
-        console.log(rect)
-        if (!this.player?.shooting) {
-            const obj = this.physics.raycast();
-            if (obj) {
-                this.physics.remove(obj);
-            }
         }
     }
 

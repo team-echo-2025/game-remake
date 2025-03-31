@@ -1,6 +1,4 @@
-import { Graphics } from "p5";
 import PhysicsObject from "../lib/physics/PhysicsObject";
-import Rectangle from "../lib/physics/Rectangle";
 import RigidBody from "../lib/physics/RigidBody";
 import Player from "../lib/Player";
 import Scene from "../lib/Scene";
@@ -10,13 +8,14 @@ import PageManager from "../lib/PageManager";
 import IcemazePage from "../pages/icemazePage";
 import Sound from "../lib/Sound";
 import SoundManager, { SoundManagerProps } from "../lib/SoundManager";
+import BoxCollider from "../lib/physics/BoxCollider";
 
 type StartArgs = Readonly<{
     starting_pos: Vector2D;
 }>;
 
 export default class IceMaze extends Scene {
-    pManager : PageManager;
+    pManager: PageManager;
     player?: Player;
     tilemap?: Tilemap;
     background_music?: Sound;
@@ -54,7 +53,7 @@ export default class IceMaze extends Scene {
         this.tilemap = this.add_new.tilemap({ tilemap_key: "tilemap" });
         if (this.player)
             this.player.body.friction = 0;
-        this.bounds = new Rectangle
+        this.bounds = new BoxCollider
             ({
                 x: this.tilemap.x,
                 y: this.tilemap.y,
@@ -106,17 +105,14 @@ export default class IceMaze extends Scene {
         this.physics.addObject(mazeEnding);
     }
 
-    keyPressed = (e: KeyboardEvent) =>
-    {
-        if (e.key === 'r')
-        {
+    keyPressed = (e: KeyboardEvent) => {
+        if (e.key === 'r') {
             if (!this.player || !this.player.body) return;
             this.player.body.x = -215;
             this.player.body.y = -215;
         }
 
-        if (e.key === "Escape")
-        {
+        if (e.key === "Escape") {
             this.pManager?.keyPressed(e);
         }
     };

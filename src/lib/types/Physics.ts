@@ -1,4 +1,4 @@
-import Rectangle from "../physics/Rectangle";
+import Collider from "../physics/Collider";
 
 export type BoundingBox = {
     halfw: number;
@@ -11,6 +11,6 @@ export type Vector2D = {
 }
 
 export type Point = {
-    rect: Rectangle;
+    rect: Collider;
     data?: any;
 }

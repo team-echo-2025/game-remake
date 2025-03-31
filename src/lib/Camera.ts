@@ -1,4 +1,4 @@
-import Rectangle from "./physics/Rectangle";
+import BoxCollider from "./physics/BoxCollider";
 import RigidBody from "./physics/RigidBody";
 import Scene from "./Scene";
 
@@ -7,8 +7,9 @@ export default class Camera {
     y: number = 0;
     scene: Scene;
     private _follow: RigidBody | undefined;
-    private _zoom: number = 1;
-    private _bounds!: Rectangle;
+    private _zoom: number = 1; 
+    private _bounds!: BoxCollider; 
+    private _rotation: number = 0;
 
     set zoom(zoom: number) {
         this._zoom = zoom;
@@ -22,12 +23,20 @@ export default class Camera {
         return this._bounds;
     }
 
+    get rotation() {
+        return this._rotation;
+    }
+
+    set rotation(radians: number) {
+        this._rotation = radians;
+    }
+
     constructor(scene: Scene) {
         this.scene = scene;
     }
 
     setup() {
-        this._bounds = new Rectangle({ x: this.x, y: this.y, w: this.scene.p5.width, h: this.scene.p5.height })
+        this._bounds = new BoxCollider({ x: this.x, y: this.y, w: this.scene.p5.width, h: this.scene.p5.height })
     }
 
     lookAt(x: number, y: number) {
@@ -67,6 +76,7 @@ export default class Camera {
             this.y = bottom - this._bounds.halfHeight / this._zoom;
         }
         this.scene.p5.scale(this._zoom);
+        this.scene.p5.rotate(-this.rotation);
         this.scene.p5.translate(-this.x, -this.y);
 
     }
