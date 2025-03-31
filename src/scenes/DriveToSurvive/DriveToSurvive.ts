@@ -23,16 +23,16 @@ export default class DriveToSurvive extends Scene {
     }
 
     preload(): any {
-        this.loadTilemap("map", "assets/tilemaps/racing/racetrack.tmx");
+        this.loadTilemap("map", "assets/tilemaps/racing/BoatMap.tmx");
     }
 
     setup(): void {
         this.tilemap = this.add_new.tilemap({
             tilemap_key: "map",
-        });
+        }); 
         const obj = new TestObject(this, 100, 100);
         this.physics.addObject(obj);
-        this.bounds = new BoxCollider({
+        this.bounds = new BoxCollider({ 
             x: this.tilemap.x,
             y: this.tilemap.y,
             w: this.tilemap.width,

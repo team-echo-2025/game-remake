@@ -30,7 +30,7 @@ export default class Player extends PhysicsObject {
     private leftKey: string = 'a';
     private downKey: string = 's';
     private rightKey: string = 'd';
-    private speed: number = 100;
+    private speed: number = 1000;
     private launch_delay_start = 0;
     private scale: number = 1;
     private width: number = 64 * this.scale;

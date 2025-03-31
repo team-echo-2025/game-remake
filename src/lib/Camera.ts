@@ -7,8 +7,8 @@ export default class Camera {
     y: number = 0;
     scene: Scene;
     private _follow: RigidBody | undefined;
-    private _zoom: number = 1;
-    private _bounds!: BoxCollider;
+    private _zoom: number = 1; 
+    private _bounds!: BoxCollider; 
     private _rotation: number = 0;
 
     set zoom(zoom: number) {

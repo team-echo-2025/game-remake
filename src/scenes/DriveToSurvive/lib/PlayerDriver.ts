@@ -81,8 +81,8 @@ export default class PlayerDriver extends CarPhysicsObject {
     draw(): void {
         this.gas = this.direction.y > 0 ? 1 : 0;
         this.brake = this.direction.y < 0 ? 1 : 0;
-        this.steer = this.direction.x;
-        this.body.rotation = -this.heading + 270 * (Math.PI / 180);
+        this.steer = this.direction.x; 
+        this.body.rotation = -this.heading + 270 * (Math.PI / 180); 
         this.asset.rotation = -this.heading + 270 * (Math.PI / 180);
         this.asset.x = this.body.x - this.asset.width / 2;
         this.asset.y = this.body.y - this.asset.height / 2;

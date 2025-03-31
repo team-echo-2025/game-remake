@@ -1,6 +1,6 @@
 import GameObject from '../GameObject';
-import Scene from '../Scene';
-import BoxCollider from './BoxCollider';
+import Scene from '../Scene'; 
+import BoxCollider from './BoxCollider'; 
 import RigidBody from './RigidBody';
 
 export type PhysicsObjectProps = Readonly<{
