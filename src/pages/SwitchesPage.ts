@@ -17,6 +17,10 @@ export default class GraveyardPage extends Page
     {
         this._active = false;
     }
+    setup(): void {
+        this.scene.p5.createCanvas(this.scene.p5.windowWidth, this.scene.p5.windowHeight);
+        this.scene.p5.rectMode(this.scene.p5.CENTER);
+    }
     postDraw(): void { }
     keyPressed = (e: KeyboardEvent) =>
     {

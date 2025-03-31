@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "graveyardSwitch.tmx",
+    "activeFile": "Switches.tmx",
     "expandedProjectPaths": [
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
@@ -20,11 +20,11 @@
             }
         },
         "Dungeon.tmx": {
-            "scale": 0.25,
+            "scale": 0.33,
             "selectedLayer": 10,
             "viewCenter": {
-                "x": -420,
-                "y": 126
+                "x": -451.5151515151515,
+                "y": 189.39393939393926
             }
         },
         "Dungeonset.tsx": {
@@ -54,6 +54,14 @@
         "Stone walls.tsx": {
             "scaleInDock": 1
         },
+        "Switches.tmx": {
+            "scale": 0.75,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 587.9999999999999,
+                "y": 396.66666666666674
+            }
+        },
         "Texture/Grass.tsx": {
             "scaleInDock": 1.5,
             "scaleInEditor": 1
@@ -80,8 +88,8 @@
             "scale": 0.75,
             "selectedLayer": 7,
             "viewCenter": {
-                "x": 529.3333333333333,
-                "y": 761.9999999999999
+                "x": 1019.9999999999999,
+                "y": 787.3333333333333
             }
         },
         "props.tsx": {
@@ -99,11 +107,11 @@
         "Texture/TX Tileset Wall.tsx",
         "Dungeonset.tsx",
         "Trees.tsx",
-        "graveyardSwitch.tmx",
         "GraveyardSwitch/Stairs.tsx",
         "GraveyardSwitch/Graveyard.tsx",
         "GraveyardSwitch/Set 1.tsx",
-        "Dungeon.tmx"
+        "Dungeon.tmx",
+        "Switches.tmx"
     ],
     "project": "Dungeon.tiled-project",
     "recentFiles": [
@@ -112,13 +120,13 @@
         "Texture/TX Tileset Wall.tsx",
         "Dungeonset.tsx",
         "Trees.tsx",
-        "Dungeon.tmx",
-        "GraveyardSwitch/Set 1.tsx",
-        "GraveyardSwitch/Graveyard.tsx",
         "GraveyardSwitch/Stairs.tsx",
+        "GraveyardSwitch/Graveyard.tsx",
+        "GraveyardSwitch/Set 1.tsx",
+        "Dungeon.tmx",
+        "Switches.tmx",
         "graveyardSwitch.tmx",
-        "GraveyardSwitch/graveyardSwitch.tmx",
-        "Dungeon Floor 1.tmx"
+        "GraveyardSwitch/graveyardSwitch.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {

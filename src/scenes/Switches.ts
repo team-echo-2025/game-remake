@@ -7,6 +7,7 @@ import SwitchesPage from "../pages/SwitchesPage";
 import Rectangle from "../lib/physics/Rectangle";
 import RigidBody from "../lib/physics/RigidBody";
 import { Vector2D } from "../lib/types/Physics";
+import { Graphics } from "p5";
 
 type StartArgs = Readonly<{
     starting_pos: Vector2D
@@ -68,7 +69,7 @@ export default class Switches extends Scene {
     }
     preload(): any {
         this.loadFont("jersey", "assets/fonts/jersey.ttf");
-        this.loadTilemap("tilemap", "assets/tilemaps/PetersTileMap/graveyardSwitch.tmx");
+        this.loadTilemap("tilemap", "assets/tilemaps/PetersTileMap/Switches.tmx");
     }
     setup(): void {
         // Boundaries of the grid
@@ -86,6 +87,7 @@ export default class Switches extends Scene {
         })
         gridSize.body.x = 0;
         gridSize.body.y = -215;
+        gridSize.overlaps = true;
         gridSize.onCollide = (other: RigidBody) => {
             if (other == this.player?.body) {
                 this.start('playscene-2', {starting_pos : { x: 140, y: -120 } }); 
