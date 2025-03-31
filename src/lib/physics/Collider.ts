@@ -1,25 +1,28 @@
 import { Point } from "../types/Physics";
 
-export type RectangleProps = Readonly<{
+export type ColliderProps = Readonly<{
     x: number;
     y: number;
     w: number;
     h: number;
+    rotation?: number;
 }>
-export default class Rectangle {
+
+export default class Collider {
     private _x: number;
     private _y: number;
     private _width: number;
     private _height: number;
+    private _rotation: number;
 
-    constructor({ x, y, w, h }: RectangleProps) {
+    constructor({ x, y, w, h, rotation }: ColliderProps) {
         this._x = x;
         this._y = y;
         this._width = w;
         this._height = h;
+        this._rotation = rotation ?? 0;
     }
 
-    // Get the center coordinates.
     get x() { return this._x; }
     set x(x: number) {
         this._x = x;
@@ -29,21 +32,24 @@ export default class Rectangle {
         this._y = y;
     }
 
-    // Get full dimensions.
     get w() { return this._width; }
     set w(w: number) {
         this._width = w;
     }
+
     get h() { return this._height; }
     set h(h: number) {
         this._height = h;
     }
 
-    // Compute half-extents explicitly.
+    get rotation() { return this._rotation; }
+    set rotation(num: number) {
+        this._rotation = num;
+    }
+
     get halfWidth() { return this._width / 2; }
     get halfHeight() { return this._height / 2; }
 
-    // Compute the boundaries.
     get left() { return this._x - this.halfWidth; }
     get right() { return this._x + this.halfWidth; }
     get top() { return this._y - this.halfHeight; }
@@ -56,10 +62,7 @@ export default class Rectangle {
             point.rect.y <= this.bottom;
     }
 
-    intersects(other: Rectangle): boolean {
-        return !(other.left > this.right ||
-            other.right < this.left ||
-            other.top > this.bottom ||
-            other.bottom < this.top);
+    intersects(_: Collider): boolean {
+        throw new Error("Not implemented.");
     }
 }

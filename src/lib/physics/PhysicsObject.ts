@@ -1,5 +1,6 @@
 import GameObject from '../GameObject';
-import Scene from '../Scene';
+import Scene from '../Scene'; 
+import BoxCollider from './BoxCollider'; 
 import RigidBody from './RigidBody';
 
 export type PhysicsObjectProps = Readonly<{
@@ -25,7 +26,7 @@ export default class PhysicsObject implements GameObject {
     }
 
     constructor(props: PhysicsObjectProps) {
-        this.body = new RigidBody(0, 0, props.width, props.height, props.mass, props.friction ?? 0.5);
+        this.body = new RigidBody(new BoxCollider({ x: 0, y: 0, w: props.width, h: props.height }), props.mass, props.friction ?? 0.5);
         this.id = Date.now();
     }
 

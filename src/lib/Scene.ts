@@ -4,9 +4,9 @@ import SceneManager from "./SceneManager";
 import GameObjectFactory from "./GameObjectFactory";
 import Camera from "./Camera";
 import WorldPhysics from "./physics/WorldPhysics";
-import Rectangle from "./physics/Rectangle";
 import { Howl } from "howler";
 import Timer from "./Timer";
+import BoxCollider from "./physics/BoxCollider";
 
 export default class Scene implements GameObject {
     zIndex?: number | undefined;
@@ -19,7 +19,7 @@ export default class Scene implements GameObject {
     private assets: Map<string, any> = new Map();
     private preloads: Promise<any>[] = []
     private _camera: Camera;
-    private _bounds: Rectangle;
+    private _bounds: BoxCollider;
 
     private _timer?: Timer;
     private start_time = 0;
@@ -45,7 +45,7 @@ export default class Scene implements GameObject {
         return this._bounds;
     }
 
-    set bounds(bounds: Rectangle) {
+    set bounds(bounds: BoxCollider) {
         this._bounds = bounds;
     }
 
@@ -82,7 +82,7 @@ export default class Scene implements GameObject {
         if (name.length <= 0) {
             throw new Error("Scene name not specified.");
         }
-        this._bounds = new Rectangle({ x: 0, y: 0, w: Infinity, h: Infinity });
+        this._bounds = new BoxCollider({ x: 0, y: 0, w: Infinity, h: Infinity });
         this.game_object_factory = new GameObjectFactory(this);
         this._camera = new Camera(this);
         this._name = name;
