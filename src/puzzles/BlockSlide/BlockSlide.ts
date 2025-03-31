@@ -271,6 +271,11 @@ export default class BlockSlide extends Puzzle {
     }
 
     mousePressed(): void {
+        if (this.hidden || 
+            this.state === PuzzleState.failed || 
+            this.state === PuzzleState.completed) {
+          return;
+          }
         let p5 = this.scene.p5;
 
         if (this.isAnimating) return;
