@@ -1,8 +1,9 @@
 import Scene from "../Scene";
 import { Point } from "../types/Physics";
-import Rectangle, { RectangleProps } from "./Rectangle";
+import BoxCollider from "./BoxCollider";
+import Collider, { ColliderProps } from "./Collider";
 
-export default class QuadTree extends Rectangle {
+export default class QuadTree extends BoxCollider {
     capacity: number;
     subdivided: boolean = false;
     northeast?: QuadTree;
@@ -15,7 +16,7 @@ export default class QuadTree extends Rectangle {
     miny: number = 0;
     maxy: number = 0;
 
-    constructor(rect: RectangleProps, capacity: number) {
+    constructor(rect: ColliderProps, capacity: number) {
         super(rect);
         this.capacity = capacity;
     }
@@ -86,7 +87,7 @@ export default class QuadTree extends Rectangle {
         }
     }
 
-    query(range: Rectangle, intersecting_points: Point[] = []) {
+    query(range: Collider, intersecting_points: Point[] = []) {
         if (!this.intersects(range)) {
             return intersecting_points;
         }

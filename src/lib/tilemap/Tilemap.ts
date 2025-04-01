@@ -42,8 +42,16 @@ export default class Tilemap implements GameObject {
         return this._x;
     }
 
+    set x(num: number) {
+        this._x = num;
+    }
+
     get y() {
         return this._y;
+    }
+
+    set y(num: number) {
+        this._y = num;
     }
 
     get width() {
@@ -146,6 +154,8 @@ export default class Tilemap implements GameObject {
     }
 
     postSetup(): void {
+        this.x -= this._width / 2;
+        this.y -= this._height / 2;
         for (const [_, chunk] of this.chunks) {
             if (chunk.topmost) {
                 chunk.load(this.buffer, this.player_buffer);
@@ -160,8 +170,12 @@ export default class Tilemap implements GameObject {
         this._scene.set_asset("buffer_image", this.buffer_image);
         this._scene.set_asset("player_buffer_image", this.player_buffer_image);
 
-        this._scene.add_new.sprite("buffer_image");
+        const buff_sprite = this._scene.add_new.sprite("buffer_image");
+        buff_sprite.x = this.x;
+        buff_sprite.y = this.y;
         const player_sprite = this._scene.add_new.sprite("player_buffer_image");
+        player_sprite.x = this.x;
+        player_sprite.y = this.y;
         player_sprite.zIndex = 100
     }
 
