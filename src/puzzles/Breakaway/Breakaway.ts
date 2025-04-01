@@ -6,6 +6,10 @@ import Scene from "../../lib/Scene";
 import { Vector } from "p5";
 import Sprite from "../../lib/Sprite";
 
+// Added Sound and SoundManager imports for breakaway sound effects
+import Sound from "../../lib/Sound";
+import SoundManager, { SoundManagerProps } from "../../lib/SoundManager";
+
 export default class Breakaway extends Puzzle {
     puzzlePieces: any[] = [];
     selectedPieceIndex: number | null = null;
@@ -37,6 +41,11 @@ export default class Breakaway extends Puzzle {
     x: number = 0;
     y: number = 0;
 
+    // Added properties for sound effects
+    private click_sfx!: Sound;
+    private rotate_sfx!: Sound;
+    private snap_sfx!: Sound;
+
     constructor(scene: Scene, puzzle_asset_key: string, player: Player) {
         super(scene);
         this.asset_key = puzzle_asset_key;
@@ -59,6 +68,14 @@ export default class Breakaway extends Puzzle {
         this.asset.change_asset('broken-puzzle');
         this.scene.physics.remove(this.physics_object);
     }
+    
+    preload(): any {
+        // Preload sound effects using the scene's loadSound method
+        this.scene.loadSound("click", "assets/TInterfaceSounds/click-234708.mp3");
+        this.scene.loadSound("rotate", "assets/TInterfaceSounds/mouse-click-290204.mp3");
+        this.scene.loadSound("snap", "assets/TInterfaceSounds/snap-264680.mp3");
+    }
+    
     setup(): void {
         //putting into game itself
         this.physics_object = new PhysicsObject({
@@ -74,7 +91,7 @@ export default class Breakaway extends Puzzle {
             if (other == this.player.body) {
                 clearTimeout(this.collider_timeout);
                 if (!this.highlight) {
-                    this.highlight = true
+                    this.highlight = true;
                     this.asset.change_asset("breakaway-highlight");
                 }
                 this.collider_timeout = setTimeout(() => {
@@ -91,6 +108,11 @@ export default class Breakaway extends Puzzle {
         //puzzle setup
         this.createPuzzle();
         this.scatterPieces();
+
+        // Initialize sound effects using the scene's add_new method
+        this.click_sfx = this.scene.add_new.sound("click");
+        this.rotate_sfx = this.scene.add_new.sound("rotate");
+        this.snap_sfx = this.scene.add_new.sound("snap");
     }
 
     createPuzzle(): void {
@@ -159,11 +181,13 @@ export default class Breakaway extends Puzzle {
             piece.targetRot = piece.rot;
         }
     }
+    
     draw() {
-        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
+        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return;
     }
+    
     postDraw(): void {
-        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
+        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return;
         if (this.hidden) return;
         this.drawBody();
         this.drawOutlines();
@@ -197,7 +221,6 @@ export default class Breakaway extends Puzzle {
         this.scene.p5.text("Rotation:\nPress U (or u) to rotate clockwise\nPress D (or d) to rotate counterclockwise", 0, -175);
 
         if (this.checkSolution()) this.state = PuzzleState.completed;
-
     }
 
     drawBody(): void {
@@ -306,14 +329,14 @@ export default class Breakaway extends Puzzle {
                 this.selectedPieceIndex = i;
                 piece.dragging = true;
                 this.dragOffset = this.scene.p5.createVector(mousePos.x - piece.pos.x, mousePos.y - piece.pos.y);
+
+                // Play click sound for selecting piece
+                if (this.click_sfx && typeof this.click_sfx.play === "function") {
+                    this.click_sfx.play();
+                }
                 return;
             }
         }
-
-        // if (this.solved()) {
-        //     this.scene.start(this.scene.name);
-        //     return;
-        // }
     }
 
     mouseDragged(): void {
@@ -335,6 +358,11 @@ export default class Breakaway extends Puzzle {
             let piece = this.puzzlePieces[this.selectedPieceIndex];
             piece.dragging = false;
             this.selectedPieceIndex = null;
+
+            // Play snap sound if piece is placed correctly
+            if (this.checkSolution() && this.snap_sfx && typeof this.snap_sfx.play === "function") {
+                this.snap_sfx.play();
+            }
         }
     }
 
@@ -346,12 +374,24 @@ export default class Breakaway extends Puzzle {
 
             if (e.key === "u" || e.key === "U") {
                 piece.targetRot = (piece.targetRot + this.rotationStep) % 360;
+
+                // Play rotation sound for clockwise rotation
+                if (this.rotate_sfx && typeof this.rotate_sfx.play === "function") {
+                    this.rotate_sfx.play();
+                }
             } else if (e.key === "d" || e.key === "D") {
                 piece.targetRot = (piece.targetRot - this.rotationStep + 360) % 360;
+
+                // Play rotation sound for counterclockwise rotation
+                if (this.rotate_sfx && typeof this.rotate_sfx.play === "function") {
+                    this.rotate_sfx.play();
+                }
             }
             piece.rotating = true;
         }
-        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
+        // console.log("Reached");
+        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return;
+        // console.log("STATE", this.state);
         if (this.hidden && this.highlight && e.key == 'e') {
             this.player.disabled = true;
             this.hidden = false;

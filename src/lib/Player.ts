@@ -54,23 +54,45 @@ export default class Player extends PhysicsObject {
                 resolve(true);
             }, (err) => reject(err));
         })
-        if (this.scene.scene_manager.playerHair != "none") {
+        const hairPath = localStorage.getItem("playerHair");
+        if (!hairPath) {
             await new Promise((resolve, reject) => {
-                this.scene.p5.loadImage(this.scene.scene_manager.playerHair, (img) => {
+                this.scene.p5.loadImage('assets/player_hair_short.png', (img) => {
                     this.hairTemplate = img;
                     resolve(true);
                 }, reject);
             });
         }
-        await new Promise((resolve, reject) => {
-            this.scene.p5.loadImage(this.scene.scene_manager.playerClothes, (img) => {
-                this.clothes = img;
-                resolve(true);
-            }, reject);
-        });
-        if (this.scene.scene_manager.playerHat != "none") {
+        if (hairPath && hairPath !== "none") {
             await new Promise((resolve, reject) => {
-                this.scene.p5.loadImage(this.scene.scene_manager.playerHat, (img) => {
+                this.scene.p5.loadImage(hairPath, (img) => {
+                    this.hairTemplate = img;
+                    resolve(true);
+                }, reject);
+            });
+        }
+        const clothesPath = localStorage.getItem("playerClothes");
+        if (!clothesPath) {
+            await new Promise((resolve, reject) => {
+                this.scene.p5.loadImage('assets/player_tunic.png', (img) => {
+                    this.clothes = img;
+                    resolve(true);
+                }, reject);
+            });
+        }
+        if (clothesPath) {
+            await new Promise((resolve, reject) => {
+                this.scene.p5.loadImage(clothesPath, (img) => {
+                    this.clothes = img;
+                    resolve(true);
+                }, reject);
+            });
+        }
+
+        const hatPath = localStorage.getItem("playerHat");
+        if (hatPath && hatPath !== "none") {
+            await new Promise((resolve, reject) => {
+                this.scene.p5.loadImage(hatPath, (img) => {
                     this.hat = img;
                     resolve(true);
                 }, reject);
@@ -80,6 +102,7 @@ export default class Player extends PhysicsObject {
         if (savedHairColor) {
             this.hairColor = JSON.parse(savedHairColor);
         }
+
         this.forwardKey = localStorage.getItem("forward") ?? 'w';
         this.leftKey = localStorage.getItem("left") ?? 'a';
         this.downKey = localStorage.getItem("down") ?? 's';

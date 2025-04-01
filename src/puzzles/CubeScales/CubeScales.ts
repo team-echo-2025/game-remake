@@ -7,6 +7,7 @@ import Player from "../../lib/Player";
 import Scene from "../../lib/Scene";
 import Sprite from "../../lib/Sprite";
 import RigidBody from "../../lib/physics/RigidBody";
+import Sound from "../../lib/Sound";
 
 export default class CubeScalesPuzzle extends Puzzle {
     cubes: Cube[] = [];
@@ -22,6 +23,9 @@ export default class CubeScalesPuzzle extends Puzzle {
     private collider_timeout: any;
     x: number = 0;
     y: number = 0;
+
+    // Added property for the light-switch sound effect
+    private lightSwitchSfx!: Sound;
 
     constructor(scene: Scene, puzzle_asset_key: string, player: Player) {
         super(scene);
@@ -45,8 +49,15 @@ export default class CubeScalesPuzzle extends Puzzle {
         this.asset.change_asset('broken-puzzle');
         this.scene.physics.remove(this.physics_object);
     }
+
+    // Optionally add a preload method if the scene doesn't already load this sound
+    preload(): any {
+        this.scene.loadSound("lightSwitch", "assets/TInterfaceSounds/light-switch.mp3");
+    }
+
     setup(): void {
-        //putting into game itself
+        //console.log("SETUP STARTED");
+        // Setting up physics object and collision detection
         this.physics_object = new PhysicsObject({
             width: 100,
             height: 100,
@@ -60,7 +71,7 @@ export default class CubeScalesPuzzle extends Puzzle {
             if (other == this.player.body) {
                 clearTimeout(this.collider_timeout);
                 if (!this.highlight) {
-                    this.highlight = true
+                    this.highlight = true;
                     this.asset.change_asset("highlighted-puzzle");
                 }
                 this.collider_timeout = setTimeout(() => {
@@ -68,7 +79,8 @@ export default class CubeScalesPuzzle extends Puzzle {
                     this.asset.change_asset("scales");
                 }, 100);
             }
-        }
+        };
+
         this.asset = this.scene.add_new.sprite(this.asset_key);
         this.asset.x = this.x;
         this.asset.y = this.y;
@@ -91,15 +103,20 @@ export default class CubeScalesPuzzle extends Puzzle {
         });
         this.resetButton.y = 200;
         if (this.hidden) this.resetButton.hidden = true;
+
+        // Instantiate the light-switch sound effect
+        this.lightSwitchSfx = this.scene.add_new.sound("lightSwitch");
     }
 
     keyPressed(e: KeyboardEvent): void {
-        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
+        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return;
+        //console.log("STATE", this.state);
         if (this.hidden && this.highlight && e.key == 'e') {
             this.player.disabled = true;
             this.hidden = false;
         }
     }
+
     postDraw(): void {
         if (this.solved()) {
             this.displayWinMessage();
@@ -216,16 +233,23 @@ export default class CubeScalesPuzzle extends Puzzle {
             this.scene.start(this.scene.name);
             return;
         }
-
+    
         for (let cube of this.cubes) {
             if (this.isMouseOver(cube)) {
                 this.draggingCube = cube;
                 this.draggingCube.dragging = true;
                 this.draggingCube.state = CubeState.dragged;
+                
+                // Play sound on cube touch
+                if (this.lightSwitchSfx && typeof this.lightSwitchSfx.play === "function") {
+                    this.lightSwitchSfx.play();
+                }
+                
                 break;
             }
         }
     }
+    
 
     mouseDragged(): void {
         if (this.draggingCube!.dragging) {
@@ -237,14 +261,23 @@ export default class CubeScalesPuzzle extends Puzzle {
 
     mouseReleased(): void {
         if (this.draggingCube) {
+            // Determine placement and update cube state
             if (this.isOnLeftScale()) {
                 this.draggingCube.x = -80;
                 this.draggingCube.y = 50;
                 this.draggingCube.state = CubeState.left;
+                // Play light-switch sound effect when a cube is placed on the left scale
+                if (this.lightSwitchSfx && typeof this.lightSwitchSfx.play === "function") {
+                    this.lightSwitchSfx.play();
+                }
             } else if (this.isOnRightScale()) {
                 this.draggingCube.x = 80;
                 this.draggingCube.y = 50;
                 this.draggingCube.state = CubeState.right;
+                // Play light-switch sound effect when a cube is placed on the right scale
+                if (this.lightSwitchSfx && typeof this.lightSwitchSfx.play === "function") {
+                    this.lightSwitchSfx.play();
+                }
             } else {
                 this.draggingCube.x = this.draggingCube.initialX;
                 this.draggingCube.y = this.draggingCube.initialY;
@@ -257,9 +290,13 @@ export default class CubeScalesPuzzle extends Puzzle {
         }
     }
 
-
     isMouseOver(cube: Cube): boolean {
-        let d = this.scene.p5.dist(cube.x, cube.y, this.scene.p5.mouseX - this.scene.p5.width / 2, this.scene.p5.mouseY - this.scene.p5.height / 2);
+        let d = this.scene.p5.dist(
+            cube.x,
+            cube.y,
+            this.scene.p5.mouseX - this.scene.p5.width / 2,
+            this.scene.p5.mouseY - this.scene.p5.height / 2
+        );
         return d < 20;
     }
 
