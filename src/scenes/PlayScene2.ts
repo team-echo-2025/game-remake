@@ -28,7 +28,7 @@ export default class Dungeon1 extends Scene {
     onStart(args?: StartArgs): void {
         this.camera.zoom = 3;
         this.player = new Player(this);
-        this.player.body.x = args?.starting_pos?.x ?? -1767;
+        this.player.body.x = args?.starting_pos?.x ?? -1260;
         this.player.body.y = args?.starting_pos?.y ?? 863;
         this.physics.addObject(this.player);
     }
@@ -56,8 +56,8 @@ export default class Dungeon1 extends Scene {
             height: 100,
             mass: Infinity
         });
-        object.body.x = -104;
-        object.body.y = -725;
+        object.body.x = 408;
+        object.body.y = -666;
         object.overlaps = true;
         object.onCollide = (other: RigidBody) => {
             if (other == this.player?.body) {
@@ -72,7 +72,7 @@ export default class Dungeon1 extends Scene {
             height: 300,
             mass: Infinity
         });
-        enter_portal.body.x = -1810;
+        enter_portal.body.x = -1300;
         enter_portal.body.y = 863;
         enter_portal.overlaps = true;
         enter_portal.onCollide = (other: RigidBody) => {

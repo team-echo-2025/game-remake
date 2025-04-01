@@ -197,7 +197,7 @@ export default class PlayScene extends Scene {
         portal1.onCollide = (other: RigidBody) => {
             if (other == this.player?.body) {
                 this.start("playscene-2", {
-                    starting_pos: { x: -1767, y: 863 }
+                    starting_pos: { x: -1260, y: 863 }
                 });
             }
         }
