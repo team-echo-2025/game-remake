@@ -18,7 +18,7 @@ type SceneState = {
 }
 
 export default class Switches extends Scene {
-    pManager: PageManager;
+    //pManager: PageManager;
     player?: Player;
     tilemap?: Tilemap;
     // firstSwitch: [number, number] | null;
@@ -30,7 +30,7 @@ export default class Switches extends Scene {
     constructor() {
         super("Switches");
         this.physics.debug = false;
-        this.pManager = new PageManager([new SwitchesPage()], this)
+        //this.pManager = new PageManager([new SwitchesPage()], this)
         // this.firstSwitch = null;
         // this.secondSwitch = null;
         // this.foundSwitch = false;
@@ -60,15 +60,15 @@ export default class Switches extends Scene {
     //     this.switchState = 0;
     // }
 
-    onStart(args?: any): void {
+    onStart(): void {
 
-        this.add(this.pManager);
-        this.pManager.set_page("SwitchesPage");
-        this.pManager.postDraw();
+        //this.add(this.pManager);
+        //this.pManager.set_page("SwitchesPage");
+        //this.pManager.postDraw();
 
         this.player = new Player(this);
-        this.player.body.x = args?.starting_pos?.x ?? -215;
-        this.player.body.y = args?.starting_pos?.y ?? -215;
+        this.player.body.x = -215;
+        this.player.body.y = -215;
         this.physics.addObject(this.player);
     }
     preload(): any {
@@ -84,17 +84,17 @@ export default class Switches extends Scene {
             w: this.tilemap.width,
             h: this.tilemap.height,
         });
-        const gridSize = new PhysicsObject({
-            width: 100,
-            height: 100,
-            mass: Infinity
-        })
-        gridSize.body.x = 0;
-        gridSize.body.y = -215;
-        gridSize.overlaps = true;
-        //gridSize.onCollide = (other: RigidBody) => {
-        //}
-        this.physics.addObject(gridSize);
+        // const gridSize = new PhysicsObject({
+        //     width: 100,
+        //     height: 100,
+        //     mass: Infinity
+        // })
+        // gridSize.body.x = 0;
+        // gridSize.body.y = -215;
+        // gridSize.overlaps = true;
+        // //gridSize.onCollide = (other: RigidBody) => {
+        // //}
+        // this.physics.addObject(gridSize);
 
         //Ending
 
@@ -106,7 +106,7 @@ export default class Switches extends Scene {
         //     this.pressSwitch(this.player.body.x, this.player.body.y);
         // }
         if (e.key === "Escape"){
-            this.pManager?.keyPressed(e);
+            this.start("menu-scene");
         } 
     }
     // pressSwitch(x: number, y: number) {
@@ -140,11 +140,11 @@ export default class Switches extends Scene {
     //     this.initializePuzzle();
     // }
     onStop(): void {
-        this.tilemap = undefined;
-        this.player = undefined;
+        // this.tilemap = undefined;
+        // this.player = undefined;
     }
     draw(): void {
-        if (!this.player || !this.player.body) return;
+        // if (!this.player || !this.player.body) return;
     }
     postDraw(): void { }
 } 
