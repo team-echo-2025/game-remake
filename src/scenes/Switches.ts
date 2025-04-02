@@ -77,7 +77,7 @@ export default class Switches extends Scene {
     }
     setup(): void {
         // Boundaries of the grid
-        this.tilemap = this.add_new.tilemap({tilemap_key: "tilemap" });
+        this.tilemap = this.add_new.tilemap({ tilemap_key: "tilemap" });
         this.bounds = new BoxCollider({
             x: this.tilemap.x,
             y: this.tilemap.y,
@@ -105,9 +105,9 @@ export default class Switches extends Scene {
         //     if(!this.player || !this.player.body) return;
         //     this.pressSwitch(this.player.body.x, this.player.body.y);
         // }
-        if (e.key === "Escape"){
+        if (e.key === "Escape") {
             this.start("menu-scene");
-        } 
+        }
     }
     // pressSwitch(x: number, y: number) {
     //     if (!this.firstSwitch || !this.secondSwitch) {
