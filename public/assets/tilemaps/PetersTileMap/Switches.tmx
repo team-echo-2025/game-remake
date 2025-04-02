@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="73" height="60" tilewidth="16" tileheight="16" infinite="1" nextlayerid="9" nextobjectid="1">
- <tileset firstgid="1" source="Texture/Grass.tsx"/>
- <tileset firstgid="257" source="Texture/TX Tileset Wall.tsx"/>
+ <tileset firstgid="1" source="Grass.tsx"/>
+ <tileset firstgid="257" source="TX Tileset Wall.tsx"/>
  <tileset firstgid="1281" source="GraveyardSwitch/Stairs.tsx"/>
- <tileset firstgid="2305" source="Texture/Stone Ground.tsx"/>
+ <tileset firstgid="2305" source="Stone Ground.tsx"/>
  <tileset firstgid="2561" source="GraveyardSwitch/Graveyard.tsx"/>
  <tileset firstgid="3585" source="Trees.tsx"/>
  <layer id="1" name="Ground/Grass" width="73" height="60">

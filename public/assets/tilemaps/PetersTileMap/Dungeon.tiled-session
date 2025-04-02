@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Dungeon.tmx",
+    "activeFile": "Texture/Stone Ground.tsx",
     "expandedProjectPaths": [
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
@@ -23,15 +23,19 @@
             "scale": 0.33,
             "selectedLayer": 10,
             "viewCenter": {
-                "x": -418.181818181818,
-                "y": 189.39393939393926
+                "x": -127.27272727272725,
+                "y": -456.060606060606
             }
         },
         "Dungeonset.tsx": {
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
+        "Grass.tsx": {
+            "dynamicWrapping": false
+        },
         "GraveyardSwitch/Graveyard.tsx": {
+            "dynamicWrapping": false,
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
@@ -51,26 +55,33 @@
                 "y": 127.33333333333337
             }
         },
+        "Stone Ground.tsx": {
+            "dynamicWrapping": false
+        },
         "Stone walls.tsx": {
+            "dynamicWrapping": false,
             "scaleInDock": 1
         },
         "Switches.tmx": {
             "scale": 0.75,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": 1078.6666666666665,
-                "y": 421.99999999999994
+                "x": 306.66666666666674,
+                "y": 440.6666666666666
             }
         },
         "Texture/Grass.tsx": {
+            "dynamicWrapping": true,
             "scaleInDock": 1.5,
             "scaleInEditor": 1
         },
         "Texture/Stone Ground.tsx": {
+            "dynamicWrapping": true,
             "scaleInDock": 2,
             "scaleInEditor": 1
         },
         "Texture/TX Tileset Wall.tsx": {
+            "dynamicWrapping": true,
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
@@ -79,6 +90,7 @@
             "scaleInEditor": 1
         },
         "Village props.tsx": {
+            "dynamicWrapping": false,
             "scaleInDock": 1
         },
         "dungeonset2.tsx": {
@@ -96,7 +108,8 @@
             "scaleInDock": 1.5
         }
     },
-    "last.imagePath": "C:/Users/SSBtd/OneDrive/Documents/GitHub/game-remake/public/assets/tilemaps/PetersTileMap/Other Assets",
+    "last.externalTilesetPath": "C:/Users/SSBtd/OneDrive/Documents/GitHub/game-remake/public/assets/tilemaps/PetersTileMap",
+    "last.imagePath": "C:/Users/SSBtd/OneDrive/Documents/GitHub/game-remake/public/assets/tilemaps/PetersTileMap",
     "map.fixedSize": false,
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 16,
@@ -107,7 +120,6 @@
         "Texture/TX Tileset Wall.tsx",
         "Dungeonset.tsx",
         "Trees.tsx",
-        "GraveyardSwitch/Stairs.tsx",
         "GraveyardSwitch/Graveyard.tsx",
         "GraveyardSwitch/Set 1.tsx",
         "Dungeon.tmx",
@@ -115,16 +127,16 @@
     ],
     "project": "Dungeon.tiled-project",
     "recentFiles": [
-        "Texture/Grass.tsx",
-        "Texture/Stone Ground.tsx",
         "Texture/TX Tileset Wall.tsx",
-        "Dungeonset.tsx",
-        "Trees.tsx",
-        "GraveyardSwitch/Stairs.tsx",
-        "GraveyardSwitch/Graveyard.tsx",
-        "GraveyardSwitch/Set 1.tsx",
+        "Texture/Grass.tsx",
         "Switches.tmx",
         "Dungeon.tmx",
+        "GraveyardSwitch/Set 1.tsx",
+        "GraveyardSwitch/Graveyard.tsx",
+        "Trees.tsx",
+        "Dungeonset.tsx",
+        "Texture/Stone Ground.tsx",
+        "GraveyardSwitch/Stairs.tsx",
         "graveyardSwitch.tmx",
         "GraveyardSwitch/graveyardSwitch.tmx"
     ],
