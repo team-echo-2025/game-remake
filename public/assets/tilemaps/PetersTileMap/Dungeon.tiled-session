@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Texture/Stone Ground.tsx",
+    "activeFile": "Switches.tmx",
     "expandedProjectPaths": [
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
@@ -23,8 +23,8 @@
             "scale": 0.33,
             "selectedLayer": 10,
             "viewCenter": {
-                "x": -127.27272727272725,
-                "y": -456.060606060606
+                "x": 1021.2121212121212,
+                "y": 904.5454545454545
             }
         },
         "Dungeonset.tsx": {
@@ -32,7 +32,11 @@
             "scaleInEditor": 1
         },
         "Grass.tsx": {
-            "dynamicWrapping": false
+            "dynamicWrapping": false,
+            "scaleInDock": 1
+        },
+        "Graveyard.tsx": {
+            "scaleInDock": 1
         },
         "GraveyardSwitch/Graveyard.tsx": {
             "dynamicWrapping": false,
@@ -55,20 +59,27 @@
                 "y": 127.33333333333337
             }
         },
+        "Stairs.tsx": {
+            "scaleInDock": 1
+        },
         "Stone Ground.tsx": {
-            "dynamicWrapping": false
+            "dynamicWrapping": false,
+            "scaleInDock": 1
         },
         "Stone walls.tsx": {
             "dynamicWrapping": false,
             "scaleInDock": 1
         },
         "Switches.tmx": {
-            "scale": 0.75,
-            "selectedLayer": 4,
+            "scale": 2,
+            "selectedLayer": 9,
             "viewCenter": {
-                "x": 306.66666666666674,
-                "y": 440.6666666666666
+                "x": 408.5,
+                "y": 326.75
             }
+        },
+        "TX Tileset Wall.tsx": {
+            "scaleInDock": 1
         },
         "Texture/Grass.tsx": {
             "dynamicWrapping": true,
@@ -115,26 +126,21 @@
     "map.tileHeight": 16,
     "map.tileWidth": 16,
     "openFiles": [
-        "Texture/Grass.tsx",
-        "Texture/Stone Ground.tsx",
-        "Texture/TX Tileset Wall.tsx",
         "Dungeonset.tsx",
         "Trees.tsx",
-        "GraveyardSwitch/Graveyard.tsx",
-        "GraveyardSwitch/Set 1.tsx",
         "Dungeon.tmx",
         "Switches.tmx"
     ],
     "project": "Dungeon.tiled-project",
     "recentFiles": [
+        "Dungeonset.tsx",
+        "Trees.tsx",
+        "Dungeon.tmx",
+        "Switches.tmx",
         "Texture/TX Tileset Wall.tsx",
         "Texture/Grass.tsx",
-        "Switches.tmx",
-        "Dungeon.tmx",
         "GraveyardSwitch/Set 1.tsx",
         "GraveyardSwitch/Graveyard.tsx",
-        "Trees.tsx",
-        "Dungeonset.tsx",
         "Texture/Stone Ground.tsx",
         "GraveyardSwitch/Stairs.tsx",
         "graveyardSwitch.tmx",

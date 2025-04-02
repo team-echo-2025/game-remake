@@ -9,6 +9,7 @@ import RigidBody from "../lib/physics/RigidBody";
 import { Vector2D } from "../lib/types/Physics";
 import { Graphics } from "p5";
 import { PuzzleState } from "../lib/Puzzle";
+import Dialogue from "../lib/ui/Dialogue";
 
 type StartArgs = Readonly<{
     starting_pos: Vector2D
@@ -26,6 +27,7 @@ export default class Switches extends Scene {
     // foundSwitch: boolean;
     // positions: [number, number][];
     // switchState: number;
+    
 
     constructor() {
         super("Switches");
@@ -67,8 +69,8 @@ export default class Switches extends Scene {
         //this.pManager.postDraw();
 
         this.player = new Player(this);
-        this.player.body.x = -215;
-        this.player.body.y = -215;
+        this.player.body.x = -90;
+        this.player.body.y = -70;
         this.physics.addObject(this.player);
     }
     preload(): any {
@@ -94,17 +96,17 @@ export default class Switches extends Scene {
         // gridSize.overlaps = true;
         // //gridSize.onCollide = (other: RigidBody) => {
         // //}
-        // this.physics.addObject(gridSize);
+        // this.physics.ad//dObject(gridSize);
 
         //Ending
 
     }
 
     keyPressed = (e: KeyboardEvent) => {
-        // if(e.key === 'e'){
+        //if(e.key === 'e'){
         //     if(!this.player || !this.player.body) return;
         //     this.pressSwitch(this.player.body.x, this.player.body.y);
-        // }
+        //}
         if (e.key === "Escape") {
             this.start("menu-scene");
         }
