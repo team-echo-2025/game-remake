@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Switches.tmx",
+    "activeFile": "Dungeon.tmx",
     "expandedProjectPaths": [
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
@@ -23,8 +23,8 @@
             "scale": 0.33,
             "selectedLayer": 10,
             "viewCenter": {
-                "x": -122.72727272727272,
-                "y": 1301.5151515151515
+                "x": -418.181818181818,
+                "y": 189.39393939393926
             }
         },
         "Dungeonset.tsx": {
@@ -123,8 +123,8 @@
         "GraveyardSwitch/Stairs.tsx",
         "GraveyardSwitch/Graveyard.tsx",
         "GraveyardSwitch/Set 1.tsx",
-        "Dungeon.tmx",
         "Switches.tmx",
+        "Dungeon.tmx",
         "graveyardSwitch.tmx",
         "GraveyardSwitch/graveyardSwitch.tmx"
     ],
