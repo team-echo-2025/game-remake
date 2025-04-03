@@ -7,6 +7,7 @@ import PhysicsObject from "../../lib/physics/PhysicsObject";
 import Sprite from "../../lib/Sprite";
 import Player from "../../lib/Player";
 import RigidBody from "../../lib/physics/RigidBody";
+import Sound from "../../lib/Sound";
 
 export default class DrawPuzzle extends Puzzle {
     squares: Square[][] = [];
@@ -35,6 +36,9 @@ export default class DrawPuzzle extends Puzzle {
     private collider_timeout: any;
     x: number = 0;
     y: number = 0;
+
+    click_sfx!: Sound;
+    draw_sfx!: Sound;
 
     constructor(scene: Scene, puzzle_asset_key: string, player: Player) {
         super(scene);
@@ -131,6 +135,9 @@ export default class DrawPuzzle extends Puzzle {
         this.getBoardSize();
         this.scene.p5.createCanvas(this.scene.p5.windowWidth, this.scene.p5.windowHeight);
         this.scene.p5.rectMode(this.scene.p5.CENTER);
+
+        this.click_sfx = this.scene.add_new.sound("lightSwitch");
+        this.draw_sfx = this.scene.add_new.sound("draw");
     }
     draw() {
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
@@ -165,8 +172,12 @@ export default class DrawPuzzle extends Puzzle {
                     else // try  add to body
                         if (!tempSelect.hasPoint && !this.checkUsedInLine(tempSelect)) {
                             this.currentLine.addToBody(tempSelect);
-                            tempSelect.color = this.cursor.currentSquare.color; //recolor
+                            tempSelect.color = this.cursor.currentSquare.color;
+                            if (this.draw_sfx && typeof this.draw_sfx.play === "function") {
+                                this.draw_sfx.play();
+                              } //recolor
                         }
+                        
                 }
 
             }
@@ -463,6 +474,14 @@ export default class DrawPuzzle extends Puzzle {
     }
 
     mousePressed(): void {
+        if (this.hidden || 
+            this.state === PuzzleState.failed || 
+            this.state === PuzzleState.completed) {
+          return;
+          }
+          if (this.click_sfx && typeof this.click_sfx.play == "function"){
+            this.click_sfx.play();
+          }
         this.currentLine?.clearLine();
         const p5 = this.scene.p5;
         const x = this.scene.p5.mouseX - this.scene.p5.width / 2;
