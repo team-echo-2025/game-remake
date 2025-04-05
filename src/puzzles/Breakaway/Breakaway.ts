@@ -224,7 +224,7 @@ export default class Breakaway extends Puzzle {
     }
 
     drawBody(): void {
-        let rectWidth = this.scene.p5.width / 1.1;
+        let rectWidth = this.scene.p5.width / 1.25;
         let rectHeight = this.scene.p5.height / 1.1;
 
         let rectX = 0;

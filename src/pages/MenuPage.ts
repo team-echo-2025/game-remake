@@ -81,7 +81,7 @@ export default class MenuPage extends Page {
             callback: () => {
                 this.button_sfx.play();
                 this.cleanup()
-                this.set_page('world-select-page')
+                this.set_page('difficulty-page')
             }
         })
         this.play.x = 0;
@@ -152,17 +152,17 @@ export default class MenuPage extends Page {
         })
         this.physicsTest2.x = 150
         this.physicsTest2.y = 400
-        this.puzzleTest = this.scene.add_new.button({
-            label: "Puzzles",
-            font_key: "jersey",
-            callback: () => {
-                this.button_sfx.play();
-                this.cleanup();
-                this.scene.start("puzzle-dev-scene");
-            }
-        })
-        this.puzzleTest.x = 0
-        this.puzzleTest.y = 300
+        // this.puzzleTest = this.scene.add_new.button({
+        //     label: "Puzzles",
+        //     font_key: "jersey",
+        //     callback: () => {
+        //         this.button_sfx.play();
+        //         this.cleanup();
+        //         this.scene.start("puzzle-dev-scene");
+        //     }
+        // })
+        // this.puzzleTest.x = 0
+        // this.puzzleTest.y = 300
 
         const splashprop: SplashTextProps = {
             label: "testtesttesttest",
