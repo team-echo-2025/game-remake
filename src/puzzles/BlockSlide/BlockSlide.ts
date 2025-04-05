@@ -5,6 +5,7 @@ import PhysicsObject from "../../lib/physics/PhysicsObject";
 import RigidBody from "../../lib/physics/RigidBody";
 import Scene from "../../lib/Scene";
 import Player from "../../lib/Player";
+import Sound from "../../lib/Sound"; // NEW: Import the Sound class
 
 type Position = { row: number; col: number };
 
@@ -31,6 +32,9 @@ export default class BlockSlide extends Puzzle {
     private collider_timeout: any;
     x: number = 0;
     y: number = 0;
+
+    // NEW: Add move sound property
+    private moveSound!: Sound;
 
     constructor(scene: Scene, puzzle_asset_key: string, player: Player) {
         super(scene);
@@ -84,6 +88,9 @@ export default class BlockSlide extends Puzzle {
         this.asset.y = this.y;
         this.asset.width = 32;
         this.asset.height = 48;
+
+        // NEW: Initialize the move sound (make sure "clack" is preloaded)
+        this.moveSound = this.scene.add_new.sound("clack");
 
         //puzzle setup
         this.setGridSize();  // Adjusted based on difficulty
@@ -264,15 +271,14 @@ export default class BlockSlide extends Puzzle {
     }
 
     mousePressed(): void {
+        if (this.hidden || 
+            this.state === PuzzleState.failed || 
+            this.state === PuzzleState.completed) {
+          return;
+          }
         let p5 = this.scene.p5;
 
         if (this.isAnimating) return;
-
-        // If the puzzle is solved, clicking anywhere will hide it
-        // if (this.solved()) {
-        //     this.scene.start(this.scene.name);
-        //     return;
-        // }
 
         // Get the top-left corner of the board
         let gridSizePixels = this.tileSize * this.gridSize;
@@ -317,6 +323,9 @@ export default class BlockSlide extends Puzzle {
         let targetY = (-this.gridSize / 2 + emptyRow + 0.5) * this.tileSize;
 
         this.isAnimating = true;
+
+        // NEW: Play the clack sound effect when a tile is moved
+        this.moveSound.play();
 
         // Start animation
         this.animations[key] = {
@@ -418,6 +427,4 @@ export default class BlockSlide extends Puzzle {
                 this.gridSize = 4;
         }
     }
-
-
 }
