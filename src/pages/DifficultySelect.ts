@@ -70,7 +70,7 @@ export default class DifficultyPage extends Page {
             callback: () => {
                 this.button_sfx.play();
                 this.cleanup()
-                this.set_page("world-select-page");
+                this.set_page("menu-page");
             }
         })
         this.keyPressed = (e: KeyboardEvent) => {

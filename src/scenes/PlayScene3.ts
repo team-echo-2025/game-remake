@@ -16,6 +16,7 @@ import CubeScalesPuzzle from "../puzzles/CubeScales/CubeScales";
 import PathPuzzle from "../puzzles/PathPuzzle/PathPuzzle";
 import BoxCollider from "../lib/physics/BoxCollider";
 import Dialogue from "../lib/ui/Dialogue";
+import Tasks from "../lib/Tasks"
 
 // Add Sound and SoundManager imports for background music and puzzle sounds
 import Sound from "../lib/Sound";
@@ -37,6 +38,7 @@ export default class Dungeon2 extends Scene {
     portal?: Spritesheet;
     puzzles: (BlockSlide | DrawPuzzle | Breakaway | PathPuzzle | LightsOn)[] = [];
     dialogue!: Dialogue;
+    tasks!: Tasks;
 
     // Background music fields (sound-related changes)
     public background_music?: Sound;
@@ -318,6 +320,7 @@ export default class Dungeon2 extends Scene {
         };
         this.puzzleSfxManager = this.add_new.soundmanager(puzzleSfxProps);
         // -----------------------
+        this.tasks = new Tasks(this, ...this.puzzles);
     }
 
     check_completed = () => {
@@ -363,6 +366,7 @@ export default class Dungeon2 extends Scene {
     }
 
     postDraw(): void {
+        this.tasks.postDraw();
         this.puzzles.forEach(puzzle => !puzzle.hidden && puzzle.postDraw());
     }
 

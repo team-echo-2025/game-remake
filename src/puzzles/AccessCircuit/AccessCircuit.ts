@@ -274,11 +274,12 @@ export default class AccessCircuit extends Puzzle {
         const solved = this.checkSolution();
         if (!solved && this.current_row >= this.board.length) {
             this.state = PuzzleState.failed;
-            //this.scene.timer?.deductTime(60);
+            this.scene.scene_manager.deductTime(60);
             this.hidden = true;
             this.player.disabled = false;
             this.scene.physics.remove(this.physics_object);
             this.asset.change_asset('broken-puzzle');
+            this.onCompleted?.();
         }
     }
 

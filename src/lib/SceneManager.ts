@@ -16,6 +16,9 @@ export default class SceneManager implements GameObject {
     get time_remaining(): number {
         return this._time_remaining;
     }
+    set time_remaining(time: number) {
+        this._time_remaining = time;
+    }
 
     public difficulty: string;
     public playerHair = "none";
@@ -122,6 +125,10 @@ export default class SceneManager implements GameObject {
 
     enableTimer(): void {
         this.timer_paused = false;
+    }
+
+    deductTime(penalty: number): void {
+        this.time_remaining -= penalty;
     }
 
     postSetup(): void {
