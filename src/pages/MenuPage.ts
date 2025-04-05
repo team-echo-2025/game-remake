@@ -21,7 +21,7 @@ export default class MenuPage extends Page {
         super("menu-page")
     }
     preload(): any {
-        this.scene.loadImage('test', "assets/buttonImages/Button_Flesh.png");
+        this.scene.loadImage('test', "assets/buttonImages/mossy.png");
     }
     cleanup() {
         this.scene.remove(this.play);
@@ -76,43 +76,20 @@ export default class MenuPage extends Page {
         })
         this.dropdown.y = -200
         this.dropdown.x = -200
-        this.play = this.scene.add_new.button({
+        this.play = this.scene.add_new.img_button({
             label: "Play!",
             font_key: 'jersey',
             callback: () => {
                 this.button_sfx.play();
                 this.cleanup()
                 this.set_page('difficulty-page')
-            }
+            },
+            imageKey : "test"
         })
         this.play.x = 0;
         this.play.y = -100;
-        this.setting = this.scene.add_new.button({
+        this.setting = this.scene.add_new.img_button({
             label: "Settings",
-            font_key: 'jersey',
-            callback: () => {
-                this.button_sfx.play();
-                this.cleanup();
-                this.set_page("settings-page");
-            }
-        })
-        this.setting.x = 0;
-        this.setting.y = 0;
-        this.carCuz = this.scene.add_new.button({
-            label: "Character Customization",
-            font_key: 'jersey',
-            callback: () => {
-                this.button_sfx.play();
-                this.cleanup();
-                this.set_page("character-page");
-            }
-        })
-        this.carCuz.x = 0;
-        this.carCuz.y = 100;
-
-
-        const changeLater = this.scene.add_new.img_button({
-            label: "FUCK",
             font_key: 'jersey',
             callback: () => {
                 this.button_sfx.play();
@@ -121,66 +98,85 @@ export default class MenuPage extends Page {
             },
             imageKey : "test"
         })
-        changeLater.x = 0;
-        changeLater.y = 0;
+        this.setting.x = 0;
+        this.setting.y = 0;
+        this.carCuz = this.scene.add_new.img_button({
+            label: "Character Customization",
+            font_key: 'jersey',
+            callback: () => {
+                this.button_sfx.play();
+                this.cleanup();
+                this.set_page("character-page");
+            },
+            imageKey : "test"
+        })
+        this.carCuz.x = 0;
+        this.carCuz.y = 100;
+
+
+        // const changeLater = this.scene.add_new.img_button({
+        //     label: "FUCK",
+        //     font_key: 'jersey',
+        //     callback: () => {
+        //         this.button_sfx.play();
+        //         this.cleanup();
+        //         this.set_page("settings-page");
+        //     },
+        //     imageKey : "test"
+        // })
+        // changeLater.x = 0;
+        // changeLater.y = 0;
 
 
 
-        this.KDbutton = this.scene.add_new.button({
+        this.KDbutton = this.scene.add_new.img_button({
             label: "KD DEV",
             font_key: "jersey",
             callback: () => {
                 this.button_sfx.play();
                 this.cleanup()
                 this.scene.start("kd-dev-scene")
-            }
+            },
+            imageKey : "test"
         })
         this.KDbutton.x = 300
         this.KDbutton.y = 300
-        this.credits = this.scene.add_new.button({
+        this.credits = this.scene.add_new.img_button({
             label: "Credits",
             font_key: "jersey",
             callback: () => {
                 this.button_sfx.play();
                 this.cleanup();
                 this.set_page("credits-page");
-            }
+            },
+            imageKey : "test"
         })
         this.credits.x = -300
         this.credits.y = 300
-        this.physicsTest = this.scene.add_new.button({
+        this.physicsTest = this.scene.add_new.img_button({
             label: "Physics",
             font_key: "jersey",
             callback: () => {
                 this.button_sfx.play();
                 this.cleanup();
                 this.scene.start("physics-scene");
-            }
+            },
+            imageKey : "test"
         })
-        this.physicsTest.x = 150
+        this.physicsTest.x = 0
         this.physicsTest.y = 300
-        this.physicsTest2 = this.scene.add_new.button({
+        this.physicsTest2 = this.scene.add_new.img_button({
             label: "Physics2",
             font_key: "jersey",
             callback: () => {
                 this.button_sfx.play();
                 this.cleanup();
                 this.scene.start("physics-scene2");
-            }
+            },
+            imageKey : "test"
         })
         this.physicsTest2.x = 150
-        this.physicsTest2.y = 400
-        this.puzzleTest = this.scene.add_new.button({
-            label: "Puzzles",
-            font_key: "jersey",
-            callback: () => {
-                this.button_sfx.play();
-                this.cleanup();
-                this.scene.start("puzzle-dev-scene");
-            }
-        })
-        this.puzzleTest.x = 0
-        this.puzzleTest.y = 300
+        this.physicsTest2.y = 300
 
         const splashprop: SplashTextProps = {
             label: "testtesttesttest",
