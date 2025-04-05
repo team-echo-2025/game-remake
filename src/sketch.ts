@@ -5,7 +5,6 @@ import PlayScene from './scenes/PlayScene';
 import LoadingScene from './scenes/LoadingScene';
 import KDDevScene from './scenes/KDDevScene';
 import PhysicsTestScene from "./scenes/PhysicsTestScene";
-// import PuzzleDevScene from "./scenes/PuzzleDevScene";
 import Dungeon1 from './scenes/PlayScene2';
 import Dungeon2 from './scenes/PlayScene3';
 import iceMaze from "./scenes/IceMaze";

@@ -21,6 +21,7 @@ export default class MenuPage extends Page {
         super("menu-page")
     }
     preload(): any {
+        this.scene.loadImage('test', "assets/buttonImages/Button_Flesh.png");
     }
     cleanup() {
         this.scene.remove(this.play);
@@ -81,7 +82,7 @@ export default class MenuPage extends Page {
             callback: () => {
                 this.button_sfx.play();
                 this.cleanup()
-                this.set_page('world-select-page')
+                this.set_page('difficulty-page')
             }
         })
         this.play.x = 0;
@@ -108,6 +109,23 @@ export default class MenuPage extends Page {
         })
         this.carCuz.x = 0;
         this.carCuz.y = 100;
+
+
+        const changeLater = this.scene.add_new.img_button({
+            label: "FUCK",
+            font_key: 'jersey',
+            callback: () => {
+                this.button_sfx.play();
+                this.cleanup();
+                this.set_page("settings-page");
+            },
+            imageKey : "test"
+        })
+        changeLater.x = 0;
+        changeLater.y = 0;
+
+
+
         this.KDbutton = this.scene.add_new.button({
             label: "KD DEV",
             font_key: "jersey",
