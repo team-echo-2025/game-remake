@@ -11,6 +11,7 @@ import { Graphics } from "p5";
 import { PuzzleState } from "../lib/Puzzle";
 import Dialogue from "../lib/ui/Dialogue";
 
+
 type StartArgs = Readonly<{
     starting_pos: Vector2D
 }>
@@ -19,14 +20,18 @@ type SceneState = {
 }
 
 export default class Switches extends Scene {
+    x: number = 0; //position of the stones
+    y: number = 0;
     pManager: PageManager;
     player?: Player;
     tilemap?: Tilemap;
     firstSwitch: [number, number] | null;
     secondSwitch: [number, number] | null;
     foundSwitch: boolean;
-    positions: [number, number][];
+    //positions: [number, number][];
     switchState: number;
+    graveSwitch!: PhysicsObject;
+    dialogue!: Dialogue;
     
 
     constructor() {
@@ -36,31 +41,31 @@ export default class Switches extends Scene {
         this.firstSwitch = null;
         this.secondSwitch = null;
         this.foundSwitch = false;
-        this.positions = [ 
-            [-309,-250], //top left
-            [-305, -131], //bottom left
-            [-143, -263], // top right
-            [143, -131], // bottom right
-        ]
+        // this.positions = [ 
+        //     [-309,-250], //top left
+        //     [-305, -131], //bottom left
+        //     [-143, -263], // top right
+        //     [143, -131], // bottom right
+        // ]
         this.switchState = 0;
         this.camera.zoom = 3;
-        this.initializePuzzle();
+        //this.initializePuzzle();
     }
-    initializePuzzle() { // 8x3
-        const row = Math.floor(Math.random() * 8);
-        const col = Math.floor(Math.random() * 3);
-        this.firstSwitch = [row, col];
+    // initializePuzzle() { // 8x3
+    //     const row = Math.floor(Math.random() * 8);
+    //     const col = Math.floor(Math.random() * 3);
+    //     this.firstSwitch = [row, col];
 
-        const neighbors: [ number, number ][] = [];
+    //     const neighbors: [ number, number ][] = [];
 
-        if (row > 0) neighbors.push([row - 10, col]);
-        if (row < 7) neighbors.push([row + 10, col]);
-        if (col > 0) neighbors.push([row, col - 10]);
-        if (col < 2) neighbors.push([row, col + 10]);
+    //     if (row > 0) neighbors.push([row - 10, col]);
+    //     if (row < 7) neighbors.push([row + 10, col]);
+    //     if (col > 0) neighbors.push([row, col - 10]);
+    //     if (col < 2) neighbors.push([row, col + 10]);
 
-        this.secondSwitch = neighbors[Math.floor(Math.random() * neighbors.length)];
-        this.switchState = 0;
-    }
+    //     this.secondSwitch = neighbors[Math.floor(Math.random() * neighbors.length)];
+    //     this.switchState = 0;
+    // }
 
     onStart(): void {
 
@@ -78,69 +83,72 @@ export default class Switches extends Scene {
         this.loadTilemap("tilemap", "assets/tilemaps/PetersTileMap/Switches.tmx");
     }
     setup(): void {
-        // Boundaries of the grid
-        this.tilemap = this.add_new.tilemap({ tilemap_key: "tilemap" });
-        this.bounds = new BoxCollider({
-            x: this.tilemap.x,
-            y: this.tilemap.y,
-            w: this.tilemap.width,
-            h: this.tilemap.height,
-        });
-        const gridSize = new PhysicsObject({
-            width: 100,
-            height: 100,
+        this.graveSwitch = new PhysicsObject({
+            width: 50,
+            height: 50,
             mass: Infinity
-        })
-        gridSize.body.x = 0;
-        gridSize.body.y = -215;
-        gridSize.overlaps = true;
-        //gridSize.onCollide = (other: RigidBody) => {
-        //}
-        this.physics.addObject(gridSize);
+        });   
+        this.graveSwitch.overlaps = true;
+        this.graveSwitch.body.x = this.x;
+        this.graveSwitch.body.y = this.y;
+        this.physics.addObject(this.graveSwitch);
+
+        this.dialogue = new Dialogue(this, this.player!);
 
         //Ending
+        //(0,-215)
 
     }
 
     keyPressed = (e: KeyboardEvent) => {
-        if(e.key === 'e'){
-            if(!this.player || !this.player.body) return;
-            this.pressSwitch(this.player.body.x, this.player.body.y);
+        // if(e.key === 'e'){
+        //     if(!this.player || !this.player.body) return;
+        //     this.pressSwitch(this.player.body.x, this.player.body.y);
+        // }
+        this.graveSwitch.onCollide = (other: RigidBody) => {
+            if(e.key === 'e') {
+                if(this.foundSwitch){
+                    this.dialogue.addDialogue(this.x,this.y,"Hmm, there is nothing here");
+                }
+                else {
+                    this.dialogue.addDialogue(this.x,this.y, "There seems to be a switch in another place");
+                }
+            } 
         }
         if (e.key === "Escape") {
             this.start("menu-scene");
         }
     }
-    pressSwitch(x: number, y: number) {
-        if (!this.firstSwitch || !this.secondSwitch) {
-            this.switchState = -1;
-            return;
-        }
+    // pressSwitch(x: number, y: number) {
+    //     if (!this.firstSwitch || !this.secondSwitch) {
+    //         this.switchState = -1;
+    //         return;
+    //     }
 
-        const row = Math.round((x + 18) / 10);
-        const col = Math.round((y + 16) / 10);
+    //     const row = Math.round((x + 18) / 10);
+    //     const col = Math.round((y + 16) / 10);
 
-        if (!this.foundSwitch) {
-            if (row === this.firstSwitch[0] && col === this.firstSwitch[1]) {
-                this.foundSwitch = true;
-                this.switchState = 1;
-            } else {
-                this.resetPuzzle();
-                this.switchState = -1;
-            }
-        } else {
-            if (row === this.secondSwitch[0] && col === this.secondSwitch[1]) {
-                this.switchState = 2;
-            } else {
-                this.resetPuzzle();
-                this.switchState = -1;
-            }
-        }
-    }
-    resetPuzzle() {
-        this.foundSwitch = false;
-        this.initializePuzzle();
-    }
+    //     if (!this.foundSwitch) {
+    //         if (row === this.firstSwitch[0] && col === this.firstSwitch[1]) {
+    //             this.foundSwitch = true;
+    //             this.switchState = 1;
+    //         } else {
+    //             this.resetPuzzle();
+    //             this.switchState = -1;
+    //         }
+    //     } else {
+    //         if (row === this.secondSwitch[0] && col === this.secondSwitch[1]) {
+    //             this.switchState = 2;
+    //         } else {
+    //             this.resetPuzzle();
+    //             this.switchState = -1;
+    //         }
+    //     }
+    // }
+    // resetPuzzle() {
+    //     this.foundSwitch = false;
+    //     this.initializePuzzle();
+    // }
     onStop(): void {
          this.tilemap = undefined;
          this.player = undefined;
