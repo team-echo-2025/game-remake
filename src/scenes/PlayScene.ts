@@ -168,6 +168,9 @@ export default class PlayScene extends Scene {
         this.access_circuit.y = 43;
         this.access_circuit?.setup();
         this.access_circuit.asset.zIndex = 101;
+        this.access_circuit.onOpen = () => {
+            this.dialogue.killAll();
+        }
 
 
         this.tilemap = this.add_new.tilemap({

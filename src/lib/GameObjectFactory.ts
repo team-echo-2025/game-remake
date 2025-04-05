@@ -10,6 +10,7 @@ import DropdownMenu, { DropdownMenuProps } from "./ui/DropdownMenu";
 import Slider, { SliderProps } from "./ui/Slider";
 import Sound from "./Sound";
 import SplashText, { SplashTextProps } from "./ui/SplashText";
+import ImageButton, { ImageButtonProps } from "./ui/ImageButton";
 
 export default class GameObjectFactory {
     private scene: Scene;
@@ -36,6 +37,13 @@ export default class GameObjectFactory {
 
     button = (props: ButtonTestProps): ButtonTest => {
         const _button = new ButtonTest(props);
+        _button.scene = this.scene;
+        this.scene.add(_button);
+        _button.setup();
+        return _button;
+    }
+    img_button = (props: ImageButtonProps): ImageButton => {
+        const _button = new ImageButton(props);
         _button.scene = this.scene;
         this.scene.add(_button);
         _button.setup();
