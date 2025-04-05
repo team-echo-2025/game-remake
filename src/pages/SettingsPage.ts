@@ -44,36 +44,39 @@ export default class SettingPage extends Page {
         }
         this.bgm_manager = this.scene.add_new.soundmanager(bgm_props);
         this.sfx_manager = this.scene.add_new.soundmanager(sfx_props);
-        this.mute = this.scene.add_new.button({
+        this.mute = this.scene.add_new.img_button({
             label: "Mute",
             font_key: 'jersey',
             callback: () => {
                 this.button_sfx.play();
                 //this.cleanup();
                 this.handleMute();
-            }
+            },
+            imageKey : "test"
         })
         this.mute.x = 0;
         this.mute.y = -100;
-        this.keybinds = this.scene.add_new.button({
+        this.keybinds = this.scene.add_new.img_button({
             label: "Keybinds",
             font_key: 'jersey',
             callback: () => {
                 this.button_sfx.play();
                 this.cleanup();
                 this.set_page("keybinds-page");
-            }
+            },
+            imageKey : "test"
         })
         this.keybinds.x = 0;
         this.keybinds.y = 0;
-        this.back = this.scene.add_new.button({
+        this.back = this.scene.add_new.img_button({
             label: "Back",
             font_key: 'jersey',
             callback: () => {
                 this.button_sfx.play();
                 this.cleanup();
                 this.set_page("menu-page");
-            }
+            },
+            imageKey : "test"
         })
         this.back.x = 0;
         this.back.y = 100;
