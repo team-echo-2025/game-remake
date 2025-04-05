@@ -72,9 +72,9 @@
         },
         "Switches.tmx": {
             "scale": 2,
-            "selectedLayer": -1,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 408.5,
+                "x": 511,
                 "y": 326.75
             }
         },

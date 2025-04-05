@@ -11,7 +11,6 @@ import { Graphics } from "p5";
 import { PuzzleState } from "../lib/Puzzle";
 import Dialogue from "../lib/ui/Dialogue";
 
-
 type StartArgs = Readonly<{
     starting_pos: Vector2D
 }>
@@ -28,7 +27,7 @@ export default class Switches extends Scene {
     firstSwitch: [number, number] | null;
     secondSwitch: [number, number] | null;
     foundSwitch: boolean;
-    //positions: [number, number][];
+    positions: [number, number][];
     switchState: number;
     graveSwitch!: PhysicsObject;
     dialogue!: Dialogue;
@@ -41,12 +40,12 @@ export default class Switches extends Scene {
         this.firstSwitch = null;
         this.secondSwitch = null;
         this.foundSwitch = false;
-        // this.positions = [ 
-        //     [-309,-250], //top left
-        //     [-305, -131], //bottom left
-        //     [-143, -263], // top right
-        //     [143, -131], // bottom right
-        // ]
+        this.positions = [ 
+            [-309,-250], //top left
+            [-305, -131], //bottom left
+            [-143, -263], // top right
+            [143, -131], // bottom right
+        ]
         this.switchState = 0;
         this.camera.zoom = 3;
         //this.initializePuzzle();
@@ -83,6 +82,20 @@ export default class Switches extends Scene {
         this.loadTilemap("tilemap", "assets/tilemaps/PetersTileMap/Switches.tmx");
     }
     setup(): void {
+
+        // Boundaries of the grid
+        this.tilemap = this.add_new.tilemap({ tilemap_key: "tilemap" });
+        const gridSize = new PhysicsObject({
+            width: 100,
+            height: 100,
+            mass: Infinity
+        })
+        gridSize.body.x = 0;
+        gridSize.body.y = -215;
+        gridSize.overlaps = true;
+        //gridSize.onCollide = (other: RigidBody) => {
+        //}
+        this.physics.addObject(gridSize);
         this.graveSwitch = new PhysicsObject({
             width: 50,
             height: 50,
@@ -108,10 +121,10 @@ export default class Switches extends Scene {
         this.graveSwitch.onCollide = (other: RigidBody) => {
             if(e.key === 'e') {
                 if(this.foundSwitch){
-                    this.dialogue.addDialogue(this.x,this.y,"Hmm, there is nothing here");
+                    this.dialogue.addDialogue(100,50,"Hmm, there is nothing here");
                 }
                 else {
-                    this.dialogue.addDialogue(this.x,this.y, "There seems to be a switch in another place");
+                    this.dialogue.addDialogue(110,60, "There seems to be a switch in another place");
                 }
             } 
         }
