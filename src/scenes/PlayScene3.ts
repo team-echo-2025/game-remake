@@ -254,6 +254,9 @@ export default class Dungeon2 extends Scene {
             puzzle.onCompleted = () => {
                 this.check_completed();
             };
+            puzzle.onOpen = () => {
+                this.dialogue.killAll();
+            };
         });
         const object = new PhysicsObject({
             width: 100,
@@ -330,6 +333,9 @@ export default class Dungeon2 extends Scene {
 
     keyPressed = (e: KeyboardEvent) => {
         this.puzzles.forEach(puzzle => puzzle.keyPressed(e));
+        if (e.key === "e" || e.key === 'E'){
+            this.dialogue.killAll();
+        }
         if (e.key === "Escape") {
             const containsHidden = this.puzzles.some(puzzle => !puzzle.hidden);
             if (containsHidden) {
@@ -342,7 +348,7 @@ export default class Dungeon2 extends Scene {
             }
         }
     };
-
+//make event for puzzle is open, this.dialogue.kill
     mousePressed(e: MouseEvent): void {
         this.puzzles.forEach(puzzle => puzzle.mousePressed());
     }
