@@ -31,7 +31,7 @@ export default class PathPuzzle extends Puzzle {
   private collider_timeout: any;
   x: number = 0;
   y: number = 0;
-
+  
   click_sfx!: Sound;
 
   constructor(scene: Scene, puzzle_asset_key: string, player: Player) {
@@ -40,20 +40,12 @@ export default class PathPuzzle extends Puzzle {
     this.hidden = true;
     this.player = player;
   }
-
+  
   force_solve() {
     this.state = PuzzleState.completed;
     this.hidden = true;
     this.player.disabled = false;
     this.asset.change_asset('scales-success');
-    this.scene.physics.remove(this.physics_object);
-  }
-
-  force_fail() {
-    this.state = PuzzleState.failed;
-    this.hidden = true;
-    this.player.disabled = false;
-    this.asset.change_asset('broken-puzzle');
     this.scene.physics.remove(this.physics_object);
   }
 
@@ -190,6 +182,7 @@ export default class PathPuzzle extends Puzzle {
     if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return;
     if (this.hidden && this.highlight && e.key == 'e') {
       this.player.disabled = true;
+      this.onOpen && this.onOpen();
       this.hidden = false;
     }
   }

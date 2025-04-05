@@ -22,7 +22,6 @@ export default class LightsOn extends Puzzle {
     private collider_timeout: any;
     x: number = 0;
     y: number = 0;
-
     constructor(scene: Scene, puzzle_asset_key: string, player: Player) {
         super(scene);
         this.asset_key = puzzle_asset_key;
@@ -37,15 +36,6 @@ export default class LightsOn extends Puzzle {
         this.asset.change_asset('success-puzzle');
         this.scene.physics.remove(this.physics_object);
     }
-
-    force_fail() {
-        this.state = PuzzleState.failed;
-        this.hidden = true;
-        this.player.disabled = false;
-        this.asset.change_asset('broken-puzzle');
-        this.scene.physics.remove(this.physics_object);
-    }
-
 
     async preload(): Promise<void> { }
 
@@ -222,6 +212,7 @@ export default class LightsOn extends Puzzle {
     keyPressed(e: KeyboardEvent): void {
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
         if (this.hidden && this.highlight && e.key == 'e') {
+            this.onOpen && this.onOpen();
             this.player.disabled = true;
             this.hidden = false;
         }
