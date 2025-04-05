@@ -316,6 +316,11 @@ export default class Breakaway extends Puzzle {
     }
 
     mousePressed(): void {
+        if (this.hidden || 
+            this.state === PuzzleState.failed || 
+            this.state === PuzzleState.completed) {
+          return;
+          }
         let mousePos = this.scene.p5.createVector(
             this.scene.p5.mouseX - this.scene.p5.width / 2,
             this.scene.p5.mouseY - this.scene.p5.height / 2
