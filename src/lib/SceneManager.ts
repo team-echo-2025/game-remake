@@ -2,7 +2,7 @@ import p5 from "p5";
 import GameObject from "./GameObject";
 import Scene from "./Scene";
 
-const DURATION = 20;
+const DURATION = 500;
 export default class SceneManager implements GameObject {
     private p: p5;
     private current_scene?: Scene;
