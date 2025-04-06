@@ -97,7 +97,9 @@ export default class SceneManager implements GameObject {
                 if (this._time_remaining <= 0) {
                     this.timer_paused = true;
                     this._time_remaining = DURATION;
-                    this.start("menu-scene");
+                    this.start("menu-scene"); // change to death secene -- more deragatory -- minecraft auto scroll like how end dragon cutaway is -- go into update method and translate -> p5.translate translates every element on canavs by some offset
+                    // change y in translate to update constantly (best done in draw cuz draw in constantly running)
+                    //start from bottom + 100
                 }
             }
         }
