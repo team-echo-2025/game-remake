@@ -7,6 +7,7 @@ export default class ImageButton extends ButtonTest {
     imageKey!: string;
     asset!: p5.Image;
     
+    
     constructor(props: ImageButtonProps) {
         super({ ...props });
         this.imageKey = props.imageKey;

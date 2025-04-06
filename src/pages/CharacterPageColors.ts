@@ -124,7 +124,7 @@ export default class CharacterPageColors extends Page {
             callback: () => this.setHairColor()
         });
         this.greenHairSlider.x = this.scene.p5.windowWidth/2 - this.scene.p5.windowWidth/12;
-        this.greenHairSlider.y = this.scene.p5.windowHeight/4 + this.scene.p5.windowHeight/8 + 13;
+        this.greenHairSlider.y = this.scene.p5.windowHeight/4 + this.scene.p5.windowHeight/10 + 8;
         this.blueHairSlider = this.scene.add_new.slider({
             scene: this.scene,
             key: "hair_blue",
@@ -132,7 +132,7 @@ export default class CharacterPageColors extends Page {
             callback: () => this.setHairColor()
         });
         this.blueHairSlider.x = this.scene.p5.windowWidth/2 - this.scene.p5.windowWidth/12;
-        this.blueHairSlider.y = this.scene.p5.windowHeight/4 + this.scene.p5.windowHeight/10 + 8;
+        this.blueHairSlider.y = this.scene.p5.windowHeight/4 + this.scene.p5.windowHeight/8 + 13;
 
         const storedHair = localStorage.getItem("hairColor");
         if (storedHair) {
