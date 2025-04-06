@@ -68,13 +68,12 @@ export default class LoserScene extends Scene {
     cleanup() {
         this.remove(this.retry);
     }
-    set_page(arg0: string) {
-    }
 
     postDraw(): void {
         const p = this.p5;
         p.push();
         p.fill(0);
+        p.rectMode(p.CENTER);
         p.rect(0, 0, p.windowWidth, p.windowHeight);
 
         const minOffset = p.windowHeight / 4 - 850;
@@ -93,7 +92,6 @@ export default class LoserScene extends Scene {
         p.textSize(50);
         p.textAlign(p.CENTER, p.CENTER);
         p.text("YOU LOSE :)", 0, -p.windowHeight / 4);
-        //
         this.textProperties()
         p.text("Thanks for giving it your best shot but \nyou're simply not good enough", 0, -p.windowHeight / 4 + 100);
 

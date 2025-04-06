@@ -101,13 +101,13 @@ export default class ButtonTest implements GameObject {
         this._draw();
     }
     //button animations
-    clamp = (a:number, min = 0, max = 1) => Math.min(max, Math.max(min, a));
-    lerp = (x:number, y:number, a:number) => x * (1 - a) + y * a;
+    clamp = (a: number, min = 0, max = 1) => Math.min(max, Math.max(min, a));
+    lerp = (x: number, y: number, a: number) => x * (1 - a) + y * a;
 
-    mousePressed(e: MouseEvent): void{
+    mousePressed(e: MouseEvent): void {
         if (this.hidden) return;
-        const x = this._scene.p5.mouseX + this.scene.camera.x - this._scene.p5.width / 2;
-        const y = this._scene.p5.mouseY + this.scene.camera.y - this._scene.p5.height / 2;
+        const x = this._scene.p5.mouseX - this.scene.p5.width / 2;
+        const y = this._scene.p5.mouseY - this.scene.p5.height / 2;
         const min_x = this._x - this._width / 2;
         const max_x = this._x + this._width / 2;
         const min_y = this._y - this._height / 2;
@@ -120,7 +120,7 @@ export default class ButtonTest implements GameObject {
         this.mouseDown = false;
     }
 
-    
+
     protected _draw(): void {
         this._scene.p5.push();
         const min = .9
@@ -131,22 +131,21 @@ export default class ButtonTest implements GameObject {
         this._scene.p5.textSize(this.font_size);
         this._scene.p5.fill(255);
         this.scene.p5.translate(this.x, this.y);
-        if(this.mouseDown)
+        if (this.mouseDown)
             this.scene.p5.scale(current);
         this._scene.p5.rect(0, 0, this._width, this._height, 10);
         this._scene.p5.fill(0);
         this._scene.p5.text(this._label, 0, 0 - this.font_size / 6);
-        if(this.mouseDown)
-        {
-            this.t+=2;
+        if (this.mouseDown) {
+            this.t += 2;
         }
         this._scene.p5.pop();
     }
 
     mouseClicked(e: any): void {
         if (this.hidden) return;
-        const x = this._scene.p5.mouseX + this.scene.camera.x - this._scene.p5.width / 2;
-        const y = this._scene.p5.mouseY + this.scene.camera.y - this._scene.p5.height / 2;
+        const x = this._scene.p5.mouseX - this.scene.p5.width / 2;
+        const y = this._scene.p5.mouseY - this.scene.p5.height / 2;
         const min_x = this._x - this._width / 2;
         const max_x = this._x + this._width / 2;
         const min_y = this._y - this._height / 2;

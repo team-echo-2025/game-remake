@@ -80,20 +80,20 @@ export default class CharacterPageColors extends Page {
             callback: () => {
                 this.hairColorIndex = (this.hairColorIndex + 1) % this.hairColors.length;
                 const color = this.hairColors[this.hairColorIndex];
-        
+
                 this.red = color.r;
                 this.green = color.g;
                 this.blue = color.b;
-        
+
                 this.redHairSlider.slider.value(this.red / 255);
                 this.greenHairSlider.slider.value(this.green / 255);
                 this.blueHairSlider.slider.value(this.blue / 255);
-        
+
                 this.setHairColor();
             }
-        });  
+        });
         this.hairColorButton.y = -50;
-        this.hairColorButton.x = this.scene.p5.windowWidth/7;
+        this.hairColorButton.x = this.scene.p5.windowWidth / 7;
         //rgb slider button
         this.hairCustomButton = this.scene.add_new.button({
             label: "Custom Color",
@@ -105,7 +105,7 @@ export default class CharacterPageColors extends Page {
             }
         })
         this.hairCustomButton.y = 50;
-        this.hairCustomButton.x = this.scene.p5.windowWidth/7;
+        this.hairCustomButton.x = this.scene.p5.windowWidth / 7;
 
         // sliders
         this.redHairSlider = this.scene.add_new.slider({
@@ -114,8 +114,8 @@ export default class CharacterPageColors extends Page {
             color: "red",
             callback: () => this.setHairColor()
         });
-        this.redHairSlider.x = this.scene.p5.windowWidth/2 - this.scene.p5.windowWidth/12;
-        this.redHairSlider.y = this.scene.p5.windowHeight/4 + this.scene.p5.windowHeight/15 + 10;
+        this.redHairSlider.x = this.scene.p5.windowWidth / 2 - this.scene.p5.windowWidth / 12;
+        this.redHairSlider.y = this.scene.p5.windowHeight / 4 + this.scene.p5.windowHeight / 15 + 10;
 
         this.greenHairSlider = this.scene.add_new.slider({
             scene: this.scene,
@@ -123,16 +123,16 @@ export default class CharacterPageColors extends Page {
             color: "green",
             callback: () => this.setHairColor()
         });
-        this.greenHairSlider.x = this.scene.p5.windowWidth/2 - this.scene.p5.windowWidth/12;
-        this.greenHairSlider.y = this.scene.p5.windowHeight/4 + this.scene.p5.windowHeight/10 + 8;
+        this.greenHairSlider.x = this.scene.p5.windowWidth / 2 - this.scene.p5.windowWidth / 12;
+        this.greenHairSlider.y = this.scene.p5.windowHeight / 4 + this.scene.p5.windowHeight / 10 + 8;
         this.blueHairSlider = this.scene.add_new.slider({
             scene: this.scene,
             key: "hair_blue",
             color: "blue",
             callback: () => this.setHairColor()
         });
-        this.blueHairSlider.x = this.scene.p5.windowWidth/2 - this.scene.p5.windowWidth/12;
-        this.blueHairSlider.y = this.scene.p5.windowHeight/4 + this.scene.p5.windowHeight/8 + 13;
+        this.blueHairSlider.x = this.scene.p5.windowWidth / 2 - this.scene.p5.windowWidth / 12;
+        this.blueHairSlider.y = this.scene.p5.windowHeight / 4 + this.scene.p5.windowHeight / 8 + 13;
 
         const storedHair = localStorage.getItem("hairColor");
         if (storedHair) {
@@ -160,9 +160,9 @@ export default class CharacterPageColors extends Page {
         const p5 = this.scene.p5;
         this.drawPreview();
         p5.fill(0);
-        p5.textAlign(this.page_manager.scene.p5.CENTER, this.page_manager.scene.p5.CENTER);
+        p5.textAlign(this.scene.p5.CENTER, this.scene.p5.CENTER);
         p5.textSize(75);
-        p5.text('Character Customization', 0, -this.scene.p5.windowHeight/3);
+        p5.text('Character Customization', 0, -this.scene.p5.windowHeight / 3);
         p5.textSize(50);
     }
 
@@ -278,13 +278,13 @@ export default class CharacterPageColors extends Page {
         this.blue = Math.floor((this.blueHairSlider.slider.value() as number) * 255);
         localStorage.setItem("clothesColor", JSON.stringify({ r: this.red, g: this.green, b: this.blue }));
     }
-    
+
     toggleSliders(show: boolean): void {
         this.redHairSlider.slider.elt.hidden = !show;
         this.greenHairSlider.slider.elt.hidden = !show;
         this.blueHairSlider.slider.elt.hidden = !show;
     }
-    drawBorder(){
+    drawBorder() {
 
     }
 }

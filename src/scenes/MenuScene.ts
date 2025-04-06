@@ -49,6 +49,7 @@ export default class MenuScene extends Scene {
         }
         this.bgm_manager = this.add_new.soundmanager(bgm_props);
         this.bgm_manager.play();
+        this.pManager.set_page("menu-page");
     }
     postDraw(): void {
         this.p5.push();  // Save the current transformation matrix

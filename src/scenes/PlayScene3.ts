@@ -22,7 +22,7 @@ import Sound from "../lib/Sound";
 import SoundManager, { SoundManagerProps } from "../lib/SoundManager";
 
 export default class Dungeon2 extends Scene {
-    zIndex?: number | undefined = 1050;
+    zIndex?: number | undefined = 200;
     player?: Player;
     tilemap?: Tilemap;
     animating: boolean = false;
@@ -34,7 +34,6 @@ export default class Dungeon2 extends Scene {
     cube_scales?: CubeScalesPuzzle;
     lights_on?: LightsOn;
     background?: Graphics;
-    bodyOfPhysics?: PhysicsObject;
     portal?: Spritesheet;
     puzzles: (BlockSlide | DrawPuzzle | Breakaway | PathPuzzle | LightsOn)[] = [];
     dialogue!: Dialogue;
@@ -51,6 +50,7 @@ export default class Dungeon2 extends Scene {
     public lightSwitch_sound?: Sound;
     public swish_sound?: Sound;
     public puzzleSfxManager?: SoundManager;
+    private solved: boolean = false;
 
 
     constructor() {
@@ -235,8 +235,12 @@ export default class Dungeon2 extends Scene {
         portal_body.overlaps = true;
         portal_body.body.x = portal.x;
         portal_body.body.y = portal.y;
+        let portal_opened = false;
         portal_body.onCollide = (other: RigidBody) => {
-            if (other == this.player?.body) {
+            if (!portal_opened && other == this.player?.body && this.isCompleted()) {
+                portal_opened = true;
+                this.scene_manager.page_manager?.set_page("non-loser");
+                //go to new scene or display UI for win  idc im probs gotta say something deragatory
             }
         }
         this.background = this.p5.createGraphics(this.p5.width, this.p5.height);
@@ -308,21 +312,6 @@ export default class Dungeon2 extends Scene {
         this.backgroundMusicManager = this.add_new.soundmanager(bgmProps);
         this.backgroundMusicManager.play();
         // -----------------------
-        this.bodyOfPhysics = new PhysicsObject({
-            width: 100,
-            height: 100,
-            mass: Infinity
-        });
-        this.bodyOfPhysics.overlaps = true;
-        this.bodyOfPhysics.body.x = 0;
-        this.bodyOfPhysics.body.y = 0;
-        this.physics.addObject(this.bodyOfPhysics);
-        this.bodyOfPhysics.onCollide = (other: RigidBody) => {
-            if (other == this.player?.body && this.isCompleted()) {
-                this.start("non-loser");
-                //go to new scene or display UI for win  idc im probs gotta say something deragatory
-            }
-        }
 
 
         // -----------------------
@@ -342,12 +331,13 @@ export default class Dungeon2 extends Scene {
         this.puzzleSfxManager = this.add_new.soundmanager(puzzleSfxProps);
         // -----------------------
     }
-    isCompleted(): boolean{
+    isCompleted(): boolean {
         return true;
-        return (this.puzzles.every(puzzle => puzzle.state === PuzzleState.completed)) 
+        return (this.puzzles.every(puzzle => puzzle.state === PuzzleState.completed))
     }
     check_completed = () => {
         if (this.isCompleted()) {
+            this.solved = true;
             this.camera.follow();
             this.camera.x = 0;
             this.camera.y = 0;
@@ -399,7 +389,9 @@ export default class Dungeon2 extends Scene {
     draw(): void {
         this.puzzles.forEach(puzzle => !puzzle.hidden && puzzle.draw());
         this.p5.push();
-        // this.p5.image(this.dark_backdrop, -this.p5.width / 2 + this.player!.body.x, -this.p5.height / 2 + this.player!.body.y);
+        if (!this.solved) {
+            this.p5.image(this.dark_backdrop, -this.p5.width / 2 + this.player!.body.x, -this.p5.height / 2 + this.player!.body.y);
+        }
         this.p5.pop();
         this.dialogue.draw();
     }

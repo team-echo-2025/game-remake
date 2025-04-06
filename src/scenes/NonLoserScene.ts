@@ -26,7 +26,7 @@ export default class NonLoser extends Scene {
         this.scene_manager.resetTimer();
         this.scene_manager.disableTimer();
         this.scrollOffset = 0;
-       //making buttons
+        //making buttons
         //Try Again same play-
         this.retry = this.add_new.img_button({
             label: "Play Again!",
@@ -68,13 +68,12 @@ export default class NonLoser extends Scene {
     cleanup() {
         this.remove(this.retry);
     }
-    set_page(arg0: string) {
-    }
 
     postDraw(): void {
         const p = this.p5;
         p.push();
         p.fill(137, 150, 240);
+        p.rectMode(p.CENTER);
         p.rect(0, 0, p.windowWidth, p.windowHeight);
 
         const minOffset = p.windowHeight / 4 - 850;
