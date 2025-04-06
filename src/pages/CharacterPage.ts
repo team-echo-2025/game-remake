@@ -89,14 +89,14 @@ export default class CharacterPage extends Page {
         };
         const hat2: ButtonTestProps = {
             ...hat1,
-            callback: () => { 
+            callback: () => {
                 localStorage.setItem("playerHat", "assets/player_pointy_hat.png");
                 localStorage.setItem("playerHair", "none");
                 this.setPreview();
-             },
+            },
             label: "Pointy Hat"
         }
-        
+
         this.dropdown = this.scene.add_new.dropdown_menu({
             label: "Hat",
             font_key: "jersey",
@@ -126,14 +126,14 @@ export default class CharacterPage extends Page {
         };
         const hair2: ButtonTestProps = {
             ...hair1,
-            callback: () => { 
+            callback: () => {
                 this.button_sfx.play();
                 this.cleanup()
                 this.set_page("character-page-colors")
-             },
+            },
             label: "Select Color"
         }
-        
+
         this.dropdownHair = this.scene.add_new.dropdown_menu({
             label: "Hair",
             font_key: "jersey",
@@ -148,21 +148,20 @@ export default class CharacterPage extends Page {
         const clothes1: ButtonTestProps = {
             label: "Blue Tunic",
             font_key: "jersey",
-            callback: () => { 
+            callback: () => {
                 localStorage.setItem("playerClothes", "assets/player_tunic.png");
                 this.setPreview();
             },
         };
         const clothes2: ButtonTestProps = {
             ...hair1,
-            callback: () => { 
+            callback: () => {
                 localStorage.setItem("playerClothes", "assets/player_armor.png");
                 this.setPreview();
-             },
+            },
             label: "Yellow Tunic"
         }
-        
-        
+
         this.dropdownClothes = this.scene.add_new.dropdown_menu({
             label: "Clothes",
             font_key: "jersey",
@@ -238,9 +237,9 @@ export default class CharacterPage extends Page {
         const p5 = this.scene.p5;
         this.drawPreview();
         p5.fill(0);
-        p5.textAlign(this.page_manager.scene.p5.CENTER, this.page_manager.scene.p5.CENTER);
+        p5.textAlign(this.scene.p5.CENTER, this.scene.p5.CENTER);
         p5.textSize(75);
-        p5.text('Character Customization', 0, -this.scene.p5.windowHeight/3);
+        p5.text('Character Customization', 0, -this.scene.p5.windowHeight / 3);
         p5.textSize(50);
     }
 
@@ -344,13 +343,12 @@ export default class CharacterPage extends Page {
         this.blue = Math.floor((this.blueHairSlider.slider.value() as number) * 255);
         localStorage.setItem("hairColor", JSON.stringify({ r: this.red, g: this.green, b: this.blue }));
     }
-    
     toggleSliders(show: boolean): void {
         this.redHairSlider.slider.elt.hidden = !show;
         this.greenHairSlider.slider.elt.hidden = !show;
         this.blueHairSlider.slider.elt.hidden = !show;
     }
-    drawBorder(){
+    drawBorder() {
 
     }
 }

@@ -1,4 +1,3 @@
-import p5 from "p5";
 import Scene from "../Scene";
 import PhysicsObject from "./PhysicsObject";
 
@@ -15,7 +14,7 @@ export default class CarPhysicsObject extends PhysicsObject {
     private brakePower = 4000;
     private sideFrictionConstant = 100;
     private rollingFrictionConstant = 10;
-    private maxSteerAngle = 2;
+    private maxSteerAngle = 2.5;
 
     update(dt: number, scene: Scene) {
         dt = dt / 1000;
@@ -39,7 +38,7 @@ export default class CarPhysicsObject extends PhysicsObject {
 
         let effectiveSideFriction = this.sideFrictionConstant;
         if (this.handbreak > 0) {
-            effectiveSideFriction = 5;
+            effectiveSideFriction = 15;
         }
 
         let sideF = -sideVel * effectiveSideFriction;
