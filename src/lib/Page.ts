@@ -4,8 +4,15 @@ import Scene from "./Scene";
 
 export default class Page implements GameObject {
     name: string;
-    scene!: Scene;
+    _scene!: Scene;
+    get scene() {
+        return this._scene;
+    }
+    set scene(scene: Scene) {
+        this._scene = scene;
+    }
     page_manager!: PageManager; // Reference to PageManager
+    zIndex?: number | undefined;
 
     constructor(name: string) {
         this.name = name;
