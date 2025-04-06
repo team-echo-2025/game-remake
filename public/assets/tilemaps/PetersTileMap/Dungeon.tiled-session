@@ -60,6 +60,7 @@
             }
         },
         "Stairs.tsx": {
+            "dynamicWrapping": false,
             "scaleInDock": 1
         },
         "Stone Ground.tsx": {
@@ -71,14 +72,15 @@
             "scaleInDock": 1
         },
         "Switches.tmx": {
-            "scale": 2,
-            "selectedLayer": 0,
+            "scale": 1,
+            "selectedLayer": 4,
             "viewCenter": {
-                "x": 511,
-                "y": 326.75
+                "x": 728,
+                "y": 723.5
             }
         },
         "TX Tileset Wall.tsx": {
+            "dynamicWrapping": false,
             "scaleInDock": 1
         },
         "Texture/Grass.tsx": {
