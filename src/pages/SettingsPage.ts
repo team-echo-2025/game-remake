@@ -108,6 +108,7 @@ export default class SettingPage extends Page {
 
         this.sfx_slider.x = this.scene.p5.windowWidth / 2 - this.scene.p5.windowWidth / 15.5;
         this.sfx_slider.y = this.scene.p5.windowHeight / 2 - this.scene.p5.windowWidth / 15;
+
     }
 
     keyPressed = (e: KeyboardEvent) => {
@@ -133,6 +134,7 @@ export default class SettingPage extends Page {
         const p5 = this.scene.p5;
         p5.fill(0);
         p5.textAlign(this.scene.p5.CENTER, this.scene.p5.CENTER);
+
         p5.textSize(75);
         p5.text('Settings', 0, -350);
         p5.textSize(25);

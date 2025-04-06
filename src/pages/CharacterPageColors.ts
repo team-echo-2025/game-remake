@@ -134,6 +134,7 @@ export default class CharacterPageColors extends Page {
         this.blueHairSlider.x = this.scene.p5.windowWidth / 2 - this.scene.p5.windowWidth / 12;
         this.blueHairSlider.y = this.scene.p5.windowHeight / 4 + this.scene.p5.windowHeight / 8 + 13;
 
+
         const storedHair = localStorage.getItem("hairColor");
         if (storedHair) {
             const { r, g, b } = JSON.parse(storedHair);

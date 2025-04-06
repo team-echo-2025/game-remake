@@ -34,6 +34,7 @@ export default class Dungeon2 extends Scene {
     cube_scales?: CubeScalesPuzzle;
     lights_on?: LightsOn;
     background?: Graphics;
+    bodyOfPhysics?: PhysicsObject;
     portal?: Spritesheet;
     puzzles: (BlockSlide | DrawPuzzle | Breakaway | PathPuzzle | LightsOn)[] = [];
     dialogue!: Dialogue;
@@ -314,6 +315,7 @@ export default class Dungeon2 extends Scene {
         // -----------------------
 
 
+
         // -----------------------
         // Sound-related changes for puzzle sounds:
         // Initialize puzzle sound assets and wrap them in a SoundManager with group "SFX"
@@ -392,6 +394,7 @@ export default class Dungeon2 extends Scene {
         if (!this.solved) {
             this.p5.image(this.dark_backdrop, -this.p5.width / 2 + this.player!.body.x, -this.p5.height / 2 + this.player!.body.y);
         }
+
         this.p5.pop();
         this.dialogue.draw();
     }

@@ -120,7 +120,6 @@ export default class ButtonTest implements GameObject {
         this.mouseDown = false;
     }
 
-
     protected _draw(): void {
         this._scene.p5.push();
         const min = .9

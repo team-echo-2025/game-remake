@@ -69,6 +69,7 @@ export default class NonLoser extends Scene {
         this.remove(this.retry);
     }
 
+
     postDraw(): void {
         const p = this.p5;
         p.push();
@@ -125,4 +126,5 @@ export default class NonLoser extends Scene {
     }
     draw(): void {
     }
+
 }

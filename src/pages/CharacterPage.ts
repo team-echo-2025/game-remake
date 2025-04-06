@@ -162,7 +162,6 @@ export default class CharacterPage extends Page {
             label: "Yellow Tunic"
         }
 
-
         this.dropdownClothes = this.scene.add_new.dropdown_menu({
             label: "Clothes",
             font_key: "jersey",
@@ -344,7 +343,6 @@ export default class CharacterPage extends Page {
         this.blue = Math.floor((this.blueHairSlider.slider.value() as number) * 255);
         localStorage.setItem("hairColor", JSON.stringify({ r: this.red, g: this.green, b: this.blue }));
     }
-
     toggleSliders(show: boolean): void {
         this.redHairSlider.slider.elt.hidden = !show;
         this.greenHairSlider.slider.elt.hidden = !show;
