@@ -7,6 +7,7 @@ import WorldPhysics from "./physics/WorldPhysics";
 import { Howl } from "howler";
 import Timer from "./Timer";
 import BoxCollider from "./physics/BoxCollider";
+import SoundManager from "./SoundManager";
 
 export default class Scene implements GameObject {
     zIndex?: number | undefined;
@@ -25,6 +26,11 @@ export default class Scene implements GameObject {
     private start_time = 0;
     private frames = 0;
     private display_frames = 0;
+    private _managers: SoundManager[] = []
+
+    get managers() {
+        return this._managers;
+    }
 
     get timer(): Timer {
         return this._timer as Timer;
@@ -94,6 +100,9 @@ export default class Scene implements GameObject {
         this._scene_manager.start(name, args);
     }
 
+    add_manager(object: SoundManager) {
+        this._managers.push(object);
+    }
     add(object: GameObject) {
         this.objects.push(object);
         this.objects.sort((obj1, obj2) => {
@@ -124,18 +133,14 @@ export default class Scene implements GameObject {
     }
 
     loadSound = (key: string, path: string) => {//
-        if (this.get_asset(key) == undefined) {
-            const sound: Promise<Howl> = new Promise<Howl>(res => {
-                const temp: Howl = new Howl({
-                    src: [path]
-                });
-                temp.on("load", () => {
-                    this.assets.set(key, temp);
-                    res(temp)
-                });
+        const sound: Promise<Howl> = new Promise<Howl>(res => {
+            const temp: Howl = new Howl({
+                src: [path]
             });
-            this.preloads.push(sound);
-        }
+            this.assets.set(key, temp);
+            res(temp)
+        });
+        this.preloads.push(sound);
 
     }
 
@@ -246,7 +251,6 @@ export default class Scene implements GameObject {
         for (const pre of this.preloads) {
             to_load.push(pre);
         }
-
         await Promise.all(to_load);
     }
 
@@ -300,39 +304,51 @@ export default class Scene implements GameObject {
             const fps = 1000 / delta;
             this.display_frames = alpha * fps + (1 - alpha) * this.display_frames;
         }
-        this.p5.push();
-        this.p5.noFill();
-        this.p5.rectMode("center");
-        this.p5.rect(this._bounds.x, this._bounds.y, this._bounds.halfWidth * 2, this._bounds.halfHeight * 2);
-        this.p5.pop();
+        //this.p5.push();
+        //this.p5.noFill();
+        //this.p5.rectMode("center");
+        //this.p5.rect(this._bounds.x, this._bounds.y, this._bounds.halfWidth * 2, this._bounds.halfHeight * 2);
+        //this.p5.pop();
     }
 
     postDraw(): void { }
     postDraw_objects(): void {
         this._physics.postDraw();
+        let drawn: boolean = false;
+        if (this.objects.length > 0 && (this.zIndex ?? 0) < (this.objects[0].zIndex ?? 0)) {
+            this.p5.push();
+            this.p5.translate(0, 0, this.zIndex ?? 0);
+            this.postDraw();
+            this.p5.pop();
+            drawn = true;
+        }
+        for (const obj of this.objects) {
+            if (!drawn && (this.zIndex ?? 0) < (obj?.zIndex ?? 0)) {
+                drawn = true;
+                this.p5.push();
+                this.p5.translate(0, 0, this.zIndex ?? 0);
+                this.postDraw();
+                this.p5.pop();
+            }
+            if (!obj.hidden) {
+                this.p5.push();
+                this.p5.translate(0, 0, obj.zIndex ?? 0);
+                obj.postDraw && obj.postDraw();
+                this.p5.pop();
+            }
+        }
+        if (!drawn) {
+            this.p5.push();
+            this.p5.translate(0, 0, this.zIndex ?? 0);
+            this.postDraw();
+            this.p5.pop();
+        }
         this.p5.push();
         this.p5.fill(0);
         this.p5.textSize(24);
         this.p5.text("MouseX: " + Math.round(this.mouseX) + " MouseY: " + Math.round(this.mouseY), 20 - this.p5.width / 2, 40 - this.p5.height / 2);
         this.p5.text(`Frames:  ${this.display_frames.toFixed(1)}`, 20 - this.p5.width / 2, 60 - this.p5.height / 2);
         this.p5.pop();
-        let drawn: boolean = false;
-        if (this.objects.length > 0 && (this.zIndex ?? 0) < (this.objects[0].zIndex ?? 0)) {
-            this.postDraw();
-            drawn = true;
-        }
-        for (const obj of this.objects) {
-            if (!drawn && (this.zIndex ?? 0) < (obj?.zIndex ?? 0)) {
-                drawn = true;
-                this.postDraw();
-            }
-            if (!obj.hidden) {
-                obj.postDraw && obj.postDraw();
-            }
-        }
-        if (!drawn) {
-            this.postDraw();
-        }
     }
 
     disableTimer() {
@@ -392,11 +408,17 @@ export default class Scene implements GameObject {
     onStop_objects() {
         this._timer = undefined;
         this._physics.onDestroy();
+        for (const obj of this._managers) {
+            obj.onDestroy();
+        }
+        this._managers = [];
         for (const obj of this.objects) {
             obj.onDestroy?.();
         }
         this.objects = [];
         this.assets = new Map();
+        this._physics = new WorldPhysics();
+        this._physics.scene = this;
     }
 
     onStart(args?: any) { }

@@ -6,22 +6,36 @@ import Scene from "./Scene";
 export default class PageManager implements GameObject {
     pages: Map<string, Page>;
     current_page: Page | null = null;
-    scene: Scene;
+    zIndex?: number | undefined;
+    private _scene?: Scene;
+    get scene() {
+        return this._scene!;
+    }
+    set scene(_scene: Scene) {
+        this._scene = _scene;
+        this.update_scene(_scene);
+    }
 
-    constructor(pages: Page[], scene: Scene) {
+    constructor(pages: Page[], scene?: Scene) {
         this.pages = new Map();
         pages.forEach(page => {
             page.page_manager = this; // Assign PageManager reference
             this.pages.set(page.name, page);
+        });
+        if (scene)
+            this.update_scene(scene);
+        this._scene = scene;
+    }
+    update_scene(scene: Scene) {
+        this.pages.forEach(page => {
             page.scene = scene;
         });
-        this.scene = scene;
-        this.current_page = pages[0];
     }
 
     set_page(page_name: string): void {
         const page = this.pages.get(page_name);
         if (page) {
+            this.zIndex = page.zIndex;
             page.setup();
             this.current_page = page;
         } else {
@@ -29,17 +43,22 @@ export default class PageManager implements GameObject {
         }
     }
 
-    async preload(): Promise<void> {
+    preload(): any {
         // const preloadPromises = Array.from(this.pages.values()).map(page => page.preload());
         // await Promise.all(preloadPromises);
-        const to_load = []
-        for (let page of this.pages.values()) {
-            to_load.push(page.preload());
+        //const to_load = []
+        for (const page of this.pages.values()) {
+            page.preload()
         }
-        await Promise.all(to_load);
+        //for (let page of this.pages.values()) {
+        //    to_load.push(page.preload());
+        //}
+        //await Promise.all(to_load);
+        console.log("DONE LOADING");
     }
 
     setup(): void {
+        console.log("IN SETUP");
         this.current_page?.setup();
     }
 

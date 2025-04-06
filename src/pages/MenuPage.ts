@@ -85,7 +85,7 @@ export default class MenuPage extends Page {
                 this.cleanup()
                 this.set_page('difficulty-page')
             },
-            imageKey : "test"
+            imageKey: "test"
         })
         this.play.x = 0;
         this.play.y = -100;
@@ -97,7 +97,7 @@ export default class MenuPage extends Page {
                 this.cleanup();
                 this.set_page("settings-page");
             },
-            imageKey : "test"
+            imageKey: "test"
         })
         this.setting.x = 0;
         this.setting.y = 0;
@@ -109,7 +109,7 @@ export default class MenuPage extends Page {
                 this.cleanup();
                 this.set_page("character-page");
             },
-            imageKey : "test"
+            imageKey: "test"
         })
         this.carCuz.x = 0;
         this.carCuz.y = 100;
@@ -138,7 +138,7 @@ export default class MenuPage extends Page {
                 this.cleanup()
                 this.scene.start("kd-dev-scene")
             },
-            imageKey : "test"
+            imageKey: "test"
         })
         this.KDbutton.x = 300
         this.KDbutton.y = 300
@@ -150,7 +150,7 @@ export default class MenuPage extends Page {
                 this.cleanup();
                 this.set_page("credits-page");
             },
-            imageKey : "test"
+            imageKey: "test"
         })
         this.credits.x = -300
         this.credits.y = 300
@@ -162,7 +162,7 @@ export default class MenuPage extends Page {
                 this.cleanup();
                 this.scene.start("physics-scene");
             },
-            imageKey : "test"
+            imageKey: "test"
         })
         this.physicsTest.x = 0
         this.physicsTest.y = 300
@@ -174,7 +174,7 @@ export default class MenuPage extends Page {
                 this.cleanup();
                 this.scene.start("physics-scene2");
             },
-            imageKey : "test"
+            imageKey: "test"
         })
         this.physicsTest2.x = 150
         this.physicsTest2.y = 300
@@ -186,7 +186,7 @@ export default class MenuPage extends Page {
         }
         this.splashtext = this.scene.add_new.splashtext(splashprop);
         this.scene.p5.push();
-        this.scene.p5.textAlign(this.page_manager.scene.p5.CENTER, this.page_manager.scene.p5.CENTER);
+        this.scene.p5.textAlign(this.scene.p5.CENTER, this.scene.p5.CENTER);
         this.scene.p5.textSize(150);
         const width = this.scene.p5.textWidth("EXIT PARADOX");
         this.scene.p5.pop();
@@ -194,7 +194,7 @@ export default class MenuPage extends Page {
         this.splashtext.y = -250;
     }
     postDraw(): void {
-        this.scene.p5.textAlign(this.page_manager.scene.p5.CENTER, this.page_manager.scene.p5.CENTER);
+        this.scene.p5.textAlign(this.scene.p5.CENTER, this.scene.p5.CENTER);
         this.scene.p5.push();
         this.scene.p5.textSize(150);
         this.scene.p5.fill(0);
