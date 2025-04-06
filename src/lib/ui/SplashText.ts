@@ -13,17 +13,19 @@ export default class SplashText implements GameObject{
         // "[removed]",
         // "This week is just a continuation of the last",
         // "whatever boats ur float",
-        // //"they actually try, \nthey’re just not as good as y’all",
+        //"they actually try, \nthey’re just not as good as y’all",
         // "feels good.. I like it.\nWhy arent more people like this",
-        // "Hail developer, Philosopher King Eli",
+        "Hail Developer, Philosopher, King Eli",
         // "This feature was made by Konnor Duncan",
         // "Inspired by Minecraft",
-        // "James broke everything",
-        // "Now with a blue shield bar!",
+        "James broke everything",
+        "Eli leaks everything",
+        "Now with a blue shield bar!",
         // "[removed]",
         // "Brought to you by Team Echo!",
-        "Delozier looks like Mark Hamill",
-        "[removed]"
+        // "Delozier looks like Mark Hamill",
+        // "[removed]",
+        // "[removed]"
     ]
 
     hidden: boolean = false;

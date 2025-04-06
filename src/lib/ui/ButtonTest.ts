@@ -115,7 +115,6 @@ export default class ButtonTest implements GameObject {
     }
     mouseReleased(e: MouseEvent): void {
         this.mouseDown = false;
-        console.log("Mouse is up");
     }
 
     
@@ -138,7 +137,6 @@ export default class ButtonTest implements GameObject {
         {
             this.t+=2;
         }
-        console.log(this.clamp(current, .5, 1));
         this._scene.p5.pop();
     }
 
