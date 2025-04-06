@@ -26,6 +26,8 @@ export default class SplashText implements GameObject{
         // "Delozier looks like Mark Hamill",
         // "The ice cream truck song is racist",
         // "How's it racist if it's true"
+        "garbage collector... \nthat is what Eli is for"
+
     ]
 
     hidden: boolean = false;

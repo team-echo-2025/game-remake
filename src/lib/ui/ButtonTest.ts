@@ -26,6 +26,7 @@ export default class ButtonTest implements GameObject {
     protected _callback?: (e: MouseEvent) => void;
     t: number = 0;
     mouseDown: boolean = false;
+    zIndex?: number | undefined;
 
     preload(): any { }
 

@@ -28,7 +28,7 @@ export default class MenuScene extends Scene {
             new CharacterPage(),
             new DifficultyPage(),
             new CreditsPage(),
-            new CharacterPageColors()
+            new CharacterPageColors(),
         ], this);
         this.add(this.pManager);
         this.disableTimer();

@@ -229,6 +229,9 @@ export default class Dungeon2 extends Scene {
             height: 100,
             mass: Infinity
         });
+        portal.onComplete = () => {
+            this.camera.follow(this.player?.body);
+        }
         portal_body.overlaps = true;
         portal_body.body.x = portal.x;
         portal_body.body.y = portal.y;
@@ -315,10 +318,12 @@ export default class Dungeon2 extends Scene {
         this.bodyOfPhysics.body.y = 0;
         this.physics.addObject(this.bodyOfPhysics);
         this.bodyOfPhysics.onCollide = (other: RigidBody) => {
-            if (other == this.player?.body && this.check_completed()) {
+            if (other == this.player?.body && this.isCompleted()) {
+                this.start("non-loser");
                 //go to new scene or display UI for win  idc im probs gotta say something deragatory
             }
         }
+
 
         // -----------------------
         // Sound-related changes for puzzle sounds:
@@ -337,12 +342,15 @@ export default class Dungeon2 extends Scene {
         this.puzzleSfxManager = this.add_new.soundmanager(puzzleSfxProps);
         // -----------------------
     }
-
+    isCompleted(): boolean{
+        return true;
+        return (this.puzzles.every(puzzle => puzzle.state === PuzzleState.completed)) 
+    }
     check_completed = () => {
-        if (this.puzzles.every(puzzle => puzzle.state === PuzzleState.completed)) {
-            this.player!.body.x = 0;
-            this.player!.body.y = 0;
-            this.portal
+        if (this.isCompleted()) {
+            this.camera.follow();
+            this.camera.x = 0;
+            this.camera.y = 0;
             this.portal?.once(true);
         }
     }
