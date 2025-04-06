@@ -1,7 +1,7 @@
 import Page from "../lib/Page";
 import ButtonTest from "../lib/ui/ButtonTest";
 import Sound from "../lib/Sound";
-import SoundManager, {SoundManagerProps} from "../lib/SoundManager";
+import SoundManager, { SoundManagerProps } from "../lib/SoundManager";
 import Slider from "../lib/ui/Slider";
 
 export default class SettingPage extends Page {
@@ -34,11 +34,11 @@ export default class SettingPage extends Page {
         this.background_music = this.scene.add_new.sound("background_music")
         this.button_sfx = this.scene.add_new.sound("button_sfx")
 
-        const bgm_props: SoundManagerProps= {
+        const bgm_props: SoundManagerProps = {
             group: "BGM",
             sounds: [this.background_music]
         }
-        const sfx_props: SoundManagerProps= {
+        const sfx_props: SoundManagerProps = {
             group: "SFX",
             sounds: [this.button_sfx]
         }
@@ -52,7 +52,7 @@ export default class SettingPage extends Page {
                 //this.cleanup();
                 this.handleMute();
             },
-            imageKey : "test"
+            imageKey: "test"
         })
         this.mute.x = 0;
         this.mute.y = 0;
@@ -64,7 +64,7 @@ export default class SettingPage extends Page {
                 this.cleanup();
                 this.set_page("keybinds-page");
             },
-            imageKey : "test"
+            imageKey: "test"
         })
         this.keybinds.x = 0;
         this.keybinds.y = 100;
@@ -76,7 +76,7 @@ export default class SettingPage extends Page {
                 this.cleanup();
                 this.set_page("menu-page");
             },
-            imageKey : "test"
+            imageKey: "test"
         })
         this.back.x = 0;
         this.back.y = 200;
@@ -84,30 +84,30 @@ export default class SettingPage extends Page {
             scene: this.scene,
             key: "BGM",
             callback: (volume: string) => {
-                if(!this.isMuted){
+                if (!this.isMuted) {
                     this.bgm_manager.updateVolume(volume);
                     this.button_sfx.play();
                 }
 
             }
         })
-        this.bgm_slider.x = this.scene.p5.windowWidth/2 - this.scene.p5.windowWidth/15.5;
-        this.bgm_slider.y = this.scene.p5.windowHeight/2 - this.scene.p5.windowWidth/7;
-        
+        this.bgm_slider.x = this.scene.p5.windowWidth / 2 - this.scene.p5.windowWidth / 15.5;
+        this.bgm_slider.y = this.scene.p5.windowHeight / 2 - this.scene.p5.windowWidth / 7;
+
         this.sfx_slider = this.scene.add_new.slider({
             scene: this.scene,
             key: "SFX",
             callback: (volume: string) => {
-                if(!this.isMuted){
+                if (!this.isMuted) {
                     this.sfx_manager.updateVolume(volume);
                     this.button_sfx.play();
                 }
-                
+
             }
         })
-        
-        this.sfx_slider.x = this.scene.p5.windowWidth/2 - this.scene.p5.windowWidth/15.5;
-        this.sfx_slider.y = this.scene.p5.windowHeight/2 - this.scene.p5.windowWidth/15;
+
+        this.sfx_slider.x = this.scene.p5.windowWidth / 2 - this.scene.p5.windowWidth / 15.5;
+        this.sfx_slider.y = this.scene.p5.windowHeight / 2 - this.scene.p5.windowWidth / 15;
     }
 
     keyPressed = (e: KeyboardEvent) => {
@@ -132,7 +132,7 @@ export default class SettingPage extends Page {
     postDraw(): void {
         const p5 = this.scene.p5;
         p5.fill(0);
-        p5.textAlign(this.page_manager.scene.p5.CENTER, this.page_manager.scene.p5.CENTER);
+        p5.textAlign(this.scene.p5.CENTER, this.scene.p5.CENTER);
         p5.textSize(75);
         p5.text('Settings', 0, -350);
         p5.textSize(25);

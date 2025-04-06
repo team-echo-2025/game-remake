@@ -1,8 +1,11 @@
 import p5 from "p5";
 import GameObject from "./GameObject";
 import Scene from "./Scene";
+import PageManager from "./PageManager";
+import LoserPage from "../pages/LoserPage";
+import WinnerPage from "../pages/WinnerPage";
 
-const DURATION = 20;
+const DURATION = 10;
 export default class SceneManager implements GameObject {
     private p: p5;
     private current_scene?: Scene;
@@ -12,6 +15,11 @@ export default class SceneManager implements GameObject {
     private timer_start: number;
     private _time_remaining: number;
     private timer_paused: boolean = false;
+    private _page_manager?: PageManager;
+
+    get page_manager() {
+        return this._page_manager;
+    }
 
     get time_remaining(): number {
         return this._time_remaining;
@@ -62,6 +70,7 @@ export default class SceneManager implements GameObject {
             throw Error(`Scene: ${name} does not exist.`);
         }
         if (this.current_scene) {
+            this._page_manager = undefined;
             this.disableTimer();
             this.current_scene.onStop();
             this.current_scene.onStop_objects();
@@ -70,6 +79,8 @@ export default class SceneManager implements GameObject {
         this.enableTimer();
         new_scene.onStart_objects(args);
         new_scene.onStart(args);
+        this._page_manager = new PageManager([new LoserPage(), new WinnerPage()], new_scene);
+        new_scene.add(this._page_manager);
         await new_scene.preload()
         await new_scene.preload_objects()
         new_scene?.setup_objects();
@@ -79,9 +90,11 @@ export default class SceneManager implements GameObject {
         this.current_scene = new_scene;
     }
 
-    async preload(): Promise<any> { }
+    async preload(): Promise<any> {
+    }
 
-    setup(): void { }
+    setup(): void {
+    }
 
     draw(): void {
         // timer stuff 
@@ -95,9 +108,9 @@ export default class SceneManager implements GameObject {
                 this._time_remaining -= delta;
 
                 if (this._time_remaining <= 0) {
-                    this.timer_paused = true;
-                    this._time_remaining = DURATION;
-                    this.start("loser");
+                    this.disableTimer();
+                    this.resetTimer();
+                    this._page_manager?.set_page("loser");
                 }
             }
         }
@@ -114,6 +127,7 @@ export default class SceneManager implements GameObject {
 
     resetTimer(): void {
         this.timer_start = this.current_scene?.p5.millis() ?? 0;
+        this._time_remaining = DURATION;
     }
 
     disableTimer(): void {
