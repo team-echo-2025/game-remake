@@ -98,27 +98,22 @@ export default class Switches extends Scene {
         }
 
 
-        if(this.positions.length < 2){  
-            return
-        }
+
 
         const shuffled = [...this.positions].sort(()=> Math.random() - 0.5);
-        this.firstSwitch = shuffled[0];
-        this.secondSwitch = shuffled[1];
-        //Ending
-        //(0,-215)
+        this.firstSwitch = shuffled[0]; //first position should be random
+        this.secondSwitch = shuffled[1]; // second position should be 1 up, down, left, and right of it.
+        
+
 
     }
 
     keyPressed = (e: KeyboardEvent) => {
-        // if(e.key === 'e'){
-        //     if(!this.player || !this.player.body) return;
-        //     this.pressSwitch(this.player.body.x, this.player.body.y);
-        // }
 
         if(e.key === 'e') {              
             if(this.foundSwitch){
                 this.dialogue.addDialogue(100,50,"Hmm, there is nothing here");
+                
             }
             else {
                 this.dialogue.addDialogue(110,60, "There seems to be a switch in another place");
