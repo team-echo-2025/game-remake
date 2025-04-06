@@ -300,22 +300,16 @@ export default class Scene implements GameObject {
             const fps = 1000 / delta;
             this.display_frames = alpha * fps + (1 - alpha) * this.display_frames;
         }
-        this.p5.push();
-        this.p5.noFill();
-        this.p5.rectMode("center");
-        this.p5.rect(this._bounds.x, this._bounds.y, this._bounds.halfWidth * 2, this._bounds.halfHeight * 2);
-        this.p5.pop();
+        //this.p5.push();
+        //this.p5.noFill();
+        //this.p5.rectMode("center");
+        //this.p5.rect(this._bounds.x, this._bounds.y, this._bounds.halfWidth * 2, this._bounds.halfHeight * 2);
+        //this.p5.pop();
     }
 
     postDraw(): void { }
     postDraw_objects(): void {
         this._physics.postDraw();
-        this.p5.push();
-        this.p5.fill(0);
-        this.p5.textSize(24);
-        this.p5.text("MouseX: " + Math.round(this.mouseX) + " MouseY: " + Math.round(this.mouseY), 20 - this.p5.width / 2, 40 - this.p5.height / 2);
-        this.p5.text(`Frames:  ${this.display_frames.toFixed(1)}`, 20 - this.p5.width / 2, 60 - this.p5.height / 2);
-        this.p5.pop();
         let drawn: boolean = false;
         if (this.objects.length > 0 && (this.zIndex ?? 0) < (this.objects[0].zIndex ?? 0)) {
             this.postDraw();
@@ -333,6 +327,12 @@ export default class Scene implements GameObject {
         if (!drawn) {
             this.postDraw();
         }
+        this.p5.push();
+        this.p5.fill(0);
+        this.p5.textSize(24);
+        this.p5.text("MouseX: " + Math.round(this.mouseX) + " MouseY: " + Math.round(this.mouseY), 20 - this.p5.width / 2, 40 - this.p5.height / 2);
+        this.p5.text(`Frames:  ${this.display_frames.toFixed(1)}`, 20 - this.p5.width / 2, 60 - this.p5.height / 2);
+        this.p5.pop();
     }
 
     disableTimer() {
@@ -397,6 +397,8 @@ export default class Scene implements GameObject {
         }
         this.objects = [];
         this.assets = new Map();
+        this._physics = new WorldPhysics();
+        this._physics.scene = this;
     }
 
     onStart(args?: any) { }
