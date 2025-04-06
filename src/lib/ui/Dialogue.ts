@@ -94,4 +94,9 @@ export default class Dialogue extends PhysicsObject {
         }, 100); // Adjust speed here (100ms per character)
     }
 
+    killAll() : void {
+        clearInterval(this.write_interval);
+        this.printText = false;
+    }
+
 }

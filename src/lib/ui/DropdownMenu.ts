@@ -6,7 +6,7 @@ export type DropdownMenuProps = ButtonTestProps & Readonly<{
 export default class DropdownMenu extends ButtonTest {
     private buttons: ButtonTest[] = [];
     private button_props: ButtonTestProps[];
-    private menuOpen: boolean = false;
+    public menuOpen: boolean = false;
 
     set x(x: number) {
         this._x = x;
@@ -16,12 +16,20 @@ export default class DropdownMenu extends ButtonTest {
         this._y = y;
         this.positionChildren();
     }
+    get x() {
+        return this._x;
+    }
+    get y() {
+        return this._y;
+    }
 
     constructor(props: DropdownMenuProps) {
         super(props);
         this._callback = this.toggleMenu;
         this.menuOpen = false;
         this.button_props = props.buttons;
+        this._x = 0;
+        this._y = 0;
     }
 
     positionChildren(): void {
@@ -34,6 +42,7 @@ export default class DropdownMenu extends ButtonTest {
     onDestroy(): void {
         for (const button of this.buttons) {
             button.onDestroy();
+            this.scene.remove(button);
         }
         this.menuOpen = false;
         super.onDestroy();
@@ -60,39 +69,53 @@ export default class DropdownMenu extends ButtonTest {
             button.hidden = !this.menuOpen;
         }
     }
+    disableMenu(): void{
+        this.menuOpen = false;
+        for (let button of this.buttons) {
+            button.hidden = true;
+        }
+    }
+    mouseClicked(e: any): void {
+        if (this.hidden) return;
+        const x = this._scene.p5.mouseX + this.scene.camera.x - this._scene.p5.width / 2;
+        const y = this._scene.p5.mouseY + this.scene.camera.y - this._scene.p5.height / 2;
+        const min_x = this._x - this._width / 2;
+        const max_x = this._x + this._width / 2;
+        const min_y = this._y - this._height / 2;
+        const max_y = this._y + this._height / 2;
+        if (x > min_x && x < max_x && y > min_y && y < max_y) {
+            this._callback?.(e);
+        }
+        else{
+            for(let button of this.buttons){
+                button.mouseClicked(e);
+            }
+            this.disableMenu();
+        }
+    }
+    protected _draw(): void {
+        this._scene.p5.push();
+        const min = .9
+        const current = this.clamp(this.lerp(1, min, this.t), min, 1);
+        this._scene.p5.rectMode(this._scene.p5.CENTER);
+        this._scene.p5.textAlign(this._scene.p5.CENTER, this._scene.p5.CENTER);
+        this._scene.p5.textFont(this.font);
+        this._scene.p5.textSize(this.font_size);
+        this._scene.p5.fill(255);
+        this.scene.p5.translate(this.x, this.y);
+        if(this.mouseDown)
+            this.scene.p5.scale(current);
+        this._scene.p5.rect(0, 0, this._width, this._height, 10);
+        this._scene.p5.fill(0);
+        this._scene.p5.text(this._label, 0, 0 - this.font_size / 6);
+        if(this.mouseDown)
+        {
+            this.t+=2;
+        }
+        this._scene.p5.pop();
+    }
+    postDraw(): void {
+        this._draw();
+    }
 }
-
-
-/*
-        Usage in scene
-    
-    
-        const button1: ButtonTestProps = {
-            label: "test nothing",
-            font_key: "jersey",
-            font_size: 50,
-        };
-        const button2: ButtonTestProps = {
-            ...button1,
-            callback: () => { this.start("menu-scene") },
-            label: "to menu"
-        }
-        const button3: ButtonTestProps = {
-            ...button1,
-            label: "this big massive button does nothing"
-        }
-            
-this.MyDropDownMenu = new Button({
-    label: "Exit Dev Scene",
-    scene: this,
-    font_size: 50,
-    callback: () => { this.start("menu-scene") },
-    buttons: [
-        button1, button2, button3
-    ]
-})
-
-            
-
-*/
 

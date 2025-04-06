@@ -5,11 +5,11 @@ import DifficultyPage from "../pages/DifficultySelect";
 import KeybindsPage from "../pages/KeybindsPage";
 import MenuPage from "../pages/MenuPage";
 import SettingPage from "../pages/SettingsPage";
-import WorldSelectPage from "../pages/WordSelect";
 import CreditsPage from "../pages/CreditsPage";
 import CharacterPage from "../pages/CharacterPage";
 import Sound from "../lib/Sound";
 import SoundManager, { SoundManagerProps } from "../lib/SoundManager";
+import CharacterPageColors from "../pages/CharacterPageColors";
 export default class MenuScene extends Scene {
     pManager!: PageManager;
     imgLogo!: p5.Image;  // Declare imgLogo variable
@@ -26,9 +26,9 @@ export default class MenuScene extends Scene {
             new KeybindsPage(),
             new SettingPage(),
             new CharacterPage(),
-            new WorldSelectPage(),
             new DifficultyPage(),
             new CreditsPage(),
+            new CharacterPageColors(),
         ], this);
         this.add(this.pManager);
         this.disableTimer();

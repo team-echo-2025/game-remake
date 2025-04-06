@@ -16,6 +16,7 @@ export default class Puzzle implements GameObject {
     puzzle!: Page;
     state!: PuzzleState;
     onCompleted?: () => void;
+    onOpen?: () => void;
     static difficulty: string;
 
     constructor(scene: Scene) {
