@@ -32,6 +32,7 @@ export default class MenuPage extends Page {
         this.scene.remove(this.physicsTest);
         this.scene.remove(this.puzzleTest);
         this.scene.remove(this.button_sfx);
+        this.dropdown.onDestroy();
         this.scene.remove(this.dropdown);
         this.scene.remove(this.splashtext);
         this.scene.remove(this.physicsTest2);

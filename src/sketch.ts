@@ -1,6 +1,5 @@
 import p5 from 'p5';
 import SceneManager from './lib/SceneManager';
-import MenuScene from './scenes/MenuScene';
 import PlayScene from './scenes/PlayScene';
 import LoadingScene from './scenes/LoadingScene';
 import KDDevScene from './scenes/KDDevScene';
@@ -11,6 +10,7 @@ import iceMaze from "./scenes/IceMaze";
 import DriveToSurvive from './scenes/DriveToSurvive/DriveToSurvive';
 import PhysicsTestScene2 from './scenes/PhysicsTestScene2';
 import PlayScene4 from './scenes/PlayScene4';
+import MenuScene from './scenes/MenuScene';
 
 let scene_manager: SceneManager;
 const sketch = (p: p5) => {
