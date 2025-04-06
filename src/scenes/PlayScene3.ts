@@ -332,10 +332,9 @@ export default class Dungeon2 extends Scene {
         };
         this.puzzleSfxManager = this.add_new.soundmanager(puzzleSfxProps);
         // -----------------------
-    }
-    isCompleted(): boolean {
-        return true;
-        return (this.puzzles.every(puzzle => puzzle.state === PuzzleState.completed))
+    }   
+    isCompleted(): boolean{
+        return (this.puzzles.every(puzzle => puzzle.state === PuzzleState.completed))  
     }
     check_completed = () => {
         if (this.isCompleted()) {
