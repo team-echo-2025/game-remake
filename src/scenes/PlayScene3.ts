@@ -343,7 +343,6 @@ export default class Dungeon2 extends Scene {
         // -----------------------
     }
     isCompleted(): boolean{
-        return true;
         return (this.puzzles.every(puzzle => puzzle.state === PuzzleState.completed)) 
     }
     check_completed = () => {
