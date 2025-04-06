@@ -9,6 +9,7 @@ import CreditsPage from "../pages/CreditsPage";
 import CharacterPage from "../pages/CharacterPage";
 import Sound from "../lib/Sound";
 import SoundManager, { SoundManagerProps } from "../lib/SoundManager";
+import CharacterPageColors from "../pages/CharacterPageColors";
 export default class MenuScene extends Scene {
     pManager!: PageManager;
     imgLogo!: p5.Image;  // Declare imgLogo variable
@@ -27,6 +28,7 @@ export default class MenuScene extends Scene {
             new CharacterPage(),
             new DifficultyPage(),
             new CreditsPage(),
+            new CharacterPageColors()
         ], this);
         this.add(this.pManager);
         this.disableTimer();

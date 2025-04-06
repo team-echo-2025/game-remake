@@ -6,23 +6,16 @@ import SoundManager, { SoundManagerProps } from "../lib/SoundManager";
 import Slider from "../lib/ui/Slider"
 import DropdownMenu from '../lib/ui/DropdownMenu';
 
-export default class CharacterPage extends Page {
+export default class CharacterPageColors extends Page {
     hairStyleButton!: ButtonTest;
     hairColorButton!: ButtonTest;
     hairCustomButton!: ButtonTest;
-    tunicButton!: ButtonTest;
-    armorButton!: ButtonTest;
-    pointyHatButton!: ButtonTest;
-    basicCapButton!: ButtonTest;
     back!: ButtonTest;
     private button_sfx!: Sound;
     private sfx_manager!: SoundManager;
     private redHairSlider!: Slider;
     private greenHairSlider!: Slider;
     private blueHairSlider!: Slider;
-    dropdown!: DropdownMenu;
-    dropdownHair!: DropdownMenu;
-    dropdownClothes!: DropdownMenu;
     private hairSliderVisible = false;
     private hairColors = [
         { r: 0, g: 0, b: 0 },       // Black
@@ -45,146 +38,74 @@ export default class CharacterPage extends Page {
     public green = 255;
     public blue = 255;
     constructor() {
-        super("character-page")
+        super("character-page-colors")
     }
     preload(): any {
         this.scene.loadFont('jersey', 'assets/fonts/jersey.ttf');
         this.setPreview();
     }
     cleanup = () => {
-        this.scene.remove(this.hairStyleButton);
-        this.scene.remove(this.hairColorButton);
-        this.scene.remove(this.hairCustomButton);
-        this.scene.remove(this.tunicButton);
-        this.scene.remove(this.armorButton);
-        this.scene.remove(this.pointyHatButton);
-        this.scene.remove(this.basicCapButton);
-        this.scene.remove(this.back);
-        this.scene.remove(this.dropdown);
-        this.scene.remove(this.dropdownClothes);
-        this.scene.remove(this.dropdownHair);
-        this.dropdown.onDestroy();
-        this.dropdownClothes.onDestroy();
-        this.dropdownHair.onDestroy();
         this.scene.remove(this.redHairSlider);
         this.scene.remove(this.greenHairSlider);
         this.scene.remove(this.blueHairSlider);
+        this.scene.remove(this.back);
+        this.scene.remove(this.hairColorButton);
+        this.scene.remove(this.hairCustomButton);
     }
     setup(): void {
+        console.log("colors setup");
         this.button_sfx = this.scene.add_new.sound("button_sfx")
         const sfx_props: SoundManagerProps = {
             group: "SFX",
             sounds: [this.button_sfx]
         }
         this.sfx_manager = this.scene.add_new.soundmanager(sfx_props);
-        //Hat Dropdown
-        const hat1: ButtonTestProps = {
-            label: "Leather Cap",
-            font_key: "jersey",
-            callback: () => {
-                localStorage.setItem("playerHat", "assets/player_leather_hat.png");
-                localStorage.setItem("playerHair", "none");
-                this.setPreview();
-            },
-        };
-        const hat2: ButtonTestProps = {
-            ...hat1,
-            callback: () => { 
-                localStorage.setItem("playerHat", "assets/player_pointy_hat.png");
-                localStorage.setItem("playerHair", "none");
-                this.setPreview();
-             },
-            label: "Pointy Hat"
-        }
-        
-        this.dropdown = this.scene.add_new.dropdown_menu({
-            label: "Hat",
-            font_key: "jersey",
-            buttons: [
-                hat1,
-                hat2
-            ]
-        })
-        this.dropdown.x = this.scene.p5.windowWidth / 7;
-        this.dropdown.y = -175;
-        //Hair Dropdown menu
-        const hair1: ButtonTestProps = {
-            label: "Change Style",
-            font_key: "jersey",
-            callback: () => {
-                const currentHair = localStorage.getItem("playerHair");
-                const newHair = currentHair === "assets/player_hair_short.png"
-                    ? "assets/player_hair_bob.png"
-                    : "assets/player_hair_short.png";
-
-                localStorage.setItem("playerHair", newHair);
-                this.hairPath = localStorage.getItem("playerHair");
-                localStorage.setItem("playerHat", "none");
-                this.hatPath = localStorage.getItem("playerHat")
-                this.setPreview();
-            },
-        };
-        const hair2: ButtonTestProps = {
-            ...hair1,
-            callback: () => { 
-                this.button_sfx.play();
-                this.cleanup()
-                this.set_page("character-page-colors")
-             },
-            label: "Select Color"
-        }
-        
-        this.dropdownHair = this.scene.add_new.dropdown_menu({
-            label: "Hair",
-            font_key: "jersey",
-            buttons: [
-                hair1,
-                hair2
-            ]
-        })
-        this.dropdownHair.x = this.scene.p5.windowWidth / 7;
-        this.dropdownHair.y = 0;
-        //Clothing Menu
-        const clothes1: ButtonTestProps = {
-            label: "Blue Tunic",
-            font_key: "jersey",
-            callback: () => { 
-                localStorage.setItem("playerClothes", "assets/player_tunic.png");
-                this.setPreview();
-            },
-        };
-        const clothes2: ButtonTestProps = {
-            ...hair1,
-            callback: () => { 
-                localStorage.setItem("playerClothes", "assets/player_armor.png");
-                this.setPreview();
-             },
-            label: "Yellow Tunic"
-        }
-        
-        
-        this.dropdownClothes = this.scene.add_new.dropdown_menu({
-            label: "Clothes",
-            font_key: "jersey",
-            buttons: [
-                clothes1,
-                clothes2
-            ]
-        })
-        this.dropdownClothes.x = this.scene.p5.windowWidth / 7;
-        this.dropdownClothes.y = 175;
         // buttons
+        //back
         this.back = this.scene.add_new.img_button({
             label: "Back",
             font_key: 'jersey',
             callback: () => {
                 this.button_sfx.play();
                 this.cleanup()
-                this.set_page("menu-page");
+                this.set_page("character-page");
             },
             imageKey: 'test'
         })
         this.back.y = 200;
+        //preset color
+        this.hairColorButton = this.scene.add_new.button({
+            label: "Random Color",
+            font_key: 'jersey',
+            callback: () => {
+                this.hairColorIndex = (this.hairColorIndex + 1) % this.hairColors.length;
+                const color = this.hairColors[this.hairColorIndex];
+        
+                this.red = color.r;
+                this.green = color.g;
+                this.blue = color.b;
+        
+                this.redHairSlider.slider.value(this.red / 255);
+                this.greenHairSlider.slider.value(this.green / 255);
+                this.blueHairSlider.slider.value(this.blue / 255);
+        
+                this.setHairColor();
+            }
+        });  
+        this.hairColorButton.y = -50;
+        this.hairColorButton.x = this.scene.p5.windowWidth/7;
+        //rgb slider button
+        this.hairCustomButton = this.scene.add_new.button({
+            label: "Custom Color",
+            font_key: 'jersey',
+            callback: () => {
+                this.hairSliderVisible = !this.hairSliderVisible;
+                this.toggleSliders(this.hairSliderVisible);
+                if (this.hairSliderVisible) this.setHairColor();
+            }
+        })
+        this.hairCustomButton.y = 50;
+        this.hairCustomButton.x = this.scene.p5.windowWidth/7;
 
         // sliders
         this.redHairSlider = this.scene.add_new.slider({
@@ -193,24 +114,25 @@ export default class CharacterPage extends Page {
             color: "red",
             callback: () => this.setHairColor()
         });
-        this.redHairSlider.x = 100;
-        this.redHairSlider.y = 100;
+        this.redHairSlider.x = this.scene.p5.windowWidth/2 - this.scene.p5.windowWidth/12;
+        this.redHairSlider.y = this.scene.p5.windowHeight/4 + this.scene.p5.windowHeight/15 + 10;
+
         this.greenHairSlider = this.scene.add_new.slider({
             scene: this.scene,
             key: "hair_green",
             color: "green",
             callback: () => this.setHairColor()
         });
-        this.greenHairSlider.x = 100;
-        this.greenHairSlider.y = 150;
+        this.greenHairSlider.x = this.scene.p5.windowWidth/2 - this.scene.p5.windowWidth/12;
+        this.greenHairSlider.y = this.scene.p5.windowHeight/4 + this.scene.p5.windowHeight/8 + 13;
         this.blueHairSlider = this.scene.add_new.slider({
             scene: this.scene,
             key: "hair_blue",
             color: "blue",
             callback: () => this.setHairColor()
         });
-        this.blueHairSlider.x = 100;
-        this.blueHairSlider.y = 200;
+        this.blueHairSlider.x = this.scene.p5.windowWidth/2 - this.scene.p5.windowWidth/12;
+        this.blueHairSlider.y = this.scene.p5.windowHeight/4 + this.scene.p5.windowHeight/10 + 8;
 
         const storedHair = localStorage.getItem("hairColor");
         if (storedHair) {
@@ -229,7 +151,7 @@ export default class CharacterPage extends Page {
         this.keyPressed = (e: KeyboardEvent) => {
             if (e.key === "Escape") { // When ESC is pressed...
                 this.cleanup();
-                this.set_page("menu-page"); // ...return to main menu
+                this.set_page("character-page");
             }
         };
     }
@@ -343,6 +265,18 @@ export default class CharacterPage extends Page {
         this.green = Math.floor((this.greenHairSlider.slider.value() as number) * 255);
         this.blue = Math.floor((this.blueHairSlider.slider.value() as number) * 255);
         localStorage.setItem("hairColor", JSON.stringify({ r: this.red, g: this.green, b: this.blue }));
+    }
+    setHatColor(): void {
+        this.red = Math.floor((this.redHairSlider.slider.value() as number) * 255);
+        this.green = Math.floor((this.greenHairSlider.slider.value() as number) * 255);
+        this.blue = Math.floor((this.blueHairSlider.slider.value() as number) * 255);
+        localStorage.setItem("hatColor", JSON.stringify({ r: this.red, g: this.green, b: this.blue }));
+    }
+    setClothingColor(): void {
+        this.red = Math.floor((this.redHairSlider.slider.value() as number) * 255);
+        this.green = Math.floor((this.greenHairSlider.slider.value() as number) * 255);
+        this.blue = Math.floor((this.blueHairSlider.slider.value() as number) * 255);
+        localStorage.setItem("clothesColor", JSON.stringify({ r: this.red, g: this.green, b: this.blue }));
     }
     
     toggleSliders(show: boolean): void {

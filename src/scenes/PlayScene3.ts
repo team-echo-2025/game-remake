@@ -34,6 +34,7 @@ export default class Dungeon2 extends Scene {
     cube_scales?: CubeScalesPuzzle;
     lights_on?: LightsOn;
     background?: Graphics;
+    bodyOfPhysics?: PhysicsObject;
     portal?: Spritesheet;
     puzzles: (BlockSlide | DrawPuzzle | Breakaway | PathPuzzle | LightsOn)[] = [];
     dialogue!: Dialogue;
@@ -41,7 +42,7 @@ export default class Dungeon2 extends Scene {
     // Background music fields (sound-related changes)
     public background_music?: Sound;
     public backgroundMusicManager?: SoundManager;
-    
+
     // Puzzle sound fields (sound-related changes)
     public clack_sound?: Sound;
     public rotate_sound?: Sound;
@@ -51,7 +52,7 @@ export default class Dungeon2 extends Scene {
     public swish_sound?: Sound;
     public puzzleSfxManager?: SoundManager;
 
-    
+
     constructor() {
         super("playscene-3");
         this.physics.debug = false;
@@ -98,7 +99,7 @@ export default class Dungeon2 extends Scene {
         // this.loadSound("circuit_correct_sfx", "assets/TInterfaceSounds/greanpatchT.mp3");
         // this.loadSound("circuit_incorrect_sfx", "assets/TInterfaceSounds/all-processorsT.mp3");
         // this.loadSound("circuit_xposition_sfx", "assets/TInterfaceSounds/iciclesT.mp3");
-        
+
         // Initialize background music in preload
         // Note: The background music file should be located at "assets/backgorund7.mp3"
         this.loadSound("background7", "assets/backgorund7.mp3");
@@ -277,10 +278,10 @@ export default class Dungeon2 extends Scene {
 
         this.dialogue = new Dialogue(this, this.player!);
         this.dialogue.addDialogue(0, 348, "There's puzzles around that need solved to escape");
-        this.dialogue.addDialogue(-262, -188, "HURRY UP!!", 50, 50 );
+        this.dialogue.addDialogue(-262, -188, "HURRY UP!!", 50, 50);
         this.dialogue.addDialogue(189, 14, "You are going super slow", 35, 35);
-        this.dialogue.addDialogue(-312, 303, "Why are you wasting time reading this? GET GOING" , 35 , 35);
-        this.dialogue.addDialogue(359, 243, "My grandma is faster than you", 35, 35 );
+        this.dialogue.addDialogue(-312, 303, "Why are you wasting time reading this? GET GOING", 35, 35);
+        this.dialogue.addDialogue(359, 243, "My grandma is faster than you", 35, 35);
         this.dialogue.setup();
         // -----------------------
         // Sound-related changes for background music:
@@ -304,7 +305,21 @@ export default class Dungeon2 extends Scene {
         this.backgroundMusicManager = this.add_new.soundmanager(bgmProps);
         this.backgroundMusicManager.play();
         // -----------------------
-        
+        this.bodyOfPhysics = new PhysicsObject({
+            width: 100,
+            height: 100,
+            mass: Infinity
+        });
+        this.bodyOfPhysics.overlaps = true;
+        this.bodyOfPhysics.body.x = 0;
+        this.bodyOfPhysics.body.y = 0;
+        this.physics.addObject(this.bodyOfPhysics);
+        this.bodyOfPhysics.onCollide = (other: RigidBody) => {
+            if (other == this.player?.body && this.check_completed()) {
+                //go to new scene or display UI for win  idc im probs gotta say something deragatory
+            }
+        }
+
         // -----------------------
         // Sound-related changes for puzzle sounds:
         // Initialize puzzle sound assets and wrap them in a SoundManager with group "SFX"
@@ -327,13 +342,14 @@ export default class Dungeon2 extends Scene {
         if (this.puzzles.every(puzzle => puzzle.state === PuzzleState.completed)) {
             this.player!.body.x = 0;
             this.player!.body.y = 0;
+            this.portal
             this.portal?.once(true);
         }
     }
 
     keyPressed = (e: KeyboardEvent) => {
         this.puzzles.forEach(puzzle => puzzle.keyPressed(e));
-        if (e.key === "e" || e.key === 'E'){
+        if (e.key === "e" || e.key === 'E') {
             this.dialogue.killAll();
         }
         if (e.key === "Escape") {
@@ -348,7 +364,7 @@ export default class Dungeon2 extends Scene {
             }
         }
     };
-//make event for puzzle is open, this.dialogue.kill
+    //make event for puzzle is open, this.dialogue.kill
     mousePressed(e: MouseEvent): void {
         this.puzzles.forEach(puzzle => puzzle.mousePressed());
     }
