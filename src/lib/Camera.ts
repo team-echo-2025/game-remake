@@ -7,8 +7,8 @@ export default class Camera {
     y: number = 0;
     scene: Scene;
     private _follow: RigidBody | undefined;
-    private _zoom: number = 1; 
-    private _bounds!: BoxCollider; 
+    private _zoom: number = 1;
+    private _bounds!: BoxCollider;
     private _rotation: number = 0;
 
     set zoom(zoom: number) {
@@ -44,8 +44,12 @@ export default class Camera {
         this.y = y;
     }
 
+    get current_follow() {
+        return this._follow;
+    }
+
     follow(body?: RigidBody) {
-        if(body){    
+        if (body) {
             this.x = body.x;
             this.y = body.y;
         }

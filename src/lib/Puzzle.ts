@@ -10,7 +10,7 @@ export enum PuzzleState {
 }
 
 export default class Puzzle implements GameObject {
-    protected _zIndex?: number | undefined = 1000;
+    protected _zIndex?: number | undefined = 300;
     hidden?: boolean = false;
     scene!: Scene;
     puzzle!: Page;

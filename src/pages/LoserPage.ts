@@ -1,9 +1,9 @@
 import Sound from "../lib/Sound";
 import SoundManager, { SoundManagerProps } from "../lib/SoundManager";
 import ButtonTest from "../lib/ui/ButtonTest";
-import Scene from "../lib/Scene";
+import Page from "../lib/Page";
 
-export default class LoserScene extends Scene {
+export default class LoserPage extends Page {
     retry!: ButtonTest;
     mainMenu!: ButtonTest;
     timer_paused: boolean = false;
@@ -12,51 +12,55 @@ export default class LoserScene extends Scene {
     background_music?: Sound;
     backgroundMusicManager?: SoundManager;
     button_sfx!: Sound;
+    zIndex?: number | undefined = 300;
 
     constructor() {
         super("loser");
     }
     preload(): any {
         // Load the background music file
-        this.loadSound("dontlisten", "assets/funSounds/background_music4.mp3");
-        this.loadFont("jersey", "assets/fonts/jersey.ttf");
-        this.loadImage('test', "assets/buttonImages/mossy.png");
+        this.scene.loadSound("dontlisten", "assets/funSounds/background_music4.mp3");
+        this.scene.loadFont("jersey", "assets/fonts/jersey.ttf");
+        this.scene.loadImage('test', "assets/buttonImages/mossy.png");
     }
     setup(): void {
-        this.scene_manager.resetTimer();
-        this.scene_manager.disableTimer();
+        for (const manager of this.scene.managers) {
+            manager.stop();
+        }
+        this.scene.scene_manager.disableTimer();
+        this.scene.scene_manager.resetTimer();
         this.scrollOffset = 0;
         //making buttons
         //Try Again same play-
-        this.retry = this.add_new.img_button({
+        this.retry = this.scene.add_new.img_button({
             label: "Try Again!",
             font_key: 'jersey',
             callback: () => {
                 // this.button_sfx.play();
                 this.cleanup()
-                this.start('play-scene')
+                this.scene.start('play-scene')
             },
             imageKey: "test"
         })
-        this.retry.x = -this.p5.windowWidth / 3;
-        this.retry.y = this.p5.windowHeight / 5;
-        this.retry.zIndex = 101;
+        this.retry.x = -this.scene.p5.windowWidth / 3;
+        this.retry.y = this.scene.p5.windowHeight / 5;
+        this.retry.zIndex = 301;
         //Menu Page
-        this.mainMenu = this.add_new.img_button({
+        this.mainMenu = this.scene.add_new.img_button({
             label: "Main Menu",
             font_key: 'jersey',
             callback: () => {
                 // this.button_sfx.play();
                 this.cleanup()
-                this.start('menu-scene')
+                this.scene.start('menu-scene')
             },
             imageKey: "test"
         })
-        this.mainMenu.x = this.p5.windowWidth / 3;
-        this.mainMenu.y = this.p5.windowHeight / 5;
-        this.mainMenu.zIndex = 101;
+        this.mainMenu.x = this.scene.p5.windowWidth / 3;
+        this.mainMenu.y = this.scene.p5.windowHeight / 5;
+        this.mainMenu.zIndex = 301;
         //
-        this.background_music = this.add_new.sound("dontlisten");
+        this.background_music = this.scene.add_new.sound("dontlisten");
         // const bgm_props: SoundManagerProps = {
         //     group: "BGM",
         //     sounds: [this.background_music]
@@ -64,35 +68,47 @@ export default class LoserScene extends Scene {
         this.background_music.play();
         // this.backgroundMusicManager = this.add_new.soundmanager(bgm_props);
         // this.backgroundMusicManager.play();
+        console.log(this.mainMenu);
     }
     cleanup() {
-        this.remove(this.retry);
+        this.scene.remove(this.retry);
     }
 
     postDraw(): void {
-        const p = this.p5;
+        const p = this.scene.p5;
         p.push();
         p.fill(0);
         p.rectMode(p.CENTER);
         p.rect(0, 0, p.windowWidth, p.windowHeight);
 
-        const minOffset = p.windowHeight / 4 - 850;
-        if (this.scrollOffset > minOffset) {
-            this.scrollOffset -= 1;
-        }
+        //const minOffset = p.windowHeight / 4 - 850;
+        const minOffset = p.windowHeight / 4 - 1500;
+        p.push()
 
         p.translate(0, this.scrollOffset);
         this.losingText();
         p.pop();
+        p.push();
+        p.fill(255);
+        p.textSize(50);
+        p.textAlign(p.CENTER, p.CENTER);
+        if (this.scrollOffset > minOffset) {
+            p.translate(0, this.scrollOffset);
+        } else {
+            p.translate(0, minOffset);
+        }
+        p.text("YOU LOSE :)", 0, -p.windowHeight / 4 + 1500);
+        p.pop();
+        p.pop();
+        this.scrollOffset -= 1;
     }
 
     losingText(): void {
-        const p = this.p5;
+        const p = this.scene.p5;
         p.fill(255);
         p.textSize(50);
         p.textAlign(p.CENTER, p.CENTER);
         p.text("YOU LOSE :)", 0, -p.windowHeight / 4);
-
         this.textProperties()
         p.text("Thanks for giving it your best shot but \nyou're simply not good enough", 0, -p.windowHeight / 4 + 100);
 
@@ -107,23 +123,15 @@ export default class LoserScene extends Scene {
         p.text("But more importantly, GOODBYE!", 0, -p.windowHeight / 4 + 850);
     }
     textProperties(): void {
-        const p = this.p5;
+        const p = this.scene.p5;
         p.fill(255);
         p.textSize(25);
         p.textAlign(p.CENTER, p.CENTER);
     }
-    onStart(): void {
-    }
 
     keyPressed = (e: KeyboardEvent) => {
         if (e.key === "Escape") {
-            this.start("menu-scene");
+            this.scene.start("menu-scene");
         }
     };
-
-    onStop(): void {
-    }
-    draw(): void {
-    }
-
 }
