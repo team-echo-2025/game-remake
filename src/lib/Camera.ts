@@ -44,10 +44,12 @@ export default class Camera {
         this.y = y;
     }
 
-    follow(body: RigidBody) {
+    follow(body?: RigidBody) {
+        if(body){    
+            this.x = body.x;
+            this.y = body.y;
+        }
         this._follow = body;
-        this.x = body.x;
-        this.y = body.y;
     }
 
     apply_transformation() {
