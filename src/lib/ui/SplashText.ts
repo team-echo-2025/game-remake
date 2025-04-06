@@ -13,17 +13,21 @@ export default class SplashText implements GameObject{
         // "All white people suck.",
         // "This week is just a continuation of the last",
         // "whatever boats ur float",
-        // //"they actually try, \nthey’re just not as good as y’all",
+        //"they actually try, \nthey’re just not as good as y’all",
         // "feels good.. I like it.\nWhy arent more people like this",
-        // "Hail developer, Philosopher King Eli",
+        "Hail Developer, Philosopher, King Eli",
         // "This feature was made by Konnor Duncan",
         // "Inspired by Minecraft",
-        // "James broke everything",
-        // "Now with a blue shield bar!",
+        "James broke everything",
+        "Eli leaks everything",
+        "Now with a blue shield bar!",
         // "I'll just pull the race card",
         // "Brought to you by Team Echo!",
-        "Delozier looks like Mark Hamill",
-        "The ice cream truck song is racist"
+        // "Delozier looks like Mark Hamill",
+        // "The ice cream truck song is racist",
+        // "How's it racist if it's true"
+        "garbage collector... \nthat is what Eli is for"
+
     ]
 
     hidden: boolean = false;

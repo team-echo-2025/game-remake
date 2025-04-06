@@ -51,14 +51,6 @@ export default class BlockSlide extends Puzzle {
         this.scene.physics.remove(this.physics_object);
     }
 
-    force_fail() {
-        this.state = PuzzleState.failed;
-        this.hidden = true;
-        this.player.disabled = false;
-        this.asset.change_asset('broken-puzzle');
-        this.scene.physics.remove(this.physics_object);
-    }
-
     setup(): void {
         //putting into game itself
         this.physics_object = new PhysicsObject({
@@ -108,6 +100,7 @@ export default class BlockSlide extends Puzzle {
     keyPressed(e: KeyboardEvent): void {
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
         if (this.hidden && this.highlight && e.key == 'e') {
+            this.onOpen && this.onOpen();
             this.player.disabled = true;
             this.hidden = false;
         }

@@ -61,21 +61,13 @@ export default class Breakaway extends Puzzle {
         this.scene.physics.remove(this.physics_object);
     }
 
-    force_fail() {
-        this.state = PuzzleState.failed;
-        this.hidden = true;
-        this.player.disabled = false;
-        this.asset.change_asset('broken-puzzle');
-        this.scene.physics.remove(this.physics_object);
-    }
-    
     preload(): any {
         // Preload sound effects using the scene's loadSound method
         this.scene.loadSound("click", "assets/TInterfaceSounds/click-234708.mp3");
         this.scene.loadSound("rotate", "assets/TInterfaceSounds/mouse-click-290204.mp3");
         this.scene.loadSound("snap", "assets/TInterfaceSounds/snap-264680.mp3");
     }
-    
+
     setup(): void {
         //putting into game itself
         this.physics_object = new PhysicsObject({
@@ -181,11 +173,11 @@ export default class Breakaway extends Puzzle {
             piece.targetRot = piece.rot;
         }
     }
-    
+
     draw() {
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return;
     }
-    
+
     postDraw(): void {
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return;
         if (this.hidden) return;
@@ -316,11 +308,11 @@ export default class Breakaway extends Puzzle {
     }
 
     mousePressed(): void {
-        if (this.hidden || 
-            this.state === PuzzleState.failed || 
+        if (this.hidden ||
+            this.state === PuzzleState.failed ||
             this.state === PuzzleState.completed) {
-          return;
-          }
+            return;
+        }
         let mousePos = this.scene.p5.createVector(
             this.scene.p5.mouseX - this.scene.p5.width / 2,
             this.scene.p5.mouseY - this.scene.p5.height / 2
@@ -398,6 +390,7 @@ export default class Breakaway extends Puzzle {
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return;
         // console.log("STATE", this.state);
         if (this.hidden && this.highlight && e.key == 'e') {
+            this.onOpen && this.onOpen();
             this.player.disabled = true;
             this.hidden = false;
         }

@@ -164,10 +164,13 @@ export default class PlayScene extends Scene {
 
 
         this.access_circuit = new AccessCircuit(this, 'puzzle', this.player!);
-        this.access_circuit.x = -280;
-        this.access_circuit.y = 70;
+        this.access_circuit.x = -288;
+        this.access_circuit.y = 43;
         this.access_circuit?.setup();
         this.access_circuit.asset.zIndex = 101;
+        this.access_circuit.onOpen = () => {
+            this.dialogue.killAll();
+        }
 
 
         this.tilemap = this.add_new.tilemap({

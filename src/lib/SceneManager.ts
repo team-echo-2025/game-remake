@@ -2,7 +2,7 @@ import p5 from "p5";
 import GameObject from "./GameObject";
 import Scene from "./Scene";
 
-const DURATION = 300;
+const DURATION = 20;
 export default class SceneManager implements GameObject {
     private p: p5;
     private current_scene?: Scene;
@@ -97,7 +97,7 @@ export default class SceneManager implements GameObject {
                 if (this._time_remaining <= 0) {
                     this.timer_paused = true;
                     this._time_remaining = DURATION;
-                    this.start("menu-scene");
+                    this.start("loser");
                 }
             }
         }
