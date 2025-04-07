@@ -165,14 +165,14 @@ export default class PlayScene extends Scene {
         fire.play();
 
  
-        this.access_circuit = new AccessCircuit(this, 'puzzle', this.player!);
-        this.access_circuit.x = -288;
-        this.access_circuit.y = 43;
-        this.access_circuit?.setup();
-        this.access_circuit.asset.zIndex = 101;
-        this.access_circuit.onOpen = () => {
-            this.dialogue.killAll();
-        }
+        // this.access_circuit = new AccessCircuit(this, 'puzzle', this.player!);
+        // this.access_circuit.x = -288;
+        // this.access_circuit.y = 43;
+        // this.access_circuit?.setup();
+        // this.access_circuit.asset.zIndex = 101;
+        // this.access_circuit.onOpen = () => {
+        //     this.dialogue.killAll();
+        // }
 
  
         this.tilemap = this.add_new.tilemap({
@@ -255,10 +255,13 @@ export default class PlayScene extends Scene {
         // and pass the index of the puzzle in the puzzles array of this.tasks that is
         // being replaced (this should really only be used here since AC is the only
         // puzzle you can fail)
-        this.access_circuit.x = -280;
-        this.access_circuit.y = 70;
+        this.access_circuit.x = -288;
+        this.access_circuit.y = 43;
         this.access_circuit.setup();
         this.access_circuit.asset.zIndex = 101;
+        this.access_circuit.onOpen = () => {
+            this.dialogue.killAll();
+        }
     
         this.access_circuit.onCompleted = () => {
             if (this.access_circuit!.state === PuzzleState.failed) {
