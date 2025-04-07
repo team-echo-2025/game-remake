@@ -167,7 +167,7 @@ export default class BlockSlide extends Puzzle {
 
                 // Applying animation on movement
                 if (anim) {
-                    anim.progress = Math.min(anim.progress + 0.1, 1);
+                    anim.progress = Math.min(anim.progress + 0.3, 1);
                     anim.x = anim.startX + (anim.targetX - anim.startX) * anim.progress;
                     anim.y = anim.startY + (anim.targetY - anim.startY) * anim.progress;
 
