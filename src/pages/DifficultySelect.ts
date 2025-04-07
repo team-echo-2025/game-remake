@@ -32,7 +32,7 @@ export default class DifficultyPage extends Page {
             sounds: [this.button_sfx]
         }
         this.sfx_manager = this.scene.add_new.soundmanager(sfx_props);
-        this.easy = this.scene.add_new.button({
+        this.easy = this.scene.add_new.img_button({
             label: "Easy",
             font_key: 'jersey',
             callback: () => {
@@ -40,10 +40,11 @@ export default class DifficultyPage extends Page {
                 this.cleanup()
                 this.scene.start("play-scene");
                 this.setDifficulty("easy");
-            }
+            },
+            imageKey : "test"
         })
         this.easy.y = -100;
-        this.normal = this.scene.add_new.button({
+        this.normal = this.scene.add_new.img_button({
             label: "Normal",
             font_key: 'jersey',
             callback: () => {
@@ -51,9 +52,10 @@ export default class DifficultyPage extends Page {
                 this.cleanup()
                 this.scene.start("play-scene");
                 this.setDifficulty("normal");
-            }
+            },
+            imageKey : "test"
         })
-        this.hard = this.scene.add_new.button({
+        this.hard = this.scene.add_new.img_button({
             label: "Hard",
             font_key: 'jersey',
             callback: () => {
@@ -61,17 +63,19 @@ export default class DifficultyPage extends Page {
                 this.cleanup()
                 this.scene.start("play-scene");
                 this.setDifficulty("hard");
-            }
+            },
+            imageKey : "test"
         })
         this.hard.y = 100;
-        this.back = this.scene.add_new.button({
+        this.back = this.scene.add_new.img_button({
             label: "Back",
             font_key: 'jersey',
             callback: () => {
                 this.button_sfx.play();
                 this.cleanup()
-                this.set_page("menu-page");
-            }
+                this.set_page("menu-page"); 
+            },
+            imageKey : "test" 
         })
         this.keyPressed = (e: KeyboardEvent) => {
             if (e.key === "Escape") { // When ESC is pressed...

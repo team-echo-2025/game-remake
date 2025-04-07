@@ -381,6 +381,7 @@ export default class DrawPuzzle extends Puzzle {
     keyPressed(e: KeyboardEvent): void {
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
         if (this.hidden && this.highlight && e.key == 'e') {
+            this.onOpen && this.onOpen();
             this.player.disabled = true;
             this.hidden = false;
         }
