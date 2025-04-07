@@ -10,6 +10,9 @@ import { Vector2D } from "../lib/types/Physics";
 import { Graphics } from "p5";
 import { PuzzleState } from "../lib/Puzzle";
 import Dialogue from "../lib/ui/Dialogue";
+import Sprite from "../lib/Sprite";
+
+// look at scene 3 and puzzles
 
 type StartArgs = Readonly<{
     starting_pos: Vector2D
@@ -27,11 +30,13 @@ export default class Switches extends Scene {
     firstSwitch: [number, number] | null;
     secondSwitch: [number, number] | null;
     foundSwitch: boolean;
-    positions: [number, number][];
-    switchState: number;
+    positions: [number, number][] = [];
+    switchState: [] = [];
     graveSwitch!: PhysicsObject;
     dialogue!: Dialogue;
     inRange: boolean = false;
+    private collider_timeout: any;
+    asset!: Sprite;
 
     constructor() {
         super("Switches");
@@ -40,12 +45,7 @@ export default class Switches extends Scene {
         this.firstSwitch = null;
         this.secondSwitch = null;
         this.foundSwitch = false;
-        this.positions = [ // graveyard positions
-            [-302,-257], [-238,-257], [-175, -257], [-111, -257], [-47, -257], [17, -257], [81, -257], [145, -257], 
-            [-302, -190], [-238,-190], [-175, -190], [-111, -190], [-47, -190], [17, -190], [81, -190], [145, -190],   
-            [-302, -125], [-238,-125], [-175, -125], [-111, -125], [-47, -125], [17, -125], [81, -125], [145, -125]
-        ]
-        this.switchState = 0;
+
         this.camera.zoom = 3;
     }
 
@@ -60,10 +60,14 @@ export default class Switches extends Scene {
         this.player.body.x = -90;
         this.player.body.y = -70;
         this.physics.addObject(this.player);
+
+        this.switchState.push();
     }
     preload(): any {
         this.loadFont("jersey", "assets/fonts/jersey.ttf");
         this.loadTilemap("tilemap", "assets/tilemaps/PetersTileMap/Switches.tmx");
+        this.loadImage("switchesOff", "assets/tilemaps/PetersTileMaps/switchesOff.png");
+        this.loadImage("switchesOn", "assets/tilemaps/PetersTilemap/switchesOn.png");
     }
     setup(): void {
         // Boundaries of the grid
@@ -89,11 +93,23 @@ export default class Switches extends Scene {
 
         this.dialogue = new Dialogue(this, this.player!);
         
+        this.positions = [ // graveyard positions
+            [-302,-257], [-238,-257], [-175, -257], [-111, -257], [-47, -257], [17, -257], [81, -257], [145, -257], 
+            [-302, -190], [-238,-190], [-175, -190], [-111, -190], [-47, -190], [17, -190], [81, -190], [145, -190],   
+            [-302, -125], [-238,-125], [-175, -125], [-111, -125], [-47, -125], [17, -125], [81, -125], [145, -125]
+        ]
+
         this.graveSwitch.onCollide = (other: RigidBody) => {
             if(other == this.player?.body){
-                if(!this.inRange){
+                clearTimeout(this.collider_timeout);
+                if(!this.inRange && this.foundSwitch){
                     this.inRange = true;
+                    this.asset.change_asset("switchesOn");
                 }
+                this.collider_timeout = setTimeout(() => {
+                    this.inRange = false;
+                    this.asset.change_asset("switchesOff");
+                }, 100);
             }
         }
 
@@ -112,11 +128,11 @@ export default class Switches extends Scene {
 
         if(e.key === 'e') {              
             if(this.foundSwitch){
-                this.dialogue.addDialogue(100,50,"Hmm, there is nothing here");
+                this.dialogue.addDialogue(110,50,"Hmm, there is nothing here");
                 
             }
             else {
-                this.dialogue.addDialogue(110,60, "There seems to be a switch in another place");
+                this.dialogue.addDialogue(110,50, "There seems to be a switch in another place");
             }
         } 
 
