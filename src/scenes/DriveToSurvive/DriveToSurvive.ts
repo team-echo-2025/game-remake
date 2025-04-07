@@ -236,7 +236,7 @@ export default class DriveToSurvive extends Scene {
         this.p5.text(text, padding / 2, 30);
         this.p5.pop();
         if (this.p5.millis() - this.start_timestamp > 30_000) {
-            this.start("playscene-2")
+            this.start("playscene-2", { starting_pos: { x: -630, y: 330 } });
             return
         }
         const text2 = "You have " + Math.round(30 - (this.p5.millis() - this.start_timestamp) / 1000) + " seconds left.";
