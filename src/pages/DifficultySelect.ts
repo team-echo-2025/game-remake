@@ -73,9 +73,9 @@ export default class DifficultyPage extends Page {
             callback: () => {
                 this.button_sfx.play();
                 this.cleanup()
-                this.set_page("menu-page");
+                this.set_page("menu-page"); 
             },
-            imageKey : "test"
+            imageKey : "test" 
         })
         this.keyPressed = (e: KeyboardEvent) => {
             if (e.key === "Escape") { // When ESC is pressed...
