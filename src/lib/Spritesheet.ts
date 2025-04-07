@@ -23,6 +23,7 @@ export default class Spritesheet extends Sprite {
     private _frame_offset: number = 0;
     display_width?: number;
     display_height?: number;
+    onComplete?: () => void
 
     get height() {
         return this._frame_height;
@@ -54,12 +55,13 @@ export default class Spritesheet extends Sprite {
         this.update_frame();
     }
 
-    constructor(asset_key: string, col_count: number, row_count: number, duration?: number) {
+    constructor(asset_key: string, col_count: number, row_count: number, duration?: number, onComplete?: () => void) {
         super(asset_key);
         this._row_count = row_count;
         this._col_count = col_count;
         this._duration = duration ?? 1000;
         this._frame = { x: this._start_col, y: this._start_row }
+        this.onComplete = onComplete;
     }
 
     setup(): void {
@@ -118,6 +120,7 @@ export default class Spritesheet extends Sprite {
                         this._frame_offset = 0;
                     }
                     this._once = false;
+                    this.onComplete && this.onComplete();
                 }
             } else if (this._playing) {
                 this._frame_offset = (this._frame_offset + 1) % totalFrames;
