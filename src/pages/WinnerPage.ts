@@ -38,7 +38,7 @@ export default class WinnerPage extends Page {
             callback: () => {
                 // this.button_sfx.play();
                 this.cleanup()
-                window.location.href = "https://www.youtube.com/watch?v=5Y-HoOFMlpI&pp=ygUaaG93IHRvIHN0b3AgYmVpbmcgYW5ub3lpbmc%3D";
+                window.location.href = "https://www.youtube.com/watch?v=l60MnDJklnM";
             },
             imageKey: "test"
         })

@@ -114,9 +114,9 @@ export default class LoserPage extends Page {
 
         p.text("Those puzzle skills definitely need work.\nMaybe one day you'll be good enough", 0, -p.windowHeight / 4 + 250);
 
-        p.text("I would say click Play Again on the left, but you should really hit the Main Menu button\non the right and try an easier difficulty", 0, -p.windowHeight / 4 + 400);
+        p.text("I would say click Play Again on the left, but you should really realize you're a failure", 0, -p.windowHeight / 4 + 400);
 
-        p.text("But you should really hit the Main Menu button on the right and try an easier difficulty", 0, -p.windowHeight / 4 + 550);
+        p.text("Maybe you should hit the Main Menu button on the right and try an easier difficulty", 0, -p.windowHeight / 4 + 550);
 
         p.text("Good luck in future endeavors", 0, -p.windowHeight / 4 + 700);
 

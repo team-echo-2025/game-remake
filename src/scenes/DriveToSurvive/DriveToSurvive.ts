@@ -202,9 +202,11 @@ export default class DriveToSurvive extends Scene {
         })
     }
 
-    keyPressed(e: KeyboardEvent): void {
-        if (e.key === "Escape") {
-            this.start("menu-scene");
+    keyPressed(e: KeyboardEvent): void
+    {
+        if (e.key === "Escape")
+        {
+            this.start("playscene-2", {starting_pos: {x: -630, y: 330}});
         }
     }
 
