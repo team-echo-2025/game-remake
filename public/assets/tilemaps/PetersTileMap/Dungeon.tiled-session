@@ -36,6 +36,7 @@
             "scaleInDock": 1
         },
         "Graveyard.tsx": {
+            "dynamicWrapping": false,
             "scaleInDock": 1
         },
         "GraveyardSwitch/Graveyard.tsx": {
@@ -72,11 +73,11 @@
             "scaleInDock": 1
         },
         "Switches.tmx": {
-            "scale": 11,
-            "selectedLayer": 0,
+            "scale": 1.5,
+            "selectedLayer": 4,
             "viewCenter": {
-                "x": -66.45454545454545,
-                "y": 617.3181818181818
+                "x": 489.33333333333337,
+                "y": 266.33333333333326
             }
         },
         "TX Tileset Wall.tsx": {
