@@ -49,6 +49,7 @@ export default class DriveToSurvive extends Scene {
     private tilemap?: Tilemap;
     private player?: PlayerDriver;
     private font?: Font;
+    private start_timestamp!: number;
 
     constructor() {
         super("drive-to-survive");
@@ -200,13 +201,12 @@ export default class DriveToSurvive extends Scene {
             w: this.tilemap.width,
             h: this.tilemap.height,
         })
+        this.start_timestamp = this.p5.millis();
     }
 
-    keyPressed(e: KeyboardEvent): void
-    {
-        if (e.key === "Escape")
-        {
-            this.start("playscene-2", {starting_pos: {x: -630, y: 330}});
+    keyPressed(e: KeyboardEvent): void {
+        if (e.key === "Escape") {
+            this.start("playscene-2", { starting_pos: { x: -630, y: 330 } });
         }
     }
 
@@ -234,6 +234,22 @@ export default class DriveToSurvive extends Scene {
         this.p5.rect(0, 0, width + padding, 60);
         this.p5.fill(255);
         this.p5.text(text, padding / 2, 30);
+        this.p5.pop();
+        if (this.p5.millis() - this.start_timestamp > 30_000) {
+            this.start("playscene-2")
+            return
+        }
+        const text2 = "You have " + Math.round(30 - (this.p5.millis() - this.start_timestamp) / 1000) + " seconds left.";
+        this.p5.push();
+        this.p5.rectMode(this.p5.CORNER);
+        this.p5.textFont(this.font!);
+        this.p5.fill(0);
+        const width2 = this.p5.textWidth(text2);
+        const padding2 = 10;
+        this.p5.translate(this.p5.width / 2 - width2 - this.p5.width * .1 - padding2, -this.p5.height / 2 + this.p5.height * .1);
+        this.p5.rect(0, 0, width2 + padding2, 60);
+        this.p5.fill(255);
+        this.p5.text(text2, padding2 / 2, 30);
         this.p5.pop();
     }
 }
