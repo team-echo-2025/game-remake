@@ -76,8 +76,8 @@
             "scale": 1.5,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": 489.33333333333337,
-                "y": 266.33333333333326
+                "x": 489.3333333333333,
+                "y": 86.33333333333334
             }
         },
         "TX Tileset Wall.tsx": {
@@ -129,17 +129,14 @@
     "map.tileHeight": 16,
     "map.tileWidth": 16,
     "openFiles": [
-        "Dungeonset.tsx",
-        "Trees.tsx",
-        "Dungeon.tmx",
         "Switches.tmx"
     ],
     "project": "Dungeon.tiled-project",
     "recentFiles": [
+        "Switches.tmx",
         "Dungeonset.tsx",
         "Trees.tsx",
         "Dungeon.tmx",
-        "Switches.tmx",
         "Texture/TX Tileset Wall.tsx",
         "Texture/Grass.tsx",
         "GraveyardSwitch/Set 1.tsx",
