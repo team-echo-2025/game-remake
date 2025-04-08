@@ -1,9 +1,10 @@
-import {Image} from 'p5';
+import { Image } from 'p5';
 import Page from "../lib/Page";
-import ButtonTest from "../lib/ui/ButtonTest";
+import ButtonTest, { ButtonTestProps } from "../lib/ui/ButtonTest";
 import Sound from "../lib/Sound";
 import SoundManager, { SoundManagerProps } from "../lib/SoundManager";
 import Slider from "../lib/ui/Slider"
+import DropdownMenu from '../lib/ui/DropdownMenu';
 
 export default class CharacterPage extends Page {
     hairStyleButton!: ButtonTest;
@@ -19,6 +20,9 @@ export default class CharacterPage extends Page {
     private redHairSlider!: Slider;
     private greenHairSlider!: Slider;
     private blueHairSlider!: Slider;
+    dropdown!: DropdownMenu;
+    dropdownHair!: DropdownMenu;
+    dropdownClothes!: DropdownMenu;
     private hairSliderVisible = false;
     private hairColors = [
         { r: 0, g: 0, b: 0 },       // Black
@@ -56,7 +60,12 @@ export default class CharacterPage extends Page {
         this.scene.remove(this.pointyHatButton);
         this.scene.remove(this.basicCapButton);
         this.scene.remove(this.back);
-
+        this.scene.remove(this.dropdown);
+        this.scene.remove(this.dropdownClothes);
+        this.scene.remove(this.dropdownHair);
+        this.dropdown.onDestroy();
+        this.dropdownClothes.onDestroy();
+        this.dropdownHair.onDestroy();
         this.scene.remove(this.redHairSlider);
         this.scene.remove(this.greenHairSlider);
         this.scene.remove(this.blueHairSlider);
@@ -68,106 +77,111 @@ export default class CharacterPage extends Page {
             sounds: [this.button_sfx]
         }
         this.sfx_manager = this.scene.add_new.soundmanager(sfx_props);
+        //Hat Dropdown
+        const hat1: ButtonTestProps = {
+            label: "Leather Cap",
+            font_key: "jersey",
+            callback: () => {
+                localStorage.setItem("playerHat", "assets/player_leather_hat.png");
+                localStorage.setItem("playerHair", "none");
+                this.setPreview();
+            },
+        };
+        const hat2: ButtonTestProps = {
+            ...hat1,
+            callback: () => {
+                localStorage.setItem("playerHat", "assets/player_pointy_hat.png");
+                localStorage.setItem("playerHair", "none");
+                this.setPreview();
+            },
+            label: "Pointy Hat"
+        }
 
-        // buttons
-        this.hairStyleButton = this.scene.add_new.button({
+        this.dropdown = this.scene.add_new.dropdown_menu({
+            label: "Hat",
+            font_key: "jersey",
+            buttons: [
+                hat1,
+                hat2
+            ]
+        })
+        this.dropdown.x = this.scene.p5.windowWidth / 7;
+        this.dropdown.y = -175;
+        //Hair Dropdown menu
+        const hair1: ButtonTestProps = {
             label: "Change Style",
-            font_key: 'jersey',
+            font_key: "jersey",
             callback: () => {
                 const currentHair = localStorage.getItem("playerHair");
                 const newHair = currentHair === "assets/player_hair_short.png"
                     ? "assets/player_hair_bob.png"
                     : "assets/player_hair_short.png";
-            
+
                 localStorage.setItem("playerHair", newHair);
                 this.hairPath = localStorage.getItem("playerHair");
                 localStorage.setItem("playerHat", "none");
                 this.hatPath = localStorage.getItem("playerHat")
                 this.setPreview();
-            }            
-        })
-        this.hairStyleButton.y = 0;
-        this.hairStyleButton.x = -180;
-        this.hairColorButton = this.scene.add_new.button({
-            label: "Select Color",
-            font_key: 'jersey',
+            },
+        };
+        const hair2: ButtonTestProps = {
+            ...hair1,
             callback: () => {
-                this.hairColorIndex = (this.hairColorIndex + 1) % this.hairColors.length;
-                const color = this.hairColors[this.hairColorIndex];
-        
-                this.red = color.r;
-                this.green = color.g;
-                this.blue = color.b;
-        
-                this.redHairSlider.slider.value(this.red / 255);
-                this.greenHairSlider.slider.value(this.green / 255);
-                this.blueHairSlider.slider.value(this.blue / 255);
-        
-                this.setHairColor();
-            }
-        });        
-        this.hairColorButton.y = 0;
-        this.hairCustomButton = this.scene.add_new.button({
-            label: "Custom Color",
-            font_key: 'jersey',
-            callback: () => {
-                this.hairSliderVisible = !this.hairSliderVisible;
-                this.toggleSliders(this.hairSliderVisible);
-                if (this.hairSliderVisible) this.setHairColor();
-            }
+                this.button_sfx.play();
+                this.cleanup()
+                this.set_page("character-page-colors")
+            },
+            label: "Select Color"
+        }
+
+        this.dropdownHair = this.scene.add_new.dropdown_menu({
+            label: "Hair",
+            font_key: "jersey",
+            buttons: [
+                hair1,
+                hair2
+            ]
         })
-        this.hairCustomButton.y = 0;
-        this.hairCustomButton.x = 180;
-        this.tunicButton = this.scene.add_new.button({
+        this.dropdownHair.x = this.scene.p5.windowWidth / 7;
+        this.dropdownHair.y = 0;
+        //Clothing Menu
+        const clothes1: ButtonTestProps = {
             label: "Blue Tunic",
-            font_key: 'jersey',
+            font_key: "jersey",
             callback: () => {
                 localStorage.setItem("playerClothes", "assets/player_tunic.png");
                 this.setPreview();
-            }            
-        })
-        this.tunicButton.y = 100;
-        this.tunicButton.x = 100;
-        this.armorButton = this.scene.add_new.button({
-            label: "Yellow Tunic",
-            font_key: 'jersey',
+            },
+        };
+        const clothes2: ButtonTestProps = {
+            ...hair1,
             callback: () => {
                 localStorage.setItem("playerClothes", "assets/player_armor.png");
                 this.setPreview();
-            }            
+            },
+            label: "Yellow Tunic"
+        }
+
+        this.dropdownClothes = this.scene.add_new.dropdown_menu({
+            label: "Clothes",
+            font_key: "jersey",
+            buttons: [
+                clothes1,
+                clothes2
+            ]
         })
-        this.armorButton.y = 100;
-        this.armorButton.x = -100;
-        this.pointyHatButton = this.scene.add_new.button({
-            label: "Pointy Hat",
-            font_key: 'jersey',
-            callback: () => {
-                localStorage.setItem("playerHat", "assets/player_pointy_hat.png");
-                localStorage.setItem("playerHair", "none");
-                this.setPreview();
-            }            
-        })
-        this.pointyHatButton.y = -100;
-        this.pointyHatButton.x = 100;
-        this.basicCapButton = this.scene.add_new.button({
-            label: "Basic Cap",
-            font_key: 'jersey',
-            callback: () => {
-                localStorage.setItem("playerHat", "assets/player_leather_hat.png");
-                localStorage.setItem("playerHair", "none");
-                this.setPreview();
-            }
-        })
-        this.basicCapButton.y = -100;
-        this.basicCapButton.x = -100;
-        this.back = this.scene.add_new.button({
+        this.dropdownClothes.x = this.scene.p5.windowWidth / 7;
+        this.dropdownClothes.y = 175;
+        // buttons
+        this.back = this.scene.add_new.img_button({
             label: "Back",
             font_key: 'jersey',
             callback: () => {
                 this.button_sfx.play();
                 this.cleanup()
                 this.set_page("menu-page");
-            }
+            },
+            imageKey: 'test'
         })
         this.back.y = 200;
 
@@ -222,15 +236,11 @@ export default class CharacterPage extends Page {
     postDraw(): void {
         const p5 = this.scene.p5;
         this.drawPreview();
-
         p5.fill(0);
-        p5.textAlign(this.page_manager.scene.p5.CENTER, this.page_manager.scene.p5.CENTER);
+        p5.textAlign(this.scene.p5.CENTER, this.scene.p5.CENTER);
         p5.textSize(75);
-        p5.text('Character Customization', 0, -350);
+        p5.text('Character Customization', 0, -this.scene.p5.windowHeight / 3);
         p5.textSize(50);
-        p5.text('Hat', 0, -155);
-        p5.text('Hair', 0, -55);
-        p5.text('Clothes', 0, 45);
     }
 
     setPreview(): void {
@@ -239,17 +249,17 @@ export default class CharacterPage extends Page {
         this.hairFrames = [];
         this.clothesFrames = [];
         this.hatFrames = [];
-    
+
         this.hairPath = localStorage.getItem("playerHair");
         this.clothesPath = localStorage.getItem("playerClothes");
         this.hatPath = localStorage.getItem("playerHat");
-    
+
         this.scene.p5.loadImage('assets/player.png', (img) => {
             for (let i = 0; i < 6; i++) {
                 this.playerFrames.push(img.get(i * 64, 64 * 4, 64, 64));
             }
         });
-    
+
         if (this.hairPath && this.hairPath !== "none") {
             this.scene.p5.loadImage(this.hairPath, (img) => {
                 for (let i = 0; i < 6; i++) {
@@ -264,7 +274,7 @@ export default class CharacterPage extends Page {
                 }
             });
         }
-    
+
         if (this.clothesPath) {
             this.scene.p5.loadImage(this.clothesPath, (img) => {
                 for (let i = 0; i < 6; i++) {
@@ -279,7 +289,7 @@ export default class CharacterPage extends Page {
                 }
             });
         }
-    
+
         if (this.hatPath && this.hatPath !== "none") {
             this.scene.p5.loadImage(this.hatPath, (img) => {
                 for (let i = 0; i < 6; i++) {
@@ -295,13 +305,13 @@ export default class CharacterPage extends Page {
             this.playerAnimIndex = (this.playerAnimIndex + 1) % 6;
             this.playerLastFrameTime = now;
         }
-    
+
         p5.push();
         p5.imageMode(p5.CENTER);
-        const x = 0;
-        const y = -210;
-        const size = 64 * 3;
-    
+        const x = -p5.windowWidth / 8;
+        const y = 0;
+        const size = 64 * 5;
+
         if (this.allFramesReady(this.playerFrames)) {
             p5.image(this.playerFrames[this.playerAnimIndex], x, y, size, size);
         }
@@ -318,14 +328,14 @@ export default class CharacterPage extends Page {
             p5.tint(255);
             p5.image(this.hatFrames[this.playerAnimIndex], x, y, size, size);
         }
-    
+
         p5.noTint();
         p5.pop();
     }
     // trying to fix glitch where sprites disappear on hair-to-hat change
     allFramesReady(frames: Image[]): boolean {
         return frames.length === 6 && frames.every(f => f !== undefined);
-    }    
+    }
 
     setHairColor(): void {
         this.red = Math.floor((this.redHairSlider.slider.value() as number) * 255);
@@ -338,9 +348,7 @@ export default class CharacterPage extends Page {
         this.greenHairSlider.slider.elt.hidden = !show;
         this.blueHairSlider.slider.elt.hidden = !show;
     }
-    //konnor commits to main
+    drawBorder() {
 
-//setDifficulty(difficulty: string) {
-//    console.log(difficulty);
-//}
+    }
 }
