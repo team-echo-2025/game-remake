@@ -230,7 +230,12 @@ export default class PlayScene extends Scene {
     keyPressed = (e: KeyboardEvent) => {
         this.access_circuit?.keyPressed(e);
         if (e.key === "Escape") {
-            this.start("menu-scene");
+            if (this.access_circuit && !this.access_circuit.hidden) {
+                this.access_circuit.hidden = true;
+                if (this.player) this.player.disabled = false;
+            } else if (!this.scene_manager.paused) {
+                this.scene_manager.page_manager?.set_page("pause-page");
+            }
         }
     };
 
@@ -243,6 +248,10 @@ export default class PlayScene extends Scene {
     postDraw(): void {
         this.tasks.postDraw();
         if (!this.access_circuit?.hidden) this.access_circuit?.postDraw();
+        if (this.player && this.scene_manager.paused) this.player.disabled = true;
+        else if (this.player && !this.scene_manager.paused) {
+            if (this.access_circuit && this.access_circuit.hidden) this.player.disabled = false;
+        }
     }
     draw(): void {
         if (!this.access_circuit?.hidden) this.access_circuit?.draw();
