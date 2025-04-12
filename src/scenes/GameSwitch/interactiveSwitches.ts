@@ -9,6 +9,7 @@ export default class interactiveSwitch extends Puzzle {
     physics_objects: PhysicsObject[] = [];
     highlight_states: boolean[] = [];
     collider_timeouts: any[] = [];
+    permanentlyActivated: boolean[] = [];
     asset_key: string;
     assets: Sprite[] = [];
     player: Player;
@@ -26,12 +27,13 @@ export default class interactiveSwitch extends Puzzle {
     setup(): void {
         for (let i = 0; i < this.positions.length; i++) {
             const [x, y] = this.positions[i];
-            
+
             const physics_object = new PhysicsObject({
                 width: 50,
                 height: 50,
                 mass: Infinity
             });
+
             physics_object.overlaps = true;
             physics_object.body.x = x;
             physics_object.body.y = y;
@@ -39,17 +41,22 @@ export default class interactiveSwitch extends Puzzle {
             const index = i;
             this.highlight_states.push(false);
             this.collider_timeouts.push(-1);
+            this.permanentlyActivated.push(false);
 
             physics_object.onCollide = (other: RigidBody) => {
                 if (other === this.player.body) {
                     clearTimeout(this.collider_timeouts[index]);
-                    if (!this.highlight_states[index]) {
+                    if (!this.highlight_states[index] && !this.permanentlyActivated[index]) {
                         this.highlight_states[index] = true;
                         this.assets[index].change_asset("computer-highlight");
                     }
+                    
+
                     this.collider_timeouts[index] = setTimeout(() => {
                         this.highlight_states[index] = false;
-                        this.assets[index].change_asset("switchesOff");
+                        if (!this.permanentlyActivated[index]) {
+                            this.assets[index].change_asset("switchesOff");
+                        }
                     }, 100);
                 }
             };
@@ -64,6 +71,20 @@ export default class interactiveSwitch extends Puzzle {
             asset.width = 24;
             asset.height = 48;
             this.assets.push(asset);
+        }
+    }
+
+    interactWithSwitch(index: number, isCorrect: boolean): void {
+        if (isCorrect) {
+            this.permanentlyActivated[index] = true;
+            this.assets[index].change_asset("switchesOn");
+        } else {
+            this.assets[index].change_asset("wrong");
+            setTimeout(() => {
+                if (!this.permanentlyActivated[index]) {
+                    this.assets[index].change_asset("switchesOff");
+                }
+            }, 800);
         }
     }
 
