@@ -10,6 +10,7 @@ import Player from "../../lib/Player";
 import Scene from "../../lib/Scene";
 import Sound from "../../lib/Sound";
 import SoundManager, { SoundManagerProps } from "../../lib/SoundManager";
+import Dialogue from "../../lib/ui/Dialogue";
 
 type RGB = Readonly<{
     r: number;
@@ -34,7 +35,7 @@ export default class AccessCircuit extends Puzzle {
     boardCircleDiameter = 0;
     dispensersWidth = 0;
     dispenserDiameter = 0;
-
+    dialogue!: Dialogue;
     asset_key: string;
     asset!: Sprite;
     player: Player;
@@ -72,6 +73,10 @@ export default class AccessCircuit extends Puzzle {
         this.asset.change_asset('broken-puzzle');
         this.scene.physics.remove(this.physics_object);
     }
+    // onOpen() : void {
+    //     console.log("FINFNFIFNIFN");
+    //     this.dialogue.killAll();
+    // }
 
     checkSolution(): boolean {
         for (let row of this.board) {
@@ -176,6 +181,7 @@ export default class AccessCircuit extends Puzzle {
     keyPressed(e: KeyboardEvent): void {
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
         if (this.hidden && this.highlight && e.key == 'e') {
+            this.onOpen && this.onOpen();
             this.player.disabled = true;
             this.hidden = false;
         }
@@ -274,11 +280,12 @@ export default class AccessCircuit extends Puzzle {
         const solved = this.checkSolution();
         if (!solved && this.current_row >= this.board.length) {
             this.state = PuzzleState.failed;
-            //this.scene.timer?.deductTime(60);
+            this.scene.scene_manager.deductTime(60);
             this.hidden = true;
             this.player.disabled = false;
             this.scene.physics.remove(this.physics_object);
             this.asset.change_asset('broken-puzzle');
+            this.onCompleted?.();
         }
     }
 
