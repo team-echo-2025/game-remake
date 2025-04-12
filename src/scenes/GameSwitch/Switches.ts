@@ -28,6 +28,7 @@ export default class Switches extends Scene {
     firstSwitch?: [number, number];
     secondSwitch?: [number, number];
     foundFirst = false;
+    secondSwitchActivated = false;
     dialogue!: Dialogue;
     playSwitch?: interactiveSwitch;
 
@@ -53,7 +54,7 @@ export default class Switches extends Scene {
         this.loadTilemap("tilemap", "assets/tilemaps/PetersTileMap/Switches.tmx");
         this.loadImage("switchesOff", "assets/tilemaps/PetersTileMap/switchesOff.png");
         this.loadImage("switchesOn", "assets/tilemaps/PetersTileMap/switchesOn.png");
-        this.loadImage("computer", "assets/puzzleImages/retroIBM.png");
+        this.loadImage("wrong", "assets/tilemaps/PetersTileMap/switchesWrong.png");
         this.loadImage("computer-highlight", "assets/puzzleImages/retroIBM-Highlighted.png");
     }
 
@@ -71,23 +72,7 @@ export default class Switches extends Scene {
         // Randomize puzzle switches
         const shuffled = [...this.positions].sort(() => Math.random() - 0.5);
         this.firstSwitch = shuffled[0];
-        this.secondSwitch = this.findAdjacent(shuffled[0]);
-
-        // Add invisible physics switches for collisions
-        for (const pos of this.positions) {
-            const graveSwitch = new PhysicsObject({ width: 50, height: 50, mass: Infinity });
-            graveSwitch.body.x = pos[0];
-            graveSwitch.body.y = pos[1];
-            graveSwitch.overlaps = true;
-            this.physics.addObject(graveSwitch);
-            this.switches.push(graveSwitch);
-
-            graveSwitch.onCollide = (other: RigidBody) => {
-                if (other === this.player?.body) {
-                    this.handleSwitchPress(pos);
-                }
-            };
-        }
+        this.secondSwitch = this.findAdjacent(this.firstSwitch)!;
 
         // Add visible interactive switches
         this.playSwitch = new interactiveSwitch(this, "switchesOff", this.player!, this.positions);
@@ -105,34 +90,38 @@ export default class Switches extends Scene {
             .find(p => this.positions.some(([px, py]) => px === p[0] && py === p[1]));
     }
 
-    handleSwitchPress(pos: [number, number]): void {
-        if (!this.foundFirst) {
-            if (this.firstSwitch && pos[0] === this.firstSwitch[0] && pos[1] === this.firstSwitch[1]) {
-                this.foundFirst = true;
-                this.dialogue.addDialogue(110, 50, "You found the first switch! Find the second one!");
-            } else {
-                this.dialogue.addDialogue(110, 50, "Wrong switch! Try again.");
-            }
-        } else {
-            if (this.secondSwitch && pos[0] === this.secondSwitch[0] && pos[1] === this.secondSwitch[1]) {
-                this.dialogue.addDialogue(110, 50, "Both switches activated! Puzzle complete!");
-                this.start("scene5"); // uncomment if needed
-            } else {
-                this.dialogue.addDialogue(110, 50, "Wrong second switch! Start over.");
-                this.foundFirst = false;
-            }
-        }
+    positionsEqual(a: [number, number], b: [number, number]): boolean {
+        return a[0] === b[0] && a[1] === b[1];
     }
 
     keyPressed = (e: KeyboardEvent) => {
         if (e.key === "Escape") {
             this.start("menu-scene");
         }
-        if (e.key.toLowerCase() === "e") {
-            const inRange = this.playSwitch?.highlight_states.some(h => h);
-            if (inRange) {
-                // Interacting with a highlighted switch
-                this.dialogue.addDialogue(110, 50, this.foundFirst ? "Hmm, nothing here." : "There seems to be a switch in another place.");
+
+        if (e.key.toLowerCase() === "e" && this.playSwitch) {
+            for (let i = 0; i < this.playSwitch.highlight_states.length; i++) {
+                if (this.playSwitch.highlight_states[i]) {
+                    const switchPos = this.positions[i];
+                    const isFirst = this.positionsEqual(switchPos, this.firstSwitch!);
+                    const isSecond = this.positionsEqual(switchPos, this.secondSwitch!);
+
+                    if (isFirst && !this.foundFirst) {
+                        this.foundFirst = true;
+                        this.playSwitch.interactWithSwitch(i, true);
+                    } else if (isSecond && this.foundFirst && !this.secondSwitchActivated) {
+                        this.secondSwitchActivated = true;
+                        this.playSwitch.interactWithSwitch(i, true);
+                    } else {
+                        this.playSwitch.interactWithSwitch(i, false);
+                    }
+
+                    if (this.foundFirst && this.secondSwitchActivated) {
+                        this.start("playscene-2");
+                    }
+
+                    break; // Avoid multiple triggers
+                }
             }
         }
     };
