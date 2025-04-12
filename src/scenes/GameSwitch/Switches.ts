@@ -11,13 +11,12 @@ import Dialogue from "../../lib/ui/Dialogue";
 import Sprite from "../../lib/Sprite";
 import interactiveSwitch from "./interactiveSwitches";
 
-// look at scene 3 and puzzles
-
 type SceneState = {
     access_puzzle: PuzzleState;
-}
+};
+
 type StartArgs = Readonly<{
-    starting_pos: Vector2D
+    starting_pos: Vector2D;
 }>;
 
 export default class Switches extends Scene {
@@ -25,8 +24,12 @@ export default class Switches extends Scene {
     player?: Player;
     tilemap?: Tilemap;
     positions: [number, number][] = [];
-    playSwitch?: interactiveSwitch;
+    switches: PhysicsObject[] = [];
+    firstSwitch?: [number, number];
+    secondSwitch?: [number, number];
+    foundFirst = false;
     dialogue!: Dialogue;
+    playSwitch?: interactiveSwitch;
 
     constructor() {
         super("Switches");
@@ -50,7 +53,7 @@ export default class Switches extends Scene {
         this.loadTilemap("tilemap", "assets/tilemaps/PetersTileMap/Switches.tmx");
         this.loadImage("switchesOff", "assets/tilemaps/PetersTileMap/switchesOff.png");
         this.loadImage("switchesOn", "assets/tilemaps/PetersTileMap/switchesOn.png");
-        this.loadImage("computer", "assets/puzzleImages/retroIBM.png"); // used as temp switch
+        this.loadImage("computer", "assets/puzzleImages/retroIBM.png");
         this.loadImage("computer-highlight", "assets/puzzleImages/retroIBM-Highlighted.png");
     }
 
@@ -60,29 +63,76 @@ export default class Switches extends Scene {
         this.tilemap = this.add_new.tilemap({ tilemap_key: "tilemap" });
 
         this.positions = [
-            [-302,-257], [-238,-257], [-175, -257], [-111, -257], [-47, -257], [17, -257], [81, -257], [145, -257], 
-            [-302, -190], [-238,-190], [-175, -190], [-111, -190], [-47, -190], [17, -190], [81, -190], [145, -190],   
-            [-302, -125], [-238,-125], [-175, -125], [-111, -125], [-47, -125], [17, -125], [81, -125], [145, -125]
-        ];
-        this.positions = this.positions.map(([x, y]) => [x + xOffset, y + yOffset]);
+            [-302,-257], [-238,-257], [-175,-257], [-111,-257], [-47,-257], [17,-257], [81,-257], [145,-257],
+            [-302,-190], [-238,-190], [-175,-190], [-111,-190], [-47,-190], [17,-190], [81,-190], [145,-190],
+            [-302,-125], [-238,-125], [-175,-125], [-111,-125], [-47,-125], [17,-125], [81,-125], [145,-125]
+        ].map(([x, y]) => [x + xOffset, y + yOffset]);
 
-        // interactive switches
+        // Randomize puzzle switches
+        const shuffled = [...this.positions].sort(() => Math.random() - 0.5);
+        this.firstSwitch = shuffled[0];
+        this.secondSwitch = this.findAdjacent(shuffled[0]);
+
+        // Add invisible physics switches for collisions
+        for (const pos of this.positions) {
+            const graveSwitch = new PhysicsObject({ width: 50, height: 50, mass: Infinity });
+            graveSwitch.body.x = pos[0];
+            graveSwitch.body.y = pos[1];
+            graveSwitch.overlaps = true;
+            this.physics.addObject(graveSwitch);
+            this.switches.push(graveSwitch);
+
+            graveSwitch.onCollide = (other: RigidBody) => {
+                if (other === this.player?.body) {
+                    this.handleSwitchPress(pos);
+                }
+            };
+        }
+
+        // Add visible interactive switches
         this.playSwitch = new interactiveSwitch(this, "switchesOff", this.player!, this.positions);
         this.playSwitch.setup();
 
+        // Dialogue
         this.dialogue = new Dialogue(this, this.player!);
+    }
+
+    findAdjacent(pos: [number, number]): [number, number] | undefined {
+        const [x, y] = pos;
+        const directions = [[64,0], [-64,0], [0,64], [0,-64]];
+        return directions
+            .map(([dx, dy]) => [x + dx, y + dy] as [number, number])
+            .find(p => this.positions.some(([px, py]) => px === p[0] && py === p[1]));
+    }
+
+    handleSwitchPress(pos: [number, number]): void {
+        if (!this.foundFirst) {
+            if (this.firstSwitch && pos[0] === this.firstSwitch[0] && pos[1] === this.firstSwitch[1]) {
+                this.foundFirst = true;
+                this.dialogue.addDialogue(110, 50, "You found the first switch! Find the second one!");
+            } else {
+                this.dialogue.addDialogue(110, 50, "Wrong switch! Try again.");
+            }
+        } else {
+            if (this.secondSwitch && pos[0] === this.secondSwitch[0] && pos[1] === this.secondSwitch[1]) {
+                this.dialogue.addDialogue(110, 50, "Both switches activated! Puzzle complete!");
+                this.start("scene5"); // uncomment if needed
+            } else {
+                this.dialogue.addDialogue(110, 50, "Wrong second switch! Start over.");
+                this.foundFirst = false;
+            }
+        }
     }
 
     keyPressed = (e: KeyboardEvent) => {
         if (e.key === "Escape") {
             this.start("menu-scene");
         }
-        if (e.key === "e") {
+        if (e.key.toLowerCase() === "e") {
             const inRange = this.playSwitch?.highlight_states.some(h => h);
             if (inRange) {
-                //this works
-                //change asset to activated switch
-                console.log("Interacted with a switch!");
+                // Interacting with a highlighted switch
+                this.dialogue.addDialogue(110, 50, this.foundFirst ? "Hmm, nothing here." : "There seems to be a switch in another place.");
             }
         }
     };
@@ -95,76 +145,3 @@ export default class Switches extends Scene {
     draw(): void {}
     postDraw(): void {}
 }
-//taken from setup
-        // const shuffled = [...this.positions].sort(() => Math.random() - 0.5);
-        // this.firstSwitch = shuffled[0];
-        // this.secondSwitch = this.findAdjacent(shuffled[0]);
-
-        // for (const pos of this.positions) {
-        //     const graveSwitch = new PhysicsObject({
-        //         width: 50,
-        //         height: 50,
-        //         mass: Infinity
-        //     });   
-        //     graveSwitch.body.x = pos[0];
-        //     graveSwitch.body.y = pos[1];
-        //     graveSwitch.overlaps = true;
-        //     this.physics.addObject(graveSwitch);
-        //     this.switches.push(graveSwitch);
-
-        //     graveSwitch.onCollide = (other: RigidBody) => {
-        //         if (other === this.player?.body) {
-        //             this.handleSwitchPress(pos);
-        //         }
-        //     };
-        // }
-//other functions..........
-// findAdjacent(pos: [number, number]): [number, number] | undefined {
-    //     const [x, y ] = pos;
-    //     const possible = [
-    //         [x + 64, y], [x - 64, y], [x, y + 64], [x, y - 64]
-    //     ];
-    //     for(const p of possible) {
-    //         if (this.positions.find(q => q[0] === p[0] && q[1] === p[1])) {
-    //             return [p[0], p[1]];
-    //         }
-    //     }
-    //     return undefined;
-        
-    // }
-    // handleSwitchPress(pos: [number,number]){
-    //     if(!this.foundFirst) {
-    //         if(this.firstSwitch && pos[0] === this.firstSwitch[0] && pos[1] === this.firstSwitch[1]) {
-    //             this.foundFirst = true;
-    //             this.dialogue.addDialogue(110, 50, "You found the first switch! Find the second one!");
-    //         } 
-    //         else {
-    //             this.dialogue.addDialogue(110, 50, "Wrong switch! Try again.");
-    //         }
-    //     }
-    //     else {
-    //         if (this.secondSwitch && pos[0] === this.secondSwitch[0] && pos[1] === this.secondSwitch[1]) {
-    //             this.dialogue.addDialogue(110, 50, "Both switches activated! Puzzle complete!");
-    //             // move the player somewhere like scene 5
-    //         } else {
-    //             this.dialogue.addDialogue(110, 50, "Wrong second switch! Start over.");
-    //             this.foundFirst = false;
-    //         }
-    //     }
-    // }
-    // keyPressed = (e: KeyboardEvent) => {
-
-    //     if(e.key === 'e') {              
-    //         if(this.foundFirst){
-    //             this.dialogue.addDialogue(110,50,"Hmm, there is nothing here");
-                
-    //         }
-    //         else {
-    //             this.dialogue.addDialogue(110,50, "There seems to be a switch in another place");
-    //         }
-    //     } 
-
-    //     if (e.key === "Escape") {
-    //         this.start("menu-scene");
-    //     }
-    // }
