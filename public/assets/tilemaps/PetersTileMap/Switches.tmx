@@ -940,7 +940,7 @@
 </chunk>
   </data>
  </layer>
- <layer id="13" name="Collision" width="73" height="60" visible="0">
+ <layer id="13" name="Collision" width="73" height="60">
   <properties>
    <property name="collider" value=""/>
   </properties>
