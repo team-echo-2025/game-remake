@@ -40,50 +40,55 @@ export default class KeybindsPage extends Page {
             sounds: [this.button_sfx]
         }
         this.sfx_manager = this.scene.add_new.soundmanager(sfx_props);
-        this.buttonW = this.scene.add_new.button({
+        this.buttonW = this.scene.add_new.img_button({
             label: `Up: ${this.keybinds.forward.toUpperCase()}`,
             font_key: "jersey",
             callback: () => {
                 this.button_sfx.play();
                 this.setKeybindChange('forward')
-            }
+            },
+            imageKey : "test"
         });
 
-        this.buttonA = this.scene.add_new.button({
+        this.buttonA = this.scene.add_new.img_button({
             label: `Left: ${this.keybinds.left.toUpperCase()}`,
             font_key: "jersey",
             callback: () => {
                 this.button_sfx.play();
                 this.setKeybindChange('left')
-            }    
+            },
+            imageKey : "test"
         });
 
-        this.buttonS = this.scene.add_new.button({
+        this.buttonS = this.scene.add_new.img_button({
             label: `Down: ${this.keybinds.down.toUpperCase()}`,
             font_key: "jersey",
             callback: () => {
                 this.button_sfx.play();
                 this.setKeybindChange('down')
-            }
+            },
+            imageKey : "test"
         });
 
-        this.buttonD = this.scene.add_new.button({
+        this.buttonD = this.scene.add_new.img_button({
             label: `Right: ${this.keybinds.right.toUpperCase()}`,
             font_key: "jersey",
             callback: () => {
                 this.button_sfx.play();
                 this.setKeybindChange('right')
-            }
+            },
+            imageKey : "test"
         });
 
-        this.buttonBack = this.scene.add_new.button({
+        this.buttonBack = this.scene.add_new.img_button({
             label: "Back",
             font_key: "jersey",
             callback: () => {
                 this.button_sfx.play();
                 this.cleanup();
                 this.set_page("settings-page")
-            }
+            },
+            imageKey : "test"
         });
         this.buttonW.x = 0;
         this.buttonW.y = -200;

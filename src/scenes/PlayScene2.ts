@@ -8,6 +8,7 @@ import Scene from "../lib/Scene";
 import Tilemap from "../lib/tilemap/Tilemap";
 import { Vector2D } from "../lib/types/Physics";
 import Dialogue from "../lib/ui/Dialogue";
+import interactiveComputer from "./DriveToSurvive/lib/interactiveComputer";
 
 type StartArgs = Readonly<{
     starting_pos: Vector2D
@@ -19,6 +20,7 @@ export default class Dungeon1 extends Scene {
     dialogue!: Dialogue;
     background_music?: Sound;
     backgroundMusicManager?: SoundManager;
+    computer?: interactiveComputer;
 
     constructor() {
         super("playscene-2");
@@ -31,6 +33,7 @@ export default class Dungeon1 extends Scene {
         this.player.body.x = args?.starting_pos?.x ?? -1260;
         this.player.body.y = args?.starting_pos?.y ?? 863;
         this.physics.addObject(this.player);
+        this.computer = new interactiveComputer(this, 'computer', this.player!)
     }
 
     preload(): any {
@@ -39,6 +42,8 @@ export default class Dungeon1 extends Scene {
         this.loadTilemap("tilemap", "assets/tilemaps/PetersTileMap/Dungeon.tmx")
         this.loadImage("door", "assets/doors/prison_door.png");
         this.loadImage("puzzle", "assets/puzzleImages/access_circuit.png");
+        this.loadImage("computer", "assets/puzzleImages/retroIBM.png");
+        this.loadImage("computer-highlight", "assets/puzzleImages/retroIBM-Highlighted.png");
         this.loadImage("broken-puzzle", "assets/puzzleImages/access_circuit_broken.png");
         this.loadImage("success-puzzle", "assets/puzzleImages/access_circuit_success.png");
         // Load the background music file
@@ -50,6 +55,7 @@ export default class Dungeon1 extends Scene {
         this.tilemap = this.add_new.tilemap({
             tilemap_key: "tilemap",
         })
+
         this.bounds = new BoxCollider({ x: this.tilemap.x, y: this.tilemap.y, w: this.tilemap.width, h: this.tilemap.height });
         const object = new PhysicsObject({
             width: 100,
@@ -82,9 +88,14 @@ export default class Dungeon1 extends Scene {
                 });
             }
         };
-
         this.physics.addObject(object);
         this.physics.addObject(enter_portal);
+
+        if(!this.computer) { return }
+        this.computer.x = -640;
+        this.computer.y = 260;
+        this.computer.setup();
+        this.computer.asset.zIndex = 101;
 
         this.dialogue = new Dialogue(this, this.player!);
         this.dialogue.addDialogue(-1572, 870, "I heard there's a graveyard far north",100,100);
@@ -119,6 +130,10 @@ export default class Dungeon1 extends Scene {
         if (e.key === "Escape") {
             this.start("menu-scene");
         }
+        if (e.key === "e" && this.computer?.highlight == true)
+        {
+            this.start("drive-to-survive")
+        }
     };
 
     onStop(): void {
@@ -129,8 +144,8 @@ export default class Dungeon1 extends Scene {
         }
     }
 
-    draw(): void {
-        this.dialogue.draw();
-    }
+    postDraw() {}
+
+    draw(): void {}
 
 }
