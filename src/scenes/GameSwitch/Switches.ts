@@ -85,10 +85,21 @@ export default class Switches extends Scene {
     findAdjacent(pos: [number, number]): [number, number] | undefined {
         const [x, y] = pos;
         const directions = [[64,0], [-64,0], [0,64], [0,-64]];
-        return directions
-            .map(([dx, dy]) => [x + dx, y + dy] as [number, number])
-            .find(p => this.positions.some(([px, py]) => px === p[0] && py === p[1]));
+    
+        // Shuffle directions randomly
+        const shuffled = directions.sort(() => Math.random() - 0.5);
+    
+        // Try all shuffled directions
+        for (const [dx, dy] of shuffled) {
+            const neighbor: [number, number] = [x + dx, y + dy];
+            if (this.positions.some(([px, py]) => px === neighbor[0] && py === neighbor[1])) {
+                return neighbor;
+            }
+        }
+    
+        return undefined;
     }
+    
 
     positionsEqual(a: [number, number], b: [number, number]): boolean {
         return a[0] === b[0] && a[1] === b[1];
