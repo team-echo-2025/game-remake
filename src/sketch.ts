@@ -13,7 +13,7 @@ import PlayScene4 from './scenes/PlayScene4';
 import MenuScene from './scenes/MenuScene';
 import LoserScene from './scenes/LoserScene';
 import NonLoser from './scenes/NonLoserScene';
-import Switches from './scenes/Switches';
+import Switches from './scenes/GameSwitch/Switches';
 
 let scene_manager: SceneManager;
 const sketch = (p: p5) => {

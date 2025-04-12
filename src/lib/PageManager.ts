@@ -54,11 +54,9 @@ export default class PageManager implements GameObject {
         //    to_load.push(page.preload());
         //}
         //await Promise.all(to_load);
-        console.log("DONE LOADING");
     }
 
     setup(): void {
-        console.log("IN SETUP");
         this.current_page?.setup();
     }
 
