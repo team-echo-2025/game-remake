@@ -8,6 +8,7 @@ export default class Sprite implements GameObject {
     protected _x: number;
     protected _y: number;
     scene!: Scene;
+    fixed: boolean = false;
     protected key!: string;
     protected asset!: Image;
     protected _width?: number;
@@ -75,7 +76,17 @@ export default class Sprite implements GameObject {
     }
 
 
+    postDraw(): void {
+        if (this.fixed) {
+            this._draw();
+        }
+    }
     draw(): void {
+        if (!this.fixed) {
+            this._draw();
+        }
+    }
+    private _draw() {
         const p = this.scene.p5;
         p.push();
         p.translate(this.x + this.width / 2, this.y + this.height / 2);

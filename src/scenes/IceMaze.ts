@@ -28,7 +28,7 @@ export default class IceMaze extends Scene {
     }
 
     onStart(args?: StartArgs): void {
-        this.camera.zoom = 4;
+        this.camera.zoom = 6;
 
         this.add(this.pManager);
         this.pManager.set_page("icemazePage");

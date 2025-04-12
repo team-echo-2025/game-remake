@@ -56,14 +56,6 @@ export default class DrawPuzzle extends Puzzle {
         this.asset.change_asset('drawPuzzle-success');
         this.scene.physics.remove(this.physics_object);
     }
-
-    force_fail() {
-        this.state = PuzzleState.failed;
-        this.hidden = true;
-        this.player.disabled = false;
-        this.asset.change_asset('broken-puzzle');
-        this.scene.physics.remove(this.physics_object);
-    }
     //dot positions (0,0 is top left)
     //right now all puzzle sets have the same number of flows as rows and columns because of the solution check implementation
     //5x5
@@ -146,7 +138,7 @@ export default class DrawPuzzle extends Puzzle {
 
     postDraw(): void {
         this.checkSolution();
-        this.scene.p5.background(255, 182, 193);
+        this.drawBody();
         // this.generateBoard();
         this.drawBoard();
         this.cursor.draw();
@@ -251,6 +243,33 @@ export default class DrawPuzzle extends Puzzle {
                 }
                 //this.selectRandomSquares();
                 break;
+            case "hard":
+                pointSet = this.hardPuzzleSets[Math.floor(Math.random() * this.hardPuzzleSets.length)];
+
+                for (let i = 0; i < pointSet.length; i++) {// i indexes point pairs
+                    let first = pointSet[i][0];
+                    let second = pointSet[i][1];
+                    if (flipped) {
+                        firstX = this.getBoardSize().columns - first[0] - 1;
+                        firstY = this.getBoardSize().rows - first[1] - 1;
+                        secondX = this.getBoardSize().columns - second[0] - 1;
+                        secondY = this.getBoardSize().rows - second[1] - 1;
+                    }
+                    else {
+                        firstX = first[0];
+                        firstY = first[1];
+                        secondX = second[0];
+                        secondY = second[1];
+                    }
+                    const square1 = this.squares[firstX][firstY];
+                    const square2 = this.squares[secondX][secondY];
+                    square1.hasPoint = true;
+                    square1.color = this.colors[i];
+                    square2.hasPoint = true;
+                    square2.color = this.colors[i];
+                }
+                //this.selectRandomSquares();
+                break;
             default:
                 pointSet = this.easyPuzzleSets[Math.floor(Math.random() * this.easyPuzzleSets.length)];
 
@@ -321,6 +340,16 @@ export default class DrawPuzzle extends Puzzle {
         this.selectedSquares = this.selectedSquares.filter(square => square.hasPoint);
     }
 
+    drawBody(): void {
+        let rectWidth = this.scene.p5.width / 1.25;
+        let rectHeight = this.scene.p5.height / 1.1;
+
+        let rectX = 0;
+        let rectY = 0;
+
+        this.scene.p5.fill(255, 182, 193);
+        this.scene.p5.rect(rectX, rectY, rectWidth, rectHeight);
+    }
     drawBoard(): void {
         const { columns, rows } = this.getBoardSize();
         this.squareSize = this.scene.p5.height / 16.15;
@@ -341,17 +370,18 @@ export default class DrawPuzzle extends Puzzle {
         p5.textAlign(p5.CENTER, p5.CENTER);
         p5.textSize((24 + 32) / 2);
         p5.text("Connect the matching colored dots!", 0, offsetY + rows / this.squareSize - 50);
-        p5.text("How To Play:", -(p5.windowWidth / 3), -(offsetY + rows * this.squareSize + 50));
-        p5.text("Create a line by dragging from one colored ", -(p5.windowWidth / 3), -(offsetY + rows * this.squareSize - 80));
-        p5.text("dot to the corresponding colored dot ", -(p5.windowWidth / 3), -(offsetY + rows * this.squareSize - 100));
-        p5.text("Rules:", (p5.windowWidth / 3), -(offsetY + rows * this.squareSize + 50));
-        p5.text("1. You can only create a line", (p5.windowWidth / 3), -(offsetY + rows * this.squareSize - 80));
-        p5.text("   between horizontal and vertical squares", (p5.windowWidth / 3), -(offsetY + rows * this.squareSize - 100));
-        p5.text("2. All squares must be filled", (p5.windowWidth / 3), -(offsetY + rows * this.squareSize - 140));
+        p5.text("How To Play:", -(p5.windowWidth / 3 - 150), -(offsetY + rows * this.squareSize + 50));
+        p5.text("Create a line by dragging from one colored ", -(p5.windowWidth / 3 - 150), -(offsetY + rows * this.squareSize - 80));
+        p5.text("dot to the corresponding colored dot ", -(p5.windowWidth / 3 - 150), -(offsetY + rows * this.squareSize - 100));
+        p5.text("Rules:", (p5.windowWidth / 3 - 150), -(offsetY + rows * this.squareSize + 50));
+        p5.text("1. You can only create a line", (p5.windowWidth / 3 - 150), -(offsetY + rows * this.squareSize - 80));
+        p5.text("   between horizontal and vertical squares", (p5.windowWidth / 3 - 150), -(offsetY + rows * this.squareSize - 100));
+        p5.text("2. All squares must be filled", (p5.windowWidth / 3 - 150), -(offsetY + rows * this.squareSize - 140));
     }
     keyPressed(e: KeyboardEvent): void {
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
         if (this.hidden && this.highlight && e.key == 'e') {
+            this.onOpen && this.onOpen();
             this.player.disabled = true;
             this.hidden = false;
         }

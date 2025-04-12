@@ -62,28 +62,28 @@ export default class CreditsPage extends Page {
         let rectX = 0;
         let rectY = -50;
         this.scene.p5.push()
-        this.page_manager.scene.p5.fill(255, 255, 255, 150);
-        this.page_manager.scene.p5.rect(rectX, rectY, rectWidth, rectHeight);
+        this.scene.p5.fill(255, 255, 255, 150);
+        this.scene.p5.rect(rectX, rectY, rectWidth, rectHeight);
 
         // Member title
-        this.page_manager.scene.p5.fill(0);
-        this.page_manager.scene.p5.textAlign(this.page_manager.scene.p5.CENTER, this.page_manager.scene.p5.CENTER);
-        this.page_manager.scene.p5.textSize(75);
-        this.page_manager.scene.p5.text('Team Echo is...', 0, -300);
+        this.scene.p5.fill(0);
+        this.scene.p5.textAlign(this.scene.p5.CENTER, this.scene.p5.CENTER);
+        this.scene.p5.textSize(75);
+        this.scene.p5.text('Team Echo is...', 0, -300);
         // Member credits
-        this.page_manager.scene.p5.textSize(35);
-        this.page_manager.scene.p5.text('Layth Alabed', 0, -230);
-        this.page_manager.scene.p5.text('Christian Auman', 0, -195);
-        this.page_manager.scene.p5.text('Konnor Duncan', 0, -160);
-        this.page_manager.scene.p5.text('Ishan Gajera', 0, -125);
-        this.page_manager.scene.p5.text('Jacob Kotik', 0, -90);
-        this.page_manager.scene.p5.text('Andrew Leonard', 0, -55);
-        this.page_manager.scene.p5.text('James Markijohn', 0, -20);
-        this.page_manager.scene.p5.text('Peter Nguyen', 0, 15);
-        this.page_manager.scene.p5.text('Eli Rogers', 0, 50);
+        this.scene.p5.textSize(35);
+        this.scene.p5.text('Layth Alabed', 0, -230);
+        this.scene.p5.text('Christian Auman', 0, -195);
+        this.scene.p5.text('Konnor Duncan', 0, -160);
+        this.scene.p5.text('Ishan Gajera', 0, -125);
+        this.scene.p5.text('Jacob Kotik', 0, -90);
+        this.scene.p5.text('Andrew Leonard', 0, -55);
+        this.scene.p5.text('James Markijohn', 0, -20);
+        this.scene.p5.text('Peter Nguyen', 0, 15);
+        this.scene.p5.text('Eli Rogers', 0, 50);
         // Built with title
-        this.page_manager.scene.p5.textSize(75);
-        this.page_manager.scene.p5.text('Built with...', 0, 125);
+        this.scene.p5.textSize(75);
+        this.scene.p5.text('Built with...', 0, 125);
         this.scene.p5.pop()
     }
     keyPressed = (e: KeyboardEvent) => {
