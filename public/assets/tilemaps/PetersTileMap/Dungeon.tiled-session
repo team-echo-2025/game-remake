@@ -23,8 +23,8 @@
             "scale": 0.33,
             "selectedLayer": 10,
             "viewCenter": {
-                "x": 590.909090909091,
-                "y": 904.5454545454545
+                "x": 590.9090909090908,
+                "y": 86.36363636363637
             }
         },
         "Dungeonset.tsx": {
@@ -76,8 +76,8 @@
             "scale": 1.5,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": 489.33333333333337,
-                "y": 266.33333333333326
+                "x": 526,
+                "y": 215
             }
         },
         "TX Tileset Wall.tsx": {
@@ -136,9 +136,9 @@
     ],
     "project": "Dungeon.tiled-project",
     "recentFiles": [
+        "Dungeon.tmx",
         "Dungeonset.tsx",
         "Trees.tsx",
-        "Dungeon.tmx",
         "Switches.tmx",
         "Texture/TX Tileset Wall.tsx",
         "Texture/Grass.tsx",
