@@ -8,6 +8,7 @@ import Scene from "../../lib/Scene";
 import Sprite from "../../lib/Sprite";
 import RigidBody from "../../lib/physics/RigidBody";
 import Sound from "../../lib/Sound";
+import Dialogue from "../../lib/ui/Dialogue";
 
 export default class CubeScalesPuzzle extends Puzzle {
     cubes: Cube[] = [];
@@ -15,6 +16,7 @@ export default class CubeScalesPuzzle extends Puzzle {
     draggingCube: Cube | null = null;
     resetButton!: ButtonTest;
     //Game references
+    dialogue!: Dialogue;
     physics_object!: PhysicsObject;
     highlight: boolean = false;
     asset_key: string;
@@ -23,17 +25,17 @@ export default class CubeScalesPuzzle extends Puzzle {
     private collider_timeout: any;
     x: number = 0;
     y: number = 0;
-
+    
     // Added property for the light-switch sound effect
     private lightSwitchSfx!: Sound;
-
+    
     constructor(scene: Scene, puzzle_asset_key: string, player: Player) {
         super(scene);
         this.asset_key = puzzle_asset_key;
         this.hidden = true;
         this.player = player;
     }
-
+    
     force_solve() {
         this.state = PuzzleState.completed;
         this.hidden = true;
@@ -41,19 +43,13 @@ export default class CubeScalesPuzzle extends Puzzle {
         this.asset.change_asset('success-puzzle');
         this.scene.physics.remove(this.physics_object);
     }
-
-    force_fail() {
-        this.state = PuzzleState.failed;
-        this.hidden = true;
-        this.player.disabled = false;
-        this.asset.change_asset('broken-puzzle');
-        this.scene.physics.remove(this.physics_object);
-    }
-
+    
     // Optionally add a preload method if the scene doesn't already load this sound
     preload(): any {
         this.scene.loadSound("lightSwitch", "assets/TInterfaceSounds/light-switch.mp3");
     }
+
+    
 
     setup(): void {
         //console.log("SETUP STARTED");
@@ -112,6 +108,7 @@ export default class CubeScalesPuzzle extends Puzzle {
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return;
         //console.log("STATE", this.state);
         if (this.hidden && this.highlight && e.key == 'e') {
+            this.onOpen && this.onOpen();
             this.player.disabled = true;
             this.hidden = false;
         }
