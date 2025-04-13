@@ -4,6 +4,7 @@ import { PuzzleState } from "../lib/Puzzle";
 import Scene from "../lib/Scene";
 import { Vector2D } from "../lib/types/Physics";
 import Lever from "../puzzles/Dungeon/Lever";
+import MagicCircle from "../puzzles/Dungeon/MagicCircle";
 
 type StartArgs = Readonly<{
     starting_pos: Vector2D
@@ -20,6 +21,7 @@ export default class PlayScene4 extends Scene {
     firstLever?: Lever;
     secondLever?: Lever;
     thirdLever?: Lever;
+    magicCircle?: MagicCircle;
 
 
     constructor() {
@@ -39,6 +41,7 @@ export default class PlayScene4 extends Scene {
         this.loadTilemap("tilemap", "assets/tilemaps/tilesetFolder/scene5.tmx");
         this.loadImage("red_lever", "assets/puzzleImages/red.png");
         this.loadImage("blue_lever", "assets/puzzleImages/blue.png");
+        this.loadImage("magic_circle", "assets/effects/magic_circle.png");
     }
 
     setup(): void {
@@ -60,6 +63,10 @@ export default class PlayScene4 extends Scene {
         this.thirdLever = new Lever(this, 345,-520,"red_lever", "blue_lever", this.player!);
         this.thirdLever.setup();
         this.add(this.thirdLever);
+
+        this.magicCircle = new MagicCircle(this, 10, -120, "magic_circle", this.player!)
+        this.magicCircle.setup();
+        this.add(this.magicCircle);
     }
 
     keyPressed = (e: KeyboardEvent) => {
