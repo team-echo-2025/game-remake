@@ -33,17 +33,19 @@ export default class Lever implements GameObject{
     }
 
     setup(): void {
-        this.asset= this.scene.add_new.sprite(this.blue_key);
-        this.asset.x = this.x;
-        this.asset.x = this.x;
-        this.asset.width = 32;
-        this.asset.height = 48;
-
         this.collider = new PhysicsObject({
                     width: 100,
                     height: 100,
                     mass: Infinity
                 });
+
+        this.asset= this.scene.add_new.sprite(this.blue_key);
+        this.asset.x = this.x-10;//hard coded positioning cuz the sprite was appearing towards the corner of the collider
+        this.asset.y = this.y-50;
+        this.asset.width = 32;
+        this.asset.height = 48;
+        this.asset.zIndex = 101;
+
         this.collider.overlaps = true;
         this.collider.body.x = this.x;
         this.collider.body.y = this.y;
@@ -56,21 +58,24 @@ export default class Lever implements GameObject{
                     console.log("in range of lever");
                 }
                 this.collider_timeout = setTimeout(() => {
+                    console.log("outa range of lever");
                     this.in_range = false;
                 }, 100);
             }
         }
     }
 
-    draw(): void{
+    draw(): void {
         
     }
 
     keyPressed(e: KeyboardEvent): void {
         if(this.in_range){
+            //console.log("lever state: ", this.flipped)
             if (this.flipped) return
             if (e.key == 'e') {
                 this.flipped = true;
+                this.asset?.change_asset(this.red_key);
             }
         }
     }
