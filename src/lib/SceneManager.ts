@@ -128,6 +128,12 @@ export default class SceneManager implements GameObject {
         this.current_scene?.p5.pop();
     }
 
+    resetScenes(): void {
+        for (const [_, scene] of this.scenes) {
+            scene.reset();
+        }
+    }
+
     resetTimer(): void {
         this.timer_start = this.current_scene?.p5.millis() ?? 0;
         this._time_remaining = DURATION;
