@@ -426,4 +426,5 @@ export default class Scene implements GameObject {
         this._timer = new Timer(this);
         this.add(this._timer);
     }
+    reset() { }
 }
