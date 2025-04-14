@@ -1,8 +1,8 @@
 import {Image} from 'p5';
-import Scene from './Scene';
-import PhysicsObject from './physics/PhysicsObject';
-import Player from './Player';
-import {TestObject} from '../scenes/PhysicsTestScene';
+import Scene from '../../lib/Scene';
+import PhysicsObject from '../../lib/physics/PhysicsObject';
+import Player from '../../lib/Player';
+import {TestObject} from '../../scenes/PhysicsTestScene';
 
 type Velocity = {
     x: number;
