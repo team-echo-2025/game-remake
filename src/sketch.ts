@@ -25,7 +25,7 @@ const sketch = (p: p5) => {
     p.setup = () => {
         p.createCanvas(window.innerWidth, window.innerHeight, p.WEBGL);
         p.ortho();
-        p.smooth();
+        p.noSmooth();
         scene_manager.setup();
     };
 

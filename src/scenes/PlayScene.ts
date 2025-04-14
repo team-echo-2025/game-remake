@@ -1,4 +1,4 @@
-import GameObject from "../lib/GameObject";
+import GameObject from "../lib/GameObject"
 import PhysicsObject from "../lib/physics/PhysicsObject";
 import RigidBody from "../lib/physics/RigidBody";
 import Player from "../lib/Player";
@@ -12,7 +12,7 @@ import Sound from "../lib/Sound";
 import SoundManager, { SoundManagerProps } from "../lib/SoundManager";
 import BoxCollider from "../lib/physics/BoxCollider";
 import Dialogue from "../lib/ui/Dialogue";
-import Tasks from "../lib/Tasks";
+import Tasks, { Task } from "../lib/Tasks";
 
 class Door implements GameObject {
     private _x: number = 0;
@@ -92,6 +92,7 @@ export default class PlayScene extends Scene {
     state: SceneState = {
         access_puzzle: PuzzleState.notStarted,
     }
+    task1?: Task;
 
 
     constructor() {
@@ -130,6 +131,7 @@ export default class PlayScene extends Scene {
 
 
     setup(): void {
+        this.task1 = new Task(this);
         this.background_music = this.add_new.sound("background_music");
         this.button_sfx = this.add_new.sound("button_sfx");
 
@@ -164,7 +166,7 @@ export default class PlayScene extends Scene {
         fire.y = 160;
         fire.play();
 
- 
+
         // this.access_circuit = new AccessCircuit(this, 'puzzle', this.player!);
         // this.access_circuit.x = -288;
         // this.access_circuit.y = 43;
@@ -174,7 +176,7 @@ export default class PlayScene extends Scene {
         //     this.dialogue.killAll();
         // }
 
- 
+
         this.tilemap = this.add_new.tilemap({
             tilemap_key: "tilemap",
         })
@@ -199,21 +201,21 @@ export default class PlayScene extends Scene {
         portal1.onCollide = (other: RigidBody) => {
             if (other == this.player?.body) {
                 this.start("playscene-2", {
-                    starting_pos: { x: -1260, y: 863 }
+                    starting_pos: { x: -1136, y: 863 }
                 });
             }
         }
         this.physics.addObject(portal1);
-        // if (this.state.access_puzzle == PuzzleState.completed) {
-        //     this.access_circuit.force_solve();
-        //     this.door.open();
-        // }
         this.dialogue = new Dialogue(this, this.player!);
         this.dialogue.addDialogue(-329, 168, "Find a way to open the door");
         this.dialogue.addDialogue(-331, -19, "Follow the path and you'll find your way eventually");
         this.dialogue.addDialogue(170, -237, "Is there something up there?");
         this.dialogue.setup();
-        this.tasks = new Tasks(this, this.access_circuit!);
+        this.tasks = new Tasks(this, this.task1);
+        if (this.state.access_puzzle == PuzzleState.completed) {
+            this.access_circuit?.force_solve();
+            this.door.open();
+        }
     }
 
 
@@ -230,7 +232,12 @@ export default class PlayScene extends Scene {
     keyPressed = (e: KeyboardEvent) => {
         this.access_circuit?.keyPressed(e);
         if (e.key === "Escape") {
-            this.start("menu-scene");
+            if (this.access_circuit && !this.access_circuit.hidden) {
+                this.access_circuit.hidden = true;
+                if (this.player) this.player.disabled = false;
+            } else if (!this.scene_manager.paused) {
+                this.scene_manager.page_manager?.set_page("pause-page");
+            }
         }
     };
 
@@ -243,6 +250,10 @@ export default class PlayScene extends Scene {
     postDraw(): void {
         this.tasks.postDraw();
         if (!this.access_circuit?.hidden) this.access_circuit?.postDraw();
+        if (this.player && this.scene_manager.paused) this.player.disabled = true;
+        else if (this.player && !this.scene_manager.paused) {
+            if (this.access_circuit && this.access_circuit.hidden) this.player.disabled = false;
+        }
     }
     draw(): void {
         if (!this.access_circuit?.hidden) this.access_circuit?.draw();
@@ -262,18 +273,21 @@ export default class PlayScene extends Scene {
         this.access_circuit.onOpen = () => {
             this.dialogue.killAll();
         }
-    
+
         this.access_circuit.onCompleted = () => {
             if (this.access_circuit!.state === PuzzleState.failed) {
                 this.remove(this.access_circuit!);
                 this.createPuzzle();
-                this.tasks.updatePuzzles(this.access_circuit!, 0);
             } else {
+                this.task1?.completeTask();
                 this.door!.open();
                 this.access_circuit!.force_solve();
                 this.state.access_puzzle = PuzzleState.completed;
             }
         };
+    }
+    reset(): void {
+        this.state.access_puzzle = PuzzleState.notStarted;
     }
 }
 

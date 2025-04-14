@@ -21,6 +21,7 @@ export default class MenuScene extends Scene {
         super("menu-scene");
     }
     onStart(args?: any): void {
+        this.scene_manager.resetScenes();
         this.pManager = new PageManager([
             new MenuPage(),
             new KeybindsPage(),
@@ -48,6 +49,7 @@ export default class MenuScene extends Scene {
             sounds: [this.background_music]
         }
         this.bgm_manager = this.add_new.soundmanager(bgm_props);
+        this.bgm_manager.loop();
         this.bgm_manager.play();
         this.pManager.set_page("menu-page");
     }
