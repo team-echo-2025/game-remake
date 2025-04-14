@@ -26,7 +26,7 @@ export default class PlayScene4 extends Scene {
     magicCircle?: MagicCircle;
     magicCircleX: number = 10;
     magicCircleY: number = -120;
-    magicCircleBounds:number =10
+    magicCircleBounds:number = 15
     ghost?: Ghost;
     ghostAlive: boolean = true;
 
@@ -56,25 +56,26 @@ export default class PlayScene4 extends Scene {
         this.loadImage("red_lever", "assets/puzzleImages/red.png");
         this.loadImage("blue_lever", "assets/puzzleImages/blue.png");
         this.loadImage("magic_circle", "assets/effects/magic_circle.png");
+        this.loadImage("highlightedLever", "assets/puzzleImages/highlightedLever.png");
     }
 
     setup(): void {
         const tilemap = this.add_new.tilemap({ tilemap_key: 'tilemap' });
         this.bounds = new BoxCollider({ w: tilemap.width, h: tilemap.height, x: 0, y: 0 });
 
-        this.firstLever = new Lever(this, -610,-170,"red_lever", "blue_lever", this.player!);
+        this.firstLever = new Lever(this, -610,-170,"red_lever", "blue_lever", "highlightedLever",  this.player!);
         this.firstLever.setup();
         this.add(this.firstLever);
 
-        this.secondLever = new Lever(this, -75, 480,"red_lever", "blue_lever", this.player!);
+        this.secondLever = new Lever(this, -75, 480,"red_lever", "blue_lever", "highlightedLever", this.player!);
         this.secondLever.setup();
         this.add(this.secondLever);
 
-        this.thirdLever = new Lever(this, 50,180,"red_lever", "blue_lever", this.player!);
+        this.thirdLever = new Lever(this, 50,180,"red_lever", "blue_lever", "highlightedLever", this.player!);
         this.thirdLever.setup();
         this.add(this.thirdLever);
 
-        this.fourthLever = new Lever(this, 345,-520,"red_lever", "blue_lever", this.player!);
+        this.fourthLever = new Lever(this, 345,-520,"red_lever", "blue_lever", "highlightedLever", this.player!);
         this.fourthLever.setup();
         this.add(this.fourthLever);
 
