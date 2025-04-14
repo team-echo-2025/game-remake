@@ -25,8 +25,8 @@ export default class PlayScene4 extends Scene {
     leversFlipped: boolean = false;
     magicCircle?: MagicCircle;
     magicCircleX: number = 10;
-    magicCircleY: number = -120;
-    magicCircleBounds:number = 15
+    magicCircleY: number = -120; 
+    magicCircleBounds:number = 15 
     ghost?: Ghost;
     ghostAlive: boolean = true;
 
@@ -62,7 +62,7 @@ export default class PlayScene4 extends Scene {
     setup(): void {
         const tilemap = this.add_new.tilemap({ tilemap_key: 'tilemap' });
         this.bounds = new BoxCollider({ w: tilemap.width, h: tilemap.height, x: 0, y: 0 });
-
+ 
         this.firstLever = new Lever(this, -610,-170,"red_lever", "blue_lever", "highlightedLever",  this.player!);
         this.firstLever.setup();
         this.add(this.firstLever);
@@ -75,7 +75,7 @@ export default class PlayScene4 extends Scene {
         this.thirdLever.setup();
         this.add(this.thirdLever);
 
-        this.fourthLever = new Lever(this, 345,-520,"red_lever", "blue_lever", "highlightedLever", this.player!);
+        this.fourthLever = new Lever(this, 345,-520,"red_lever", "blue_lever", "highlightedLever", this.player!); 
         this.fourthLever.setup();
         this.add(this.fourthLever);
 
@@ -102,28 +102,28 @@ export default class PlayScene4 extends Scene {
     }
 
     draw(): void {
-        if(!this.leversFlipped){
-            if(this.leverCheck()){
+        if (!this.leversFlipped) {
+            if (this.leverCheck()) {
                 this.leversFlipped = true;
                 this.magicCircle?.activateCircle();
             }
         }
-        else{
-            if(this.ghostAlive)
+        else {
+            if (this.ghostAlive)
                 this.ghostKillCheck();
         }
     }
 
-    leverCheck():boolean{
+    leverCheck(): boolean {
         return this.firstLever!.flipped && this.secondLever!.flipped && this.thirdLever!.flipped && this.fourthLever!.flipped
     }
 
-    ghostKillCheck(): void{
-        if(this.magicCircleX-this.magicCircleBounds <= this.ghost!.body.x && this.ghost!.body.x <= this.magicCircleX+this.magicCircleBounds ){
-            if(this.magicCircleY-this.magicCircleBounds <= this.ghost!.body.y && this.ghost!.body.y <= this.magicCircleY+this.magicCircleBounds ){
+    ghostKillCheck(): void {
+        if (this.magicCircleX - this.magicCircleBounds <= this.ghost!.body.x && this.ghost!.body.x <= this.magicCircleX + this.magicCircleBounds) {
+            if (this.magicCircleY - this.magicCircleBounds <= this.ghost!.body.y && this.ghost!.body.y <= this.magicCircleY + this.magicCircleBounds) {
                 this.ghost!.die();
                 this.ghostAlive = false;
             }
-        } 
+        }
     }
 }
