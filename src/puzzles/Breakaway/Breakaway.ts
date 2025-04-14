@@ -45,6 +45,7 @@ export default class Breakaway extends Puzzle {
     private click_sfx!: Sound;
     private rotate_sfx!: Sound;
     private snap_sfx!: Sound;
+    
 
     constructor(scene: Scene, puzzle_asset_key: string, player: Player) {
         super(scene);
@@ -52,6 +53,7 @@ export default class Breakaway extends Puzzle {
         this.hidden = true;
         this.player = player;
     }
+    
 
     force_solve() {
         this.state = PuzzleState.completed;
@@ -216,7 +218,7 @@ export default class Breakaway extends Puzzle {
     }
 
     drawBody(): void {
-        let rectWidth = this.scene.p5.width / 1.25;
+        let rectWidth = this.scene.p5.width / 1.30;
         let rectHeight = this.scene.p5.height / 1.1;
 
         let rectX = 0;
@@ -350,17 +352,40 @@ export default class Breakaway extends Puzzle {
         }
     }
 
-    mouseReleased(): void {
-        if (this.selectedPieceIndex !== null) {
-            let piece = this.puzzlePieces[this.selectedPieceIndex];
-            piece.dragging = false;
-            this.selectedPieceIndex = null;
+    private isPieceCorrect(piece: any): boolean {
+        let d = this.scene.p5.dist(
+          piece.pos.x, piece.pos.y,
+          piece.idealPos.x, piece.idealPos.y
+        );
+        let r = this.angleDiff(piece.rot, piece.idealRot);
+      
+        return d < this.pieceThreshold && r < this.rotationThreshold;
+      }
+      
 
-            // Play snap sound if piece is placed correctly
-            if (this.checkSolution() && this.snap_sfx && typeof this.snap_sfx.play === "function") {
-                this.snap_sfx.play();
-            }
+      mouseReleased(): void {
+        if (this.selectedPieceIndex !== null) {
+          let piece = this.puzzlePieces[this.selectedPieceIndex];
+          piece.dragging = false;
+          this.selectedPieceIndex = null;
+      
+          // 1) Check if this dropped piece is in its correct spot
+          if (
+            this.isPieceCorrect(piece) &&
+            this.snap_sfx &&
+            typeof this.snap_sfx.play === "function"
+          ) {
+            this.snap_sfx.play();
+          }
+      
+          // 2) Then see if the puzzle as a whole is now solved
+          if (this.checkSolution()) {
+            // The puzzle is fully complete. 
+            // (Whatever your puzzle completion logic is)
+          }
         }
+      
+      
     }
 
     keyPressed(e: KeyboardEvent): void {
