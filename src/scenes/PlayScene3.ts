@@ -243,7 +243,8 @@ export default class Dungeon2 extends Scene {
         portal_body.onCollide = (other: RigidBody) => {
             if (!portal_opened && other == this.player?.body && this.isCompleted()) {
                 portal_opened = true;
-                this.scene_manager.page_manager?.set_page("non-loser");
+                this.start('playscene-4');
+                //this.scene_manager.page_manager?.set_page("non-loser");
                 //go to new scene or display UI for win  idc im probs gotta say something deragatory
             }
         }
