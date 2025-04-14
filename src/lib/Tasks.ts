@@ -49,6 +49,7 @@ export default class Tasks implements GameObject {
     postDraw(): void {
         const start = -this.scene.p5.height / 2 + 105;
         const p = this.scene.p5;
+
         p.push();
         p.fill(26, 30, 84);
         p.textSize(21);
