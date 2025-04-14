@@ -21,6 +21,8 @@ export default class PlayScene4 extends Scene {
     firstLever?: Lever;
     secondLever?: Lever;
     thirdLever?: Lever;
+    fourthLever?: Lever;
+    leversFlipped: boolean = false;
     magicCircle?: MagicCircle;
 
 
@@ -60,9 +62,9 @@ export default class PlayScene4 extends Scene {
         this.thirdLever.setup();
         this.add(this.thirdLever);
 
-        this.thirdLever = new Lever(this, 345,-520,"red_lever", "blue_lever", this.player!);
-        this.thirdLever.setup();
-        this.add(this.thirdLever);
+        this.fourthLever = new Lever(this, 345,-520,"red_lever", "blue_lever", this.player!);
+        this.fourthLever.setup();
+        this.add(this.fourthLever);
 
         this.magicCircle = new MagicCircle(this, 10, -120, "magic_circle", this.player!)
         this.magicCircle.setup();
@@ -80,7 +82,16 @@ export default class PlayScene4 extends Scene {
 
     postDraw(): void {
     }
-    draw(): void { }
+
+    draw(): void {
+        if(!this.leversFlipped){
+            if(this.leverCheck()){
+                this.leversFlipped = true;
+                this.magicCircle?.activateCircle();
+            }
+        }
+        
+    }
 
     leverCheck():boolean{
         return this.firstLever!.flipped && this.secondLever!.flipped && this.thirdLever!.flipped

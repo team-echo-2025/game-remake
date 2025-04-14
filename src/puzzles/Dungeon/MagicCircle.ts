@@ -16,6 +16,7 @@ export default class MagicCircle implements GameObject{
     in_range: boolean;
     asset?: Spritesheet;
     asset_key: string;
+    hidden: boolean = true;;
 
     
 
@@ -40,7 +41,6 @@ export default class MagicCircle implements GameObject{
         this.asset.y = this.y;
         // this.asset.width = 64;
         // this.asset.height = 64;
-        this.asset.zIndex = 101;
 
         this.asset.start_col = 0;
         this.asset.end_col = 2;
@@ -72,5 +72,20 @@ export default class MagicCircle implements GameObject{
 
     keyPressed(e: KeyboardEvent): void {
     }
-
+    activateCircle(): void{
+        this.asset!.zIndex=101;
+        this.collider.onCollide = (other: RigidBody) => {
+            if (other == this.player.body) {
+                clearTimeout(this.collider_timeout);
+                if (!this.in_range) {
+                    this.in_range = true;
+                    console.log("in range of active circle");
+                }
+                this.collider_timeout = setTimeout(() => {
+                    console.log("outa range of active circle");
+                    this.in_range = false;
+                }, 100);
+            }
+        }
+    }
 }

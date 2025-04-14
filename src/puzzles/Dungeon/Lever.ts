@@ -66,7 +66,13 @@ export default class Lever implements GameObject{
     }
 
     draw(): void {
-        
+        if(this.in_range){
+            this.scene.p5.push();
+            this.scene.p5.stroke("yellow");
+            this.scene.p5.circle(this.asset!.x+15, this.asset!.y+35, 32);
+
+            this.scene.p5.pop()
+        }
     }
 
     keyPressed(e: KeyboardEvent): void {
