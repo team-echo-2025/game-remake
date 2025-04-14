@@ -48,7 +48,7 @@ export default class interactiveSwitch extends Puzzle {
                     clearTimeout(this.collider_timeouts[index]);
                     if (!this.highlight_states[index] && !this.permanentlyActivated[index]) {
                         this.highlight_states[index] = true;
-                        this.assets[index].change_asset("computer-highlight");
+                        this.assets[index].change_asset("switch-highlight");
                     }
                     
 
