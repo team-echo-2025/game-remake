@@ -5,7 +5,7 @@ import PageManager from "./PageManager";
 import LoserPage from "../pages/LoserPage";
 import WinnerPage from "../pages/WinnerPage";
 
-const DURATION = 500;
+const DURATION = 60;
 export default class SceneManager implements GameObject {
     private p: p5;
     private current_scene?: Scene;
@@ -15,7 +15,12 @@ export default class SceneManager implements GameObject {
     private timer_start: number;
     private _time_remaining: number;
     private timer_paused: boolean = false;
+    private _total_time: number;
     private _page_manager?: PageManager;
+
+    get total_time(): number {
+        return this._total_time;
+      }
 
     get page_manager() {
         return this._page_manager;
@@ -65,6 +70,7 @@ export default class SceneManager implements GameObject {
         });
         this.timer_start = p.millis();
         this._time_remaining = DURATION;
+        this._total_time = DURATION;
     }
 
     async start(name: string, args?: any) {
