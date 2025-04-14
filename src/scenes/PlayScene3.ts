@@ -16,7 +16,7 @@ import CubeScalesPuzzle from "../puzzles/CubeScales/CubeScales";
 import PathPuzzle from "../puzzles/PathPuzzle/PathPuzzle";
 import BoxCollider from "../lib/physics/BoxCollider";
 import Dialogue from "../lib/ui/Dialogue";
-import Tasks from "../lib/Tasks"
+import Tasks, { Task } from "../lib/Tasks"
 
 // Add Sound and SoundManager imports for background music and puzzle sounds
 import Sound from "../lib/Sound";
@@ -54,6 +54,7 @@ export default class Dungeon2 extends Scene {
     public swish_sound?: Sound;
     public puzzleSfxManager?: SoundManager;
     private solved: boolean = false;
+    private puzzle_tasks?: Task[];
 
 
     constructor() {
@@ -258,11 +259,12 @@ export default class Dungeon2 extends Scene {
         this.puzzles[3].x = 200 - 22; // Path Puzzle
         this.puzzles[3].y = 150 - 32; // Path Puzzle
         // Setup each puzzle
-        this.puzzles.forEach(puzzle => {
+        this.puzzles.forEach((puzzle, index: number) => {
             puzzle.setup();
             puzzle.hidden = true;
             puzzle.asset.zIndex = 101;
             puzzle.onCompleted = () => {
+                this.puzzle_tasks![index].completeTask();
                 this.check_completed();
             };
             puzzle.onOpen = () => {
@@ -334,10 +336,11 @@ export default class Dungeon2 extends Scene {
         };
         this.puzzleSfxManager = this.add_new.soundmanager(puzzleSfxProps);
         // ----------------------- 
-        this.tasks = new Tasks(this, ...this.puzzles); 
-    }   
-    isCompleted(): boolean{
-        return (this.puzzles.every(puzzle => puzzle.state === PuzzleState.completed))   
+        this.puzzle_tasks = this.puzzles.map(() => { return new Task(this) });
+        this.tasks = new Tasks(this, ...this.puzzle_tasks);
+    }
+    isCompleted(): boolean {
+        return (this.puzzles.every(puzzle => puzzle.state === PuzzleState.completed))
     }
     check_completed = () => {
         if (this.isCompleted()) {
@@ -403,5 +406,9 @@ export default class Dungeon2 extends Scene {
 
         this.p5.pop();
         this.dialogue.draw();
+    }
+
+    reset(): void {
+        this.solved = false;
     }
 }

@@ -85,7 +85,7 @@ export default class IceMaze extends Scene {
         mazeBeginning.overlaps = true;
         mazeBeginning.onCollide = (other: RigidBody) => {
             if (other == this.player?.body) {
-                this.start('playscene-2', { starting_pos: { x: -103, y: -636 } });
+                this.start('playscene-2', { starting_pos: { x: 515, y: -660 } });
             }
         };
         this.physics.addObject(mazeBeginning);

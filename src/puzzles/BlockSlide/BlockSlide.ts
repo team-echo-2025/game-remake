@@ -47,8 +47,11 @@ export default class BlockSlide extends Puzzle {
         this.state = PuzzleState.completed;
         this.hidden = true;
         this.player.disabled = false;
+        this.onCompleted && this.onCompleted();
+        clearTimeout(this.collider_timeout);
         this.asset.change_asset('blockslide-success');
         this.scene.physics.remove(this.physics_object);
+
     }
 
     setup(): void {
@@ -99,6 +102,9 @@ export default class BlockSlide extends Puzzle {
 
     keyPressed(e: KeyboardEvent): void {
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
+        if (this.highlight && e.key == 'j') {
+            this.force_solve();
+        }
         if (this.hidden && this.highlight && e.key == 'e') {
             this.onOpen && this.onOpen();
             this.player.disabled = true;
@@ -264,11 +270,11 @@ export default class BlockSlide extends Puzzle {
     }
 
     mousePressed(): void {
-        if (this.hidden || 
-            this.state === PuzzleState.failed || 
+        if (this.hidden ||
+            this.state === PuzzleState.failed ||
             this.state === PuzzleState.completed) {
-          return;
-          }
+            return;
+        }
         let p5 = this.scene.p5;
 
         if (this.isAnimating) return;

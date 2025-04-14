@@ -2,6 +2,7 @@ import { Image } from 'p5';
 import Scene from './Scene';
 import PhysicsObject from './physics/PhysicsObject';
 import { TestObject } from '../scenes/PhysicsTestScene';
+import Key from '../puzzles/CrossyRoad/Key';
 
 type Velocity = {
     x: number;
@@ -37,10 +38,12 @@ export default class Player extends PhysicsObject {
     private height: number = 64 * this.scale;
     disabled: boolean = false;
     shooting: boolean = false;
+    on_platform: boolean = false;
     teleporting: boolean = false;
+    keys: number = 0;
 
     constructor(scene: Scene) {
-        super({ width: 16, height: 16, mass: 16 * 16, });
+        super({ width: 16, height: 8, mass: 16 * 16, });
         this.scene = scene;
         this.direction = {
             x: 0,
@@ -156,6 +159,11 @@ export default class Player extends PhysicsObject {
         return _sprites;
     }
 
+    collectKey(key: Key) {
+        this.scene.physics.remove(key);
+        this.keys++;
+    }
+
 
     keyPressed(e: KeyboardEvent): void {
         //if (this.disabled) { return; }
@@ -229,6 +237,7 @@ export default class Player extends PhysicsObject {
 
     draw(): void {
         this.scene.p5.push();
+        this.scene.p5.translate(0, -6);
         if (this.direction.x == 0 && this.direction.y == 0) {
             this.moving = false;
         } else {
