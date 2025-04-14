@@ -5,7 +5,7 @@ import Scene from "../lib/Scene";
 import { Vector2D } from "../lib/types/Physics";
 import Lever from "../puzzles/Dungeon/Lever";
 import MagicCircle from "../puzzles/Dungeon/MagicCircle";
-
+import Ghost from "../puzzles/Dungeon/Ghost";
 type StartArgs = Readonly<{
     starting_pos: Vector2D
 }>
@@ -24,6 +24,13 @@ export default class PlayScene4 extends Scene {
     fourthLever?: Lever;
     leversFlipped: boolean = false;
     magicCircle?: MagicCircle;
+    magicCircleX: number = 10;
+    magicCircleY: number = -120;
+    magicCircleBounds:number =10
+    ghost?: Ghost;
+    ghostAlive: boolean = true;
+
+
 
 
     constructor() {
@@ -37,6 +44,11 @@ export default class PlayScene4 extends Scene {
         this.physics.addObject(this.player);
         this.player.body.x = -300
         this.player.body.y = -500
+
+        this.ghost = new Ghost(this, this.player);
+        this.physics.addObject(this.ghost);
+        this.ghost.body.x = -200;
+        this.ghost.body.y = -450;
     }
 
     preload(): any {
@@ -66,7 +78,7 @@ export default class PlayScene4 extends Scene {
         this.fourthLever.setup();
         this.add(this.fourthLever);
 
-        this.magicCircle = new MagicCircle(this, 10, -120, "magic_circle", this.player!)
+        this.magicCircle = new MagicCircle(this, this.magicCircleX, this.magicCircleY, "magic_circle", this.player!)
         this.magicCircle.setup();
         this.add(this.magicCircle);
     }
@@ -90,10 +102,21 @@ export default class PlayScene4 extends Scene {
                 this.magicCircle?.activateCircle();
             }
         }
-        
+        else{
+            if(this.ghostAlive)
+                this.ghostKillCheck();
+        }
     }
 
     leverCheck():boolean{
-        return this.firstLever!.flipped && this.secondLever!.flipped && this.thirdLever!.flipped
+        return this.firstLever!.flipped && this.secondLever!.flipped && this.thirdLever!.flipped && this.fourthLever!.flipped
+    }
+
+    ghostKillCheck(): void{
+        const kill = false;
+        this.ghostAlive = false;
+        if( this.magicCircleX-this.magicCircleBounds <= this.ghost!.body.x && this.ghost!.body.x <= this.magicCircleX+this.magicCircleBounds )
+            if(this.magicCircleY-this.magicCircleBounds <= this.ghost!.body.y && this.ghost!.body.y <= this.magicCircleY+this.magicCircleBounds )
+                this.ghost?.die();
     }
 }

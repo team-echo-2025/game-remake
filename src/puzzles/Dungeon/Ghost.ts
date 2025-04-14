@@ -3,6 +3,7 @@ import Scene from '../../lib/Scene';
 import PhysicsObject from '../../lib/physics/PhysicsObject';
 import Player from '../../lib/Player';
 import {TestObject} from '../../scenes/PhysicsTestScene';
+import RigidBody from '../../lib/physics/RigidBody';
 
 type Velocity = {
     x: number;
@@ -37,9 +38,12 @@ export default class Ghost extends PhysicsObject
     private isDying = false;
     private fullyDead = false;
 
+    private in_range: boolean = false;
+    private collider_timeout: any;
+
     constructor(scene: Scene, player: Player)
     {
-        super({width: 0, height: 0, mass: 16 * 16,});
+        super({width: 1, height: 1, mass: 16 * 16,});
         this.scene = scene;
         this.player = player;
         this.direction = {x: 0, y: 0,};
@@ -59,6 +63,19 @@ export default class Ghost extends PhysicsObject
     setup(): void
     {
         this.#setup_frames(this.spritesheet);
+        this.onCollide = (other: RigidBody) =>{
+            if (other == this.player.body) {
+                clearTimeout(this.collider_timeout);
+                if (!this.in_range) {
+                    this.in_range = true;
+                    console.log("ghost enter collide");
+                }
+                this.collider_timeout = setTimeout(() => {
+                    console.log("ghost exit collide");
+                    this.in_range = false;
+                }, 100);
+            }
+        }
     }
 
 
