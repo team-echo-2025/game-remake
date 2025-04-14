@@ -62,7 +62,7 @@ export default class MenuPage extends Page {
         const button5: ButtonTestProps = {
             ...button1,
             label: "Scene 5",
-            callback: () => { this.scene.start("new-scene") },
+            callback: () => { this.scene.start("playscene-4") },
         }
         this.dropdown = this.scene.add_new.dropdown_menu({
             label: "Show Dev Scenes",
@@ -83,9 +83,9 @@ export default class MenuPage extends Page {
             callback: () => {
                 this.button_sfx.play();
                 this.cleanup()
-                this.set_page('difficulty-page') 
+                this.set_page('difficulty-page')
             },
-            imageKey: "test" 
+            imageKey: "test"
         })
         this.play.x = 0;
         this.play.y = -100;
@@ -176,7 +176,7 @@ export default class MenuPage extends Page {
             },
             imageKey: "test"
         })
-        this.physicsTest2.x = 150 
+        this.physicsTest2.x = 150
         // this.puzzleTest = this.scene.add_new.button({
         //     label: "Puzzles",
         //     font_key: "jersey",
@@ -188,7 +188,7 @@ export default class MenuPage extends Page {
         // })
         // this.puzzleTest.x = 0
         // this.puzzleTest.y = 300 
-        this.physicsTest2.y = 300 
+        this.physicsTest2.y = 300
 
         const splashprop: SplashTextProps = {
             label: "testtesttesttest",

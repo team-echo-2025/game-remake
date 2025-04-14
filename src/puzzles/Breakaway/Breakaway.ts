@@ -211,7 +211,7 @@ export default class Breakaway extends Puzzle {
         this.scene.p5.textSize(50);
         this.scene.p5.text("Breakaway", 0, -250);
         this.scene.p5.textSize(16);
-        this.scene.p5.text("Rotation:\nPress U (or u) to rotate clockwise\nPress D (or d) to rotate counterclockwise", 0, -175);
+        this.scene.p5.text("Rotation:\nPress R (or R) to rotate clockwise\nPress D (or d) to rotate counterclockwise", 0, -175);
 
         if (this.checkSolution()) this.state = PuzzleState.completed;
     }

@@ -34,7 +34,7 @@ export default class PlayScene4 extends Scene {
 
 
     constructor() {
-        super("new-scene");
+        super("playscene-4");
         this.physics.debug = false;
         this.camera.zoom = 3;
     }
@@ -123,6 +123,9 @@ export default class PlayScene4 extends Scene {
             if (this.magicCircleY - this.magicCircleBounds <= this.ghost!.body.y && this.ghost!.body.y <= this.magicCircleY + this.magicCircleBounds) {
                 this.ghost!.die();
                 this.ghostAlive = false;
+                setTimeout(() => {
+                    this.scene_manager.page_manager?.set_page("non-loser");
+                }, 2000);
             }
         }
     }
