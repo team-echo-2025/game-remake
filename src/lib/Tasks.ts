@@ -47,13 +47,13 @@ export default class Tasks implements GameObject {
     }
 
     postDraw(): void {
-        const start = -this.scene.p5.height / 2 + 50;
+        const start = -this.scene.p5.height / 2 + 105;
         const p = this.scene.p5;
         p.push();
-        p.fill(255, 0, 0);
-        p.textSize(24);
+        p.fill(26, 30, 84);
+        p.textSize(21);
         p.textAlign(p.RIGHT, p.TOP);
-        p.text(`Puzzles Left: ${this._counter}`, p.width / 2 - 20, start);
+        p.text(`Puzzles Left: ${this._counter}`, p.width / 2 - 40, start);
         p.pop();
         let y = start;
         for (const task of this.tasks) {
