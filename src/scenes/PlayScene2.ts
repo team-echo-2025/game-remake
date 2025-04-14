@@ -187,8 +187,8 @@ export default class Dungeon1 extends Scene {
         this.physics.addObject(enter_portal);
 
         if (!this.computer) { return }
-        this.computer.x = -640;
-        this.computer.y = 260;
+        this.computer.x = -36;
+        this.computer.y = 300;
         this.computer.setup();
         this.computer.asset.zIndex = 101;
 
@@ -265,13 +265,13 @@ export default class Dungeon1 extends Scene {
 
         this.background_music = undefined
     }
- 
+
     postDraw() {
         if (this.player && this.scene_manager.paused) this.player.disabled = true;
         else if (this.player && !this.scene_manager.paused) {
             this.player.disabled = false;
         }
-    } 
+    }
 
     draw(): void {
         this.checkSolved();
