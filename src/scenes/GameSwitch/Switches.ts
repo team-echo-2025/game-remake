@@ -104,7 +104,7 @@ export default class Switches extends Scene {
     positionsEqual(a: [number, number], b: [number, number]): boolean {
         return a[0] === b[0] && a[1] === b[1];
     }
-
+    //pretty much handles all game logic
     keyPressed = (e: KeyboardEvent) => {
         if (e.key === "Escape") {
             this.start("menu-scene");
@@ -116,7 +116,6 @@ export default class Switches extends Scene {
                     const switchPos = this.positions[i];
                     const isFirst = this.positionsEqual(switchPos, this.firstSwitch!);
                     const isSecond = this.positionsEqual(switchPos, this.secondSwitch!);
-
                     if (isFirst && !this.foundFirst) {
                         this.foundFirst = true;
                         this.playSwitch.interactWithSwitch(i, true);
@@ -124,6 +123,7 @@ export default class Switches extends Scene {
                         this.secondSwitchActivated = true;
                         this.playSwitch.interactWithSwitch(i, true);
                     } else {
+                        this.scene_manager.deductTime(.25);
                         this.playSwitch.interactWithSwitch(i, false);
                     }
 
@@ -132,6 +132,9 @@ export default class Switches extends Scene {
                     }
 
                     break; // Avoid multiple triggers
+                }
+                else{
+                    this.scene_manager.deductTime(.25);
                 }
             }
         }
