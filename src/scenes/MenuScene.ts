@@ -21,6 +21,7 @@ export default class MenuScene extends Scene {
         super("menu-scene");
     }
     onStart(args?: any): void {
+        this.scene_manager.resetScenes();
         this.pManager = new PageManager([
             new MenuPage(),
             new KeybindsPage(),
