@@ -73,6 +73,20 @@ export default class Dungeon1 extends Scene {
             }
         };
 
+        const switches_portal = new PhysicsObject({
+            width: 50,
+            height: 300,
+            mass: Infinity
+        });
+        switches_portal.body.x = -1280;
+        switches_portal.body.y = -586;
+        switches_portal.overlaps = true;
+        switches_portal.onCollide = (other: RigidBody) => {
+            if (other == this.player?.body){
+                this.start("Switches");
+            }
+        };
+
         const enter_portal = new PhysicsObject({
             width: 50,
             height: 300,
@@ -90,6 +104,7 @@ export default class Dungeon1 extends Scene {
         };
         this.physics.addObject(object);
         this.physics.addObject(enter_portal);
+        this.physics.addObject(switches_portal);
 
         if(!this.computer) { return }
         this.computer.x = -640;
