@@ -55,7 +55,7 @@ export default class Switches extends Scene {
         this.loadImage("switchesOff", "assets/tilemaps/PetersTileMap/switchesOff.png");
         this.loadImage("switchesOn", "assets/tilemaps/PetersTileMap/switchesOn.png");
         this.loadImage("wrong", "assets/tilemaps/PetersTileMap/switchesWrong.png");
-        this.loadImage("computer-highlight", "assets/puzzleImages/retroIBM-Highlighted.png");
+        this.loadImage("switch-highlight", "assets/puzzleImages/switch-highlight.png");
     }
 
     setup(): void {
