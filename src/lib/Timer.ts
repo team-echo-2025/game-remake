@@ -9,7 +9,7 @@ export default class Timer implements GameObject {
   
   constructor(scene: Scene) {
     this.scene = scene;
-    this.timerImage = this.scene.p5.loadImage('assets/timer.png');
+    this.timerImage = this.scene.p5.loadImage('assets/timer1.png');
   }
   
   postDraw(): void {
@@ -42,14 +42,34 @@ export default class Timer implements GameObject {
     p.arc(cx, cy, diameter, diameter, 0, p.TWO_PI);
 
     // Draw the fraction arc
-    p.stroke(80, 80, 80); 
+    p.stroke(60, 60, 60); 
     const startAngle = -p.HALF_PI;
     const endAngle = startAngle + fraction * p.TWO_PI;
     p.arc(cx, cy, diameter, diameter, startAngle, endAngle);
 
-    // Draw text to the right
     p.noStroke();
-    p.fill(0); 
+    p.fill(26, 30, 84);
+    p.textAlign(p.CENTER, p.BOTTOM);
+    p.textSize(32);
+    const label = "Timer";
+    const labelX = cx + 19;
+    const labelY = cy - diameter / 2 - 10; 
+    p.text(label, labelX, labelY);
+
+    const labelWidth = p.textWidth(label);
+
+    p.stroke(26, 30, 84);
+    p.strokeWeight(2);
+
+    p.line(
+      labelX - labelWidth / 2, 
+      labelY -2,              
+      labelX + labelWidth / 2, 
+      labelY -2
+    );
+    
+    p.noStroke();
+    p.fill(26, 30, 84); 
     p.textAlign(p.LEFT, p.CENTER);
     p.textSize(26);
 
@@ -59,5 +79,6 @@ export default class Timer implements GameObject {
     p.text(`${Math.ceil(clamped)}`, textX, textY);
 
     p.pop();
+
   }
 }
