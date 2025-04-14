@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Switches.tmx",
+    "activeFile": "Dungeon.tmx",
     "expandedProjectPaths": [
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
@@ -20,11 +20,11 @@
             }
         },
         "Dungeon.tmx": {
-            "scale": 0.33,
-            "selectedLayer": 18,
+            "scale": 1,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": -387.878787878788,
-                "y": 243.93939393939377
+                "x": -871,
+                "y": -374
             }
         },
         "Dungeonset.tsx": {
@@ -74,10 +74,10 @@
         },
         "Switches.tmx": {
             "scale": 1.5,
-            "selectedLayer": 4,
+            "selectedLayer": 9,
             "viewCenter": {
                 "x": 526,
-                "y": 575
+                "y": 305.3333333333333
             }
         },
         "TX Tileset Wall.tsx": {
@@ -119,6 +119,7 @@
             }
         },
         "props.tsx": {
+            "dynamicWrapping": false,
             "scaleInDock": 1.5
         }
     },
@@ -131,8 +132,7 @@
     "openFiles": [
         "Dungeonset.tsx",
         "Trees.tsx",
-        "Dungeon.tmx",
-        "Switches.tmx"
+        "Dungeon.tmx"
     ],
     "project": "Dungeon.tiled-project",
     "recentFiles": [
