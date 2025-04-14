@@ -11,6 +11,7 @@ export default class Lever implements GameObject{
     scene: Scene;
     player: Player;
     collider!: PhysicsObject;
+    highlight: boolean = false;
     private collider_timeout: any;
 
     flipped: boolean;
@@ -18,15 +19,17 @@ export default class Lever implements GameObject{
     asset?: Sprite;
     red_key: string;
     blue_key: string;
+    highlightKey: string;
 
     
 
-    constructor(scene: Scene, xPos: number, yPos: number, red_asset_key: string, blue_asset_key: string, player: Player) {
+    constructor(scene: Scene, xPos: number, yPos: number, red_asset_key: string, blue_asset_key: string, highlight_asset_key: string, player: Player) {
         this.scene = scene;
         this.x = xPos;
         this.y = yPos;
         this.red_key = red_asset_key;
         this.blue_key = blue_asset_key;
+        this.highlightKey = highlight_asset_key;
         this.flipped = false;
         this.in_range = false;
         this.player = player;
@@ -39,12 +42,12 @@ export default class Lever implements GameObject{
                     mass: Infinity
                 });
 
-        this.asset= this.scene.add_new.sprite(this.blue_key);
+        this.asset = this.scene.add_new.sprite(this.blue_key);
         this.asset.x = this.x-10;//hard coded positioning cuz the sprite was appearing towards the corner of the collider
         this.asset.y = this.y-50;
         this.asset.width = 32;
         this.asset.height = 48;
-        this.asset.zIndex = 101;
+        this.asset.zIndex = 99;
 
         this.collider.overlaps = true;
         this.collider.body.x = this.x;
@@ -53,13 +56,18 @@ export default class Lever implements GameObject{
         this.collider.onCollide = (other: RigidBody) => {
             if (other == this.player.body) {
                 clearTimeout(this.collider_timeout);
-                if (!this.in_range) {
+                if (!this.in_range && !this.highlight) {
                     this.in_range = true;
-                    console.log("in range of lever");
+                    this.highlight = true;
+                    this.asset?.change_asset(this.highlightKey);
                 }
                 this.collider_timeout = setTimeout(() => {
-                    console.log("outa range of lever");
-                    this.in_range = false;
+                    if(!this.flipped)
+                    {
+                        this.in_range = false;
+                        this.highlight = false;
+                        this.asset?.change_asset(this.blue_key);
+                    }
                 }, 100);
             }
         }
@@ -67,11 +75,13 @@ export default class Lever implements GameObject{
 
     draw(): void {
         if(this.in_range){
+            /*
             this.scene.p5.push();
             this.scene.p5.stroke("yellow");
             this.scene.p5.circle(this.asset!.x+15, this.asset!.y+35, 32);
 
-            this.scene.p5.pop()
+            this.scene.p5.pop()*/
+
         }
     }
 
