@@ -44,8 +44,8 @@ export default class Switches extends Scene {
         this.pManager.set_page("SwitchesPage");
 
         this.player = new Player(this);
-        this.player.body.x = -90;
-        this.player.body.y = -70;
+        this.player.body.x = 557;
+        this.player.body.y = 386;
         this.physics.addObject(this.player);
     }
 
