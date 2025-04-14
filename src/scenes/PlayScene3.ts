@@ -364,8 +364,8 @@ export default class Dungeon2 extends Scene {
                 //@ts-ignore
                 this.player?.disabled = false;
             }
-            else {
-                this.start("menu-scene");
+            else if (!this.scene_manager.paused) {
+                this.scene_manager.page_manager?.set_page("pause-page");
             }
         }
     };
@@ -392,6 +392,9 @@ export default class Dungeon2 extends Scene {
     postDraw(): void {
         this.tasks.postDraw();
         this.puzzles.forEach(puzzle => !puzzle.hidden && puzzle.postDraw());
+        let containsHidden = this.puzzles.some(puzzle => !puzzle.hidden);
+        if (this.player && this.scene_manager.paused) this.player.disabled = true;
+        else if (this.player && !containsHidden) this.player.disabled = false;
     }
 
     draw(): void {

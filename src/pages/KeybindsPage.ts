@@ -101,6 +101,14 @@ export default class KeybindsPage extends Page {
         this.buttonBack.x = 0;
         this.buttonBack.y = 200;
     }
+    postDraw(): void {
+        this.scene.p5.textAlign(this.scene.p5.CENTER, this.scene.p5.CENTER);
+        this.scene.p5.push();
+        this.scene.p5.textSize(28);
+        this.scene.p5.fill(0);
+        this.scene.p5.text('Interaction Key: E', 0, -300);
+        this.scene.p5.pop();
+    }
 
     keyPressed(e: KeyboardEvent): void {
         if (this.waitingForKey) {

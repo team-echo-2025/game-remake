@@ -232,7 +232,9 @@ export default class Dungeon1 extends Scene {
             this.player!.teleporting = !this.player?.teleporting;
         }
         if (e.key === "Escape") {
-            this.start("menu-scene");
+            if (!this.scene_manager.paused) {
+                this.scene_manager.page_manager?.set_page("pause-page");
+            }
         }
         if (e.key === "e" && this.computer?.highlight == true) {
             this.start("drive-to-survive")
@@ -263,8 +265,13 @@ export default class Dungeon1 extends Scene {
 
         this.background_music = undefined
     }
-
-    postDraw() { }
+ 
+    postDraw() {
+        if (this.player && this.scene_manager.paused) this.player.disabled = true;
+        else if (this.player && !this.scene_manager.paused) {
+            this.player.disabled = false;
+        }
+    } 
 
     draw(): void {
         this.checkSolved();
