@@ -81,6 +81,11 @@ export default class PlayScene4 extends Scene {
         this.magicCircle = new MagicCircle(this, this.magicCircleX, this.magicCircleY, "magic_circle", this.player!)
         this.magicCircle.setup();
         this.add(this.magicCircle);
+
+        // this.firstLever.flipped= true;
+        // this.secondLever.flipped = true;
+        // this.thirdLever.flipped = true;
+        // this.fourthLever.flipped = true;
     }
 
     keyPressed = (e: KeyboardEvent) => {
@@ -113,10 +118,11 @@ export default class PlayScene4 extends Scene {
     }
 
     ghostKillCheck(): void{
-        const kill = false;
-        this.ghostAlive = false;
-        if( this.magicCircleX-this.magicCircleBounds <= this.ghost!.body.x && this.ghost!.body.x <= this.magicCircleX+this.magicCircleBounds )
-            if(this.magicCircleY-this.magicCircleBounds <= this.ghost!.body.y && this.ghost!.body.y <= this.magicCircleY+this.magicCircleBounds )
-                this.ghost?.die();
+        if(this.magicCircleX-this.magicCircleBounds <= this.ghost!.body.x && this.ghost!.body.x <= this.magicCircleX+this.magicCircleBounds ){
+            if(this.magicCircleY-this.magicCircleBounds <= this.ghost!.body.y && this.ghost!.body.y <= this.magicCircleY+this.magicCircleBounds ){
+                this.ghost!.die();
+                this.ghostAlive = false;
+            }
+        } 
     }
 }

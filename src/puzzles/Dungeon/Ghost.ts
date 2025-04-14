@@ -43,7 +43,7 @@ export default class Ghost extends PhysicsObject
 
     constructor(scene: Scene, player: Player)
     {
-        super({width: 1, height: 1, mass: 16 * 16,});
+        super({width: 0, height: 0, mass: 16 * 16,});
         this.scene = scene;
         this.player = player;
         this.direction = {x: 0, y: 0,};
