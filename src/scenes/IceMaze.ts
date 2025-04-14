@@ -20,6 +20,7 @@ export default class IceMaze extends Scene {
     tilemap?: Tilemap;
     background_music?: Sound;
     backgroundMusicManager?: SoundManager;
+    playerClearedInstructions = false;
 
     constructor() {
         super("iceMaze");
@@ -114,6 +115,10 @@ export default class IceMaze extends Scene {
 
         if (e.key === "Escape") {
             this.pManager?.keyPressed(e);
+            if (!this.scene_manager.paused && this.playerClearedInstructions) {
+                this.scene_manager.page_manager?.set_page("pause-page");
+            }
+            this.playerClearedInstructions = true;
         }
     };
 
@@ -133,6 +138,7 @@ export default class IceMaze extends Scene {
         if (this.player.body.velocity.x === 0 && this.player.body.velocity.y === 0) {
             this.player.disabled = false;
         }
+        if (this.scene_manager.paused && this.player) this.player.disabled = true;
     }
 
     postDraw(): void { }

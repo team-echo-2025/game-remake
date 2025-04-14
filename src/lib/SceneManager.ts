@@ -4,6 +4,7 @@ import Scene from "./Scene";
 import PageManager from "./PageManager";
 import LoserPage from "../pages/LoserPage";
 import WinnerPage from "../pages/WinnerPage";
+import PausePage from "../pages/PausePage";
 
 const DURATION = 500;
 export default class SceneManager implements GameObject {
@@ -38,6 +39,7 @@ export default class SceneManager implements GameObject {
     public playerClothes = "assets/player_tunic.png";
     public playerHat = "none";
     public timer?: Timer;
+    public paused = false;
     constructor(p: p5, scenes: (new (name: string) => Scene)[], LoadingScene: new (name: string) => Scene) {
         this.scenes = new Map<string, Scene>();
         this.loading_scene = new LoadingScene(LoadingScene.name);
@@ -88,7 +90,7 @@ export default class SceneManager implements GameObject {
         this.enableTimer();
         new_scene.onStart_objects(args);
         new_scene.onStart(args);
-        this._page_manager = new PageManager([new LoserPage(), new WinnerPage()], new_scene);
+        this._page_manager = new PageManager([new LoserPage(), new WinnerPage(), new PausePage()], new_scene);
         new_scene.add(this._page_manager);
         await new_scene.preload()
         await new_scene.preload_objects()
