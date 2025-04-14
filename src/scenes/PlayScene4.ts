@@ -54,7 +54,7 @@ export default class PlayScene4 extends Scene {
     preload(): any {
         this.loadTilemap("tilemap", "assets/tilemaps/tilesetFolder/scene5.tmx");
         this.loadImage("red_lever", "assets/puzzleImages/red.png");
-        this.loadImage("blue_lever", "assets/puzzleImages/blue.png");
+        this.loadImage("blue_lever", "assets/puzzleImages/blue.PNG");
         this.loadImage("magic_circle", "assets/effects/magic_circle.png");
     }
 
