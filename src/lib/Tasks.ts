@@ -34,10 +34,10 @@ export default class Tasks implements GameObject {
 
         const p = this.scene.p5;
         p.push();
-        p.fill(0);
+        p.fill(26, 30, 84);
         p.textSize(21);
         p.textAlign(p.RIGHT, p.TOP);
-        p.text(`Puzzles Left: ${this._counter}`, p.width / 2 - 42, -p.height / 2 + 100);
+        p.text(`Puzzles Left: ${this._counter}`, p.width / 2 - 40, -p.height / 2 + 105);
         p.pop();
     }
 

@@ -5,7 +5,7 @@ import PageManager from "./PageManager";
 import LoserPage from "../pages/LoserPage";
 import WinnerPage from "../pages/WinnerPage";
 
-const DURATION = 60;
+const DURATION = 500;
 export default class SceneManager implements GameObject {
     private p: p5;
     private current_scene?: Scene;
