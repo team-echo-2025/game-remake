@@ -8,7 +8,6 @@ import Sprite from "../../lib/Sprite";
 
 // Added Sound and SoundManager imports for breakaway sound effects
 import Sound from "../../lib/Sound";
-import SoundManager, { SoundManagerProps } from "../../lib/SoundManager";
 
 export default class Breakaway extends Puzzle {
     puzzlePieces: any[] = [];
@@ -46,12 +45,14 @@ export default class Breakaway extends Puzzle {
     private rotate_sfx!: Sound;
     private snap_sfx!: Sound;
 
+
     constructor(scene: Scene, puzzle_asset_key: string, player: Player) {
         super(scene);
         this.asset_key = puzzle_asset_key;
         this.hidden = true;
         this.player = player;
     }
+
 
     force_solve() {
         this.state = PuzzleState.completed;
@@ -216,7 +217,7 @@ export default class Breakaway extends Puzzle {
     }
 
     drawBody(): void {
-        let rectWidth = this.scene.p5.width / 1.25;
+        let rectWidth = this.scene.p5.width / 1.30;
         let rectHeight = this.scene.p5.height / 1.1;
 
         let rectX = 0;
@@ -350,17 +351,40 @@ export default class Breakaway extends Puzzle {
         }
     }
 
+    private isPieceCorrect(piece: any): boolean {
+        let d = this.scene.p5.dist(
+            piece.pos.x, piece.pos.y,
+            piece.idealPos.x, piece.idealPos.y
+        );
+        let r = this.angleDiff(piece.rot, piece.idealRot);
+
+        return d < this.pieceThreshold && r < this.rotationThreshold;
+    }
+
+
     mouseReleased(): void {
         if (this.selectedPieceIndex !== null) {
             let piece = this.puzzlePieces[this.selectedPieceIndex];
             piece.dragging = false;
             this.selectedPieceIndex = null;
 
-            // Play snap sound if piece is placed correctly
-            if (this.checkSolution() && this.snap_sfx && typeof this.snap_sfx.play === "function") {
+            // 1) Check if this dropped piece is in its correct spot
+            if (
+                this.isPieceCorrect(piece) &&
+                this.snap_sfx &&
+                typeof this.snap_sfx.play === "function"
+            ) {
                 this.snap_sfx.play();
             }
+
+            // 2) Then see if the puzzle as a whole is now solved
+            if (this.checkSolution()) {
+                // The puzzle is fully complete. 
+                // (Whatever your puzzle completion logic is)
+            }
         }
+
+
     }
 
     keyPressed(e: KeyboardEvent): void {
@@ -369,7 +393,7 @@ export default class Breakaway extends Puzzle {
 
             if (piece.rotating) return;
 
-            if (e.key === "u" || e.key === "U") {
+            if (e.key === "r" || e.key === "R") {
                 piece.targetRot = (piece.targetRot + this.rotationStep) % 360;
 
                 // Play rotation sound for clockwise rotation

@@ -4,6 +4,7 @@ import Scene from "./Scene";
 import PageManager from "./PageManager";
 import LoserPage from "../pages/LoserPage";
 import WinnerPage from "../pages/WinnerPage";
+import PausePage from "../pages/PausePage";
 
 const DURATION = 500;
 export default class SceneManager implements GameObject {
@@ -15,7 +16,12 @@ export default class SceneManager implements GameObject {
     private timer_start: number;
     private _time_remaining: number;
     private timer_paused: boolean = false;
+    private _total_time: number;
     private _page_manager?: PageManager;
+
+    get total_time(): number {
+        return this._total_time;
+      }
 
     get page_manager() {
         return this._page_manager;
@@ -33,6 +39,7 @@ export default class SceneManager implements GameObject {
     public playerClothes = "assets/player_tunic.png";
     public playerHat = "none";
     public timer?: Timer;
+    public paused = false;
     constructor(p: p5, scenes: (new (name: string) => Scene)[], LoadingScene: new (name: string) => Scene) {
         this.scenes = new Map<string, Scene>();
         this.loading_scene = new LoadingScene(LoadingScene.name);
@@ -65,6 +72,7 @@ export default class SceneManager implements GameObject {
         });
         this.timer_start = p.millis();
         this._time_remaining = DURATION;
+        this._total_time = DURATION;
     }
 
     async start(name: string, args?: any) {
@@ -82,7 +90,7 @@ export default class SceneManager implements GameObject {
         this.enableTimer();
         new_scene.onStart_objects(args);
         new_scene.onStart(args);
-        this._page_manager = new PageManager([new LoserPage(), new WinnerPage()], new_scene);
+        this._page_manager = new PageManager([new LoserPage(), new WinnerPage(), new PausePage()], new_scene);
         new_scene.add(this._page_manager);
         await new_scene.preload()
         await new_scene.preload_objects()
@@ -126,6 +134,12 @@ export default class SceneManager implements GameObject {
         this.current_scene?.p5.push();
         this.current_scene?.postDraw_objects();
         this.current_scene?.p5.pop();
+    }
+
+    resetScenes(): void {
+        for (const [_, scene] of this.scenes) {
+            scene.reset();
+        }
     }
 
     resetTimer(): void {
