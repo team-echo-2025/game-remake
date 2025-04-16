@@ -4,25 +4,26 @@ import Player from "../../lib/Player";
 import Puzzle, { PuzzleState } from "../../lib/Puzzle";
 import Scene from "../../lib/Scene";
 import Sprite from "../../lib/Sprite";
+import Sound from "../../lib/Sound";
+
 import {
   PathCell,
   generateRandomPath,
   buildSolutionGrid,
   scrambleGrid,
   isSolutionPathComplete,
+  findAllPaths,
+  findSolutionPath,
   rotateTile,
-  getOpenEdges,
+  getOpenEdges
 } from "./PathUtils";
-
-import Sound from "../../lib/Sound";
-
 
 export default class PathPuzzle extends Puzzle {
   grid: PathCell[][] = [];
   gridSize: number = 5;
   tileSize: number = 0;
   boardSize: number = 300;
-  // Game references
+
   physics_object!: PhysicsObject;
   highlight: boolean = false;
   asset_key: string;
@@ -31,8 +32,14 @@ export default class PathPuzzle extends Puzzle {
   private collider_timeout: any;
   x: number = 0;
   y: number = 0;
-  
+
   click_sfx!: Sound;
+
+  // Track when puzzle was completed, for the 1-sec pause
+  private puzzleCompleteAt: number | null = null;
+
+  // The coordinates that define the intended solution path
+  solutionSet: Set<string> = new Set();
 
   constructor(scene: Scene, puzzle_asset_key: string, player: Player) {
     super(scene);
@@ -40,7 +47,7 @@ export default class PathPuzzle extends Puzzle {
     this.hidden = true;
     this.player = player;
   }
-  
+
   force_solve() {
     this.state = PuzzleState.completed;
     this.hidden = true;
@@ -49,15 +56,9 @@ export default class PathPuzzle extends Puzzle {
     this.scene.physics.remove(this.physics_object);
   }
 
-  // The set of cell coordinates (e.g. "0,0") that define the solution path
-  solutionSet: Set<string> = new Set();
-
-  preload(): any { 
-    
-  }
+  preload(): any { }
 
   setup(): void {
-    // Putting the puzzle into the game
     this.physics_object = new PhysicsObject({
       width: 100,
       height: 100,
@@ -67,6 +68,7 @@ export default class PathPuzzle extends Puzzle {
     this.physics_object.body.x = this.x;
     this.physics_object.body.y = this.y;
     this.scene.physics.addObject(this.physics_object);
+
     this.physics_object.onCollide = (other: RigidBody) => {
       if (other == this.player.body) {
         clearTimeout(this.collider_timeout);
@@ -79,32 +81,33 @@ export default class PathPuzzle extends Puzzle {
           this.asset.change_asset("scales");
         }, 100);
       }
-    }
+    };
+
     this.asset = this.scene.add_new.sprite(this.asset_key);
     this.asset.x = this.x;
     this.asset.y = this.y;
     this.asset.width = 24;
     this.asset.height = 36;
-    // Puzzle setup
+
     this.state = PuzzleState.notStarted;
     this.setGridSize();
 
-    // 1) Generate a random path from top-left to bottom-right
+    // 1) Generate a random "intended" path
     const pathCoords = generateRandomPath(this.gridSize);
 
-    // 2) Store the path in a set for quick lookups
+    // 2) Fill the solutionSet
     this.solutionSet.clear();
     pathCoords.forEach(([r, c]) => {
       this.solutionSet.add(`${r},${c}`);
     });
 
-    // 3) Build a solved board
+    // 3) Build a solved board for that path
     let solvedBoard = buildSolutionGrid(this.gridSize, pathCoords);
 
     // 4) Scramble it
     scrambleGrid(solvedBoard);
 
-    // 5) Assign to puzzle
+    // 5) Assign
     this.grid = solvedBoard;
     this.tileSize = this.boardSize / this.gridSize;
 
@@ -140,18 +143,13 @@ export default class PathPuzzle extends Puzzle {
   }
 
   mousePressed(): void {
-    if (this.hidden || 
-      this.state === PuzzleState.failed || 
+    if (this.hidden ||
+      this.state === PuzzleState.failed ||
       this.state === PuzzleState.completed) {
-    return;
+      return;
     }
     const p5 = this.scene.p5;
-    // if (this.solved()) {
-    //   this.scene.start(this.scene.name);
-    //   return;
-    // }
 
-    // Figure out which tile was clicked
     const col = Math.floor(
       (p5.mouseX - p5.width / 2 + this.boardSize / 2) / this.tileSize
     );
@@ -159,28 +157,28 @@ export default class PathPuzzle extends Puzzle {
       (p5.mouseY - p5.height / 2 + this.boardSize / 2) / this.tileSize
     );
 
-    // If it’s in range, rotate that tile
+    // If in range, rotate that tile
     if (row >= 0 && row < this.gridSize && col >= 0 && col < this.gridSize) {
       rotateTile(this.grid[row][col]);
-      if (this.click_sfx && typeof this.click_sfx.play == "function"){
+      if (this.click_sfx && typeof this.click_sfx.play === "function") {
         this.click_sfx.play();
       }
+
+      // Check if puzzle is now solved
       if (this.checkWin()) {
-        // Puzzle is solved
         this.state = PuzzleState.completed;
-        this.hidden = true;
-        this.player.disabled = false;
-        this.asset.change_asset('scales-success');
-        this.scene.physics.remove(this.physics_object);
-        this.onCompleted && this.onCompleted();
+        this.puzzleCompleteAt = p5.millis();  // record the time we solved it
+        this.player.disabled = true;          // prevent movement
+        this.asset.change_asset("scales-success");
         clearTimeout(this.collider_timeout);
+        // Do NOT hide puzzle yet
       }
     }
   }
 
   keyPressed(e: KeyboardEvent): void {
-    if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return;
-    if (this.hidden && this.highlight && e.key == 'e') {
+    if (this.state === PuzzleState.completed || this.state === PuzzleState.failed) return;
+    if (this.hidden && this.highlight && e.key === 'e') {
       this.player.disabled = true;
       this.onOpen && this.onOpen();
       this.hidden = false;
@@ -203,18 +201,43 @@ export default class PathPuzzle extends Puzzle {
   }
 
   draw() {
-    if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return;
+    if (this.state === PuzzleState.completed || this.state === PuzzleState.failed) return;
   }
 
   postDraw(): void {
-    this.solved();
-    if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return;
+    // Don’t draw if puzzle is hidden or in failed state
     if (this.hidden) return;
-    // Always draw the board
+    if (this.state === PuzzleState.failed) return;
+
     this.draw_body();
     this.draw_board();
+
+    // 1) Get all physical paths from (0,0) to (end)
+    const allPaths = findAllPaths(this.grid);
+
+    // 2) See if the solution path is formed
+    const solPath = findSolutionPath(this.grid, this.solutionSet);
+
+    if (solPath) {
+      // If the correct path exists, draw ONLY it in green
+      this.drawPathLine(solPath, "green");
+    } else {
+      // Otherwise, draw ALL found paths in red
+      for (const path of allPaths) {
+        this.drawPathLine(path, "red");
+      }
+    }
+
     this.draw_footer();
     this.draw_header();
+
+    // If puzzle completed, handle the 1-second delay
+    if (this.state === PuzzleState.completed && this.puzzleCompleteAt) {
+      const now = this.scene.p5.millis();
+      if (now - this.puzzleCompleteAt > 1000) {
+        this.finishPuzzle();
+      }
+    }
   }
 
   draw_body(): void {
@@ -230,60 +253,58 @@ export default class PathPuzzle extends Puzzle {
 
     for (let r = 0; r < this.gridSize; r++) {
       for (let c = 0; c < this.gridSize; c++) {
-        p5.fill(240);
+        const tileX = startX + c * this.tileSize;
+        const tileY = startY + r * this.tileSize;
+
+        // Fill entire square for start (green) or end (red), else normal
+        if (r === 0 && c === 0) {
+          p5.fill(0, 200, 0); // green start tile
+        } else if (r === this.gridSize - 1 && c === this.gridSize - 1) {
+          p5.fill(200, 0, 0); // red end tile
+        } else {
+          p5.fill(240); // normal tile
+        }
+
         p5.rect(
-          startX + c * this.tileSize,
-          startY + r * this.tileSize,
+          tileX,
+          tileY,
           this.tileSize - 5,
           this.tileSize - 5,
           8
         );
 
+        // Draw lines for open edges
         p5.stroke(0);
         p5.strokeWeight(4);
         const edges = getOpenEdges(this.grid[r][c]);
-        const cx = startX + c * this.tileSize;
-        const cy = startY + r * this.tileSize;
         const half = (this.tileSize - 5) / 2 - 4;
 
-        if (edges[0]) p5.line(cx, cy, cx, cy - half); // top
-        if (edges[1]) p5.line(cx, cy, cx + half, cy); // right
-        if (edges[2]) p5.line(cx, cy, cx, cy + half); // bottom
-        if (edges[3]) p5.line(cx, cy, cx - half, cy); // left
+        if (edges[0]) p5.line(tileX, tileY, tileX, tileY - half); // top
+        if (edges[1]) p5.line(tileX, tileY, tileX + half, tileY); // right
+        if (edges[2]) p5.line(tileX, tileY, tileX, tileY + half); // bottom
+        if (edges[3]) p5.line(tileX, tileY, tileX - half, tileY); // left
 
         p5.noStroke();
-
-        // Draw start marker 
-        if (r === 0 && c === 0) {
-          p5.fill(0, 200, 0);
-          p5.ellipse(cx, cy, this.tileSize / 3);
-          p5.fill(255);
-          p5.textAlign(p5.CENTER, p5.CENTER);
-          p5.textSize(12);
-        }
-        // Draw end marker 
-        else if (r === this.gridSize - 1 && c === this.gridSize - 1) {
-          p5.fill(200, 0, 0);
-          p5.ellipse(cx, cy, this.tileSize / 3);
-          p5.fill(255);
-          p5.textAlign(p5.CENTER, p5.CENTER);
-          p5.textSize(12);
-        }
       }
     }
   }
 
   draw_footer(): void {
     const p5 = this.scene.p5;
+    const footerHeight = 140;
+    const footerY = this.boardSize / 2 + footerHeight / 2 + 10 ;
+
     p5.fill(50);
-    p5.rect(0, this.boardSize / 2 + 40, this.boardSize, 60);
+    p5.rect(0, footerY, this.boardSize, footerHeight);
     p5.fill(255);
     p5.textAlign(p5.CENTER, p5.CENTER);
-    p5.textSize(16);
+    p5.textSize(20);
     p5.text(
-      "Click a tile to rotate it. Multiple paths between \ngreen and red may exist. Find the right path!",
+      "Rotate tiles by clicking them. Connect\n the green tile to the red tile. " +
+      "Some paths\n appear correct, but will highlight red." +
+      "\nWhen the correct path is found\n it will highlight green.",
       0,
-      this.boardSize / 2 + 40
+      footerY
     );
   }
 
@@ -294,24 +315,43 @@ export default class PathPuzzle extends Puzzle {
     p5.fill(255);
     p5.textAlign(p5.CENTER, p5.CENTER);
     p5.textSize(20);
-    p5.text("Find the Path", 0, -this.boardSize / 2 - 30);
+    p5.text("Find the Path!", 0, -this.boardSize / 2 - 30);
   }
 
-  displayWinMessage(): void {
+  // Highlight a given path in a chosen color
+  private drawPathLine(path: [number, number][], color: string) {
     const p5 = this.scene.p5;
-    const boxWidth = p5.width / 3;
-    const boxHeight = p5.height / 6;
+    const startX = -this.boardSize / 2 + this.tileSize / 2;
+    const startY = -this.boardSize / 2 + this.tileSize / 2;
 
-    p5.fill(255);
-    p5.stroke(0);
-    p5.rect(0, 0, boxWidth, boxHeight, 10);
+    p5.stroke(color);
+    p5.strokeWeight(4);
 
-    p5.fill(0);
+    for (let i = 0; i < path.length - 1; i++) {
+      const [r1, c1] = path[i];
+      const [r2, c2] = path[i + 1];
+
+      const x1 = startX + c1 * this.tileSize;
+      const y1 = startY + r1 * this.tileSize;
+      const x2 = startX + c2 * this.tileSize;
+      const y2 = startY + r2 * this.tileSize;
+
+      p5.line(x1, y1, x2, y2);
+    }
+
     p5.noStroke();
-    p5.textAlign(p5.CENTER, p5.CENTER);
-    p5.textSize(28);
-    p5.text("Path Complete!", 0, -boxHeight / 8);
-    p5.textSize(16);
-    p5.text("Click to restart.", 0, boxHeight / 4);
+  }
+
+  // After the 1s delay, finalize and exit the puzzle
+  private finishPuzzle(): void {
+    this.hidden = true;
+    this.player.disabled = false;
+    this.scene.physics.remove(this.physics_object);
+    clearTimeout(this.collider_timeout);
+
+    this.onCompleted && this.onCompleted();
+
+    // Reset timestamp if puzzle re-used
+    this.puzzleCompleteAt = null;
   }
 }

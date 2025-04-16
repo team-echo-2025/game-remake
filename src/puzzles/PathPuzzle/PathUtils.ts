@@ -1,10 +1,7 @@
 /** A direction: 0=top, 1=right, 2=bottom, 3=left */
 export type Direction = 0 | 1 | 2 | 3;
 
-/**
- * A tile can be "elbow", "T", or "straight".
- * orientation is the index in the boolean[][] that describes open edges.
- */
+/** A tile can be "elbow", "T", or "straight". */
 export interface PathCell {
   tileType: "elbow" | "T" | "straight";
   orientation: number; // number of 90° clockwise rotations
@@ -100,8 +97,7 @@ export function getNeighbors(
  */
 export function generateRandomPath(gridSize: number): [number, number][] {
   const path: [number, number][] = [];
-  let r = 0,
-    c = 0;
+  let r = 0, c = 0;
   path.push([r, c]);
 
   const steps: string[] = [];
@@ -197,7 +193,6 @@ export function buildSolutionGrid(
     if (!chosen) {
       chosen = { tileType: "T", orientation: 0 };
     }
-
     grid[r][c] = chosen;
   }
 
@@ -219,8 +214,8 @@ export function scrambleGrid(grid: PathCell[][]): void {
 }
 
 /**
- * Checks if there's a path from (sr, sc) to (er, ec) but ONLY traversing cells
- * whose coordinates are in solutionSet. This ensures only one unique path.
+ * Checks if there's a path from (sr, sc) to (er, ec) ONLY traversing cells
+ * in the solutionSet. This ensures the puzzle’s "official" path is formed.
  */
 export function isSolutionPathComplete(
   grid: PathCell[][],
@@ -237,6 +232,11 @@ export function isSolutionPathComplete(
   const queue: [number, number][] = [[sr, sc]];
   visited[sr][sc] = true;
 
+  // If start or end not in the set, can't possibly be a valid solution
+  if (!solutionSet.has(`${sr},${sc}`) || !solutionSet.has(`${er},${ec}`)) {
+    return false;
+  }
+
   while (queue.length > 0) {
     const [r, c] = queue.shift()!;
     if (r === er && c === ec) return true;
@@ -249,4 +249,94 @@ export function isSolutionPathComplete(
     }
   }
   return false;
+}
+
+/**
+ * Enumerates ALL distinct paths from (0,0) to (gridSize-1, gridSize-1).
+ * Each path is an array of [r,c] coordinates in order.
+ */
+export function findAllPaths(grid: PathCell[][]): [number, number][][] {
+  const results: [number, number][][] = [];
+  const size = grid.length;
+
+  const visited = Array.from({ length: size }, () => Array(size).fill(false));
+
+  function dfs(r: number, c: number, path: [number, number][]) {
+    // If we reached bottom-right, store a copy
+    if (r === size - 1 && c === size - 1) {
+      results.push([...path]);
+      return;
+    }
+
+    for (const [nr, nc] of getNeighbors(grid, r, c)) {
+      if (!visited[nr][nc]) {
+        visited[nr][nc] = true;
+        path.push([nr, nc]);
+        dfs(nr, nc, path);
+        path.pop();
+        visited[nr][nc] = false;
+      }
+    }
+  }
+
+  // Start from (0,0) if valid
+  visited[0][0] = true;
+  dfs(0, 0, [[0, 0]]);
+
+  return results;
+}
+
+/**
+ * Finds the actual solution path if physically formed (only traveling cells in solutionSet).
+ * Returns an array of [r,c] or null if not formed.
+ */
+export function findSolutionPath(
+  grid: PathCell[][],
+  solutionSet: Set<string>
+): [number, number][] | null {
+  const size = grid.length;
+
+  // If start or end not in the set, can't form
+  if (!solutionSet.has(`0,0`) || !solutionSet.has(`${size-1},${size-1}`)) {
+    return null;
+  }
+
+  const visited = Array.from({ length: size }, () => Array(size).fill(false));
+  visited[0][0] = true;
+  const stack: [number, number][] = [[0, 0]];
+
+  const cameFrom = new Map<string, string>();
+
+  while (stack.length > 0) {
+    const [r, c] = stack.pop()!;
+    if (r === size - 1 && c === size - 1) {
+      // Reconstruct
+      return reconstructSolutionPath(cameFrom, [r, c]);
+    }
+    for (const [nr, nc] of getNeighbors(grid, r, c)) {
+      if (!visited[nr][nc] && solutionSet.has(`${nr},${nc}`)) {
+        visited[nr][nc] = true;
+        stack.push([nr, nc]);
+        cameFrom.set(`${nr},${nc}`, `${r},${c}`);
+      }
+    }
+  }
+  return null;
+}
+
+function reconstructSolutionPath(
+  cameFrom: Map<string, string>,
+  end: [number, number]
+): [number, number][] {
+  let curKey = `${end[0]},${end[1]}`;
+  const path: [number, number][] = [];
+
+  while (cameFrom.has(curKey)) {
+    const [r, c] = curKey.split(",").map(Number);
+    path.push([r, c]);
+    curKey = cameFrom.get(curKey)!;
+  }
+  // Add (0,0)
+  path.push([0, 0]);
+  return path.reverse();
 }
