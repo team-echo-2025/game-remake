@@ -21,10 +21,18 @@
         },
         "Dungeon.tmx": {
             "scale": 1,
-            "selectedLayer": 18,
+            "selectedLayer": 7,
             "viewCenter": {
-                "x": -1329,
-                "y": 783
+                "x": -1174.5,
+                "y": -698
+            }
+        },
+        "DungeonSmaller.tmx": {
+            "scale": 0.2882161458333333,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": -385.1276259317822,
+                "y": -126.64106618477513
             }
         },
         "Dungeonset.tsx": {
@@ -73,11 +81,11 @@
             "scaleInDock": 1
         },
         "Switches.tmx": {
-            "scale": 1.5,
-            "selectedLayer": 9,
+            "scale": 0.75,
+            "selectedLayer": 5,
             "viewCenter": {
-                "x": 526,
-                "y": 305.3333333333333
+                "x": 512.6666666666666,
+                "y": 512
             }
         },
         "TX Tileset Wall.tsx": {
@@ -121,6 +129,9 @@
         "props.tsx": {
             "dynamicWrapping": false,
             "scaleInDock": 1.5
+        },
+        "water.tsx": {
+            "scaleInDock": 1
         }
     },
     "last.externalTilesetPath": "C:/Users/SSBtd/OneDrive/Documents/GitHub/game-remake/public/assets/tilemaps/PetersTileMap",
@@ -132,22 +143,23 @@
     "openFiles": [
         "Dungeonset.tsx",
         "Trees.tsx",
-        "Dungeon.tmx"
+        "Dungeon.tmx",
+        "Switches.tmx"
     ],
     "project": "Dungeon.tiled-project",
     "recentFiles": [
         "Dungeonset.tsx",
         "Trees.tsx",
-        "Dungeon.tmx",
         "Switches.tmx",
+        "Dungeon.tmx",
+        "DungeonSmaller.tmx",
         "Texture/TX Tileset Wall.tsx",
         "Texture/Grass.tsx",
         "GraveyardSwitch/Set 1.tsx",
         "GraveyardSwitch/Graveyard.tsx",
         "Texture/Stone Ground.tsx",
         "GraveyardSwitch/Stairs.tsx",
-        "graveyardSwitch.tmx",
-        "GraveyardSwitch/graveyardSwitch.tmx"
+        "graveyardSwitch.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
