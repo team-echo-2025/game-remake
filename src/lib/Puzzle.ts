@@ -15,6 +15,7 @@ export default class Puzzle implements GameObject {
     scene!: Scene;
     puzzle!: Page;
     state!: PuzzleState;
+    isDisplayingHint = false;
     onCompleted?: () => void;
     onOpen?: () => void;
     static difficulty: string;
@@ -41,6 +42,8 @@ export default class Puzzle implements GameObject {
     draw(): void { }
 
     postDraw(): void { }
+
+    drawHint(): void { }
 
     mouseClicked(_: MouseEvent): void { }
 
@@ -75,4 +78,10 @@ export default class Puzzle implements GameObject {
     setDifficulty(difficulty: string): void {
         Puzzle.difficulty = difficulty;
     }
+
+    displayHint(): void {
+        this.isDisplayingHint = !this.isDisplayingHint
+    }
+
+    cleanup(): void { }
 }
