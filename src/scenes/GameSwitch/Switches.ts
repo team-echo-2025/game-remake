@@ -110,6 +110,10 @@ export default class Switches extends Scene {
             this.start("menu-scene");
         }
 
+        if (e.key.toLowerCase() === "g" && this.player?.body.x && this.player.body.y) {
+
+        }
+
         if (e.key.toLowerCase() === "e" && this.playSwitch) {
             for (let i = 0; i < this.playSwitch.highlight_states.length; i++) {
                 if (this.playSwitch.highlight_states[i]) {

@@ -240,6 +240,7 @@ export default class Dungeon1 extends Scene {
             this.player?.collectKey(this.key3!);
             this.crossyRoad?.forceSolve();
         }
+        //this.start("Switches")
     }
 
     keyPressed = (e: KeyboardEvent) => {
