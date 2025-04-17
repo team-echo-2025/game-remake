@@ -362,6 +362,7 @@ export default class Dungeon2 extends Scene {
             const containsHidden = this.puzzles.some(puzzle => !puzzle.hidden);
             if (containsHidden) {
                 this.puzzles.forEach(puzzle => puzzle.hidden = true);
+                this.puzzles.forEach(puzzle => puzzle.cleanup());
                 //@ts-ignore
                 this.player?.disabled = false;
             }
