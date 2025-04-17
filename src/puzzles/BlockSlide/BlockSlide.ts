@@ -6,7 +6,6 @@ import RigidBody from "../../lib/physics/RigidBody";
 import Scene from "../../lib/Scene";
 import Player from "../../lib/Player";
 import Sound from "../../lib/Sound"; // NEW: Import the Sound class
-import ButtonTest from "../../lib/ui/ButtonTest"
 
 type Position = { row: number; col: number };
 
@@ -24,7 +23,6 @@ export default class BlockSlide extends Puzzle {
             progress: number;
         }
     } = {};
-    hintButton!: ButtonTest;
     //Game references
     physics_object!: PhysicsObject;
     highlight: boolean = false;
@@ -112,29 +110,18 @@ export default class BlockSlide extends Puzzle {
             this.onOpen && this.onOpen();
             this.player.disabled = true;
             this.hidden = false;
-            this.hintButton = this.scene.add_new.img_button({
-                // TODO: remove text, replace image
-                label: "How to Play",
-                font_key: 'jersey',
-                callback: () => {
-                    this.displayHint();
-                    console.log(this.isDisplayingHint);
-                },
-                imageKey: "test"
-            })
-            this.hintButton.x = 700;
-            this.hintButton.y = 200;
+            this.setupHint();
         }
     }
 
     postDraw(): void {
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
         if (this.hidden) return;
+
         this.draw_body();
         this.draw_board();
-        this.draw_footer();
         this.draw_header();
-        this.drawHint();
+        if (this.isDisplayingHint) this.drawHint();
     }
 
     generateGrid(): void {
@@ -236,7 +223,7 @@ export default class BlockSlide extends Puzzle {
         this.setup();  // Restart puzzle
     }
 
-    draw_footer(): void {
+    drawHint(): void {
         let p5 = this.scene.p5;
 
         // dimensions
@@ -283,10 +270,6 @@ export default class BlockSlide extends Puzzle {
         p5.textAlign(p5.CENTER, p5.CENTER);
         p5.textSize(50);
         p5.text("Block Slide", headerX, headerY - rectHeight / 8);
-    }
-
-    drawHint(): void {
-        // TODO: Draw the hint page
     }
 
     mousePressed(): void {
@@ -447,11 +430,5 @@ export default class BlockSlide extends Puzzle {
             default:
                 this.gridSize = 4;
         }
-    }
-
-    // Remove the hint button
-    cleanup(): void {
-        this.scene.remove(this.hintButton);
-        console.log("cleanup called");
     }
 }
