@@ -32,14 +32,16 @@ export default class PageManager implements GameObject {
         });
     }
 
-    set_page(page_name: string): void {
-        const page = this.pages.get(page_name);
-        if (page) {
+    set_page(page_name?: string): void {
+        this.current_page?.onDestroy();
+        if (page_name) {
+            const page = this.pages.get(page_name);
+            if (!page) throw new Error("Cannot find page: " + page_name + ".");
             this.zIndex = page.zIndex;
             page.setup();
             this.current_page = page;
         } else {
-            console.error(`Page "${page_name}" not found.`);
+            this.current_page = null;
         }
     }
 
@@ -80,5 +82,9 @@ export default class PageManager implements GameObject {
         this.current_page?.keyReleased(e);
     }
 
-    onDestroy(): void { }
+    onDestroy(): void {
+        for (const page of this.pages.values()) {
+            page.onDestroy && page.onDestroy();
+        }
+    }
 }
