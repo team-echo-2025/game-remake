@@ -63,9 +63,6 @@ export default class CharacterPage extends Page {
         this.scene.remove(this.dropdown);
         this.scene.remove(this.dropdownClothes);
         this.scene.remove(this.dropdownHair);
-        this.dropdown.onDestroy();
-        this.dropdownClothes.onDestroy();
-        this.dropdownHair.onDestroy();
         this.scene.remove(this.redHairSlider);
         this.scene.remove(this.greenHairSlider);
         this.scene.remove(this.blueHairSlider);
@@ -350,5 +347,8 @@ export default class CharacterPage extends Page {
     }
     drawBorder() {
 
+    }
+    onDestroy(): void {
+        this.cleanup();
     }
 }

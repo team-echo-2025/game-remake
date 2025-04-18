@@ -21,7 +21,7 @@ export default class SceneManager implements GameObject {
 
     get total_time(): number {
         return this._total_time;
-      }
+    }
 
     get page_manager() {
         return this._page_manager;
@@ -157,6 +157,10 @@ export default class SceneManager implements GameObject {
 
     deductTime(penalty: number): void {
         this.time_remaining -= penalty;
+    }
+
+    addTime(amount: number): void {
+        this.time_remaining += amount;
     }
 
     postSetup(): void {

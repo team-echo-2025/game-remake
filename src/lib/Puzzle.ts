@@ -11,7 +11,7 @@ export enum PuzzleState {
 }
 
 export default class Puzzle implements GameObject {
-    protected _zIndex?: number | undefined = 300;
+    protected _zIndex?: number | undefined = 200;
     hidden?: boolean = false;
     scene!: Scene;
     puzzle!: Page;
@@ -20,7 +20,11 @@ export default class Puzzle implements GameObject {
     isDisplayingHint = false;
     onCompleted?: () => void;
     onOpen?: () => void;
-    static difficulty: string;
+    x: number = 0;
+    y: number = 0;
+    asset?: any;
+    hide_page: boolean = true;
+    static difficulty: string = 'easy';
 
     constructor(scene: Scene) {
         this.state = PuzzleState.notStarted;
@@ -37,7 +41,7 @@ export default class Puzzle implements GameObject {
     }
 
 
-    async preload(): Promise<void> { }
+    preload(): any { }
 
     setup(): void { }
 
@@ -63,6 +67,7 @@ export default class Puzzle implements GameObject {
 
     cleanup(): void {
         this.scene.remove(this.hintButton);
+        this.hide_page = true;
         this.isDisplayingHint = false;
     }
 
