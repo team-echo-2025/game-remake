@@ -17,6 +17,10 @@ export default class LoadingScene extends Scene {
         this.loadFont("jersey", "assets/fonts/jersey.ttf");
     }
 
+    onStart(args?: any): void {
+        this.loading_progress = 0;
+    }
+
     setup(): void {
         this.loading_button = this.add_new.button({
             label: "",  // no label to prevent getting an empty white text 
@@ -69,7 +73,7 @@ export default class LoadingScene extends Scene {
         this.drawLoadingLabel(); // just exists (deal with it)
         this.drawLoadingTitle(); // centered title (EXIT PARADOX) above loading bar
         this.drawLoadingBar();
-        this.drawParticles(); 
+        this.drawParticles();
         this.drawLoadingHint(); // draw the random hint under the loading bar
     }
 
@@ -120,10 +124,6 @@ export default class LoadingScene extends Scene {
     }
 
     updateLoadingBar(): void {
-        this.loading_progress += 0.5;
-        if (this.loading_progress > 100) {
-            this.loading_progress = 100;
-        }
     }
 
     drawLoadingLabel(): void {
@@ -200,5 +200,8 @@ export default class LoadingScene extends Scene {
         p.fill(180);
         p.text(this.loading_hint, 0, hintY);
         p.pop();
+    }
+    onStop(): void {
+        this.loading_progress = 100;
     }
 }
