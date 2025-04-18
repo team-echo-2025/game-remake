@@ -245,11 +245,22 @@ export default class Scene implements GameObject {
     async preload(): Promise<any> { }
     async preload_objects(): Promise<any> {
         const to_load = []
+        let total = this.objects.length;
+        let current = 0;
+        let previous = this.scene_manager.loading_scene.loading_progress;
         for (const obj of this.objects) {
-            obj.preload && to_load.push(obj.preload());
+            if (obj.preload) {
+                let pre = obj.preload()
+                pre && to_load.push(pre.then(() => {
+                    this.scene_manager.loading_scene.loading_progress = previous + ((current++) / total) * 60;
+                }));
+            }
         }
+        total += this.preloads.length;
         for (const pre of this.preloads) {
-            to_load.push(pre);
+            to_load.push(pre.then(() => {
+                this.scene_manager.loading_scene.loading_progress = previous + ((current++) / total) * 60;
+            }));
         }
         await Promise.all(to_load);
     }
