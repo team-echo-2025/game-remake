@@ -68,7 +68,7 @@ export default class LoserPage extends Page {
         this.background_music.play();
         // this.backgroundMusicManager = this.add_new.soundmanager(bgm_props);
         // this.backgroundMusicManager.play();
-        console.log(this.mainMenu);
+        //console.log(this.mainMenu);
     }
     cleanup() {
         this.scene.remove(this.retry);

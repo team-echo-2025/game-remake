@@ -231,7 +231,9 @@ export default class WorldPhysics implements GameObject {
         if (this._paused) return;
         if (!this.quad_tree) return;
         const dtSec = this._scene.p5.deltaTime / 1000;
-        this.accumulator += this.accumulator >= 1 ? 0 : dtSec;
+        // Cap accumulated time to limit physics steps per frame and avoid long freezes
+        const maxAccumulatedTime = this.fixedTimeStep * 5;
+        this.accumulator = Math.min(this.accumulator + dtSec, maxAccumulatedTime);
         while (this.accumulator >= this.fixedTimeStep) {
             this.quad_tree.clear();
             for (const obj of this.physic_objects) {

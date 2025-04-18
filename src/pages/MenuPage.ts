@@ -57,14 +57,14 @@ export default class MenuPage extends Page {
         const button4: ButtonTestProps = {
             ...button1,
             label: "Scene 4",
-            callback: () => { this.scene.start("drive-to-survive") },
+            callback: () => { this.scene.start("boat-to-float") },
         }
         const button5: ButtonTestProps = {
             ...button1,
             label: "Scene 5",
             callback: () => { this.scene.start("playscene-4") },
         }
-        const button6: ButtonTestProps = { 
+        const button6: ButtonTestProps = {
             ...button1,
             label: "Switches",
             callback: () => { this.scene.start("Switches") },
@@ -221,5 +221,8 @@ export default class MenuPage extends Page {
         this.scene.p5.fill(255);
         this.scene.p5.text('EXIT PARADOX', 0, -300);
         this.scene.p5.pop();
+    }
+    onDestroy(): void {
+        this.cleanup();
     }
 }

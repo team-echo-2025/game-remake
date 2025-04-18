@@ -169,6 +169,10 @@ export default class SceneManager implements GameObject {
         this.time_remaining -= penalty;
     }
 
+    addTime(amount: number): void {
+        this.time_remaining += amount;
+    }
+
     postSetup(): void {
         this.current_scene?.postSetup();
         this.current_scene?.postSetup_objects();

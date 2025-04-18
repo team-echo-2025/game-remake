@@ -7,18 +7,18 @@ import PhysicsTestScene from "./scenes/PhysicsTestScene";
 import Dungeon1 from './scenes/PlayScene2';
 import Dungeon2 from './scenes/PlayScene3';
 import iceMaze from "./scenes/IceMaze";
-import DriveToSurvive from './scenes/DriveToSurvive/DriveToSurvive';
 import PhysicsTestScene2 from './scenes/PhysicsTestScene2';
 import PlayScene4 from './scenes/PlayScene4';
 import MenuScene from './scenes/MenuScene';
 import LoserScene from './scenes/LoserScene';
 import NonLoser from './scenes/NonLoserScene';
 import Switches from './scenes/GameSwitch/Switches';
+import BoatToFloat from './scenes/BoatToFloat/BoatToFloat';
 
 let scene_manager: SceneManager;
 const sketch = (p: p5) => {
     p.preload = () => {
-        scene_manager = new SceneManager(p, [MenuScene, PlayScene, KDDevScene, PhysicsTestScene, Dungeon1, Dungeon2, iceMaze, DriveToSurvive, PhysicsTestScene2, PlayScene4, LoserScene, NonLoser, Switches], LoadingScene,);
+        scene_manager = new SceneManager(p, [MenuScene, PlayScene, KDDevScene, PhysicsTestScene, Dungeon1, Dungeon2, iceMaze, BoatToFloat, PhysicsTestScene2, PlayScene4, LoserScene, NonLoser, Switches], LoadingScene,);
         scene_manager.preload();
     };
 
