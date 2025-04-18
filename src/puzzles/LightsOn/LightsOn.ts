@@ -26,20 +26,23 @@ export default class LightsOn extends Puzzle {
         super(scene);
         this.asset_key = puzzle_asset_key;
         this.hidden = true;
+        this.hide_page = true;
         this.player = player;
     }
 
     force_solve() {
         this.state = PuzzleState.completed;
         this.hidden = true;
+        this.hide_page = true;
         this.player.disabled = false;
-        this.asset.change_asset('success-puzzle');
+        clearTimeout(this.collider_timeout);
+        this.asset.change_asset('blockslide-success');
         this.scene.physics.remove(this.physics_object);
     }
 
     async preload(): Promise<void> { }
 
-    setup(): void {
+    override setup(): void {
         //putting into game itself
         this.physics_object = new PhysicsObject({
             width: 100,
@@ -54,12 +57,14 @@ export default class LightsOn extends Puzzle {
             if (other == this.player.body) {
                 clearTimeout(this.collider_timeout);
                 if (!this.highlight) {
+                    this.hidden = false;
                     this.highlight = true
-                    this.asset.change_asset("highlighted-puzzle");
+                    this.asset.change_asset("blockslide-highlight");
                 }
                 this.collider_timeout = setTimeout(() => {
                     this.highlight = false;
-                    this.asset.change_asset("puzzle");
+                    this.hidden = true;
+                    this.asset.change_asset(this.asset_key);
                 }, 100);
             }
         }
@@ -68,6 +73,7 @@ export default class LightsOn extends Puzzle {
         this.asset.y = this.y;
         this.asset.width = 32;
         this.asset.height = 48;
+        this.asset.zIndex = 49;
         //Puzzle Setup
         this.state = PuzzleState.notStarted;  // Reset puzzle state to allow a new game
         this.setGridSize();
@@ -79,7 +85,7 @@ export default class LightsOn extends Puzzle {
     }
 
 
-    setDifficulty(difficulty: string): void {
+    override setDifficulty(difficulty: string): void {
         Puzzle.difficulty = difficulty;  // Update the global difficulty
         this.setup();  // Restart puzzle with new difficulty
     }
@@ -100,12 +106,10 @@ export default class LightsOn extends Puzzle {
                 this.gridSize = 5;
         }
     }
-    draw() {
+
+    override postDraw(): void {
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
-    }
-    postDraw(): void {
-        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
-        if (this.hidden) return;
+        if (this.hide_page) return;
         this.draw_body();
         this.draw_board();
         this.draw_footer();
@@ -165,13 +169,8 @@ export default class LightsOn extends Puzzle {
         }
     }
 
-    mousePressed(): void {
+    override mousePressed(): void {
         let p5 = this.scene.p5;
-
-        if (this.solved()) {
-            this.scene.start(this.scene.name);
-            return;
-        }
 
         let col = Math.floor((p5.mouseX - p5.width / 2 + this.boardSize / 2) / this.tileSize);
         let row = Math.floor((p5.mouseY - p5.height / 2 + this.boardSize / 2) / this.tileSize);
@@ -206,15 +205,20 @@ export default class LightsOn extends Puzzle {
         }
 
         if (checkWin && this.checkWin()) {
-            this.state = PuzzleState.completed;
+            this.force_solve()
         }
     }
-    keyPressed(e: KeyboardEvent): void {
+    override keyPressed(e: KeyboardEvent): void {
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
-        if (this.hidden && this.highlight && e.key == 'e') {
+        if (this.hide_page && this.highlight && e.key == 'e') {
             this.onOpen && this.onOpen();
             this.player.disabled = true;
-            this.hidden = false;
+            this.hide_page = false;
+        }
+        if (!this.hide_page && e.key == 'Escape') {
+            this.cleanup();
+            this.player.disabled = false;
+            this.hide_page = true;
         }
     }
 

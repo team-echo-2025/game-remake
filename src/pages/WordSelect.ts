@@ -1,7 +1,7 @@
 import Page from "../lib/Page";
 import ButtonTest from "../lib/ui/ButtonTest";
 import Sound from "../lib/Sound";
-import SoundManager, {SoundManagerProps} from "../lib/SoundManager";
+import SoundManager, { SoundManagerProps } from "../lib/SoundManager";
 export default class WorldSelectPage extends Page {
     w1?: ButtonTest;
     w2?: ButtonTest;
@@ -26,7 +26,7 @@ export default class WorldSelectPage extends Page {
     }
     setup(): void {
         this.button_sfx = this.scene.add_new.sound("button_sfx")
-        const sfx_props: SoundManagerProps= {
+        const sfx_props: SoundManagerProps = {
             group: "SFX",
             sounds: [this.button_sfx]
         }
@@ -78,5 +78,8 @@ export default class WorldSelectPage extends Page {
 
         this.w3.y = 100;
         this.back.y = 200;
+    }
+    onDestroy(): void {
+        this.cleanup();
     }
 }

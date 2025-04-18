@@ -6,6 +6,45 @@ import Tilemap from "../../lib/tilemap/Tilemap";
 import PlayerDriver from "./lib/PlayerDriver";
 import RigidBody from "../../lib/physics/RigidBody";
 
+export class ChumBucket extends PhysicsObject {
+    zIndex?: number | undefined = 49;
+    asset!: p5.Image;
+    asset_key: string;
+    scene: Scene;
+    player: PlayerDriver;
+    offestY: number = 0;
+    constructor(props: { asset_key: string, scene: Scene, player: PlayerDriver, x?: number, y?: number }) {
+        super({ width: 20, height: 30, mass: Infinity });
+        this.body.overlaps = true
+        this.asset_key = props.asset_key;
+        this.scene = props.scene;
+        this.body.x = props.x ?? 0;
+        this.body.y = props.y ?? 0;
+        this.player = props.player;
+        let collided = false;
+        this.onCollide = (other: RigidBody) => {
+            if (!collided && other == this.player.body) {
+                collided = true;
+                this.player.collectChum(this);
+                this.scene.scene_manager.deductTime(100);
+            }
+        };
+    }
+    setup(): void {
+        this.asset = this.scene.get_asset(this.asset_key);
+    }
+    draw(): void {
+        this.scene.p5.push();
+        this.scene.p5.translate(this.body.x - this.body.halfWidth, this.body.y - this.body.halfHeight);
+        this.scene.p5.image(this.asset, 0, this.offestY, this.body.halfWidth * 2, this.body.halfHeight * 2);
+        this.scene.p5.pop();
+    }
+    update(_: number, scene: Scene): void {
+        const pulseSpeed = 0.01;  // Adjust for speed of pulsing
+        const pulseAmount = 5;
+        this.offestY = Math.sin(scene.p5.millis() * pulseSpeed) * pulseAmount
+    }
+}
 export class KrabbyPatty extends PhysicsObject {
     zIndex?: number | undefined = 49;
     asset!: p5.Image;
@@ -25,6 +64,7 @@ export class KrabbyPatty extends PhysicsObject {
         this.onCollide = (other: RigidBody) => {
             if (!collided && other == this.player.body) {
                 collided = true;
+                this.scene.scene_manager.addTime(30);
                 this.player.collectPatty(this);
             }
         };
@@ -45,14 +85,15 @@ export class KrabbyPatty extends PhysicsObject {
     }
 }
 
-export default class DriveToSurvive extends Scene {
+export default class BoatToFloat extends Scene {
     private tilemap?: Tilemap;
     private player?: PlayerDriver;
     private font?: Font;
     private start_timestamp!: number;
+    private total_time: number = 30; // seconds
 
     constructor() {
-        super("drive-to-survive");
+        super("boat-to-float");
         //this.physics.debug = true;
     }
 
@@ -162,6 +203,91 @@ export default class DriveToSurvive extends Scene {
         this.physics.addObject(new KrabbyPatty({ x: 2335.60930615721, y: 636.783330371335, asset_key: "krabby-patty", scene: this, player: this.player }));
         this.physics.addObject(new KrabbyPatty({ x: 2333.916126824126, y: 17.503727599214244, asset_key: "krabby-patty", scene: this, player: this.player }));
         this.physics.addObject(new KrabbyPatty({ x: 2337.6534521555486, y: -588.7149719773224, asset_key: "krabby-patty", scene: this, player: this.player }));
+
+
+
+        // CHUMMMM
+        this.physics.addObject(new ChumBucket({ x: 354.758167545722, y: -270.6095378390702, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 328.77171518759405, y: -908.5808204519085, asset_key: "chum-bucket", scene: this, player: this.player }));
+
+        this.physics.addObject(new ChumBucket({ x: 277.4063619323948, y: -1147.5821133421632, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 387.9494413757827, y: -1612.0894361111534, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 342.93033862191896, y: -1835.4284257136899, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 537.8939915033347, y: -1931.3615699143481, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 414.8383490372735, y: -2144.0301169359745, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 111.36562704783546, y: -2080.558522607947, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: -35.36736123873618, y: -2303.41751000191, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: -228.10180636256882, y: -2902.351936494043, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: -550.6059768385263, y: -2951, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: -1039.55878816239, y: -2908, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: -1746.799197151552, y: -2973.5, asset_key: "chum-bucket", scene: this, player: this.player }));
+
+        this.physics.addObject(new ChumBucket({ x: -2548.5683330116653, y: -2944.5, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: -2860, y: -2930, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: -2801.5, y: -2496.0945403750766, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: -2329.853775107488, y: -2391.4019434146394, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: -2333.413432638129, y: -1915.9711364299123, asset_key: "chum-bucket", scene: this, player: this.player }));
+
+        this.physics.addObject(new ChumBucket({ x: -2086.6666666666665, y: 264.66666666666697, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: -2590, y: 248, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: -2760, y: 634.666666666667, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: -2743.333333333333, y: 1108, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: -3116.6666666666665, y: 1491.3333333333335, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: -2540, y: 1844.666666666667, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: -2770, y: 1641.333333333334, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: -2233.333333333333, y: 1314.666666666667, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: -1813.3333333333333, y: 1271.3333333333335, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: -1536.6666666666665, y: 1714.666666666667, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: -1703.3333333333333, y: 2121.333333333334, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: -1413.3333333333333, y: 2111.333333333334, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: -2806.6666666666665, y: 2188, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: -1153.333333333333, y: 2034.666666666667, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: -676.6666666666665, y: 2154.666666666667, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: -1586.6666666666665, y: 2261.333333333334, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 556.666666666667, y: 244.66666666666697, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 1026.666666666667, y: 78, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 1296.666666666667, y: 64.66666666666697, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 1363.333333333334, y: -48.666666666666515, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 1343.333333333334, y: -152, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 1356.666666666667, y: -282, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 1356.666666666667, y: -485.33333333333303, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 1590, y: -605.3333333333333, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 2063.333333333334, y: -592, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 2350, y: -358.6666666666665, asset_key: "chum-bucket", scene: this, player: this.player }));
+
+        this.physics.addObject(new ChumBucket({ x: 1423.333333333334, y: -2502, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 1930, y: -2495.3333333333335, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 2303.333333333334, y: -2252, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 2343.333333333334, y: -1792, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 2336.666666666667, y: -1602, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 2336.666666666667, y: -1238.6666666666665, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 2326.666666666667, y: -882, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 2493.333333333334, y: -615.3333333333333, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 2760, y: -845.3333333333333, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 2936.666666666667, y: -1102, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 2956.666666666667, y: -1702, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 2936.666666666667, y: -1915.3333333333333, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 2570, y: -2355.3333333333335, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 2523.333333333334, y: -2518.6666666666665, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 2560, y: 314.66666666666697, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 2130, y: 171.33333333333348, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 2353.333333333334, y: 301.3333333333335, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 2340, y: 808, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 2333.333333333334, y: 1231.3333333333335, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 2360, y: 1678, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 1930, y: 1314.666666666667, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 2730, y: 1274.666666666667, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 2703.333333333334, y: 844.666666666667, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 2706.666666666667, y: 1658, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 2320, y: 1984.666666666667, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 2150, y: 2241.333333333334, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 1260, y: -2318.6666666666665, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 1483.333333333334, y: -2552, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 1750, y: -2468.6666666666665, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 1966.666666666667, y: -2525.3333333333335, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 2206.666666666667, y: -2298.6666666666665, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 2336.666666666667, y: -1688.6666666666665, asset_key: "chum-bucket", scene: this, player: this.player }));
+        this.physics.addObject(new ChumBucket({ x: 2563.333333333334, y: -2462, asset_key: "chum-bucket", scene: this, player: this.player }));
     }
 
     preload(): any {
@@ -170,9 +296,11 @@ export default class DriveToSurvive extends Scene {
         this.loadImage("monitor", "assets/tilemaps/racing/monitor-frame.png");
         this.loadImage("monitor-overlay", "assets/tilemaps/racing/monitor-overlay.png");
         this.loadImage("krabby-patty", "assets/tilemaps/racing/krabby-patty.png");
+        this.loadImage("chum-bucket", "assets/tilemaps/racing/chum.png");
     }
 
     setup(): void {
+        this.physics.debug = true;
         const monitor = this.add_new.sprite('monitor');
         monitor.fixed = true;
         monitor.width = this.p5.width;
@@ -206,7 +334,7 @@ export default class DriveToSurvive extends Scene {
 
     keyPressed(e: KeyboardEvent): void {
         if (e.key === "Escape") {
-            this.start("playscene-2", { starting_pos: { x: -630, y: 330 } });
+            this.start("playscene-2", { starting_pos: { x: -15, y: 350 } });
         }
     }
 
@@ -218,7 +346,8 @@ export default class DriveToSurvive extends Scene {
 
     mouseClicked(_: MouseEvent): void {
         try {
-            navigator.clipboard.writeText(`this.physics.addObject(new KrabbyPatty({ x: ${this.mouseX}, y: ${this.mouseY}, asset_key: "krabby-patty", scene: this, player: this.player }));`);
+            console.log(`this.physics.addObject(new ChumBucket({ x: ${this.mouseX}, y: ${this.mouseY}, asset_key: "chum-bucket", scene: this, player: this.player }));`);
+            navigator.clipboard.writeText(`this.physics.addObject(new ChumBucket({ x: ${this.mouseX}, y: ${this.mouseY}, asset_key: "chum-bucket", scene: this, player: this.player }));`);
         } catch (e: any) { }
     }
 
@@ -235,11 +364,11 @@ export default class DriveToSurvive extends Scene {
         this.p5.fill(255);
         this.p5.text(text, padding / 2, 30);
         this.p5.pop();
-        if (this.p5.millis() - this.start_timestamp > 30_000) {
-            this.start("playscene-2", { starting_pos: { x: -630, y: 330 } });
+        if (this.p5.millis() - this.start_timestamp > this.total_time * 1000) {
+            this.start("playscene-2", { starting_pos: { x: -15, y: 350 }, completed_BTF: true });
             return
         }
-        const text2 = "You have " + Math.round(30 - (this.p5.millis() - this.start_timestamp) / 1000) + " seconds left.";
+        const text2 = "You have " + Math.round(this.total_time - (this.p5.millis() - this.start_timestamp) / 1000) + " seconds left.";
         this.p5.push();
         this.p5.rectMode(this.p5.CORNER);
         this.p5.textFont(this.font!);

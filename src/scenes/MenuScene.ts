@@ -31,6 +31,7 @@ export default class MenuScene extends Scene {
             new CreditsPage(),
             new CharacterPageColors(),
         ], this);
+        this.scene_manager.resetTimer();
         this.add(this.pManager);
         this.disableTimer();
     }
