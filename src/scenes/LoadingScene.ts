@@ -38,7 +38,7 @@ export default class LoadingScene extends Scene {
             });
         }
 
-        // Randomize the hint each time the scene starts
+        // randomize the hint each time the scene starts
         const hints = [
             "Tip: Solve the puzzle carefully, or you’ll lose valuable time!",
             "Hint: Explore it all, you might rock the boat, but it’ll float your boat!",
@@ -58,7 +58,7 @@ export default class LoadingScene extends Scene {
     draw(): void {
         const p = this.p5;
 
-        // Background
+        // background
         p.fill("#2d2d3e");
         p.noStroke();
         p.rect(0, 0, p.width, p.height);
@@ -70,7 +70,7 @@ export default class LoadingScene extends Scene {
         this.drawLoadingTitle(); // centered title (EXIT PARADOX) above loading bar
         this.drawLoadingBar();
         this.drawParticles(); 
-        this.drawLoadingHint(); // Draw the random hint under the loading bar
+        this.drawLoadingHint(); // draw the random hint under the loading bar
     }
 
     drawLoadingTitle(): void {
@@ -127,7 +127,7 @@ export default class LoadingScene extends Scene {
     }
 
     drawLoadingLabel(): void {
-        // Nothing here (label removed)
+        // nothing here 
     }
 
     drawLoadingBar(): void {
@@ -187,7 +187,7 @@ export default class LoadingScene extends Scene {
         p.pop();
     }
 
-    // New method to draw the random hint below the loading bar
+    // new method to draw the random hint below the loading bar
     drawLoadingHint(): void {
         const p = this.p5;
         const fontSize = 16;
