@@ -46,6 +46,7 @@ export default class BlockSlide extends Puzzle {
     force_solve() {
         this.state = PuzzleState.completed;
         this.hidden = true;
+        this.cleanup();
         this.player.disabled = false;
         this.onCompleted && this.onCompleted();
         clearTimeout(this.collider_timeout);
@@ -109,16 +110,18 @@ export default class BlockSlide extends Puzzle {
             this.onOpen && this.onOpen();
             this.player.disabled = true;
             this.hidden = false;
+            this.setupHint();
         }
     }
 
     postDraw(): void {
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
         if (this.hidden) return;
+
         this.draw_body();
         this.draw_board();
-        this.draw_footer();
         this.draw_header();
+        if (this.isDisplayingHint) this.drawHint();
     }
 
     generateGrid(): void {
@@ -220,7 +223,7 @@ export default class BlockSlide extends Puzzle {
         this.setup();  // Restart puzzle
     }
 
-    draw_footer(): void {
+    drawHint(): void {
         let p5 = this.scene.p5;
 
         // dimensions
@@ -384,6 +387,7 @@ export default class BlockSlide extends Puzzle {
                     if (this.grid[row][col] === 0) { // Ensure last tile is empty
                         this.state = PuzzleState.completed;
                         this.hidden = true;
+                        this.cleanup();
                         this.onCompleted && this.onCompleted();
                         this.player.disabled = false;
                         this.scene.physics.remove(this.physics_object);
@@ -401,6 +405,7 @@ export default class BlockSlide extends Puzzle {
         }
         this.state = PuzzleState.completed;
         this.hidden = true;
+        this.cleanup();
         this.onCompleted && this.onCompleted();
         this.player.disabled = false;
         this.scene.physics.remove(this.physics_object);
