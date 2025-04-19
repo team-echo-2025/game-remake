@@ -225,9 +225,10 @@ export default class Dungeon1 extends Scene {
         this.computer.disable = this.completed_BTF;
 
         this.dialogue = new Dialogue(this, this.player!);
-        this.dialogue.addDialogue(-1572, 870, "I heard there's a graveyard far north", 100, 100);
-        this.dialogue.addDialogue(-1546, 725, "There's a city to the east", 500, 45);
-        this.dialogue.addDialogue(-1203, 497, "Is that an ice maze to the northeast??", 45, 500);
+        // this.dialogue.addDialogue(-967, 836, "Find the keys to escape to the maze", 100, 100);
+        this.dialogue.addDialogue(-1136, 863, "Find the keys to escape to the maze", 100, 100);
+        this.dialogue.addDialogue(-945, 694, "There might be something in the city eastward", 500, 45);
+        this.dialogue.addDialogue(-956, 410, "Keep going and you'lll find a graveyard", 45, 500);
         this.dialogue.addDialogue(-1572, 557, "Fahoo forays, dahoo dorays", 100, 100);
         this.dialogue.addDialogue(-1572, 307, "Welcome Christmas! Come this way", 100, 100);
         this.dialogue.addDialogue(-1441, 0, "Fahoo forays, dahoo dorays", 110, 110);
