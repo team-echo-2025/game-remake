@@ -91,7 +91,9 @@ export default class PlayScene4 extends Scene {
 
     keyPressed = (e: KeyboardEvent) => {
         if (e.key === "Escape") {
-            this.start("menu-scene");
+            if (!this.scene_manager.paused) {
+                this.scene_manager.page_manager?.set_page("pause-page");
+            }
         }
     };
 
@@ -99,6 +101,10 @@ export default class PlayScene4 extends Scene {
     }
 
     postDraw(): void {
+        if (this.player && this.scene_manager.paused) this.player.disabled = true;
+        else if (this.player && !this.scene_manager.paused) {
+            this.player.disabled = false;
+        }
     }
 
     draw(): void {
