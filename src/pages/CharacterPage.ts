@@ -23,15 +23,6 @@ export default class CharacterPage extends Page {
     dropdown!: DropdownMenu;
     dropdownHair!: DropdownMenu;
     dropdownClothes!: DropdownMenu;
-    private hairSliderVisible = false;
-    private hairColors = [
-        { r: 0, g: 0, b: 0 },       // Black
-        { r: 139, g: 69, b: 19 },   // Brown
-        { r: 255, g: 225, b: 100 }, // Blonde
-        { r: 200, g: 100, b: 30 },  // Red
-        { r: 150, g: 150, b: 150 }  // Grey
-    ];
-    private hairColorIndex = 0;
     private hairPath = localStorage.getItem("playerHair");
     private clothesPath = localStorage.getItem("playerClothes");
     private hatPath = localStorage.getItem("playerHat");
