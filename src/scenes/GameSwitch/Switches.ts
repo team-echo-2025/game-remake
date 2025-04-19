@@ -44,14 +44,15 @@ export default class Switches extends Scene {
         this.pManager.set_page("SwitchesPage");
 
         this.player = new Player(this);
-        this.player.body.x = 557;
-        this.player.body.y = 386;
+        this.player.body.x = -783;
+        this.player.body.y = -576;
         this.physics.addObject(this.player);
     }
 
     preload(): any {
         this.loadFont("jersey", "assets/fonts/jersey.ttf");
-        this.loadTilemap("tilemap", "assets/tilemaps/PetersTileMap/Switches.tmx");
+        //this.loadTilemap("tilemap", "assets/tilemaps/PetersTileMap/Switches.tmx");
+        this.loadTilemap("tilemap", "assets/tilemaps/PetersTileMap/Dungeon.tmx");
         this.loadImage("switchesOff", "assets/tilemaps/PetersTileMap/switchesOff.png");
         this.loadImage("switchesOn", "assets/tilemaps/PetersTileMap/switchesOn.png");
         this.loadImage("wrong", "assets/tilemaps/PetersTileMap/switchesWrong.png");
@@ -64,9 +65,12 @@ export default class Switches extends Scene {
         this.tilemap = this.add_new.tilemap({ tilemap_key: "tilemap" });
 
         this.positions = [
-            [-302,-257], [-238,-257], [-175,-257], [-111,-257], [-47,-257], [17,-257], [81,-257], [145,-257],
-            [-302,-190], [-238,-190], [-175,-190], [-111,-190], [-47,-190], [17,-190], [81,-190], [145,-190],
-            [-302,-125], [-238,-125], [-175,-125], [-111,-125], [-47,-125], [17,-125], [81,-125], [145,-125]
+            //[-302,-257], [-238,-257], [-175,-257], [-111,-257], [-47,-257], [17,-257], [81,-257], [145,-257],
+            //[-302,-190], [-238,-190], [-175,-190], [-111,-190], [-47,-190], [17,-190], [81,-190], [145,-190],
+            //[-302,-125], [-238,-125], [-175,-125], [-111,-125], [-47,-125], [17,-125], [81,-125], [145,-125]
+            [-1024,-795], [-960,-795], [-896,-795], [-832,-795], [-768,-795], [-704,-795], [-640,-795], [-576,-795],
+            [-1024,-731], [-960,-731], [-896,-731], [-832,-731], [-768,-731], [-704,-731], [-640,-731], [-576,-731],
+            [-1024,-667], [-960,-667], [-896,-667], [-832,-667], [-768,-667], [-704,-667], [-640,-667], [-576,-667]
         ].map(([x, y]) => [x + xOffset, y + yOffset]);
 
         // Randomize puzzle switches
@@ -110,9 +114,9 @@ export default class Switches extends Scene {
             this.start("menu-scene");
         }
 
-        if (e.key.toLowerCase() === "g" && this.player?.body.x && this.player.body.y) {
+        // if (e.key.toLowerCase() === "g" && this.player?.body.x && this.player.body.y) {
 
-        }
+        // }
 
         if (e.key.toLowerCase() === "e" && this.playSwitch) {
             for (let i = 0; i < this.playSwitch.highlight_states.length; i++) {
