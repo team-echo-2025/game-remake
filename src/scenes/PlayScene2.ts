@@ -145,7 +145,6 @@ export default class Dungeon1 extends Scene {
 
     preload(): any {
         this.loadFont("jersey", "assets/fonts/jersey.ttf");
-        this.loadFont("jersey", "assets/fonts/cour.ttf");
         this.loadTilemap("tilemap", "assets/tilemaps/PetersTileMap/Dungeon.tmx")
         this.loadImage("door", "assets/doors/prison_door.png");
         this.loadImage("puzzle", "assets/puzzleImages/access_circuit.png");
