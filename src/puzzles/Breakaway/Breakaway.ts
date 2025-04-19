@@ -50,6 +50,7 @@ export default class Breakaway extends Puzzle {
         super(scene);
         this.asset_key = puzzle_asset_key;
         this.hidden = true;
+        this.hide_page = true;
         this.player = player;
     }
 
@@ -57,19 +58,20 @@ export default class Breakaway extends Puzzle {
     force_solve() {
         this.state = PuzzleState.completed;
         this.hidden = true;
+        this.hide_page = true;
         this.player.disabled = false;
         this.asset.change_asset('breakaway-success');
         this.scene.physics.remove(this.physics_object);
     }
 
-    preload(): any {
+    override preload(): any {
         // Preload sound effects using the scene's loadSound method
         this.scene.loadSound("click", "assets/TInterfaceSounds/click-234708.mp3");
         this.scene.loadSound("rotate", "assets/TInterfaceSounds/mouse-click-290204.mp3");
         this.scene.loadSound("snap", "assets/TInterfaceSounds/snap-264680.mp3");
     }
 
-    setup(): void {
+    override setup(): void {
         //putting into game itself
         this.physics_object = new PhysicsObject({
             width: 100,
@@ -85,10 +87,13 @@ export default class Breakaway extends Puzzle {
                 clearTimeout(this.collider_timeout);
                 if (!this.highlight) {
                     this.highlight = true;
+                    this.hidden = false;
                     this.asset.change_asset("breakaway-highlight");
                 }
                 this.collider_timeout = setTimeout(() => {
                     this.highlight = false;
+                    this.hidden = true;
+                    this.hide_page = true;
                     this.asset.change_asset("breakaway");
                 }, 100);
             }
@@ -98,6 +103,7 @@ export default class Breakaway extends Puzzle {
         this.asset.y = this.y;
         this.asset.width = 32;
         this.asset.height = 48;
+        this.asset.zIndex = 49;
         //puzzle setup
         this.createPuzzle();
         this.scatterPieces();
@@ -175,13 +181,9 @@ export default class Breakaway extends Puzzle {
         }
     }
 
-    draw() {
+    override postDraw(): void {
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return;
-    }
-
-    postDraw(): void {
-        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return;
-        if (this.hidden) return;
+        if (this.hide_page) return;
         this.drawBody();
         this.drawOutlines();
 
@@ -229,8 +231,16 @@ export default class Breakaway extends Puzzle {
 
     drawPiece(piece: any, highlight: boolean): void {
         this.scene.p5.push();
-        this.scene.p5.translate(piece.pos.x, piece.pos.y);
+        const maxx = Math.max(...piece.localVerts.map((v: any) => v.x));
+        const minx = Math.min(...piece.localVerts.map((v: any) => v.x));
+        const maxy = Math.max(...piece.localVerts.map((v: any) => v.y));
+        const miny = Math.min(...piece.localVerts.map((v: any) => v.y));
+        let width = maxx - minx;
+        let height = maxy - miny;
+        this.scene.p5.translate(piece.pos.x + width / 2, piece.pos.y + height / 2);
+        //this.scene.p5.translate(piece.pos.x, piece.pos.y);
         this.scene.p5.rotate(this.scene.p5.radians(piece.rot));
+        this.scene.p5.translate(-width / 2, -height / 2);
 
         if (highlight) {
             this.scene.p5.stroke(255, 0, 0);
@@ -280,16 +290,23 @@ export default class Breakaway extends Puzzle {
     }
 
     getGlobalVerts(piece: any): Vector[] {
-        let verts: Vector[] = [];
-        let angle = this.scene.p5.radians(piece.rot);
+        const angle = this.scene.p5.radians(piece.rot);
 
-        for (let v of piece.localVerts) {
-            let rx = v.x * Math.cos(angle) - v.y * Math.sin(angle);
-            let ry = v.x * Math.sin(angle) + v.y * Math.cos(angle);
-            verts.push(this.scene.p5.createVector(rx + piece.pos.x, ry + piece.pos.y));
-        }
+        // local bounds again
+        const maxx = Math.max(...piece.localVerts.map((v: any) => v.x));
+        const minx = Math.min(...piece.localVerts.map((v: any) => v.x));
+        const maxy = Math.max(...piece.localVerts.map((v: any) => v.y));
+        const miny = Math.min(...piece.localVerts.map((v: any) => v.y));
+        const cx = (maxx - minx) / 2;
+        const cy = (maxy - miny) / 2;
 
-        return verts;
+        return piece.localVerts.map((v: any) => {
+            // shift to centre, rotate, shift back, then translate to world
+            const rx = (v.x - cx) * Math.cos(angle) - (v.y - cy) * Math.sin(angle);
+            const ry = (v.x - cx) * Math.sin(angle) + (v.y - cy) * Math.cos(angle);
+            return this.scene.p5.createVector(rx + piece.pos.x + cx,
+                ry + piece.pos.y + cy);
+        });
     }
 
     pointInPolygon(pt: Vector, polygon: Vector[]): boolean {
@@ -308,8 +325,8 @@ export default class Breakaway extends Puzzle {
         return inside;
     }
 
-    mousePressed(): void {
-        if (this.hidden ||
+    override mousePressed(): void {
+        if (this.hide_page ||
             this.state === PuzzleState.failed ||
             this.state === PuzzleState.completed) {
             return;
@@ -341,13 +358,8 @@ export default class Breakaway extends Puzzle {
         if (this.selectedPieceIndex !== null) {
             let piece = this.puzzlePieces[this.selectedPieceIndex];
 
-            let mousePos = this.scene.p5.createVector(
-                this.scene.p5.mouseX - this.scene.p5.width / 2,
-                this.scene.p5.mouseY - this.scene.p5.height / 2
-            );
-
-            piece.pos.x = mousePos.x - this.dragOffset.x;
-            piece.pos.y = mousePos.y - this.dragOffset.y;
+            piece.pos.x = this.scene.mouseX;
+            piece.pos.y = this.scene.mouseY;
         }
     }
 
@@ -362,18 +374,16 @@ export default class Breakaway extends Puzzle {
     }
 
 
-    mouseReleased(): void {
+    override mouseReleased(): void {
         if (this.selectedPieceIndex !== null) {
             let piece = this.puzzlePieces[this.selectedPieceIndex];
             piece.dragging = false;
             this.selectedPieceIndex = null;
 
             // 1) Check if this dropped piece is in its correct spot
-            if (
-                this.isPieceCorrect(piece) &&
-                this.snap_sfx &&
-                typeof this.snap_sfx.play === "function"
-            ) {
+            if (this.isPieceCorrect(piece)) {
+                piece.pos.x = piece.idealPos.x;
+                piece.pos.y = piece.idealPos.y;
                 this.snap_sfx.play();
             }
 
@@ -387,7 +397,7 @@ export default class Breakaway extends Puzzle {
 
     }
 
-    keyPressed(e: KeyboardEvent): void {
+    override keyPressed(e: KeyboardEvent): void {
         if (this.selectedPieceIndex !== null) {
             let piece = this.puzzlePieces[this.selectedPieceIndex];
 
@@ -410,17 +420,20 @@ export default class Breakaway extends Puzzle {
             }
             piece.rotating = true;
         }
-        // console.log("Reached");
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return;
-        // console.log("STATE", this.state);
-        if (this.hidden && this.highlight && e.key == 'e') {
+        if (this.hide_page && this.highlight && e.key == 'e') {
             this.onOpen && this.onOpen();
             this.player.disabled = true;
-            this.hidden = false;
+            this.hide_page = false;
+        }
+        if (!this.hide_page && e.key == 'Escape') {
+            this.cleanup();
+            this.player.disabled = false;
+            this.hide_page = true;
         }
     }
 
-    checkSolution(): boolean {
+    override checkSolution(): boolean {
         let allCorrect = this.puzzlePieces.every(piece => {
             let d = this.scene.p5.dist(piece.pos.x, piece.pos.y, piece.idealPos.x, piece.idealPos.y);
             let r = this.angleDiff(piece.rot, piece.idealRot);
@@ -428,7 +441,7 @@ export default class Breakaway extends Puzzle {
         });
         if (allCorrect) {
             this.state = PuzzleState.completed;
-            this.hidden = true;
+            this.hide_page = true;
             this.onCompleted && this.onCompleted();
             this.player.disabled = false;
             this.scene.physics.remove(this.physics_object);
@@ -460,7 +473,7 @@ export default class Breakaway extends Puzzle {
         p5.text("Click to continue.", 0, boxHeight / 4);
     }
 
-    setDifficulty(difficulty: string): void {
+    override setDifficulty(difficulty: string): void {
         Puzzle.difficulty = difficulty;
 
         this.cols = Puzzle.difficulty === "easy" ? 3 : Puzzle.difficulty === "normal" ? 4 : 5;

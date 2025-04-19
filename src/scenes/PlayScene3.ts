@@ -2,7 +2,7 @@ import { Graphics } from "p5";
 import PhysicsObject from "../lib/physics/PhysicsObject";
 import RigidBody from "../lib/physics/RigidBody";
 import Player from "../lib/Player";
-import { PuzzleState } from "../lib/Puzzle";
+import Puzzle, { PuzzleState } from "../lib/Puzzle";
 import Scene from "../lib/Scene";
 import Spritesheet from "../lib/Spritesheet";
 import Tilemap from "../lib/tilemap/Tilemap";
@@ -37,7 +37,7 @@ export default class Dungeon2 extends Scene {
     background?: Graphics;
     bodyOfPhysics?: PhysicsObject;
     portal?: Spritesheet;
-    puzzles: (BlockSlide | DrawPuzzle | Breakaway | PathPuzzle | LightsOn)[] = [];
+    puzzles: Puzzle[] = [];
     dialogue!: Dialogue;
     tasks!: Tasks;
 
@@ -68,14 +68,6 @@ export default class Dungeon2 extends Scene {
         this.player.body.x = args?.starting_pos?.x ?? 0;
         this.player.body.y = args?.starting_pos?.y ?? 348;
         this.physics.addObject(this.player);
-
-        this.puzzles.push(
-            new BlockSlide(this, 'blockslide', this.player!),
-            new DrawPuzzle(this, 'drawPuzzle', this.player!),
-            new Breakaway(this, 'breakaway', this.player!),
-            new PathPuzzle(this, 'scales', this.player!)
-            // new LightsOn(this, 'puzzle', this.player!)
-        );
     }
 
     preload(): any {
@@ -116,25 +108,6 @@ export default class Dungeon2 extends Scene {
         this.loadSound("lightSwitch", "assets/TInterfaceSounds/light-switch.mp3");
         this.loadSound("swish", "assets/TInterfaceSounds/swish-sound-94707.mp3");
         this.loadSound("draw", "assets/TInterfaceSounds/draw.mp3");
-    }
-
-    cubicBezier(p0: Vector2D, p1: Vector2D, p2: Vector2D, p3: Vector2D, t: number) {
-        const x = Math.pow(1 - t, 3) * p0.x +
-            3 * Math.pow(1 - t, 2) * t * p1.x +
-            3 * (1 - t) * t * t * p2.x +
-            Math.pow(t, 3) * p3.x;
-        const y = Math.pow(1 - t, 3) * p0.y +
-            3 * Math.pow(1 - t, 2) * t * p1.y +
-            3 * (1 - t) * Math.pow(t, 2) * p2.y +
-            Math.pow(t, 3) * p3.y;
-        return { x, y };
-    }
-
-    cubicBezierValue(p0: number, p1: number, p2: number, p3: number, t: number) {
-        return (1 - t) ** 3 * p0 +
-            3 * (1 - t) ** 2 * t * p1 +
-            3 * (1 - t) * t ** 2 * p2 +
-            t ** 3 * p3;
     }
 
     cubicBezierNew(
@@ -202,26 +175,44 @@ export default class Dungeon2 extends Scene {
     }
 
     setup(): void {
-        this.dark_backdrop = this.p5.createGraphics(this.p5.width, this.p5.height);
-        this.dark_backdrop.background(0, 1, 12);
-        this.dark_backdrop.erase();
-        this.dark_backdrop.translate(this.p5.width / 2, this.p5.height / 2);
-        this.dark_backdrop.noStroke();
-        this.dark_backdrop.fill(0);
-        this.dark_backdrop.circle(0, 0, 50);
-        const ease = this.cubicBezierNew(0, .83, .1, .98);
-        const ease2 = this.cubicBezierNew(.61, .67, .78, .98);
-        for (let i = 0; i < 150; i++) {
-            const amount = ease(i / 150);
-            this.dark_backdrop.fill(0, (50 - ease2((i) / 150) * 50) + 10 - amount * 10 - 5);
-            this.dark_backdrop.circle(0, 0, 50 + i);
-        }
-        this.dark_backdrop.noErase();
+        const puzzle_1 = Puzzle.difficulty == "easy" ? new LightsOn(this, "blockslide", this.player!) : new BlockSlide(this, 'blockslide', this.player!);
+        puzzle_1.x = -435 - 22;
+        puzzle_1.y = 213 - 32;
+        puzzle_1.setup();
+        this.puzzles.push(puzzle_1);
 
+        const draw_puzzle = new DrawPuzzle(this, 'drawPuzzle', this.player!);
+        draw_puzzle.x = -24 - 22;
+        draw_puzzle.y = -310 - 32;
+        draw_puzzle.setup();
+        this.puzzles.push(draw_puzzle);
+
+        const breakaway = new Breakaway(this, 'breakaway', this.player!);
+        breakaway.x = 425 - 32;
+        breakaway.y = -15 - 32;
+        breakaway.setup();
+        this.puzzles.push(breakaway);
+
+        const path_puzzle = new PathPuzzle(this, 'scales', this.player!);
+        path_puzzle.x = 200 - 22;
+        path_puzzle.y = 150 - 32;
+        path_puzzle.setup();
+        this.puzzles.push(path_puzzle);
+
+        this.add(puzzle_1);
+        this.add(draw_puzzle);
+        this.add(breakaway);
+        this.add(path_puzzle);
+        this.puzzle_tasks = this.puzzles.map(() => { return new Task(this) });
+        this.tasks = new Tasks(this, ...this.puzzle_tasks);
+        this.add(this.tasks);
+
+        this.setupBackdrop();
         this.tilemap = this.add_new.tilemap({
             tilemap_key: "tilemap",
         })
         this.bounds = new BoxCollider({ x: this.tilemap.x, y: this.tilemap.y, w: this.tilemap.width, h: this.tilemap.height });
+
         const portal = this.add_new.spritesheet("portal", 4, 3, 1000);
         portal.zIndex = 49;
         portal.end_row = 2;
@@ -251,19 +242,8 @@ export default class Dungeon2 extends Scene {
         this.background = this.p5.createGraphics(this.p5.width, this.p5.height);
         this.portal = portal;
         this.physics.addObject(portal_body);
-        this.puzzles[0].x = -435 - 22; //BlockSlide
-        this.puzzles[0].y = 213 - 32; //BlockSlide
-        this.puzzles[1].x = -24 - 22; // DrawPuzzle 
-        this.puzzles[1].y = -310 - 32; // DrawPuzzle 
-        this.puzzles[2].x = 425 - 32; // Breakaway 
-        this.puzzles[2].y = -15 - 32; // Breakaway 
-        this.puzzles[3].x = 200 - 22; // Path Puzzle
-        this.puzzles[3].y = 150 - 32; // Path Puzzle
         // Setup each puzzle
-        this.puzzles.forEach((puzzle, index: number) => {
-            puzzle.setup();
-            puzzle.hidden = true;
-            puzzle.asset.zIndex = 101;
+        this.puzzles.forEach((puzzle: Puzzle, index: number) => {
             puzzle.onCompleted = () => {
                 this.puzzle_tasks![index].completeTask();
                 this.check_completed();
@@ -336,13 +316,30 @@ export default class Dungeon2 extends Scene {
             sounds: [this.clack_sound, this.rotate_sound, this.click_sound, this.snap_sound, this.lightSwitch_sound, this.swish_sound]
         };
         this.puzzleSfxManager = this.add_new.soundmanager(puzzleSfxProps);
-        // ----------------------- 
-        this.puzzle_tasks = this.puzzles.map(() => { return new Task(this) });
-        this.tasks = new Tasks(this, ...this.puzzle_tasks);
     }
+    setupBackdrop() {
+        this.dark_backdrop = this.p5.createGraphics(this.p5.width, this.p5.height);
+        this.dark_backdrop.background(0, 1, 12);
+        this.dark_backdrop.erase();
+        this.dark_backdrop.translate(this.p5.width / 2, this.p5.height / 2);
+        this.dark_backdrop.noStroke();
+        this.dark_backdrop.fill(0);
+        this.dark_backdrop.circle(0, 0, 50);
+        const ease = this.cubicBezierNew(0, .83, .1, .98);
+        const ease2 = this.cubicBezierNew(.61, .67, .78, .98);
+        for (let i = 0; i < 150; i++) {
+            const amount = ease(i / 150);
+            this.dark_backdrop.fill(0, (50 - ease2((i) / 150) * 50) + 10 - amount * 10 - 5);
+            this.dark_backdrop.circle(0, 0, 50 + i);
+        }
+        this.dark_backdrop.noErase();
+
+    }
+
     isCompleted(): boolean {
         return (this.puzzles.every(puzzle => puzzle.state === PuzzleState.completed))
     }
+
     check_completed = () => {
         if (this.isCompleted()) {
             this.solved = true;
@@ -354,30 +351,16 @@ export default class Dungeon2 extends Scene {
     }
 
     keyPressed = (e: KeyboardEvent) => {
-        this.puzzles.forEach(puzzle => puzzle.keyPressed(e));
         if (e.key === "e" || e.key === 'E') {
             this.dialogue.killAll();
         }
         if (e.key === "Escape") {
-            const containsHidden = this.puzzles.some(puzzle => !puzzle.hidden);
-            if (containsHidden) {
-                this.puzzles.forEach(puzzle => puzzle.hidden = true);
-                //@ts-ignore
-                this.player?.disabled = false;
-            }
-            else if (!this.scene_manager.paused) {
+            if (!this.scene_manager.paused && this.puzzles.every(puzzle => puzzle.hide_page)) {
+                this.player!.disabled = true;
                 this.scene_manager.page_manager?.set_page("pause-page");
             }
         }
     };
-    //make event for puzzle is open, this.dialogue.kill
-    mousePressed(e: MouseEvent): void {
-        this.puzzles.forEach(puzzle => puzzle.mousePressed());
-    }
-
-    mouseReleased(e: MouseEvent): void {
-        this.puzzles.forEach(puzzle => puzzle.mouseReleased && puzzle.mouseReleased(e));
-    }
 
     onStop(): void {
         this.player = undefined;
@@ -390,23 +373,16 @@ export default class Dungeon2 extends Scene {
         }
     }
 
-    postDraw(): void {
-        this.tasks.postDraw();
-        this.puzzles.forEach(puzzle => !puzzle.hidden && puzzle.postDraw());
-        let containsHidden = this.puzzles.some(puzzle => !puzzle.hidden);
-        if (this.player && this.scene_manager.paused) this.player.disabled = true;
-        else if (this.player && !containsHidden) this.player.disabled = false;
-    }
-
     draw(): void {
-        this.puzzles.forEach(puzzle => !puzzle.hidden && puzzle.draw());
         this.p5.push();
         if (!this.solved) {
             this.p5.image(this.dark_backdrop, -this.p5.width / 2 + this.player!.body.x, -this.p5.height / 2 + this.player!.body.y);
         }
-
         this.p5.pop();
         this.dialogue.draw();
+        if (!this.scene_manager.paused && this.puzzles.every(puzzle => puzzle.hide_page) && this.player) {
+            this.player.disabled = false;
+        }
     }
 
     reset(): void {

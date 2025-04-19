@@ -53,7 +53,6 @@ export default class CharacterPageColors extends Page {
         this.scene.remove(this.hairCustomButton);
     }
     setup(): void {
-        console.log("colors setup");
         this.button_sfx = this.scene.add_new.sound("button_sfx")
         const sfx_props: SoundManagerProps = {
             group: "SFX",
@@ -287,5 +286,8 @@ export default class CharacterPageColors extends Page {
     }
     drawBorder() {
 
+    }
+    onDestroy(): void {
+        this.cleanup();
     }
 }

@@ -6,9 +6,9 @@ import Player from "../../lib/Player";
 
 import Scene from "../../lib/Scene";
 import Spritesheet from "../../lib/Spritesheet";
-export default class MagicCircle implements GameObject{
+export default class MagicCircle implements GameObject {
     x: number = 0;
-    y: number =0 ;
+    y: number = 0;
     scene: Scene;
     player: Player;
     collider!: PhysicsObject;
@@ -18,7 +18,7 @@ export default class MagicCircle implements GameObject{
     asset_key: string;
     hidden: boolean = true;;
 
-    
+
 
     constructor(scene: Scene, xPos: number, yPos: number, asset_key: string, player: Player) {
         this.scene = scene;
@@ -31,12 +31,12 @@ export default class MagicCircle implements GameObject{
 
     setup(): void {
         this.collider = new PhysicsObject({
-                    width: 100,
-                    height: 100,
-                    mass: Infinity
-                });
+            width: 100,
+            height: 100,
+            mass: Infinity
+        });
 
-        this.asset= this.scene.add_new.spritesheet(this.asset_key, 4, 2, 1000);
+        this.asset = this.scene.add_new.spritesheet(this.asset_key, 4, 2, 1000);
         this.asset.x = this.x;
         this.asset.y = this.y;
         // this.asset.width = 64;
@@ -67,13 +67,13 @@ export default class MagicCircle implements GameObject{
     }
 
     draw(): void {
-        
+
     }
 
     keyPressed(e: KeyboardEvent): void {
     }
-    activateCircle(): void{
-        this.asset!.zIndex=101;
+    activateCircle(): void {
+        this.asset!.zIndex = 101;
         this.collider.onCollide = (other: RigidBody) => {
             if (other == this.player.body) {
                 clearTimeout(this.collider_timeout);

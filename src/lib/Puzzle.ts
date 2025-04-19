@@ -1,6 +1,7 @@
 import GameObject from "./GameObject";
 import Page from "./Page";
 import Scene from "./Scene";
+import ButtonTest from "../lib/ui/ButtonTest"
 
 export enum PuzzleState {
     completed,
@@ -10,14 +11,20 @@ export enum PuzzleState {
 }
 
 export default class Puzzle implements GameObject {
-    protected _zIndex?: number | undefined = 300;
+    protected _zIndex?: number | undefined = 200;
     hidden?: boolean = false;
     scene!: Scene;
     puzzle!: Page;
     state!: PuzzleState;
+    hintButton!: ButtonTest;
+    isDisplayingHint = false;
     onCompleted?: () => void;
     onOpen?: () => void;
-    static difficulty: string;
+    x: number = 0;
+    y: number = 0;
+    asset?: any;
+    hide_page: boolean = true;
+    static difficulty: string = 'easy';
 
     constructor(scene: Scene) {
         this.state = PuzzleState.notStarted;
@@ -34,13 +41,35 @@ export default class Puzzle implements GameObject {
     }
 
 
-    async preload(): Promise<void> { }
+    preload(): any { }
 
     setup(): void { }
 
     draw(): void { }
 
     postDraw(): void { }
+
+    drawHint(): void { }
+
+    setupHint(): void {
+        this.hintButton = this.scene.add_new.img_button({
+            label: "How to Play",
+            font_key: 'jersey',
+            callback: () => {
+                this.isDisplayingHint = !this.isDisplayingHint;
+            },
+            imageKey: "test"
+        })
+        const p = this.scene.p5;
+        this.hintButton.x = p.width / 2 - 100;
+        this.hintButton.y = p.height / 2 - 50;
+    }
+
+    cleanup(): void {
+        this.scene.remove(this.hintButton);
+        this.hide_page = true;
+        this.isDisplayingHint = false;
+    }
 
     mouseClicked(_: MouseEvent): void { }
 
