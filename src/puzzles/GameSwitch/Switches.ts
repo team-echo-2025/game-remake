@@ -2,22 +2,9 @@ import PhysicsObject from "../../lib/physics/PhysicsObject";
 import Player from "../../lib/Player";
 import Tilemap from "../../lib/tilemap/Tilemap";
 import Scene from "../../lib/Scene";
-import PageManager from "../../lib/PageManager";
-import RigidBody from "../../lib/physics/RigidBody";
-import { Vector2D } from "../../lib/types/Physics";
 import Puzzle, { PuzzleState } from "../../lib/Puzzle";
 import Dialogue from "../../lib/ui/Dialogue";
-import Sprite from "../../lib/Sprite";
 import interactiveSwitch from "./interactiveSwitches";
-import Key from "../../puzzles/CrossyRoad/Key";
-
-type SceneState = {
-    access_puzzle: PuzzleState;
-};
-
-type StartArgs = Readonly<{
-    starting_pos: Vector2D;
-}>;
 
 export default class Switches extends Puzzle {
     player?: Player;
