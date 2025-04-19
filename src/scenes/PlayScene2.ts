@@ -229,7 +229,7 @@ export default class Dungeon1 extends Scene {
         this.dialogue.addDialogue(-945, 694, "There might be something in the city eastward", 500, 45);
         this.dialogue.addDialogue(-859, 11, "Keep going and you'll find the graveyard", 100, 100);
         this.dialogue.addDialogue(-318, 710, "Cross the sewers on the ice to get the key. Don't fall in!", 100, 100);
-        this.dialogue.addDialogue(-73, 449, "Need more time? Play on the computer. Beware you could lose time too", 100, 100);
+        this.dialogue.addDialogue(-73, 449, "Need more time? Play on the computer. Beware! You could lose time too", 100, 100);
 
         this.dialogue.setup();
         // Initialize the background music using Sound and SoundManager

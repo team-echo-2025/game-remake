@@ -71,12 +71,7 @@ export default class Dungeon2 extends Scene {
     }
 
     preload(): any {
-        // this.loadImage("puzzle", "assets/puzzleImages/access_circuit.png");
-        // this.loadImage("broken-puzzle", "assets/puzzleImages/access_circuit_broken.png");
-        // this.loadImage("success-puzzle", "assets/puzzleImages/access_circuit_success.png");
-        // this.loadImage("highlighted-puzzle", "assets/puzzleImages/access_circuit_highlighted.png");
         this.loadImage("drawPuzzle", "assets/puzzleImages/drawPuzzleBase.png");
-        this.loadFont("jersey", "assets/fonts/cour.ttf");
         this.loadImage("breakaway", "assets/puzzleImages/breakawayBase.png");
         this.loadImage("blockslide", "assets/puzzleImages/blockSlideBase.png");
         this.loadImage("scales", "assets/puzzleImages/scalesBase.png");
@@ -91,10 +86,6 @@ export default class Dungeon2 extends Scene {
         this.loadFont("jersey", "assets/fonts/jersey.ttf");
         this.loadTilemap("tilemap", "assets/tilemaps/PetersTileMap/Dungeon Floor 1.tmx");
         this.loadImage("portal", "assets/tilemaps/LaythsTileMap/portal-sheet.png");
-        // this.loadSound("button_sfx", "assets/TInterfaceSounds/light-switch.mp3");
-        // this.loadSound("circuit_correct_sfx", "assets/TInterfaceSounds/greanpatchT.mp3");
-        // this.loadSound("circuit_incorrect_sfx", "assets/TInterfaceSounds/all-processorsT.mp3");
-        // this.loadSound("circuit_xposition_sfx", "assets/TInterfaceSounds/iciclesT.mp3");
 
         // Initialize background music in preload
         // Note: The background music file should be located at "assets/backgorund7.mp3"
@@ -176,6 +167,9 @@ export default class Dungeon2 extends Scene {
 
     setup(): void {
         const puzzle_1 = Puzzle.difficulty == "easy" ? new LightsOn(this, "blockslide", this.player!) : new BlockSlide(this, 'blockslide', this.player!);
+        if (puzzle_1 instanceof LightsOn) {
+            this.lights_on = puzzle_1;
+        }
         puzzle_1.x = -435 - 22;
         puzzle_1.y = 213 - 32;
         puzzle_1.setup();
@@ -299,8 +293,6 @@ export default class Dungeon2 extends Scene {
         this.backgroundMusicManager.play();
         // -----------------------
 
-
-
         // -----------------------
         // Sound-related changes for puzzle sounds:
         // Initialize puzzle sound assets and wrap them in a SoundManager with group "SFX"
@@ -375,7 +367,7 @@ export default class Dungeon2 extends Scene {
 
     draw(): void {
         this.p5.push();
-        if (!this.solved) {
+        if(this.lights_on?.state !== PuzzleState.completed && !this.solved){   
             this.p5.image(this.dark_backdrop, -this.p5.width / 2 + this.player!.body.x, -this.p5.height / 2 + this.player!.body.y);
         }
         this.p5.pop();
