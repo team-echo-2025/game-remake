@@ -225,17 +225,12 @@ export default class Dungeon1 extends Scene {
         this.computer.disable = this.completed_BTF;
 
         this.dialogue = new Dialogue(this, this.player!);
-        // this.dialogue.addDialogue(-967, 836, "Find the keys to escape to the maze", 100, 100);
-        this.dialogue.addDialogue(-1136, 863, "Find the keys to escape to the maze", 100, 100);
+        this.dialogue.addDialogue(-967, 836, "Find the keys to escape to the maze", 100, 100);
         this.dialogue.addDialogue(-945, 694, "There might be something in the city eastward", 500, 45);
-        this.dialogue.addDialogue(-956, 410, "Keep going and you'lll find a graveyard", 45, 500);
-        this.dialogue.addDialogue(-1572, 557, "Fahoo forays, dahoo dorays", 100, 100);
-        this.dialogue.addDialogue(-1572, 307, "Welcome Christmas! Come this way", 100, 100);
-        this.dialogue.addDialogue(-1441, 0, "Fahoo forays, dahoo dorays", 110, 110);
-        this.dialogue.addDialogue(-1476, -281, "Welcome Christmas, Christmas Day", 100, 100);
-        this.dialogue.addDialogue(-1526, -586, "Finally, you're here", 500, 45);
-        this.dialogue.addDialogue(-943, -152, "Seriously, can you move any faster?", 100, 100);
-        this.dialogue.addDialogue(-234, -507, "Good you're here. I hope you get lost in the maze", 100, 100);
+        this.dialogue.addDialogue(-859, 11, "Keep going and you'll find the graveyard", 100, 100);
+        this.dialogue.addDialogue(-318, 710, "Cross the sewers on the ice to get the key. Don't fall in!", 100, 100);
+        this.dialogue.addDialogue(-73, 449, "Need more time? Play on the computer. Beware you could lose time too", 100, 100);
+
         this.dialogue.setup();
         // Initialize the background music using Sound and SoundManager
         this.background_music = this.add_new.sound("background5");
@@ -308,6 +303,7 @@ export default class Dungeon1 extends Scene {
 
     draw(): void {
         this.checkSolved();
+        this.dialogue?.draw();
     }
     reset() {
         this.solved = false;
