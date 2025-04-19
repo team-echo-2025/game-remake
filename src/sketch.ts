@@ -18,7 +18,7 @@ import BoatToFloat from './scenes/BoatToFloat/BoatToFloat';
 let scene_manager: SceneManager;
 const sketch = (p: p5) => {
     p.preload = () => {
-        scene_manager = new SceneManager(p, [MenuScene, PlayScene, KDDevScene, PhysicsTestScene, Dungeon1, Dungeon2, iceMaze, BoatToFloat, PhysicsTestScene2, PlayScene4, LoserScene, NonLoser, Switches], LoadingScene,);
+        scene_manager = new SceneManager(p, [MenuScene, PlayScene, KDDevScene, PhysicsTestScene, Dungeon1, Dungeon2, iceMaze, BoatToFloat, PhysicsTestScene2, PlayScene4, LoserScene, NonLoser], LoadingScene,);
         scene_manager.preload();
     };
 

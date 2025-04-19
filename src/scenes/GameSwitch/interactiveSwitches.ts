@@ -65,7 +65,7 @@ export default class interactiveSwitch extends Puzzle {
             this.physics_objects.push(physics_object);
 
             const asset = this.scene.add_new.sprite(this.asset_key);
-            asset.zIndex = 100;
+            asset.zIndex = 49;
             asset.x = x;
             asset.y = y;
             asset.width = 24;

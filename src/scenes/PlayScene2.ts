@@ -74,7 +74,7 @@ export default class Dungeon1 extends Scene {
                 this.player!.disabled = false;
             }
         }
-        this.switches = new Switches();
+        this.switches = new Switches(this, this.player);
         
 
         this.key2 = new Key(this);
@@ -160,12 +160,16 @@ export default class Dungeon1 extends Scene {
         // Load the background music file
         this.loadSound("background5", "assets/background5.mp3");
         this.crossyRoad?.preload();
+        this.switches?.preload();
     }
 
     setup(): void {
         this.crossyRoad?.setup();
         if (this.crossyRoad)
             this.add(this.crossyRoad);
+        this.switches?.setup();
+        if(this.switches)
+            this.add(this.switches);
         // this.physics.debug = true;
         this.tilemap = this.add_new.tilemap({
             tilemap_key: "tilemap",
@@ -280,6 +284,7 @@ export default class Dungeon1 extends Scene {
         this.dialogue = undefined;
         this.backgroundMusicManager = undefined;
         this.computer = undefined;
+        this.switches = undefined;
         this.crossyRoad = undefined;
         this.key2 = undefined;
         this.key3 = undefined;
