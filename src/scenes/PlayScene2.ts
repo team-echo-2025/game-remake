@@ -13,7 +13,7 @@ import CrossyRoad from "../puzzles/CrossyRoad/CrossyRoad";
 import Key from "../puzzles/CrossyRoad/Key";
 import Lock from "../puzzles/CrossyRoad/Lock";
 import Tasks, { Task } from "../lib/Tasks";
-import Switches from "../scenes/GameSwitch/Switches";
+import Switches from "../puzzles/GameSwitch/Switches";
 
 type StartArgs = Readonly<{
     starting_pos: Vector2D;
