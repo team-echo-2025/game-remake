@@ -8,14 +8,15 @@ import Scene from "../lib/Scene";
 import Tilemap from "../lib/tilemap/Tilemap";
 import { Vector2D } from "../lib/types/Physics";
 import Dialogue from "../lib/ui/Dialogue";
-import interactiveComputer from "./DriveToSurvive/lib/interactiveComputer";
+import InteractiveComputer from "./BoatToFloat/lib/interactiveComputer";
 import CrossyRoad from "../puzzles/CrossyRoad/CrossyRoad";
 import Key from "../puzzles/CrossyRoad/Key";
 import Lock from "../puzzles/CrossyRoad/Lock";
 import Tasks, { Task } from "../lib/Tasks";
 
 type StartArgs = Readonly<{
-    starting_pos: Vector2D,
+    starting_pos: Vector2D;
+    completed_BTF: boolean;
 }>
 
 export default class Dungeon1 extends Scene {
@@ -24,7 +25,7 @@ export default class Dungeon1 extends Scene {
     dialogue?: Dialogue;
     background_music?: Sound;
     backgroundMusicManager?: SoundManager;
-    computer?: interactiveComputer;
+    computer?: InteractiveComputer;
     crossyRoad?: CrossyRoad;
     key2?: Key;
     key3?: Key;
@@ -37,20 +38,27 @@ export default class Dungeon1 extends Scene {
     tasks?: Tasks;
 
     task1?: Task;
+    task2?: Task;
+    task3?: Task;
 
     constructor() {
         super("playscene-2");
         this.physics.debug = false;
     }
 
+    completed_BTF: boolean = false;
+
     onStart(args?: StartArgs): void {
-        this.task1 = new Task(this);
+        this.task1 = new Task(this, "Cross the sewers.");
+        this.task2 = new Task(this, "Fill the hole.");
+        this.task3 = new Task(this, "Find the last key.");
         this.camera.zoom = 3;
+        this.completed_BTF = args?.completed_BTF ?? this.completed_BTF;
         this.player = new Player(this);
         this.player.body.x = args?.starting_pos?.x ?? -1132;
         this.player.body.y = args?.starting_pos?.y ?? 880;
         this.physics.addObject(this.player);
-        this.computer = new interactiveComputer(this, 'computer', this.player!)
+        this.computer = new InteractiveComputer(this, 'computer', this.player!)
         this.crossyRoad = new CrossyRoad(this, this.player);
         this.crossyRoad.onCompleted = () => {
             this.camera.follow();
@@ -59,6 +67,7 @@ export default class Dungeon1 extends Scene {
             this.player!.disabled = true;
             this.lock3?.unlock();
             this.lock3!.onComplete = () => {
+                this.task1?.completeTask("Cross the sewers.");
                 this.camera.follow(this.player!.body);
                 this.player!.disabled = false;
             }
@@ -78,6 +87,7 @@ export default class Dungeon1 extends Scene {
                 this.player?.collectKey(this.key2!);
                 this.lock2?.unlock();
                 this.lock2!.onComplete = () => {
+                    this.task2?.completeTask("Fill the hole");
                     this.camera.follow(this.player!.body);
                     this.player!.disabled = false;
                 }
@@ -97,6 +107,7 @@ export default class Dungeon1 extends Scene {
                 this.player?.collectKey(this.key3!);
                 this.lock1?.unlock();
                 this.lock1!.onComplete = () => {
+                    this.task3?.completeTask("Find the last key.");
                     this.camera.follow(this.player!.body);
                     this.player!.disabled = false;
                 }
@@ -123,8 +134,13 @@ export default class Dungeon1 extends Scene {
         this.lock3.y = lock_y;
         this.lock3.zIndex = lock_z;
 
-        this.tasks = new Tasks(this, this.task1);
-        this.add(this.tasks);
+        if (!this.solved) {
+            this.tasks = new Tasks(this, this.task1, this.task2, this.task3);
+            this.add(this.tasks);
+        } else {
+            this.tasks = new Tasks(this);
+            this.add(this.tasks);
+        }
     }
 
     preload(): any {
@@ -177,7 +193,7 @@ export default class Dungeon1 extends Scene {
         switches_portal.body.y = -586;
         switches_portal.overlaps = true;
         switches_portal.onCollide = (other: RigidBody) => {
-            if (other == this.player?.body){
+            if (other == this.player?.body) {
                 this.start("Switches");
             }
         };
@@ -205,7 +221,8 @@ export default class Dungeon1 extends Scene {
         this.computer.x = -36;
         this.computer.y = 300;
         this.computer.setup();
-        this.computer.asset.zIndex = 101;
+        this.computer.asset.zIndex = 49;
+        this.computer.disable = this.completed_BTF;
 
         this.dialogue = new Dialogue(this, this.player!);
         this.dialogue.addDialogue(-1572, 870, "I heard there's a graveyard far north", 100, 100);
@@ -253,7 +270,7 @@ export default class Dungeon1 extends Scene {
             }
         }
         if (e.key === "e" && this.computer?.highlight == true) {
-            this.start("drive-to-survive")
+            this.start("boat-to-float")
         }
     };
     checkSolved = () => {
@@ -294,5 +311,6 @@ export default class Dungeon1 extends Scene {
     }
     reset() {
         this.solved = false;
+        this.completed_BTF = false;
     }
 }
