@@ -37,7 +37,7 @@ export default class Key extends PhysicsObject {
         this.key_spritesheet = this.scene.add_new.spritesheet("key", 12, 1, 600);
         this.key_spritesheet.display_width = 10;
         this.key_spritesheet.display_height = 20;
-        this.key_spritesheet.zIndex = 60;
+        this.key_spritesheet.zIndex = 49;
         this.key_spritesheet.play();
         this.key_spritesheet.end_col = 11;
     }

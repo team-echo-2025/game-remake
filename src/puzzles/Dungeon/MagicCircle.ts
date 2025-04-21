@@ -16,8 +16,6 @@ export default class MagicCircle implements GameObject {
     in_range: boolean;
     asset?: Spritesheet;
     asset_key: string;
-    hidden: boolean = true;;
-
 
 
     constructor(scene: Scene, xPos: number, yPos: number, asset_key: string, player: Player) {
@@ -39,6 +37,7 @@ export default class MagicCircle implements GameObject {
         this.asset = this.scene.add_new.spritesheet(this.asset_key, 4, 2, 1000);
         this.asset.x = this.x;
         this.asset.y = this.y;
+        this.asset.hidden = true;
         // this.asset.width = 64;
         // this.asset.height = 64;
 
@@ -64,6 +63,7 @@ export default class MagicCircle implements GameObject {
                 }, 100);
             }
         }
+        this.asset!.zIndex = 101;
     }
 
     draw(): void {
@@ -73,19 +73,22 @@ export default class MagicCircle implements GameObject {
     keyPressed(e: KeyboardEvent): void {
     }
     activateCircle(): void {
-        this.asset!.zIndex = 101;
-        this.collider.onCollide = (other: RigidBody) => {
-            if (other == this.player.body) {
-                clearTimeout(this.collider_timeout);
-                if (!this.in_range) {
-                    this.in_range = true;
-                    console.log("in range of active circle");
-                }
-                this.collider_timeout = setTimeout(() => {
-                    console.log("outa range of active circle");
-                    this.in_range = false;
-                }, 100);
-            }
-        }
+        this.asset!.hidden = false;
+        //this.collider.onCollide = (other: RigidBody) => {
+        //    if (other == this.player.body) {
+        //        clearTimeout(this.collider_timeout);
+        //        if (!this.in_range) {
+        //            this.in_range = true;
+        //            console.log("in range of active circle");
+        //        }
+        //        this.collider_timeout = setTimeout(() => {
+        //            console.log("outa range of active circle");
+        //            this.in_range = false;
+        //        }, 100);
+        //    }
+        //}
+    }
+    onDestroy(): void {
+        console.log("Hreitnasoier");
     }
 }

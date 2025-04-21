@@ -175,6 +175,9 @@ export default class Ghost extends PhysicsObject {
     }
 
     public die(): void {
+        this.onCollide = undefined;
+        clearInterval(this.flashInterval);
+        this.speed = 0;
         this.isDying = true
         this.moving = false
         this.isAttacking = false;
@@ -381,5 +384,7 @@ export default class Ghost extends PhysicsObject {
         this.drawFlashOverlay();
 
         this.scene.p5.pop()
+    }
+    onDestroy(): void {
     }
 }

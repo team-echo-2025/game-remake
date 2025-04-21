@@ -35,12 +35,10 @@ export default class PlayScene4 extends Scene {
 
     constructor() {
         super("playscene-4");
-        this.physics.debug = false;
         this.camera.zoom = 3;
     }
 
     onStart(): void {
-        this.physics.debug = true;
         this.player = new Player(this);
         this.physics.addObject(this.player);
         this.player.body.x = -300
@@ -95,17 +93,32 @@ export default class PlayScene4 extends Scene {
             if (!this.scene_manager.paused) {
                 this.scene_manager.page_manager?.set_page("pause-page");
             }
+        } else if (e.key === "f") {
+            this.firstLever!.flipped = true;
+            this.secondLever!.flipped = true;
+            this.thirdLever!.flipped = true;
+            this.fourthLever!.flipped = true;
         }
     };
 
-    onStop(): void { 
+    onStop(): void {
+        this.player = undefined;
+        this.tilemap = undefined;
+        this.firstLever = undefined;
+        this.secondLever = undefined
+        this.thirdLever = undefined;
+        this.fourthLever = undefined;
+        this.magicCircle = undefined;
+        this.ghost = undefined;
+        this.ghostAlive = true;
+        this.leversFlipped = false;
     }
 
     postDraw(): void {
         if (this.player && this.scene_manager.paused) this.player.disabled = true;
         else if (this.player && !this.scene_manager.paused) {
             this.player.disabled = false;
-        } 
+        }
     }
 
     draw(): void {

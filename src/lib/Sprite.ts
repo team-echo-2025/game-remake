@@ -13,6 +13,7 @@ export default class Sprite implements GameObject {
     protected asset!: Image;
     protected _width?: number;
     protected _height?: number;
+    hidden?: boolean | undefined;
 
     set zIndex(n: number) {
         this._zIndex = n;
