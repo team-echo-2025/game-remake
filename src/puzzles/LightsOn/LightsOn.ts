@@ -109,12 +109,17 @@ export default class LightsOn extends Puzzle {
     }
 
     override postDraw(): void {
+        
+        
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
         if (this.hide_page) return;
         this.draw_body();
         this.draw_board();
         this.draw_footer();
         this.draw_header();
+        if (this.isDisplayingHint) {
+            this.drawHint();
+          }
     }
 
     draw_body(): void {
@@ -215,6 +220,7 @@ export default class LightsOn extends Puzzle {
             this.onOpen && this.onOpen();
             this.player.disabled = true;
             this.hide_page = false;
+            this.setupHint();
         }
         if (!this.hide_page && e.key == 'Escape') {
             this.cleanup();
@@ -226,18 +232,19 @@ export default class LightsOn extends Puzzle {
     checkWin(): boolean {
         //Future Implementation???????
 
-        // if (this.grid.every(row => row.every(tile => tile))) {
-        //     this.state = PuzzleState.completed;
-        //     this.hidden = true;
-        //     this.onCompleted && this.onCompleted();
-        //     this.player.disabled = false;
-        //     this.scene.physics.remove(this.physics_object);
-        //     clearTimeout(this.collider_timeout);
-        //     this.asset.change_asset('success-puzzle');
-        //     return true;
-        // }
-        // return false;
-        return this.grid.every(row => row.every(tile => tile));
+         if (this.grid.every(row => row.every(tile => tile))) {
+             this.state = PuzzleState.completed;
+             this.hidden = true;
+             this.onCompleted && this.onCompleted();
+             this.player.disabled = false;
+             this.scene.physics.remove(this.physics_object);
+             clearTimeout(this.collider_timeout);
+             this.asset.change_asset('success-puzzle');
+             this.cleanup();
+             return true;
+         }
+         return false;
+        
     }
 
 
@@ -260,5 +267,46 @@ export default class LightsOn extends Puzzle {
         p5.text("You Win!", 0, -boxHeight / 8);
         p5.textSize(16);
         p5.text("Click to continue.", 0, boxHeight / 4);
+    }
+    override drawHint(): void {
+        const p = this.scene.p5;
+        // your original box sizing & position
+        const rectWidth  = p.windowHeight/2;
+        const rectHeight = p.windowHeight/2 + 60;
+        const rectX      = -p.windowWidth/3;
+        const rectY      = -50;
+    
+        p.push();
+          // Background
+          p.fill(255, 255, 255, 180);
+          p.rect(rectX, rectY, rectWidth, rectHeight);
+    
+          // Title
+          p.fill(0);
+          p.textAlign(p.CENTER, p.CENTER);
+          p.textSize(32);
+          p.text(
+            'How To Play',
+            -p.windowWidth/3,
+            -p.windowHeight/4 - 25
+          );
+    
+          
+          p.textSize(20);
+          p.textLeading(24);       
+          p.textWrap(p.WORD);      
+    
+          const instr =
+            'Click on a tile to rotate it.\n\n There may be multiple paths connecting the green and red tiles.\n\n ' +
+            'When a wrong path is found it will highlight in red. When the correct path is found, it will highlight in green';
+    
+         
+          p.text(
+            instr,
+            -p.windowWidth/3,
+            -p.windowHeight/20 + 15,
+            rectWidth
+          );
+        p.pop();
     }
 }

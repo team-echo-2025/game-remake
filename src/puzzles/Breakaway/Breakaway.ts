@@ -30,6 +30,9 @@ export default class Breakaway extends Puzzle {
     boardX = 0;
     boardY = -100;
 
+    private winDelayStart: number | null = null;
+    private readonly winDelayDuration = 1000;
+
     //Game references
     physics_object!: PhysicsObject;
     highlight: boolean = false;
@@ -112,6 +115,8 @@ export default class Breakaway extends Puzzle {
         this.click_sfx = this.scene.add_new.sound("click");
         this.rotate_sfx = this.scene.add_new.sound("rotate");
         this.snap_sfx = this.scene.add_new.sound("snap");
+
+        
     }
 
     createPuzzle(): void {
@@ -216,6 +221,9 @@ export default class Breakaway extends Puzzle {
         this.scene.p5.text("Rotation:\nPress R (or R) to rotate clockwise\nPress D (or d) to rotate counterclockwise", 0, -175);
 
         if (this.checkSolution()) this.state = PuzzleState.completed;
+        if (this.isDisplayingHint) {
+            this.drawHint();
+          }
     }
 
     drawBody(): void {
@@ -425,6 +433,7 @@ export default class Breakaway extends Puzzle {
             this.onOpen && this.onOpen();
             this.player.disabled = true;
             this.hide_page = false;
+            this.setupHint();
         }
         if (!this.hide_page && e.key == 'Escape') {
             this.cleanup();
@@ -441,6 +450,7 @@ export default class Breakaway extends Puzzle {
         });
         if (allCorrect) {
             this.state = PuzzleState.completed;
+            this.cleanup();
             this.hide_page = true;
             this.onCompleted && this.onCompleted();
             this.player.disabled = false;
@@ -486,4 +496,62 @@ export default class Breakaway extends Puzzle {
 
         this.setup();
     }
+    override drawHint(): void {
+        // grab p5 & raw GL context
+        const p  = this.scene.p5 as any;
+        const gl = p._renderer.GL as WebGLRenderingContext;
+      
+        // disable depth‑testing so our hint always draws on top
+        gl.disable(gl.DEPTH_TEST);
+      
+        // card geometry 
+        const rectWidth  = p.windowHeight / 2;
+        const rectHeight = p.windowHeight / 2 + 60;
+        const rectX      = -p.windowWidth  / 3;
+        const rectY      = -50;
+      
+        p.push();
+          // 1) fully opaque white background (hides everything)
+          p.noStroke();
+          p.fill(255, 255, 255, 180);  
+          p.rect(rectX, rectY, rectWidth, rectHeight, 8);
+      
+          // 2) thin black border
+          p.stroke(0);
+          p.strokeWeight(2);
+          p.noFill();
+          p.rect(rectX, rectY, rectWidth, rectHeight, 8);
+      
+          // 3) title
+          p.noStroke();
+          p.fill(0);
+          this.scene.p5.textAlign(this.scene.p5.CENTER, this.scene.p5.CENTER);
+          p.textSize(32);
+          this.scene.p5.text('How To Play', -this.scene.p5.windowWidth/3, -this.scene.p5.windowHeight/4 - 25);
+      
+          // 4) body text (wrapped)
+          p.textSize(20);
+          p.textLeading(24);
+          p.textWrap(p.WORD);
+          p.textAlign(p.LEFT, p.TOP);
+          const instr =
+      `Click on one of the puzzle pieces to begin dragging it toward the puzzle.
+      
+      Use the "r" and "d" keys to rotate the piece. Place the piece in its correct spot.
+      
+      When the piece is in the correct position, the outside edge of the piece will highlight green.`;
+          p.text(
+            instr,
+            rectX + 16,
+            rectY + 56,
+            rectWidth - 32,
+            rectHeight - 80
+          );
+        p.pop();
+      
+        // re‑enable depth‑testing so your puzzle still renders correctly afterward
+        gl.enable(gl.DEPTH_TEST);
+      }
+      
+
 }
