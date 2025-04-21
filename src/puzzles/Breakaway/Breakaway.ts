@@ -30,6 +30,9 @@ export default class Breakaway extends Puzzle {
     boardX = 0;
     boardY = -100;
 
+    private winDelayStart: number | null = null;
+    private readonly winDelayDuration = 1000;
+
     //Game references
     physics_object!: PhysicsObject;
     highlight: boolean = false;

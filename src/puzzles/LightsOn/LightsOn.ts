@@ -12,13 +12,8 @@ export default class LightsOn extends Puzzle {
     gridSize: number = 5; // 5x5 grid by default
     tileSize: number = 0;
     boardSize: number = 300;
-    lastClicked: Position | null = null;
-
-    // Win animation timing
-    private winAnimationStart: number | null = null;
-    private readonly winAnimationDuration = 2000; // milliseconds
-
-    // Game references
+    lastClicked: Position | null = null; // Track last clicked tile
+    //Game references
     physics_object!: PhysicsObject;
     highlight: boolean = false;
     asset_key: string;
@@ -27,7 +22,6 @@ export default class LightsOn extends Puzzle {
     private collider_timeout: any;
     x: number = 0;
     y: number = 0;
-
     constructor(scene: Scene, puzzle_asset_key: string, player: Player) {
         super(scene);
         this.asset_key = puzzle_asset_key;
@@ -35,9 +29,9 @@ export default class LightsOn extends Puzzle {
         this.hide_page = true;
         this.player = player;
     }
+
     force_solve() {
         this.state = PuzzleState.completed;
-        this.cleanup();
         this.hidden = true;
         this.hide_page = true;
         this.player.disabled = false;
@@ -46,216 +40,233 @@ export default class LightsOn extends Puzzle {
         this.scene.physics.remove(this.physics_object);
     }
 
+    async preload(): Promise<void> { }
 
     override setup(): void {
-        // Reset state and animation
-        this.state = PuzzleState.notStarted;
-        this.winAnimationStart = null;
-
-        // Physics collider setup
-        this.physics_object = new PhysicsObject({ width: 100, height: 100, mass: Infinity });
+        //putting into game itself
+        this.physics_object = new PhysicsObject({
+            width: 100,
+            height: 100,
+            mass: Infinity
+        });
         this.physics_object.overlaps = true;
         this.physics_object.body.x = this.x;
         this.physics_object.body.y = this.y;
         this.scene.physics.addObject(this.physics_object);
         this.physics_object.onCollide = (other: RigidBody) => {
-            if (other === this.player.body) {
+            if (other == this.player.body) {
                 clearTimeout(this.collider_timeout);
                 if (!this.highlight) {
                     this.hidden = false;
-                    this.highlight = true;
-                    this.asset.change_asset(this.asset_key + "-highlight");
+                    this.highlight = true
+                    this.asset.change_asset("blockslide-highlight");
                 }
                 this.collider_timeout = setTimeout(() => {
                     this.highlight = false;
-                    this.hide_page = true;
+                    this.hidden = true;
                     this.asset.change_asset(this.asset_key);
                 }, 100);
             }
-        };
-
-        // Asset sprite
+        }
         this.asset = this.scene.add_new.sprite(this.asset_key);
         this.asset.x = this.x;
         this.asset.y = this.y;
         this.asset.width = 32;
         this.asset.height = 48;
         this.asset.zIndex = 49;
-
-        // Initialize grid
+        //Puzzle Setup
+        this.state = PuzzleState.notStarted;  // Reset puzzle state to allow a new game
         this.setGridSize();
         this.generateSolvableGrid();
         this.tileSize = this.boardSize / this.gridSize;
 
-        // Canvas
         this.scene.p5.createCanvas(this.scene.p5.windowWidth, this.scene.p5.windowHeight);
         this.scene.p5.rectMode(this.scene.p5.CENTER);
     }
 
+
     override setDifficulty(difficulty: string): void {
-        Puzzle.difficulty = difficulty;
-        this.setup();
+        Puzzle.difficulty = difficulty;  // Update the global difficulty
+        this.setup();  // Restart puzzle with new difficulty
     }
+
 
     setGridSize(): void {
         switch (Puzzle.difficulty) {
-            case "easy":   this.gridSize = 5; break;
-            case "normal": this.gridSize = 7; break;
-            case "hard":   this.gridSize = 9; break;
-            default:        this.gridSize = 5;
+            case "easy":
+                this.gridSize = 5;
+                break;
+            case "normal":
+                this.gridSize = 7;
+                break;
+            case "hard":
+                this.gridSize = 9;
+                break;
+            default:
+                this.gridSize = 5;
         }
     }
 
     override postDraw(): void {
-        const p = this.scene.p5;
-
-        // Win animation phase
-        if (this.winAnimationStart !== null) {
-            const elapsed = p.millis() - this.winAnimationStart;
-            // Draw full white board with glow
-            this.draw_body();
-            this.draw_board(20);
-            // Overlay completion text
-            p.push();
-            p.textAlign(p.CENTER, p.CENTER);
-            p.textStyle(p.BOLD);
-            p.textSize(48);
-            // draw black silhouette for outline
-            p.fill(0);
-            p.text("Lights On!", 0, 0);
-            // draw yellow text on top for fill
-            p.fill(255, 255, 0);
-            p.text("Lights On!", 0, 0);
-            p.pop();
-            // After delay, finish puzzle
-            if (elapsed >= this.winAnimationDuration) {
-                this.force_solve();
-            }
-            return;
-        }
-
-        // Normal rendering
-        if (this.state === PuzzleState.completed || this.state === PuzzleState.failed) return;
+        
+        
+        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
         if (this.hide_page) return;
-
         this.draw_body();
         this.draw_board();
         this.draw_footer();
         this.draw_header();
-
-        if (this.isDisplayingHint) this.drawHint();
+        if (this.isDisplayingHint) {
+            this.drawHint();
+          }
     }
 
-    private draw_body(): void {
-        const p = this.scene.p5;
-        p.fill(200);
-        p.rect(0, 0, this.boardSize + 20, this.boardSize + 20);
+    draw_body(): void {
+        let p5 = this.scene.p5;
+        p5.fill(200);
+        p5.rect(0, 0, this.boardSize + 20, this.boardSize + 20);
     }
 
-    private draw_board(extraGlow: number = 0): void {
-        const p = this.scene.p5;
-        const startX = -this.boardSize / 2 + this.tileSize / 2;
-        const startY = -this.boardSize / 2 + this.tileSize / 2;
-        const glow = extraGlow || (10 + 5 * Math.sin(p.frameCount * 0.1));
+    draw_footer(): void {
+        let p5 = this.scene.p5;
+        p5.fill(50);
+        p5.rect(0, this.boardSize / 2 + 40, this.boardSize, 60);
+        p5.fill(255);
+        p5.textAlign(p5.CENTER, p5.CENTER);
+        p5.textSize(16);
+        p5.text("Make all tiles white to turn the lights on.\nClick a tile to begin", 0, this.boardSize / 2 + 40);
+    }
+
+    draw_header(): void {
+        let p5 = this.scene.p5;
+        p5.fill(50);
+        p5.rect(0, -this.boardSize / 2 - 40, this.boardSize, 60);
+        p5.fill(255);
+        p5.textAlign(p5.CENTER, p5.CENTER);
+        p5.textSize(24);
+        p5.text("Lights On", 0, -this.boardSize / 2 - 30);
+    }
+
+    draw_board(): void {
+        let p5 = this.scene.p5;
+        let startX = -this.boardSize / 2 + this.tileSize / 2;
+        let startY = -this.boardSize / 2 + this.tileSize / 2;
 
         for (let row = 0; row < this.gridSize; row++) {
             for (let col = 0; col < this.gridSize; col++) {
-                const isOn = this.grid[row][col];
-                p.push();
-                const x = startX + col * this.tileSize;
-                const y = startY + row * this.tileSize;
-                if (isOn && extraGlow > 0) {
-                    p.drawingContext.shadowBlur = glow;
-                    p.drawingContext.shadowColor = "rgba(255,255,200,0.8)";
-                }
-                p.noStroke();
-                p.fill(isOn ? 255 : 50);
-                p.rect(x, y, this.tileSize - 5, this.tileSize - 5, 8);
-                p.drawingContext.shadowBlur = 0;
-                p.pop();
+                let isOn = this.grid[row][col];
+                p5.fill(isOn ? 255 : 50);
+                p5.rect(startX + col * this.tileSize, startY + row * this.tileSize, this.tileSize - 5, this.tileSize - 5, 8);
             }
         }
     }
 
-    private draw_footer(): void {
-        const p = this.scene.p5;
-        p.fill(50);
-        p.rect(0, this.boardSize / 2 + 40, this.boardSize, 60);
-        p.fill(255);
-        p.textAlign(p.CENTER, p.CENTER);
-        p.textSize(16);
-        p.text("Make all tiles white to turn the lights on.\nClick a tile to begin", 0, this.boardSize / 2 + 40);
-    }
+    generateSolvableGrid(): void {
 
-    private draw_header(): void {
-        const p = this.scene.p5;
-        p.fill(50);
-        p.rect(0, -this.boardSize / 2 - 40, this.boardSize, 60);
-        p.fill(255);
-        p.textAlign(p.CENTER, p.CENTER);
-        p.textSize(24);
-        p.text("Lights On", 0, -this.boardSize / 2 - 30);
-    }
-
-    private generateSolvableGrid(): void {
         this.grid = Array.from({ length: this.gridSize }, () => Array(this.gridSize).fill(false));
-        const numShuffles = this.gridSize * 2;
+
+        // Apply more random toggles to create a harder starting board
+        let numShuffles = this.gridSize * 2; // Increase difficulty by doubling the number of shuffles
         for (let i = 0; i < numShuffles; i++) {
-            const row = Math.floor(Math.random() * this.gridSize);
-            const col = Math.floor(Math.random() * this.gridSize);
-            this.toggleTileInternal(row, col);
+            let row = Math.floor(Math.random() * this.gridSize);
+            let col = Math.floor(Math.random() * this.gridSize);
+            this.toggleTile(row, col, false); // Apply toggles without checking for a win
         }
     }
 
     override mousePressed(): void {
-        const p = this.scene.p5;
-        const col = Math.floor((p.mouseX - p.width / 2 + this.boardSize / 2) / this.tileSize);
-        const row = Math.floor((p.mouseY - p.height / 2 + this.boardSize / 2) / this.tileSize);
-        if (row < 0 || row >= this.gridSize || col < 0 || col >= this.gridSize) return;
-        // Prevent clicking same tile twice
-        if (this.lastClicked && this.lastClicked.row === row && this.lastClicked.col === col) return;
-        this.lastClicked = { row, col };
-        this.toggleTileInternal(row, col);
-        if (this.grid.every(r => r.every(tile => tile))) {
-            this.winAnimationStart = this.scene.p5.millis();
+        let p5 = this.scene.p5;
+
+        let col = Math.floor((p5.mouseX - p5.width / 2 + this.boardSize / 2) / this.tileSize);
+        let row = Math.floor((p5.mouseY - p5.height / 2 + this.boardSize / 2) / this.tileSize);
+
+        if (row >= 0 && row < this.gridSize && col >= 0 && col < this.gridSize) {
+            if (this.lastClicked && this.lastClicked.row === row && this.lastClicked.col === col) {
+                return; // Prevent clicking the same tile twice in a row
+            }
+            this.lastClicked = { row, col };
+            this.toggleTile(row, col, true);
         }
+
     }
 
-    private toggleTileInternal(row: number, col: number): void {
-        const toggle = (r: number, c: number) => {
+    toggleTile(row: number, col: number, checkWin: boolean = true): void {
+        let toggle = (r: number, c: number) => {
             if (r >= 0 && r < this.gridSize && c >= 0 && c < this.gridSize) {
                 this.grid[r][c] = !this.grid[r][c];
             }
         };
-        const toggleRow = Math.random() < 0.5;
+
+        let toggleRow = Math.random() < 0.5;
+
         if (toggleRow) {
-            for (let c = 0; c < this.gridSize; c++) toggle(row, c);
+            for (let c = 0; c < this.gridSize; c++) {
+                toggle(row, c);
+            }
         } else {
-            for (let r = 0; r < this.gridSize; r++) toggle(r, col);
+            for (let r = 0; r < this.gridSize; r++) {
+                toggle(r, col);
+            }
+        }
+
+        if (checkWin && this.checkWin()) {
+            this.force_solve()
         }
     }
-
-    private toggleTile(row: number, col: number, checkWin: boolean = true): void {
-        this.toggleTileInternal(row, col);
-        if (checkWin && this.grid.every(r => r.every(tile => tile))) {
-            this.winAnimationStart = this.scene.p5.millis();
-        }
-    }
-
     override keyPressed(e: KeyboardEvent): void {
-        if (this.hide_page && this.highlight && e.key === 'e') {
+        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
+        if (this.hide_page && this.highlight && e.key == 'e') {
             this.onOpen && this.onOpen();
             this.player.disabled = true;
             this.hide_page = false;
             this.setupHint();
         }
-        if (!this.hide_page && e.key === 'Escape') {
+        if (!this.hide_page && e.key == 'Escape') {
             this.cleanup();
             this.player.disabled = false;
             this.hide_page = true;
         }
     }
 
+    checkWin(): boolean {
+        //Future Implementation???????
+
+         if (this.grid.every(row => row.every(tile => tile))) {
+             this.state = PuzzleState.completed;
+             this.hidden = true;
+             this.onCompleted && this.onCompleted();
+             this.player.disabled = false;
+             this.scene.physics.remove(this.physics_object);
+             clearTimeout(this.collider_timeout);
+             this.asset.change_asset('success-puzzle');
+             this.cleanup();
+             return true;
+         }
+         return false;
+        
+    }
+
+
+    displayWinMessage(): void {
+        let p5 = this.scene.p5;
+
+        p5.fill(0, 0, 0, 150);
+        p5.rect(0, 0, p5.width, p5.height);
+
+        let boxWidth = p5.width / 3;
+        let boxHeight = p5.height / 6;
+        p5.fill(255);
+        p5.stroke(0);
+        p5.rect(0, 0, boxWidth, boxHeight, 10);
+
+        p5.fill(0);
+        p5.noStroke();
+        p5.textAlign(p5.CENTER, p5.CENTER);
+        p5.textSize(32);
+        p5.text("You Win!", 0, -boxHeight / 8);
+        p5.textSize(16);
+        p5.text("Click to continue.", 0, boxHeight / 4);
+    }
     override drawHint(): void {
         const p = this.scene.p5;
         // your original box sizing & position
@@ -279,16 +290,16 @@ export default class LightsOn extends Puzzle {
             -p.windowHeight/4 - 25
           );
     
-          // Body text
+          
           p.textSize(20);
           p.textLeading(24);       
-          p.textWrap(p.WORD);     
+          p.textWrap(p.WORD);      
     
           const instr =
-            'Click on a tile to begin. When a tile is clicked, every tile in the same row, or column will flip.\n\n' +
-            'The same tile can not be clicked twice in a row.\n\n Make all tiles white to turn the lights on ';
+            'Click on a tile to rotate it.\n\n There may be multiple paths connecting the green and red tiles.\n\n ' +
+            'When a wrong path is found it will highlight in red. When the correct path is found, it will highlight in green';
     
-          
+         
           p.text(
             instr,
             -p.windowWidth/3,
