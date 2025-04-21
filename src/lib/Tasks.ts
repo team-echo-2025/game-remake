@@ -14,21 +14,35 @@ export class Task {
         this.message = message;
     }
 
-    completeTask() {
+    completeTask(new_message: string = "") {
         if (this.state == TaskState.Completed) return;
         this.state = TaskState.Completed;
         this.onComplete && this.onComplete();
+        this.message = new_message;
     }
 
     display(startY: number): number {
         if (!this.message) return startY;
+        let height = 20;
         this.scene.p5.push();
-        this.scene.p5.fill(255, 0, 0);
-        this.scene.p5.textSize(24);
-        this.scene.p5.textAlign(this.scene.p5.RIGHT, this.scene.p5.TOP);
-        this.scene.p5.text(this.message, this.scene.p5.width / 2 - 20, startY);
+        switch (this.state) {
+            case TaskState.Completed:
+                this.scene.p5.fill(90);
+                break;
+            case TaskState.NotCompleted:
+                this.scene.p5.fill(26, 30, 84);
+                break;
+        }
+        this.scene.p5.textSize(21);
+        this.scene.p5.textAlign(this.scene.p5.CENTER);
+        let width = this.scene.p5.textWidth(this.message);
+        let padding = 60;
+        if (this.scene.timer.width < width + padding) {
+            this.scene.timer.paddingX = (width + padding) - (this.scene.timer.width - this.scene.timer.paddingX);
+        }
+        this.scene.p5.text(this.message, this.scene.p5.width / 2 + width / 2 - this.scene.timer.width + padding / 2 - 10, startY + height);
         this.scene.p5.pop();
-        return startY + 20;
+        return startY + height
     }
 }
 
@@ -47,19 +61,27 @@ export default class Tasks implements GameObject {
     }
 
     postDraw(): void {
-        const start = -this.scene.p5.height / 2 + 105;
+        const start = -this.scene.p5.height / 2 + 125;
         const p = this.scene.p5;
 
         p.push();
         p.fill(26, 30, 84);
         p.textSize(21);
-        p.textAlign(p.RIGHT, p.TOP);
-        p.text(`Puzzles Left: ${this._counter}`, p.width / 2 - 40, start);
+        p.textAlign(p.CENTER);
+        let completed_tasks = this._counter <= 0;
+        let text = completed_tasks ? "No puzzles left." : `Puzzles Left: ${this._counter}`;
+        let width = p.textWidth(text);
+        p.text(text, p.width / 2 + width / 2 - this.scene.timer.width / 2 - width / 2 - 10, start);
         p.pop();
+        if (completed_tasks) {
+            this.scene.timer.paddingY = 0;
+            return
+        }
         let y = start;
         for (const task of this.tasks) {
-            y = task.display(start);
+            y = task.display(y);
         }
+        this.scene.timer.paddingY = y - start;
     }
 }
 

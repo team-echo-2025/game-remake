@@ -1,7 +1,7 @@
 import Page from "../lib/Page";
 import ButtonTest from "../lib/ui/ButtonTest";
 import Sound from "../lib/Sound";
-import SoundManager, {SoundManagerProps} from "../lib/SoundManager";
+import SoundManager, { SoundManagerProps } from "../lib/SoundManager";
 
 export default class KeybindsPage extends Page {
     buttonW!: ButtonTest;
@@ -35,7 +35,7 @@ export default class KeybindsPage extends Page {
     }
     setup(): void {
         this.button_sfx = this.scene.add_new.sound("button_sfx")
-        const sfx_props: SoundManagerProps= {
+        const sfx_props: SoundManagerProps = {
             group: "SFX",
             sounds: [this.button_sfx]
         }
@@ -47,7 +47,7 @@ export default class KeybindsPage extends Page {
                 this.button_sfx.play();
                 this.setKeybindChange('forward')
             },
-            imageKey : "test"
+            imageKey: "test"
         });
 
         this.buttonA = this.scene.add_new.img_button({
@@ -57,7 +57,7 @@ export default class KeybindsPage extends Page {
                 this.button_sfx.play();
                 this.setKeybindChange('left')
             },
-            imageKey : "test"
+            imageKey: "test"
         });
 
         this.buttonS = this.scene.add_new.img_button({
@@ -67,7 +67,7 @@ export default class KeybindsPage extends Page {
                 this.button_sfx.play();
                 this.setKeybindChange('down')
             },
-            imageKey : "test"
+            imageKey: "test"
         });
 
         this.buttonD = this.scene.add_new.img_button({
@@ -77,7 +77,7 @@ export default class KeybindsPage extends Page {
                 this.button_sfx.play();
                 this.setKeybindChange('right')
             },
-            imageKey : "test"
+            imageKey: "test"
         });
 
         this.buttonBack = this.scene.add_new.img_button({
@@ -88,7 +88,7 @@ export default class KeybindsPage extends Page {
                 this.cleanup();
                 this.set_page("settings-page")
             },
-            imageKey : "test"
+            imageKey: "test"
         });
         this.buttonW.x = 0;
         this.buttonW.y = -200;
@@ -155,5 +155,8 @@ export default class KeybindsPage extends Page {
         this.buttonA.label = `Left: ${this.keybinds.left.toUpperCase()}`;
         this.buttonS.label = `Down: ${this.keybinds.down.toUpperCase()}`;
         this.buttonD.label = `Right: ${this.keybinds.right.toUpperCase()}`;
+    }
+    onDestroy(): void {
+        this.cleanup();
     }
 }
