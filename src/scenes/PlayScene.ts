@@ -97,7 +97,6 @@ export default class PlayScene extends Scene {
 
     constructor() {
         super("play-scene");
-        this.physics.debug = false;
         //this.physics.debug = true;
     }
 
@@ -134,7 +133,6 @@ export default class PlayScene extends Scene {
         this.task1 = new Task(this);
         this.background_music = this.add_new.sound("background_music");
         this.button_sfx = this.add_new.sound("button_sfx");
-
 
         const bgm_props: SoundManagerProps = {
             group: "BGM",
@@ -189,6 +187,26 @@ export default class PlayScene extends Scene {
         this.door.setup();
         this.door.x = -384;
         this.door.y = 66;
+
+        const leftOfDoor = new PhysicsObject({
+            width: 15,
+            height: 30,
+            mass: Infinity,
+        })
+        leftOfDoor.body.x = -409;
+        leftOfDoor.body.y = 64;
+        this.physics.addObject(leftOfDoor);
+        const rightOfDoor = new PhysicsObject({
+            width: 15,
+            height: 30,
+            mass: Infinity,
+        })
+        rightOfDoor.body.x = -360;
+        rightOfDoor.body.y = 64;
+        this.physics.addObject(rightOfDoor);
+
+
+
         this.createPuzzle();
         const portal1 = new PhysicsObject({
             width: 300,
@@ -215,6 +233,7 @@ export default class PlayScene extends Scene {
         if (this.state.access_puzzle == PuzzleState.completed) {
             this.access_circuit?.force_solve();
             this.door.open();
+            this.task1.completeTask();
         }
     }
 
@@ -288,6 +307,7 @@ export default class PlayScene extends Scene {
     }
     reset(): void {
         this.state.access_puzzle = PuzzleState.notStarted;
+        this.task1 = undefined;
     }
 }
 

@@ -46,12 +46,14 @@ export default class DrawPuzzle extends Puzzle {
         this.cursor = new Cursor(scene);
         this.state = PuzzleState.notStarted;
         this.asset_key = puzzle_asset_key;
-        this.hidden = true;
         this.player = player;
+        this.hide_page = true;
+        this.hidden = true;
     }
     force_solve() {
         this.state = PuzzleState.completed;
         this.hidden = true;
+        this.hide_page = true;
         this.player.disabled = false;
         this.asset.change_asset('drawPuzzle-success');
         this.scene.physics.remove(this.physics_object);
@@ -90,10 +92,7 @@ export default class DrawPuzzle extends Puzzle {
     ]
 
 
-
-    preload(): any { }
-
-    setup(): void {
+    override setup(): void {
         //putting into game itself
         this.physics_object = new PhysicsObject({
             width: 100,
@@ -109,10 +108,12 @@ export default class DrawPuzzle extends Puzzle {
                 clearTimeout(this.collider_timeout);
                 if (!this.highlight) {
                     this.highlight = true
+                    this.hidden = false;
                     this.asset.change_asset("drawPuzzle-highlight");
                 }
                 this.collider_timeout = setTimeout(() => {
                     this.highlight = false;
+                    this.hidden = true;
                     this.asset.change_asset("drawPuzzle");
                 }, 100);
             }
@@ -122,6 +123,7 @@ export default class DrawPuzzle extends Puzzle {
         this.asset.y = this.y;
         this.asset.width = 24;
         this.asset.height = 36;
+        this.asset.zIndex = 49;
         //setting up puzzle
         this.generateBoard();
         this.getBoardSize();
@@ -131,12 +133,9 @@ export default class DrawPuzzle extends Puzzle {
         this.click_sfx = this.scene.add_new.sound("lightSwitch");
         this.draw_sfx = this.scene.add_new.sound("draw");
     }
-    draw() {
-        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
-    }
 
-
-    postDraw(): void {
+    override postDraw(): void {
+        if (this.hide_page || this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
         this.checkSolution();
         this.drawBody();
         // this.generateBoard();
@@ -167,16 +166,14 @@ export default class DrawPuzzle extends Puzzle {
                             tempSelect.color = this.cursor.currentSquare.color;
                             if (this.draw_sfx && typeof this.draw_sfx.play === "function") {
                                 this.draw_sfx.play();
-                              } //recolor
+                            } //recolor
                         }
-                        
+
                 }
 
             }
 
         }
-        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
-        if (this.hidden) return;
     }
 
     selectSolvableSquares(): void {
@@ -378,12 +375,17 @@ export default class DrawPuzzle extends Puzzle {
         p5.text("   between horizontal and vertical squares", (p5.windowWidth / 3 - 150), -(offsetY + rows * this.squareSize - 100));
         p5.text("2. All squares must be filled", (p5.windowWidth / 3 - 150), -(offsetY + rows * this.squareSize - 140));
     }
-    keyPressed(e: KeyboardEvent): void {
+    override keyPressed(e: KeyboardEvent): void {
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
-        if (this.hidden && this.highlight && e.key == 'e') {
+        if (this.hide_page && this.highlight && e.key == 'e') {
             this.onOpen && this.onOpen();
             this.player.disabled = true;
-            this.hidden = false;
+            this.hide_page = false;
+        }
+        if (!this.hide_page && e.key == 'Escape') {
+            this.cleanup();
+            this.player.disabled = false;
+            this.hide_page = true;
         }
     }
     generateBoard() {
@@ -503,15 +505,15 @@ export default class DrawPuzzle extends Puzzle {
         return false
     }
 
-    mousePressed(): void {
-        if (this.hidden || 
-            this.state === PuzzleState.failed || 
+    override mousePressed(): void {
+        if (this.hide_page ||
+            this.state === PuzzleState.failed ||
             this.state === PuzzleState.completed) {
-          return;
-          }
-          if (this.click_sfx && typeof this.click_sfx.play == "function"){
+            return;
+        }
+        if (this.click_sfx && typeof this.click_sfx.play == "function") {
             this.click_sfx.play();
-          }
+        }
         this.currentLine?.clearLine();
         const p5 = this.scene.p5;
         const x = this.scene.p5.mouseX - this.scene.p5.width / 2;
@@ -524,7 +526,7 @@ export default class DrawPuzzle extends Puzzle {
         }
 
     }
-    checkSolution(): boolean {
+    override checkSolution(): boolean {
         //get all 
         this.getBoardSize(); // find num pairs
         let found = false;
@@ -535,7 +537,7 @@ export default class DrawPuzzle extends Puzzle {
                     if (this.squares[i][j].color == null)
                         return false;
             this.state = PuzzleState.completed;
-            this.hidden = true;
+            this.hide_page = true;
             this.onCompleted && this.onCompleted();
             this.player.disabled = false;
             this.scene.physics.remove(this.physics_object);
@@ -606,7 +608,7 @@ export default class DrawPuzzle extends Puzzle {
         p5.text("Click to continue.", 0, boxHeight / 4);
     }
 
-    setDifficulty(difficulty: string): void {
+    override setDifficulty(difficulty: string): void {
         Puzzle.difficulty = difficulty;
         this.squares = [];
         for (let i = 0; i < this.lines.length; i++) {

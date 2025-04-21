@@ -15,6 +15,7 @@ export default class BlockSlide extends Puzzle {
     tileSize: number = 0;
     gridSize: number = 4; // Grid will be 4x4 by default
     isAnimating: boolean = false; // Will prevent clicks while animations are going on
+    hide_page: boolean = true;
     animations: {
         [key: string]: {
             x: number; y: number;
@@ -40,12 +41,14 @@ export default class BlockSlide extends Puzzle {
         super(scene);
         this.asset_key = puzzle_asset_key;
         this.hidden = true;
+        this.hide_page = true;
         this.player = player;
     }
 
     force_solve() {
         this.state = PuzzleState.completed;
         this.hidden = true;
+        this.cleanup();
         this.player.disabled = false;
         this.onCompleted && this.onCompleted();
         clearTimeout(this.collider_timeout);
@@ -54,7 +57,7 @@ export default class BlockSlide extends Puzzle {
 
     }
 
-    setup(): void {
+    override setup(): void {
         //putting into game itself
         this.physics_object = new PhysicsObject({
             width: 100,
@@ -70,9 +73,11 @@ export default class BlockSlide extends Puzzle {
                 clearTimeout(this.collider_timeout);
                 if (!this.highlight) {
                     this.highlight = true
+                    this.hidden = false;
                     this.asset.change_asset("blockslide-highlight");
                 }
                 this.collider_timeout = setTimeout(() => {
+                    this.hidden = true;
                     this.highlight = false;
                     this.asset.change_asset("blockslide");
                 }, 100);
@@ -83,6 +88,7 @@ export default class BlockSlide extends Puzzle {
         this.asset.y = this.y;
         this.asset.width = 32;
         this.asset.height = 48;
+        this.asset.zIndex = this.zIndex ?? 0;
 
         // NEW: Initialize the move sound (make sure "clack" is preloaded)
         this.moveSound = this.scene.add_new.sound("clack");
@@ -96,29 +102,30 @@ export default class BlockSlide extends Puzzle {
         this.scene.p5.rectMode(this.scene.p5.CENTER);
     }
 
-    draw() {
-        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
-    }
-
-    keyPressed(e: KeyboardEvent): void {
+    override keyPressed(e: KeyboardEvent): void {
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
         if (this.highlight && e.key == 'j') {
             this.force_solve();
         }
-        if (this.hidden && this.highlight && e.key == 'e') {
+        if (this.hide_page && this.highlight && e.key == 'e') {
             this.onOpen && this.onOpen();
+            this.hide_page = false;
             this.player.disabled = true;
-            this.hidden = false;
+            this.setupHint();
+        }
+        if (!this.hide_page && e.key == 'Escape') {
+            this.cleanup();
         }
     }
 
-    postDraw(): void {
-        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
+    override postDraw(): void {
+        if (this.hide_page || this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
         if (this.hidden) return;
+
         this.draw_body();
         this.draw_board();
-        this.draw_footer();
         this.draw_header();
+        if (this.isDisplayingHint) this.drawHint();
     }
 
     generateGrid(): void {
@@ -215,12 +222,12 @@ export default class BlockSlide extends Puzzle {
         }
         this.isAnimating = animationActive;
     }
-    setDifficulty(difficulty: string): void {
+    override setDifficulty(difficulty: string): void {
         Puzzle.difficulty = difficulty;
-        this.setup();  // Restart puzzle
+        //this.setup();  // Restart puzzle
     }
 
-    draw_footer(): void {
+    override drawHint(): void {
         let p5 = this.scene.p5;
 
         // dimensions
@@ -269,8 +276,8 @@ export default class BlockSlide extends Puzzle {
         p5.text("Block Slide", headerX, headerY - rectHeight / 8);
     }
 
-    mousePressed(): void {
-        if (this.hidden ||
+    override mousePressed(): void {
+        if (this.hide_page ||
             this.state === PuzzleState.failed ||
             this.state === PuzzleState.completed) {
             return;
@@ -376,7 +383,7 @@ export default class BlockSlide extends Puzzle {
         return { row: this.gridSize - 1, col: this.gridSize - 1 }; // Default fallback
     }
 
-    checkSolution(): boolean {
+    override checkSolution(): boolean {
         let correct = 1;
         for (let row = 0; row < this.gridSize; row++) {
             for (let col = 0; col < this.gridSize; col++) {
@@ -384,6 +391,7 @@ export default class BlockSlide extends Puzzle {
                     if (this.grid[row][col] === 0) { // Ensure last tile is empty
                         this.state = PuzzleState.completed;
                         this.hidden = true;
+                        this.cleanup();
                         this.onCompleted && this.onCompleted();
                         this.player.disabled = false;
                         this.scene.physics.remove(this.physics_object);
@@ -401,6 +409,7 @@ export default class BlockSlide extends Puzzle {
         }
         this.state = PuzzleState.completed;
         this.hidden = true;
+        this.cleanup();
         this.onCompleted && this.onCompleted();
         this.player.disabled = false;
         this.scene.physics.remove(this.physics_object);
@@ -409,21 +418,21 @@ export default class BlockSlide extends Puzzle {
         return true;
     }
 
+    override cleanup() {
+        super.cleanup();
+        this.player.disabled = false;
+        this.hide_page = true;
+    }
+
 
     // Dynamic grid based on difficulty
     setGridSize(): void {
         switch (Puzzle.difficulty) {
             case "easy":
+            case "normal":
+            case "hard":
                 this.gridSize = 3;
                 break;
-            case "normal":
-                this.gridSize = 4;
-                break;
-            case "hard":
-                this.gridSize = 5;
-                break;
-            default:
-                this.gridSize = 4;
         }
     }
 }

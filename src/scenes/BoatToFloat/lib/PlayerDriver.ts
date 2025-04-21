@@ -2,7 +2,7 @@ import CarPhysicsObject from "../../../lib/physics/CarPhysiscsObject";
 import Scene from "../../../lib/Scene";
 import Sprite from "../../../lib/Sprite";
 import { Vector2D } from "../../../lib/types/Physics";
-import { KrabbyPatty } from "../DriveToSurvive";
+import { ChumBucket, KrabbyPatty } from "../BoatToFloat";
 type TireMark = {
     left_start: Vector2D;
     left_end: Vector2D;
@@ -13,6 +13,7 @@ type TireMark = {
 export default class PlayerDriver extends CarPhysicsObject {
     private asset!: Sprite;
     private _collectedPatties: number = 0;
+    private _collectedChums: number = 0;
     private pressed_keys: any = {};
     private scene!: Scene;
     private direction: Vector2D = { x: 0, y: 0 };
@@ -25,6 +26,9 @@ export default class PlayerDriver extends CarPhysicsObject {
 
     get collectedPatties() {
         return this._collectedPatties;
+    }
+    get collectedChums() {
+        return this._collectedChums;
     }
 
     constructor(scene: Scene) {
@@ -56,6 +60,11 @@ export default class PlayerDriver extends CarPhysicsObject {
     collectPatty(patty: KrabbyPatty) {
         this.scene.physics.remove(patty);
         this._collectedPatties++;
+    }
+
+    collectChum(chum: ChumBucket) {
+        this.scene.physics.remove(chum);
+        this._collectedChums++;
     }
 
     keyPressed(e: KeyboardEvent): void {

@@ -6,6 +6,7 @@ import { Vector2D } from "../lib/types/Physics";
 import Lever from "../puzzles/Dungeon/Lever";
 import MagicCircle from "../puzzles/Dungeon/MagicCircle";
 import Ghost from "../puzzles/Dungeon/Ghost";
+import Tilemap from "../lib/tilemap/Tilemap";
 type StartArgs = Readonly<{
     starting_pos: Vector2D
 }>
@@ -18,6 +19,7 @@ type SceneState = {
 
 export default class PlayScene4 extends Scene {
     player?: Player;
+    tilemap?: Tilemap;
     firstLever?: Lever;
     secondLever?: Lever;
     thirdLever?: Lever;
@@ -31,8 +33,6 @@ export default class PlayScene4 extends Scene {
     ghostAlive: boolean = true;
 
 
-
-
     constructor() {
         super("playscene-4");
         this.physics.debug = false;
@@ -40,6 +40,7 @@ export default class PlayScene4 extends Scene {
     }
 
     onStart(): void {
+        this.physics.debug = true;
         this.player = new Player(this);
         this.physics.addObject(this.player);
         this.player.body.x = -300
@@ -60,8 +61,8 @@ export default class PlayScene4 extends Scene {
     }
 
     setup(): void {
-        const tilemap = this.add_new.tilemap({ tilemap_key: 'tilemap' });
-        this.bounds = new BoxCollider({ w: tilemap.width, h: tilemap.height, x: 0, y: 0 });
+        this.tilemap = this.add_new.tilemap({ tilemap_key: 'tilemap' });
+        this.bounds = new BoxCollider({ w: this.tilemap.width, h: this.tilemap.height, x: 0, y: 0 });
 
         this.firstLever = new Lever(this, -610, -170, "red_lever", "blue_lever", "highlightedLever", this.player!);
         this.firstLever.setup();
@@ -97,14 +98,14 @@ export default class PlayScene4 extends Scene {
         }
     };
 
-    onStop(): void {
+    onStop(): void { 
     }
 
     postDraw(): void {
         if (this.player && this.scene_manager.paused) this.player.disabled = true;
         else if (this.player && !this.scene_manager.paused) {
             this.player.disabled = false;
-        }
+        } 
     }
 
     draw(): void {
@@ -113,8 +114,7 @@ export default class PlayScene4 extends Scene {
                 this.leversFlipped = true;
                 this.magicCircle?.activateCircle();
             }
-        }
-        else {
+        } else {
             if (this.ghostAlive)
                 this.ghostKillCheck();
         }

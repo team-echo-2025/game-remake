@@ -141,4 +141,7 @@ export default class SettingPage extends Page {
         p5.text('Music', 0, -250);
         p5.text('Sound Effects', 0, -150);
     }
+    onDestroy(): void {
+        this.cleanup();
+    }
 }

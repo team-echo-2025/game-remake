@@ -3,7 +3,7 @@ import ButtonTest from "../lib/ui/ButtonTest";
 
 export default class PausePage extends Page {
     backButton!: ButtonTest;
-    quitButton!: ButtonTest;
+    quitButton!: ButtonTest; 
     helpButton!: ButtonTest;
     private keybinds: Record<string, string> = {
         forward: localStorage.getItem("forward") || "w",
@@ -12,7 +12,7 @@ export default class PausePage extends Page {
         right: localStorage.getItem("right") || "d"
     };
     isDisplayingInstructions = false;
-    hidden = true;
+    hidden = true; 
 
     constructor() {
         super("pause-page")
@@ -38,8 +38,7 @@ export default class PausePage extends Page {
             label: "Return to Game",
             font_key: 'jersey',
             callback: () => {
-                this.cleanup();
-                this.hidden = true;
+                this.scene.scene_manager.page_manager?.set_page("");
             },
             imageKey: "test"
         })
@@ -61,19 +60,18 @@ export default class PausePage extends Page {
             label: "Quit to Menu",
             font_key: 'jersey',
             callback: () => {
-                this.cleanup();
                 this.scene.start("menu-scene");
             },
             imageKey: "test"
-        })
+        }) 
         this.quitButton.x = 200;
         this.quitButton.y = -150;
-        this.hidden = false;
+        this.hidden = false; 
         this.scene.scene_manager.disableTimer();
         this.scene.scene_manager.paused = true;
     }
 
-    postDraw(): void {
+    postDraw(): void { 
         if (!this.hidden) {
             // Background
             let rectWidth = 700;
@@ -125,6 +123,6 @@ export default class PausePage extends Page {
             this.scene.p5.text('Return to the main menu and visit Settings or Character Customization!', 0, 250);
             this.scene.p5.text('Be sure to read dialogue for more hints and instructions.', 0, 310);
             this.scene.p5.pop();
-        }
+        } 
     }
 }

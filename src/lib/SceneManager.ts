@@ -5,12 +5,13 @@ import PageManager from "./PageManager";
 import LoserPage from "../pages/LoserPage";
 import WinnerPage from "../pages/WinnerPage";
 import PausePage from "../pages/PausePage";
+import LoadingScene from "../scenes/LoadingScene";
 
 const DURATION = 500;
 export default class SceneManager implements GameObject {
     private p: p5;
     private current_scene?: Scene;
-    private loading_scene: Scene;
+    loading_scene: LoadingScene;
     private scenes: Map<string, Scene>;
 
     private timer_start: number;
@@ -21,7 +22,7 @@ export default class SceneManager implements GameObject {
 
     get total_time(): number {
         return this._total_time;
-      }
+    }
 
     get page_manager() {
         return this._page_manager;
@@ -40,7 +41,7 @@ export default class SceneManager implements GameObject {
     public playerHat = "none";
     public timer?: Timer;
     public paused = false;
-    constructor(p: p5, scenes: (new (name: string) => Scene)[], LoadingScene: new (name: string) => Scene) {
+    constructor(p: p5, scenes: (new (name: string) => Scene)[], LoadingScene: new (name: string) => LoadingScene) {
         this.scenes = new Map<string, Scene>();
         this.loading_scene = new LoadingScene(LoadingScene.name);
         this.loading_scene.p5 = p;
@@ -87,18 +88,27 @@ export default class SceneManager implements GameObject {
             this.current_scene.onStop_objects();
         }
         this.current_scene = this.loading_scene;
+        this.loading_scene.onStart();
         this.enableTimer();
         new_scene.onStart_objects(args);
         new_scene.onStart(args);
+        this.loading_scene.loading_progress = 20;
         this._page_manager = new PageManager([new LoserPage(), new WinnerPage(), new PausePage()], new_scene);
         new_scene.add(this._page_manager);
         await new_scene.preload()
+        this.loading_scene.loading_progress = 30;
         await new_scene.preload_objects()
+        this.loading_scene.loading_progress = 70;
         new_scene?.setup_objects();
+        this.loading_scene.loading_progress = 80;
         new_scene?.setup();
         new_scene?.postSetup();
         new_scene?.postSetup_objects();
-        this.current_scene = new_scene;
+        this.loading_scene.loading_progress = 90;
+        this.loading_scene.onStop();
+        setTimeout(() => {
+            this.current_scene = new_scene;
+        }, 100);
     }
 
     async preload(): Promise<any> {
@@ -119,6 +129,7 @@ export default class SceneManager implements GameObject {
                 this._time_remaining -= delta;
 
                 if (this._time_remaining <= 0) {
+                    dispatchEvent(new Event('time-up'));
                     this.disableTimer();
                     this.resetTimer();
                     this._page_manager?.set_page("loser");
@@ -157,6 +168,10 @@ export default class SceneManager implements GameObject {
 
     deductTime(penalty: number): void {
         this.time_remaining -= penalty;
+    }
+
+    addTime(amount: number): void {
+        this.time_remaining += amount;
     }
 
     postSetup(): void {
