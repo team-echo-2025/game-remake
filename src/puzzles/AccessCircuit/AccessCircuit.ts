@@ -61,6 +61,7 @@ export default class AccessCircuit extends Puzzle {
     force_solve() {
         this.state = PuzzleState.completed;
         this.hidden = true;
+        this.cleanup();
         this.player.disabled = false;
         this.asset.change_asset('success-puzzle');
         this.scene.physics.remove(this.physics_object);
@@ -68,6 +69,7 @@ export default class AccessCircuit extends Puzzle {
 
     force_fail() {
         this.state = PuzzleState.failed;
+        this.cleanup();
         this.hidden = true;
         this.player.disabled = false;
         this.asset.change_asset('broken-puzzle');
@@ -93,6 +95,7 @@ export default class AccessCircuit extends Puzzle {
             if (rowIsCorrect) {
                 this.state = PuzzleState.completed;
                 this.hidden = true;
+                this.cleanup();
                 this.onCompleted && this.onCompleted();
                 this.player.disabled = false;
                 this.scene.physics.remove(this.physics_object);
@@ -153,10 +156,6 @@ export default class AccessCircuit extends Puzzle {
         //Making Cells
         this.setupBoard();
         this.setupFooter();
-    }
-
-    draw() {
-        if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
     }
 
     postDraw() {
@@ -283,6 +282,7 @@ export default class AccessCircuit extends Puzzle {
         if (!solved && this.current_row >= this.board.length) {
             this.state = PuzzleState.failed;
             this.scene.scene_manager.deductTime(60);
+            this.cleanup();
             this.hidden = true;
             this.player.disabled = false;
             this.scene.physics.remove(this.physics_object);
@@ -292,10 +292,10 @@ export default class AccessCircuit extends Puzzle {
     }
     override drawHint(): void {
         // Background
-        let rectWidth = this.scene.p5.windowHeight/2;
-        let rectHeight = this.scene.p5.windowHeight/2 + 60;
+        let rectWidth = this.scene.p5.windowHeight / 2;
+        let rectHeight = this.scene.p5.windowHeight / 2 + 60;
 
-        let rectX = -this.scene.p5.windowWidth/3;
+        let rectX = -this.scene.p5.windowWidth / 3;
         let rectY = -50;
         this.scene.p5.push()
         this.scene.p5.fill(255, 255, 255, 150);
@@ -305,10 +305,10 @@ export default class AccessCircuit extends Puzzle {
         this.scene.p5.fill(0);
         this.scene.p5.textAlign(this.scene.p5.CENTER, this.scene.p5.CENTER);
         this.scene.p5.textSize(32);
-        this.scene.p5.text('How To Play', -this.scene.p5.windowWidth/3, -this.scene.p5.windowHeight/4 - 25);
+        this.scene.p5.text('How To Play', -this.scene.p5.windowWidth / 3, -this.scene.p5.windowHeight / 4 - 25);
         this.scene.p5.textSize(20);
         //I recommend turning on word wrap to read this
-        this.scene.p5.text('Drag a circle from the bottom to a white\nhighlighted position on the board\n\n If the highlight turns green, the color\n is in the solution and correct spot\n\n If it turns yellow, the color is in the solution\nbut not in the correct position\n\nBut if it turns red, the color is not in the solution\n\n If a previously inserted color highlight turns yellow\nor green and the same color is added in a different spot\nand the highlight turns red, there is only one instance\nof the color in the solution', -this.scene.p5.windowWidth/3, -this.scene.p5.windowHeight/20 + 15);
+        this.scene.p5.text('Drag a circle from the bottom to a white\nhighlighted position on the board\n\n If the highlight turns green, the color\n is in the solution and correct spot\n\n If it turns yellow, the color is in the solution\nbut not in the correct position\n\nBut if it turns red, the color is not in the solution\n\n If a previously inserted color highlight turns yellow\nor green and the same color is added in a different spot\nand the highlight turns red, there is only one instance\nof the color in the solution', -this.scene.p5.windowWidth / 3, -this.scene.p5.windowHeight / 20 + 15);
         this.scene.p5.pop();
     }
 

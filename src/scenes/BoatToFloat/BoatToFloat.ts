@@ -300,7 +300,6 @@ export default class BoatToFloat extends Scene {
     }
 
     setup(): void {
-        this.physics.debug = true;
         const monitor = this.add_new.sprite('monitor');
         monitor.fixed = true;
         monitor.width = this.p5.width;
