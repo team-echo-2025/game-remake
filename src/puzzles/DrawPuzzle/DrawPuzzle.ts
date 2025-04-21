@@ -188,6 +188,8 @@ export default class DrawPuzzle extends Puzzle {
         let rectY = -50;
         this.scene.p5.push()
         this.scene.p5.fill(255, 255, 255, 150);
+        this.scene.p5.stroke(0,0,0)
+        this.scene.p5.strokeWeight(2);
         this.scene.p5.rect(rectX, rectY, rectWidth, rectHeight);
 
         // Title / text
