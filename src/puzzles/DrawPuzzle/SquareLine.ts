@@ -45,6 +45,7 @@ export default class SquareLine {
     }
     draw() {
         const p5 = this.scene.p5;
+        p5.push();
         if (this.head.color != null && this.tail?.color != null) {
             p5.stroke(this.head.color.r, this.head.color.g, this.head.color.b); // Red color for the box
             p5.noFill();
@@ -65,7 +66,8 @@ export default class SquareLine {
                 this.tail.size,
                 this.tail.size
             );
+            p5.stroke(0,0,0);
         }
-
+        p5.pop();
     }
 }
