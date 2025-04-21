@@ -37,6 +37,7 @@ export default class Square implements GameObject {
 
     drawSquare(): void {
         const p5 = this.scene.p5;
+        p5.push()
         if (this.hasPoint) {
             p5.stroke(0);
             p5.fill(255,255,255);
@@ -49,18 +50,18 @@ export default class Square implements GameObject {
             else    p5.fill(this.color.r,this.color.g,this.color.b)
             p5.rect(0, 0, this.size, this.size); 
         }
-        
-
-        
+        p5.pop();
     }
 
     drawCenterPoint(): void {
         const p5 = this.scene.p5;
+        p5.push();
         // for(let i = 1; i < 7; ++i)
         //     p5.fill(i, i * 10, i * 20);
         if(this.color != null)
             p5.fill(this.color.r, this.color.g, this.color.b);
         p5.ellipse(0, 0, 10, 10);
+        p5.pop();
     }
     
     matchingPoint(rhs:Square):boolean{//used to check if this and rhs are matching endpoints
