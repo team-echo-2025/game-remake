@@ -57,16 +57,16 @@ export default class SquareLine {
                 this.head.size
             );
 
-            // p5.stroke(this.tail.color.r, this.tail.color.g, this.tail.color.b); // Red color for the box
-            // p5.noFill();
-            // p5.strokeWeight(5); // Set stroke weight for the box
-            // p5.rect(
-            //     this.tail.x,
-            //     this.tail.y,
-            //     this.tail.size,
-            //     this.tail.size
-            // );
-            // p5.stroke(0,0,0);
+            p5.stroke(this.tail.color.r, this.tail.color.g, this.tail.color.b); // Red color for the box
+            p5.noFill();
+            p5.strokeWeight(5); // Set stroke weight for the box
+            p5.rect(
+                this.tail.x,
+                this.tail.y,
+                this.tail.size,
+                this.tail.size
+            );
+            p5.stroke(0,0,0);
         }
         p5.pop();
     }
