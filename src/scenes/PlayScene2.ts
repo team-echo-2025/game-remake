@@ -11,8 +11,9 @@ import Dialogue from "../lib/ui/Dialogue";
 import InteractiveComputer from "./BoatToFloat/lib/interactiveComputer";
 import CrossyRoad from "../puzzles/CrossyRoad/CrossyRoad";
 import Key from "../puzzles/CrossyRoad/Key";
-import Lock from "../puzzles/CrossyRoad/Lock";
-import Tasks, { Task, TaskState } from "../lib/Tasks";
+import Lock from "../puzzles/CrossyRoad/Lock"; 
+import Tasks, { Task, TaskState } from "../lib/Tasks"; 
+import Switches from "../puzzles/GameSwitch/Switches"; 
 
 type StartArgs = Readonly<{
     starting_pos: Vector2D;
@@ -25,6 +26,7 @@ export default class Dungeon1 extends Scene {
     dialogue?: Dialogue;
     background_music?: Sound;
     backgroundMusicManager?: SoundManager;
+    switches?: Switches;
     computer?: InteractiveComputer;
     crossyRoad?: CrossyRoad;
     key2?: Key;
@@ -74,8 +76,13 @@ export default class Dungeon1 extends Scene {
         }
 
         this.key2 = new Key(this);
-        this.key2.x = -414;
-        this.key2.y = 460;
+        this.key2.x = -800;
+        this.key2.y = -600;
+        this.key2.hidden = true;
+        this.switches = new Switches(this, this.player);
+        this.switches.onCompleted = () => {
+            this.key2!.hidden = false;
+        }
         let collided = false;
         this.key2.onCollide = (other: RigidBody) => {
             if (!collided && other == this.player!.body) {
@@ -168,12 +175,16 @@ export default class Dungeon1 extends Scene {
         // Load the background music file
         this.loadSound("background5", "assets/background5.mp3");
         this.crossyRoad?.preload();
+        this.switches?.preload();
     }
 
     setup(): void {
         this.crossyRoad?.setup();
         if (this.crossyRoad)
             this.add(this.crossyRoad);
+        this.switches?.setup();
+        if (this.switches)
+            this.add(this.switches);
         // this.physics.debug = true;
         this.tilemap = this.add_new.tilemap({
             tilemap_key: "tilemap",
@@ -196,19 +207,7 @@ export default class Dungeon1 extends Scene {
             }
         };
 
-        const switches_portal = new PhysicsObject({
-            width: 50,
-            height: 300,
-            mass: Infinity
-        });
-        switches_portal.body.x = -1280;
-        switches_portal.body.y = -586;
-        switches_portal.overlaps = true;
-        switches_portal.onCollide = (other: RigidBody) => {
-            if (other == this.player?.body) {
-                this.start("Switches");
-            }
-        };
+
 
         const enter_portal = new PhysicsObject({
             width: 50,
@@ -227,7 +226,6 @@ export default class Dungeon1 extends Scene {
         };
         this.physics.addObject(object);
         this.physics.addObject(enter_portal);
-        this.physics.addObject(switches_portal);
 
         if (!this.computer) { return }
         this.computer.x = -36;
@@ -265,6 +263,7 @@ export default class Dungeon1 extends Scene {
             this.player?.collectKey(this.key3!);
             this.crossyRoad?.forceSolve();
         }
+        //this.start("Switches")
     }
 
     keyPressed = (e: KeyboardEvent) => {
@@ -295,6 +294,7 @@ export default class Dungeon1 extends Scene {
         this.dialogue = undefined;
         this.backgroundMusicManager = undefined;
         this.computer = undefined;
+        this.switches = undefined;
         this.crossyRoad = undefined;
         this.key2 = undefined;
         this.key3 = undefined;

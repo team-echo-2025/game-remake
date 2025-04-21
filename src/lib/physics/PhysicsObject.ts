@@ -1,6 +1,6 @@
 import GameObject from '../GameObject';
-import Scene from '../Scene'; 
-import BoxCollider from './BoxCollider'; 
+import Scene from '../Scene';
+import BoxCollider from './BoxCollider';
 import RigidBody from './RigidBody';
 
 export type PhysicsObjectProps = Readonly<{
@@ -16,6 +16,7 @@ export default class PhysicsObject implements GameObject {
     id: any;
     body: RigidBody;
     zIndex?: number | undefined;
+    hidden?: boolean | undefined;
 
     set overlaps(v: boolean) {
         this.body.overlaps = v;
@@ -34,6 +35,7 @@ export default class PhysicsObject implements GameObject {
     async preload(): Promise<void> { }
     draw(): void { }
     update(dt: number, _: Scene): void {
+        if (this.hidden) return;
         this.body.x += this.body.velocity.x * dt / 1000;
         this.body.y += this.body.velocity.y * dt / 1000;
     }

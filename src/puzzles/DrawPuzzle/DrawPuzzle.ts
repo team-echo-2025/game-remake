@@ -135,6 +135,7 @@ export default class DrawPuzzle extends Puzzle {
     }
 
     override postDraw(): void {
+        this.scene.p5.push();
         if (this.hide_page || this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
         this.checkSolution();
         this.drawBody();
@@ -151,6 +152,7 @@ export default class DrawPuzzle extends Puzzle {
 
         if (this.cursor.validLineStart()) { //check if the stored square has a dot
             let tempSelect = this.getSquareAtMousePosition(x, y); // null or a square at mouse position
+            this.scene.p5.push();
             if (this.currentLine != null && tempSelect != null && this.cursor.currentSquare != null && this.isAdjacent(this.currentLine.lastAdded, tempSelect)) {
 
                 if (this.currentLine) { //prove is defined
@@ -172,8 +174,38 @@ export default class DrawPuzzle extends Puzzle {
                 }
 
             }
-
+            this.scene.p5.pop();
         }
+        if (this.isDisplayingHint) this.drawHint();
+        this.scene.p5.pop();
+    }
+    override drawHint(): void {
+        // Background
+        let rectWidth = this.scene.p5.windowHeight/2;
+        let rectHeight = this.scene.p5.windowHeight/2 + 60;
+
+        let rectX = -this.scene.p5.windowWidth/3;
+        let rectY = -50;
+        this.scene.p5.push()
+        this.scene.p5.fill(255, 255, 255, 150);
+        this.scene.p5.stroke(0,0,0)
+        this.scene.p5.strokeWeight(2);
+        this.scene.p5.rect(rectX, rectY, rectWidth, rectHeight);
+
+        // Title / text
+        this.scene.p5.fill(0);
+        this.scene.p5.textAlign(this.scene.p5.CENTER, this.scene.p5.CENTER);
+        this.scene.p5.textSize(32);
+        this.scene.p5.text('How To Play', -this.scene.p5.windowWidth/3, -this.scene.p5.windowHeight/4 - 25);
+        this.scene.p5.textSize(20);
+        //I recommend turning on word wrap to read this  //-this.scene.p5.windowWidth/3, -this.scene.p5.windowHeight/20 + 1
+        this.scene.p5.text("Create a line by dragging from one colored dot \nto the corresponding colored dot", -this.scene.p5.windowWidth/3, -this.scene.p5.windowHeight/4 +10);
+        this.scene.p5.text("Rules:", -this.scene.p5.windowWidth/3, -this.scene.p5.windowHeight/4 + 100);
+        this.scene.p5.text("1. You can only create a line between \nhorizontal and vertical squares", -this.scene.p5.windowWidth/3, -this.scene.p5.windowHeight/4 +150);
+        this.scene.p5.text("2. All squares must be filled", -this.scene.p5.windowWidth/3, -this.scene.p5.windowHeight/4 +180);
+
+        //this.scene.p5.text('Drag a circle from the bottom to a white\nhighlighted position on the board\n\n If the highlight turns green, the color\n is in the solution and correct spot\n\n If it turns yellow, the color is in the solution\nbut not in the correct position\n\nBut if it turns red, the color is not in the solution\n\n If a previously inserted color highlight turns yellow\nor green and the same color is added in a different spot\nand the highlight turns red, there is only one instance\nof the color in the solution', -this.scene.p5.windowWidth/3, -this.scene.p5.windowHeight/20 + 15);
+        this.scene.p5.pop();
     }
 
     selectSolvableSquares(): void {
@@ -338,16 +370,20 @@ export default class DrawPuzzle extends Puzzle {
     }
 
     drawBody(): void {
+        this.scene.p5.push();
         let rectWidth = this.scene.p5.width / 1.3;
         let rectHeight = this.scene.p5.height / 1.1;
 
         let rectX = 0;
         let rectY = 0;
 
-        this.scene.p5.fill(255, 182, 193);
+        this.scene.p5.fill(255, 182, 193,150);
         this.scene.p5.rect(rectX, rectY, rectWidth, rectHeight);
+        this.scene.p5.pop();
     }
     drawBoard(): void {
+        let p5 = this.scene.p5;
+        p5.push();
         const { columns, rows } = this.getBoardSize();
         this.squareSize = this.scene.p5.height / 16.15;
         const offsetX = -(columns * this.squareSize) / 2;
@@ -361,19 +397,20 @@ export default class DrawPuzzle extends Puzzle {
                 square.draw();
             }
         }
-        let p5 = this.scene.p5;
+        
         p5.fill(0);
         p5.noStroke();
         p5.textAlign(p5.CENTER, p5.CENTER);
         p5.textSize((24 + 32) / 2);
-        p5.text("Connect the matching colored dots!", 0, offsetY + rows / this.squareSize - 50);
-        p5.text("How To Play:", -(p5.windowWidth / 3 - 150), -(offsetY + rows * this.squareSize + 50));
-        p5.text("Create a line by dragging from one colored ", -(p5.windowWidth / 3 - 150), -(offsetY + rows * this.squareSize - 80));
-        p5.text("dot to the corresponding colored dot ", -(p5.windowWidth / 3 - 150), -(offsetY + rows * this.squareSize - 100));
-        p5.text("Rules:", (p5.windowWidth / 3 - 150), -(offsetY + rows * this.squareSize + 50));
-        p5.text("1. You can only create a line", (p5.windowWidth / 3 - 150), -(offsetY + rows * this.squareSize - 80));
-        p5.text("   between horizontal and vertical squares", (p5.windowWidth / 3 - 150), -(offsetY + rows * this.squareSize - 100));
-        p5.text("2. All squares must be filled", (p5.windowWidth / 3 - 150), -(offsetY + rows * this.squareSize - 140));
+        // p5.text("Connect the matching colored dots!", 0, offsetY + rows / this.squareSize - 50);
+        // p5.text("How To Play:", -(p5.windowWidth / 3 - 150), -(offsetY + rows * this.squareSize + 50));
+        // p5.text("Create a line by dragging from one colored ", -(p5.windowWidth / 3 - 150), -(offsetY + rows * this.squareSize - 80));
+        // p5.text("dot to the corresponding colored dot ", -(p5.windowWidth / 3 - 150), -(offsetY + rows * this.squareSize - 100));
+        // p5.text("Rules:", (p5.windowWidth / 3 - 150), -(offsetY + rows * this.squareSize + 50));
+        // p5.text("1. You can only create a line", (p5.windowWidth / 3 - 150), -(offsetY + rows * this.squareSize - 80));
+        // p5.text("   between horizontal and vertical squares", (p5.windowWidth / 3 - 150), -(offsetY + rows * this.squareSize - 100));
+        // p5.text("2. All squares must be filled", (p5.windowWidth / 3 - 150), -(offsetY + rows * this.squareSize - 140));
+        p5.pop();
     }
     override keyPressed(e: KeyboardEvent): void {
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
@@ -381,6 +418,7 @@ export default class DrawPuzzle extends Puzzle {
             this.onOpen && this.onOpen();
             this.player.disabled = true;
             this.hide_page = false;
+            this.setupHint();
         }
         if (!this.hide_page && e.key == 'Escape') {
             this.cleanup();
@@ -589,7 +627,7 @@ export default class DrawPuzzle extends Puzzle {
 
     displayWinMessage(): void {
         let p5 = this.scene.p5;
-
+        p5.push();
         p5.fill(0, 0, 0, 150);
         p5.rect(0, 0, p5.width, p5.height);
 
@@ -606,6 +644,7 @@ export default class DrawPuzzle extends Puzzle {
         p5.text("You Win!", 0, -boxHeight / 8);
         p5.textSize(16);
         p5.text("Click to continue.", 0, boxHeight / 4);
+        p5.pop();
     }
 
     override setDifficulty(difficulty: string): void {
