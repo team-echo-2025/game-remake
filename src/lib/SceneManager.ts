@@ -7,8 +7,8 @@ import WinnerPage from "../pages/WinnerPage";
 import PausePage from "../pages/PausePage";
 import LoadingScene from "../scenes/LoadingScene";
 
-const DURATION = 500;
 export default class SceneManager implements GameObject {
+    static DURATION = 500;
     private p: p5;
     private current_scene?: Scene;
     loading_scene: LoadingScene;
@@ -17,12 +17,7 @@ export default class SceneManager implements GameObject {
     private timer_start: number;
     private _time_remaining: number;
     private timer_paused: boolean = false;
-    private _total_time: number;
     private _page_manager?: PageManager;
-
-    get total_time(): number {
-        return this._total_time;
-    }
 
     get page_manager() {
         return this._page_manager;
@@ -72,8 +67,7 @@ export default class SceneManager implements GameObject {
             this.start(new_scene.name);
         });
         this.timer_start = p.millis();
-        this._time_remaining = DURATION;
-        this._total_time = DURATION;
+        this._time_remaining = SceneManager.DURATION;
     }
 
     async start(name: string, args?: any) {
@@ -155,7 +149,7 @@ export default class SceneManager implements GameObject {
 
     resetTimer(): void {
         this.timer_start = this.current_scene?.p5.millis() ?? 0;
-        this._time_remaining = DURATION;
+        this._time_remaining = SceneManager.DURATION;
     }
 
     disableTimer(): void {

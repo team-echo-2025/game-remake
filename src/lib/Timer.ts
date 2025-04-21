@@ -1,6 +1,7 @@
 import p5 from 'p5';
 import GameObject from './GameObject';
 import Scene from './Scene';
+import SceneManager from './SceneManager';
 
 export default class Timer implements GameObject {
     hidden?: boolean;
@@ -38,7 +39,7 @@ export default class Timer implements GameObject {
         const p = this.scene.p5;
 
         const time_left = this.scene.scene_manager.time_remaining;
-        const total_time = this.scene.scene_manager.total_time;
+        const total_time = SceneManager.DURATION;
 
         const clamped = Math.max(0, time_left);
 

@@ -2,6 +2,7 @@ import GameObject from "./GameObject";
 import Page from "./Page";
 import Scene from "./Scene";
 import ButtonTest from "../lib/ui/ButtonTest"
+import SceneManager from "./SceneManager";
 
 export enum PuzzleState {
     completed,
@@ -103,5 +104,17 @@ export default class Puzzle implements GameObject {
 
     setDifficulty(difficulty: string): void {
         Puzzle.difficulty = difficulty;
+        switch (difficulty) {
+            case "easy":
+                SceneManager.DURATION = 500;
+                break;
+            case "normal":
+                SceneManager.DURATION = 600;
+                break;
+            case "hard":
+                SceneManager.DURATION = 700;
+                break;
+
+        }
     }
 }

@@ -95,11 +95,11 @@ export default class Ghost extends PhysicsObject {
                     this.flashInterval = setInterval(() => {
                         this.flashRed(150);
                         this.speed = 0;
+                        this.scene.scene_manager.deductTime?.(100);
                         timeout = setTimeout(() => {
                             this.speed = 85
                         }, 100);
                     }, 1500);
-                    this.scene.scene_manager.deductTime?.(10);
                     this.isAttacking = true;
                     this.anim_index = 0;
                     this.lastStrikeTime = this.scene.p5.millis();
