@@ -41,9 +41,6 @@ export default class Dialogue extends PhysicsObject {
                         this.fullText = dialogue.text;
                         this.printText = true;
                         this.startTypeWriterEffect(this.fullText);
-                        // this.collider_timeout = setTimeout(() => {
-                        //     this.printText = false;
-                        // }, 9000);  //3 seconds ... obv can be increased for more time
                     }
 
                 }
