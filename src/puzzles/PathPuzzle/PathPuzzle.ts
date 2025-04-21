@@ -185,6 +185,7 @@ export default class PathPuzzle extends Puzzle {
             this.player.disabled = true;
             this.onOpen && this.onOpen();
             this.hide_page = false;
+            this.setupHint();
         }
         if (!this.hide_page && e.key == 'Escape') {
             this.cleanup();
@@ -234,6 +235,9 @@ export default class PathPuzzle extends Puzzle {
 
         this.draw_footer();
         this.draw_header();
+        if (this.isDisplayingHint) {
+            this.drawHint();
+          }
 
         // If puzzle completed, handle the 1-second delay
         if (this.state === PuzzleState.completed && this.puzzleCompleteAt) {
@@ -295,7 +299,7 @@ export default class PathPuzzle extends Puzzle {
 
     draw_footer(): void {
         const p5 = this.scene.p5;
-        const footerHeight = 140;
+        const footerHeight = 100;
         const footerY = this.boardSize / 2 + footerHeight / 2 + 10;
 
         p5.fill(50);
@@ -304,9 +308,7 @@ export default class PathPuzzle extends Puzzle {
         p5.textAlign(p5.CENTER, p5.CENTER);
         p5.textSize(20);
         p5.text(
-            "Rotate tiles by clicking them. Connect\n the green tile to the red tile. " +
-            "Some paths\n appear correct, but will highlight red." +
-            "\nWhen the correct path is found\n it will highlight green.",
+            "Click to rotate tiles and find the\n correct path from the green tile\n to the red tile",
             0,
             footerY
         );
@@ -348,6 +350,7 @@ export default class PathPuzzle extends Puzzle {
 
     // After the 1s delay, finalize and exit the puzzle
     private finishPuzzle(): void {
+        this.cleanup();
         this.hide_page = true;
         this.hidden = true;
         this.player.disabled = false;
@@ -359,4 +362,46 @@ export default class PathPuzzle extends Puzzle {
         // Reset timestamp if puzzle re-used
         this.puzzleCompleteAt = null;
     }
+    override drawHint(): void {
+        const p = this.scene.p5;
+        // your original box sizing & position
+        const rectWidth  = p.windowHeight/2;
+        const rectHeight = p.windowHeight/2 + 60;
+        const rectX      = -p.windowWidth/3;
+        const rectY      = -50;
+    
+        p.push();
+          // Background
+          p.fill(255, 255, 255, 180);
+          p.rect(rectX, rectY, rectWidth, rectHeight);
+    
+          // Title
+          p.fill(0);
+          p.textAlign(p.CENTER, p.CENTER);
+          p.textSize(32);
+          p.text(
+            'How To Play',
+            -p.windowWidth/3,
+            -p.windowHeight/4 - 25
+          );
+    
+          
+          p.textSize(20);
+          p.textLeading(24);       
+          p.textWrap(p.WORD);      
+    
+          const instr =
+            'Click on a tile to rotate it.\n\n There may be multiple paths connecting the green and red tiles.\n\n ' +
+            'When a wrong path is found it will highlight in red. When the correct path is found, it will highlight in green';
+    
+         
+          p.text(
+            instr,
+            -p.windowWidth/3,
+            -p.windowHeight/20 + 15,
+            rectWidth
+          );
+        p.pop();
+    }
+    
 }
