@@ -74,12 +74,15 @@ export default class Dungeon1 extends Scene {
                 this.player!.disabled = false;
             }
         }
-        this.switches = new Switches(this, this.player);
-        
 
         this.key2 = new Key(this);
-        this.key2.x = -414;
-        this.key2.y = 460;
+        this.key2.x = -800;
+        this.key2.y = -600;
+        this.key2.hidden = true;
+        this.switches = new Switches(this, this.player);
+        this.switches.onCompleted = () => {
+            this.key2!.hidden = false;
+        }
         let collided = false;
         this.key2.onCollide = (other: RigidBody) => {
             if (!collided && other == this.player!.body) {
@@ -168,7 +171,7 @@ export default class Dungeon1 extends Scene {
         if (this.crossyRoad)
             this.add(this.crossyRoad);
         this.switches?.setup();
-        if(this.switches)
+        if (this.switches)
             this.add(this.switches);
         // this.physics.debug = true;
         this.tilemap = this.add_new.tilemap({
@@ -211,7 +214,6 @@ export default class Dungeon1 extends Scene {
         };
         this.physics.addObject(object);
         this.physics.addObject(enter_portal);
-        
 
         if (!this.computer) { return }
         this.computer.x = -36;

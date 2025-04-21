@@ -106,6 +106,7 @@ export default class Switches extends Puzzle {
                     }
 
                     if (this.foundFirst && this.secondSwitchActivated) {
+                        this.onCompleted && this.onCompleted();
                         //puzzle complete, do something
                     }
 
