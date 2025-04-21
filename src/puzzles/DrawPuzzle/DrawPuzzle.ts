@@ -57,6 +57,7 @@ export default class DrawPuzzle extends Puzzle {
         this.player.disabled = false;
         this.asset.change_asset('drawPuzzle-success');
         this.scene.physics.remove(this.physics_object);
+        this.cleanup();
     }
     //dot positions (0,0 is top left)
     //right now all puzzle sets have the same number of flows as rows and columns because of the solution check implementation
@@ -181,14 +182,14 @@ export default class DrawPuzzle extends Puzzle {
     }
     override drawHint(): void {
         // Background
-        let rectWidth = this.scene.p5.windowHeight/2;
-        let rectHeight = this.scene.p5.windowHeight/2 + 60;
+        let rectWidth = this.scene.p5.windowHeight / 2;
+        let rectHeight = this.scene.p5.windowHeight / 2 + 60;
 
-        let rectX = -this.scene.p5.windowWidth/3;
+        let rectX = -this.scene.p5.windowWidth / 3;
         let rectY = -50;
         this.scene.p5.push()
         this.scene.p5.fill(255, 255, 255, 150);
-        this.scene.p5.stroke(0,0,0)
+        this.scene.p5.stroke(0, 0, 0)
         this.scene.p5.strokeWeight(2);
         this.scene.p5.rect(rectX, rectY, rectWidth, rectHeight);
 
@@ -196,13 +197,13 @@ export default class DrawPuzzle extends Puzzle {
         this.scene.p5.fill(0);
         this.scene.p5.textAlign(this.scene.p5.CENTER, this.scene.p5.CENTER);
         this.scene.p5.textSize(32);
-        this.scene.p5.text('How To Play', -this.scene.p5.windowWidth/3, -this.scene.p5.windowHeight/4 - 25);
+        this.scene.p5.text('How To Play', -this.scene.p5.windowWidth / 3, -this.scene.p5.windowHeight / 4 - 25);
         this.scene.p5.textSize(20);
         //I recommend turning on word wrap to read this  //-this.scene.p5.windowWidth/3, -this.scene.p5.windowHeight/20 + 1
-        this.scene.p5.text("Create a line by dragging from one colored dot \nto the corresponding colored dot", -this.scene.p5.windowWidth/3, -this.scene.p5.windowHeight/4 +10);
-        this.scene.p5.text("Rules:", -this.scene.p5.windowWidth/3, -this.scene.p5.windowHeight/4 + 100);
-        this.scene.p5.text("1. You can only create a line between \nhorizontal and vertical squares", -this.scene.p5.windowWidth/3, -this.scene.p5.windowHeight/4 +150);
-        this.scene.p5.text("2. All squares must be filled", -this.scene.p5.windowWidth/3, -this.scene.p5.windowHeight/4 +180);
+        this.scene.p5.text("Create a line by dragging from one colored dot \nto the corresponding colored dot", -this.scene.p5.windowWidth / 3, -this.scene.p5.windowHeight / 4 + 10);
+        this.scene.p5.text("Rules:", -this.scene.p5.windowWidth / 3, -this.scene.p5.windowHeight / 4 + 100);
+        this.scene.p5.text("1. You can only create a line between \nhorizontal and vertical squares", -this.scene.p5.windowWidth / 3, -this.scene.p5.windowHeight / 4 + 150);
+        this.scene.p5.text("2. All squares must be filled", -this.scene.p5.windowWidth / 3, -this.scene.p5.windowHeight / 4 + 180);
 
         //this.scene.p5.text('Drag a circle from the bottom to a white\nhighlighted position on the board\n\n If the highlight turns green, the color\n is in the solution and correct spot\n\n If it turns yellow, the color is in the solution\nbut not in the correct position\n\nBut if it turns red, the color is not in the solution\n\n If a previously inserted color highlight turns yellow\nor green and the same color is added in a different spot\nand the highlight turns red, there is only one instance\nof the color in the solution', -this.scene.p5.windowWidth/3, -this.scene.p5.windowHeight/20 + 15);
         this.scene.p5.pop();
@@ -377,7 +378,7 @@ export default class DrawPuzzle extends Puzzle {
         let rectX = 0;
         let rectY = 0;
 
-        this.scene.p5.fill(255, 182, 193,150);
+        this.scene.p5.fill(255, 182, 193, 150);
         this.scene.p5.rect(rectX, rectY, rectWidth, rectHeight);
         this.scene.p5.pop();
     }
@@ -397,7 +398,7 @@ export default class DrawPuzzle extends Puzzle {
                 square.draw();
             }
         }
-        
+
         p5.fill(0);
         p5.noStroke();
         p5.textAlign(p5.CENTER, p5.CENTER);
@@ -581,6 +582,7 @@ export default class DrawPuzzle extends Puzzle {
             this.scene.physics.remove(this.physics_object);
             clearTimeout(this.collider_timeout);
             this.asset.change_asset('drawPuzzle-success');
+            this.cleanup();
             return true;
         }
         return false;
