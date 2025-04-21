@@ -4,7 +4,6 @@ import ButtonTest, { ButtonTestProps } from "../lib/ui/ButtonTest";
 import Sound from "../lib/Sound";
 import SoundManager, { SoundManagerProps } from "../lib/SoundManager";
 import Slider from "../lib/ui/Slider"
-import DropdownMenu from '../lib/ui/DropdownMenu';
 
 export default class CharacterPageColors extends Page {
     hairStyleButton!: ButtonTest;
@@ -17,21 +16,11 @@ export default class CharacterPageColors extends Page {
     private greenHairSlider!: Slider;
     private blueHairSlider!: Slider;
     private hairSliderVisible = false;
-    private hairColors = [
-        { r: 0, g: 0, b: 0 },       // Black
-        { r: 139, g: 69, b: 19 },   // Brown
-        { r: 255, g: 225, b: 100 }, // Blonde
-        { r: 200, g: 100, b: 30 },  // Red
-        { r: 150, g: 150, b: 150 }  // Grey
-    ];
-    private hairColorIndex = 0;
     private hairPath = localStorage.getItem("playerHair");
     private clothesPath = localStorage.getItem("playerClothes");
-    private hatPath = localStorage.getItem("playerHat");
     private playerFrames: Image[] = [];
     private hairFrames: Image[] = [];
     private clothesFrames: Image[] = [];
-    private hatFrames: Image[] = [];
     private playerAnimIndex = 0;
     private playerLastFrameTime = 0;
     public red = 255;
@@ -77,12 +66,9 @@ export default class CharacterPageColors extends Page {
             label: "Random Color",
             font_key: 'jersey',
             callback: () => {
-                this.hairColorIndex = (this.hairColorIndex + 1) % this.hairColors.length;
-                const color = this.hairColors[this.hairColorIndex];
-
-                this.red = color.r;
-                this.green = color.g;
-                this.blue = color.b;
+                this.red = Math.floor(Math.random() * 256);
+                this.green = Math.floor(Math.random() * 256);
+                this.blue = Math.floor(Math.random() * 256);
 
                 this.redHairSlider.slider.value(this.red / 255);
                 this.greenHairSlider.slider.value(this.green / 255);
@@ -171,11 +157,9 @@ export default class CharacterPageColors extends Page {
         this.playerFrames = [];
         this.hairFrames = [];
         this.clothesFrames = [];
-        this.hatFrames = [];
 
         this.hairPath = localStorage.getItem("playerHair");
         this.clothesPath = localStorage.getItem("playerClothes");
-        this.hatPath = localStorage.getItem("playerHat");
 
         this.scene.p5.loadImage('assets/player.png', (img) => {
             for (let i = 0; i < 6; i++) {
@@ -183,20 +167,18 @@ export default class CharacterPageColors extends Page {
             }
         });
 
-        if (this.hairPath && this.hairPath !== "none") {
-            this.scene.p5.loadImage(this.hairPath, (img) => {
-                for (let i = 0; i < 6; i++) {
-                    this.hairFrames.push(img.get(i * 64, 64 * 4, 64, 64));
-                }
-            });
+        if (!this.hairPath || this.hairPath === "none") {
+            // force a default hairstyle if no hair is set
+            this.hairPath = 'assets/player_hair_short.png';
+            localStorage.setItem("playerHair", this.hairPath);
         }
-        if (!this.hairPath) {
-            this.scene.p5.loadImage('assets/player_hair_short.png', (img) => {
-                for (let i = 0; i < 6; i++) {
-                    this.hairFrames.push(img.get(i * 64, 64 * 4, 64, 64));
-                }
-            });
-        }
+        
+        this.scene.p5.loadImage(this.hairPath, (img) => {
+            for (let i = 0; i < 6; i++) {
+                this.hairFrames.push(img.get(i * 64, 64 * 4, 64, 64));
+            }
+        });
+        
 
         if (this.clothesPath) {
             this.scene.p5.loadImage(this.clothesPath, (img) => {
@@ -209,14 +191,6 @@ export default class CharacterPageColors extends Page {
             this.scene.p5.loadImage('assets/player_tunic.png', (img) => {
                 for (let i = 0; i < 6; i++) {
                     this.clothesFrames.push(img.get(i * 64, 64 * 4, 64, 64));
-                }
-            });
-        }
-
-        if (this.hatPath && this.hatPath !== "none") {
-            this.scene.p5.loadImage(this.hatPath, (img) => {
-                for (let i = 0; i < 6; i++) {
-                    this.hatFrames.push(img.get(i * 64, 64 * 4, 64, 64));
                 }
             });
         }
@@ -247,10 +221,6 @@ export default class CharacterPageColors extends Page {
             p5.image(this.hairFrames[this.playerAnimIndex], x, y, size, size);
             p5.noTint();
         }
-        if (this.allFramesReady(this.hatFrames)) {
-            p5.tint(255);
-            p5.image(this.hatFrames[this.playerAnimIndex], x, y, size, size);
-        }
 
         p5.noTint();
         p5.pop();
@@ -265,12 +235,6 @@ export default class CharacterPageColors extends Page {
         this.green = Math.floor((this.greenHairSlider.slider.value() as number) * 255);
         this.blue = Math.floor((this.blueHairSlider.slider.value() as number) * 255);
         localStorage.setItem("hairColor", JSON.stringify({ r: this.red, g: this.green, b: this.blue }));
-    }
-    setHatColor(): void {
-        this.red = Math.floor((this.redHairSlider.slider.value() as number) * 255);
-        this.green = Math.floor((this.greenHairSlider.slider.value() as number) * 255);
-        this.blue = Math.floor((this.blueHairSlider.slider.value() as number) * 255);
-        localStorage.setItem("hatColor", JSON.stringify({ r: this.red, g: this.green, b: this.blue }));
     }
     setClothingColor(): void {
         this.red = Math.floor((this.redHairSlider.slider.value() as number) * 255);

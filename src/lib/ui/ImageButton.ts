@@ -14,7 +14,7 @@ export default class ImageButton extends ButtonTest {
     setup(): void {
         super.setup()
         this.asset = this.scene.get_asset(this.imageKey); //returns asset
-        this._height = this.asset.height;
+        this._height = this._scene.p5.textAscent() + this._scene.p5.textDescent() + this.padding_y;
     }
     protected _draw() {
         this._scene.p5.push();

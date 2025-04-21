@@ -112,7 +112,6 @@ export default class PlayScene extends Scene {
 
     preload(): any {
         this.loadFont("jersey", "assets/fonts/jersey.ttf");
-        this.loadFont("courier", "assets/fonts/cour.ttf");
         this.loadTilemap("tilemap", "assets/tilemaps/LaythsTileMap/world-1.tmx")
         this.loadImage("door", "assets/doors/prison_door.png");
         this.loadImage("puzzle", "assets/puzzleImages/access_circuit.png");
@@ -163,16 +162,6 @@ export default class PlayScene extends Scene {
         fire.x = -380;
         fire.y = 160;
         fire.play();
-
-
-        // this.access_circuit = new AccessCircuit(this, 'puzzle', this.player!);
-        // this.access_circuit.x = -288;
-        // this.access_circuit.y = 43;
-        // this.access_circuit?.setup();
-        // this.access_circuit.asset.zIndex = 101;
-        // this.access_circuit.onOpen = () => {
-        //     this.dialogue.killAll();
-        // }
 
 
         this.tilemap = this.add_new.tilemap({

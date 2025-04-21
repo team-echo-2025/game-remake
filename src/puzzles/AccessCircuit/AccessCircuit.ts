@@ -176,14 +176,16 @@ export default class AccessCircuit extends Puzzle {
             this.dragging.y = y;
             this.dragging.draw();
         }
+        if (this.isDisplayingHint) this.drawHint();
     }
 
     keyPressed(e: KeyboardEvent): void {
         if (this.state == PuzzleState.completed || this.state == PuzzleState.failed) return
         if (this.hidden && this.highlight && e.key == 'e') {
             this.onOpen && this.onOpen();
-            this.player.disabled = true;
             this.hidden = false;
+            this.player.disabled = true;
+            this.setupHint();
         }
     }
     mousePressed(_: MouseEvent) {
@@ -288,6 +290,27 @@ export default class AccessCircuit extends Puzzle {
             this.onCompleted?.();
         }
     }
+    override drawHint(): void {
+        // Background
+        let rectWidth = this.scene.p5.windowHeight/2;
+        let rectHeight = this.scene.p5.windowHeight/2 + 60;
+
+        let rectX = -this.scene.p5.windowWidth/3;
+        let rectY = -50;
+        this.scene.p5.push()
+        this.scene.p5.fill(255, 255, 255, 150);
+        this.scene.p5.rect(rectX, rectY, rectWidth, rectHeight);
+
+        // Title / text
+        this.scene.p5.fill(0);
+        this.scene.p5.textAlign(this.scene.p5.CENTER, this.scene.p5.CENTER);
+        this.scene.p5.textSize(32);
+        this.scene.p5.text('How To Play', -this.scene.p5.windowWidth/3, -this.scene.p5.windowHeight/4 - 25);
+        this.scene.p5.textSize(20);
+        //I recommend turning on word wrap to read this
+        this.scene.p5.text('Drag a circle from the bottom to a white\nhighlighted position on the board\n\n If the highlight turns green, the color\n is in the solution and correct spot\n\n If it turns yellow, the color is in the solution\nbut not in the correct position\n\nBut if it turns red, the color is not in the solution\n\n If a previously inserted color highlight turns yellow\nor green and the same color is added in a different spot\nand the highlight turns red, there is only one instance\nof the color in the solution', -this.scene.p5.windowWidth/3, -this.scene.p5.windowHeight/20 + 15);
+        this.scene.p5.pop();
+    }
 
     draw_header() {
         let p5 = this.scene.p5;
@@ -370,7 +393,7 @@ export default class AccessCircuit extends Puzzle {
         p5.noStroke();
         p5.textAlign(p5.CENTER, p5.CENTER);
         p5.textSize(16);
-        p5.text("Drag a ball from here into the board!", footerX, footerY - footerHeight / 2 + 20);
+        p5.text("Drag a ball from here into the board!", footerX, footerY - footerHeight / 2 + 10);
 
     }
     setupFooter() {
