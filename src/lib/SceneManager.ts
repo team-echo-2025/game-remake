@@ -129,6 +129,7 @@ export default class SceneManager implements GameObject {
                 this._time_remaining -= delta;
 
                 if (this._time_remaining <= 0) {
+                    dispatchEvent(new Event('time-up'));
                     this.disableTimer();
                     this.resetTimer();
                     this._page_manager?.set_page("loser");
