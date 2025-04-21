@@ -59,9 +59,9 @@ export default class Dialogue extends PhysicsObject {
             this.scene.p5.textSize(10);
             const width = this.scene.p5.textWidth(this.currentText);
             this.scene.p5.rectMode(this.scene.p5.CENTER)
-            this.scene.p5.rect(this.player.body.x, this.player.body.y - 25, width + 10, 15, 20)
+            this.scene.p5.rect(this.player.body.x, this.player.body.y - 35, width + 10, 15, 20)
             this.scene.p5.fill(0);
-            this.scene.p5.text(this.currentText, this.player.body.x - width / 2, this.player.body.y - 25);
+            this.scene.p5.text(this.currentText, this.player.body.x - width / 2, this.player.body.y - 35);
             this.scene.p5.pop();
         }
     }
