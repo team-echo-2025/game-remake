@@ -17,8 +17,7 @@ type SceneState = {
 }
 
 
-export default class PlayScene4 extends Scene
-{
+export default class PlayScene4 extends Scene {
     player?: Player;
     tilemap?: Tilemap;
     firstLever?: Lever;
@@ -34,15 +33,14 @@ export default class PlayScene4 extends Scene
     ghostAlive: boolean = true;
 
 
-    constructor()
-    {
+    constructor() {
         super("playscene-4");
         this.physics.debug = false;
         this.camera.zoom = 3;
     }
 
-    onStart(): void
-    {
+    onStart(): void {
+        this.physics.debug = true;
         this.player = new Player(this);
         this.physics.addObject(this.player);
         this.player.body.x = -300
@@ -54,8 +52,7 @@ export default class PlayScene4 extends Scene
         this.ghost.body.y = -450;
     }
 
-    preload(): any
-    {
+    preload(): any {
         this.loadTilemap("tilemap", "assets/tilemaps/tilesetFolder/scene5.tmx");
         this.loadImage("red_lever", "assets/puzzleImages/red.png");
         this.loadImage("blue_lever", "assets/puzzleImages/blue.png");
@@ -63,10 +60,9 @@ export default class PlayScene4 extends Scene
         this.loadImage("highlightedLever", "assets/puzzleImages/highlightedLever.png");
     }
 
-    setup(): void
-    {
-        this.tilemap = this.add_new.tilemap({tilemap_key: 'tilemap'});
-        this.bounds = new BoxCollider({w: this.tilemap.width, h: this.tilemap.height, x: 0, y: 0});
+    setup(): void {
+        this.tilemap = this.add_new.tilemap({ tilemap_key: 'tilemap' });
+        this.bounds = new BoxCollider({ w: this.tilemap.width, h: this.tilemap.height, x: 0, y: 0 });
 
         this.firstLever = new Lever(this, -610, -170, "red_lever", "blue_lever", "highlightedLever", this.player!);
         this.firstLever.setup();
@@ -94,56 +90,40 @@ export default class PlayScene4 extends Scene
         // this.fourthLever.flipped = true;
     }
 
-    keyPressed = (e: KeyboardEvent) =>
-    {
-        if (e.key === "Escape")
-        {
+    keyPressed = (e: KeyboardEvent) => {
+        if (e.key === "Escape") {
             this.start("menu-scene");
         }
     };
 
-    onStop(): void
-    {
+    onStop(): void {
         this.player = undefined;
         this.tilemap = undefined;
         this.ghost = undefined;
     }
 
-    postDraw(): void
-    {
-    }
-
-    draw(): void
-    {
-        if (!this.leversFlipped)
-        {
-            if (this.leverCheck())
-            {
+    draw(): void {
+        if (!this.leversFlipped) {
+            if (this.leverCheck()) {
                 this.leversFlipped = true;
                 this.magicCircle?.activateCircle();
             }
-        } else
-        {
+        } else {
             if (this.ghostAlive)
                 this.ghostKillCheck();
         }
     }
 
-    leverCheck(): boolean
-    {
+    leverCheck(): boolean {
         return this.firstLever!.flipped && this.secondLever!.flipped && this.thirdLever!.flipped && this.fourthLever!.flipped
     }
 
-    ghostKillCheck(): void
-    {
-        if (this.magicCircleX - this.magicCircleBounds <= this.ghost!.body.x && this.ghost!.body.x <= this.magicCircleX + this.magicCircleBounds)
-        {
-            if (this.magicCircleY - this.magicCircleBounds <= this.ghost!.body.y && this.ghost!.body.y <= this.magicCircleY + this.magicCircleBounds)
-            {
+    ghostKillCheck(): void {
+        if (this.magicCircleX - this.magicCircleBounds <= this.ghost!.body.x && this.ghost!.body.x <= this.magicCircleX + this.magicCircleBounds) {
+            if (this.magicCircleY - this.magicCircleBounds <= this.ghost!.body.y && this.ghost!.body.y <= this.magicCircleY + this.magicCircleBounds) {
                 this.ghost!.die();
                 this.ghostAlive = false;
-                setTimeout(() =>
-                {
+                setTimeout(() => {
                     this.scene_manager.page_manager?.set_page("non-loser");
                 }, 2000);
             }
