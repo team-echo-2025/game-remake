@@ -10,11 +10,9 @@ type Velocity = {
     y: number;
 };
 
-export default class Ghost extends PhysicsObject
-{
+export default class Ghost extends PhysicsObject {
     zIndex?: number = 100;
     private player: Player;
-    private followThreshold = 5;
     private attackRange = 50;
     private ghostDebug = true;
     private movements: any = {};
@@ -27,7 +25,6 @@ export default class Ghost extends PhysicsObject
     public moving: boolean = false;
     private scene: Scene;
     private speed: number = 85;
-    private launch_delay_start = 0;
     private scale: number = 1;
     private width: number = 128 * this.scale;
     private height: number = 128 * this.scale;
@@ -41,45 +38,41 @@ export default class Ghost extends PhysicsObject
     private lastStrikeTime = 0;
     private strikeCooldown = 1000;
     private strikeDistance = 25;
-    private readonly TILE_SIZE   = 32;
-    private readonly MAX_TRAIL   = Infinity;
+    private readonly TILE_SIZE = 32;
+    private readonly MAX_TRAIL = 3;
     private trail: { col: number; row: number }[] = [];
     private crumbPtr = 0;
     private lastRecorded?: { col: number; row: number };
     private gameOver = false;
+    private flashInterval?: Timer;
 
     private in_range: boolean = false;
     private collider_timeout: any;
 
-    constructor(scene: Scene, player: Player)
-    {
-        super({width: 0, height: 0, mass: 16 * 16,});
+    constructor(scene: Scene, player: Player) {
+        super({ width: 80, height: 80, mass: Infinity, });
+        this.overlaps = true;
         this.scene = scene;
         this.player = player;
-        this.direction = {x: 0, y: 0,};
-        addEventListener('time-up', () => {this.gameOver = true;});
+        this.direction = { x: 0, y: 0, };
+        addEventListener('time-up', () => { this.gameOver = true; });
     }
 
 
 
-    async preload(): Promise<void>
-    {
-        await new Promise((resolve, reject) =>
-        {
-            this.spritesheet = this.scene.p5.loadImage('assets/Ghost.png', (_: Image) =>
-            {
+    async preload(): Promise<void> {
+        await new Promise((resolve, reject) => {
+            this.spritesheet = this.scene.p5.loadImage('assets/Ghost.png', (_: Image) => {
                 resolve(true);
             }, (err) => reject(err));
         })
     }
 
-    public flashRed(duration = 150)
-    {
+    public flashRed(duration = 150) {
         this.flashUntil = this.scene.p5.millis() + duration;
     }
 
-    drawFlashOverlay()
-    {
+    drawFlashOverlay() {
         if (this.scene.p5.millis() >= this.flashUntil) return;
 
         this.scene.p5.push();
@@ -90,22 +83,33 @@ export default class Ghost extends PhysicsObject
         this.scene.p5.rect(0, 0, this.scene.p5.width, this.scene.p5.height);
     }
 
-    setup(): void
-    {
+    setup(): void {
         this.#setup_frames(this.spritesheet);
-        this.onCollide = (other: RigidBody) =>
-        {
-            if (other == this.player.body)
-            {
+        let timeout: Timer;
+        this.onCollide = (other: RigidBody) => {
+            if (other == this.player.body) {
                 clearTimeout(this.collider_timeout);
-                if (!this.in_range)
-                {
+                if (!this.in_range) {
                     this.in_range = true;
+                    this.speed = 120;
+                    this.flashInterval = setInterval(() => {
+                        this.flashRed(150);
+                        this.speed = 0;
+                        timeout = setTimeout(() => {
+                            this.speed = 85
+                        }, 100);
+                    }, 1500);
+                    this.scene.scene_manager.deductTime?.(10);
+                    this.isAttacking = true;
+                    this.anim_index = 0;
+                    this.lastStrikeTime = this.scene.p5.millis();
                     console.log("ghost enter collide");
                 }
-                this.collider_timeout = setTimeout(() =>
-                {
+                this.collider_timeout = setTimeout(() => {
                     console.log("ghost exit collide");
+                    clearInterval(this.flashInterval);
+                    this.anim_index = 0;
+                    this.isAttacking = false;
                     this.in_range = false;
                 }, 100);
             }
@@ -113,84 +117,64 @@ export default class Ghost extends PhysicsObject
     }
 
 
-    #setup_frames(spritesheet?: Image)
-    {
-        if (!spritesheet)
-        {
+    #setup_frames(spritesheet?: Image) {
+        if (!spritesheet) {
             return
         }
-        for (let i = 0; i < 17; i++)
-        {
+        for (let i = 0; i < 17; i++) {
             this.frames.push(this.#get_row(i, spritesheet));
         }
     }
 
-    #get_row = (row: number, spritesheet?: Image) =>
-    {
-        if (!spritesheet)
-        {
+    #get_row = (row: number, spritesheet?: Image) => {
+        if (!spritesheet) {
             return []
         }
         const _sprites: Image[] = []
-        for (let j = 0; j < 24; j++)
-        {
+        for (let j = 0; j < 24; j++) {
             _sprites.push(spritesheet.get(256 * j, 256 * row, 256, 256));
         }
         return _sprites;
     }
 
-    keyPressed(e: KeyboardEvent): void
-    {
-        if (this.ghostDebug)
-        {
-            if (e.key == 'p')
-            {
+    keyPressed(e: KeyboardEvent): void {
+        if (this.ghostDebug) {
+            if (e.key == 'p') {
                 this.die();
             }
-            if (e.key == 'i')
-            {
+            if (e.key == 'i') {
                 this.startMoveUp()
             }
-            if (e.key == 'j')
-            {
+            if (e.key == 'j') {
                 this.startMoveLeft()
             }
-            if (e.key == 'k')
-            {
+            if (e.key == 'k') {
                 this.startMoveDown()
             }
-            if (e.key == 'l')
-            {
+            if (e.key == 'l') {
                 this.startMoveRight()
             }
         }
     }
 
-    keyReleased(e: KeyboardEvent): void
-    {
-        if (this.ghostDebug)
-        {
-            if (e.key == 'i')
-            {
+    keyReleased(e: KeyboardEvent): void {
+        if (this.ghostDebug) {
+            if (e.key == 'i') {
                 this.endMoveUp()
             }
-            if (e.key == 'j')
-            {
+            if (e.key == 'j') {
                 this.endMoveLeft()
             }
-            if (e.key == 'k')
-            {
+            if (e.key == 'k') {
                 this.endMoveDown()
             }
-            if (e.key == 'l')
-            {
+            if (e.key == 'l') {
                 this.endMoveRight()
             }
         }
     }
 
-    public die(): void
-    {
+    public die(): void {
         this.isDying = true
         this.moving = false
         this.isAttacking = false;
@@ -213,7 +197,10 @@ export default class Ghost extends PhysicsObject
         const tile = this.toTile(this.player.body.x, this.player.body.y);
         if (!this.lastRecorded || this.lastRecorded.col !== tile.col || this.lastRecorded.row !== tile.row) {
             this.trail.push(tile);
-            if (this.trail.length > this.MAX_TRAIL) this.trail.shift();
+            if (this.trail.length > this.MAX_TRAIL) {
+                this.trail.shift();
+                if (this.crumbPtr > 0) this.crumbPtr--;
+            }
             this.lastRecorded = tile;
         }
     }
@@ -234,18 +221,15 @@ export default class Ghost extends PhysicsObject
         this.syncMovementFlags();
     }
 
-    private syncMovementFlags(): void
-    {
+    private syncMovementFlags(): void {
         this.movements[0] = this.movements[1] = this.movements[2] = this.movements[3] = false;
 
         if (this.direction.x === 0 && this.direction.y === 0) return;
 
-        if (Math.abs(this.direction.y) >= Math.abs(this.direction.x))
-        {
+        if (Math.abs(this.direction.y) >= Math.abs(this.direction.x)) {
             if (this.direction.y > 0) this.movements[0] = true;
             else this.movements[1] = true;
-        } else
-        {
+        } else {
             if (this.direction.x > 0) this.movements[3] = true;
             else this.movements[2] = true;
         }
@@ -325,18 +309,7 @@ export default class Ghost extends PhysicsObject
         const dy = this.player.body.y - this.body.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
-        if (dist < this.strikeDistance) {
-            const now = this.scene.p5.millis();
-            if (now - this.lastStrikeTime > this.strikeCooldown) {
-                this.flashRed(150);
-                this.scene.scene_manager.deductTime?.(10);
-                this.lastStrikeTime = now;
-            }
-        }
-
         if (!this.isAttacking && dist < this.attackRange) {
-            this.isAttacking = true;
-            this.anim_index = 0;
         }
 
         if (this.frames.length > 0 && this.frames[0].length > 0) {
@@ -363,7 +336,6 @@ export default class Ghost extends PhysicsObject
                 this.anim_index++;
                 if (this.anim_index >= this.attackAnimation) {
                     this.anim_index = 0;
-                    this.isAttacking = false;
                 }
             } else {
                 if (this.moving) {
