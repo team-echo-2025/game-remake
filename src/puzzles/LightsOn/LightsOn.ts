@@ -34,6 +34,7 @@ export default class LightsOn extends Puzzle {
         this.state = PuzzleState.completed;
         this.hidden = true;
         this.hide_page = true;
+        this.onCompleted && this.onCompleted();
         this.player.disabled = false;
         clearTimeout(this.collider_timeout);
         this.asset.change_asset('blockslide-success');
