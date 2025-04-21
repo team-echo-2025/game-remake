@@ -13,7 +13,6 @@ type Velocity = {
 export default class Ghost extends PhysicsObject {
     zIndex?: number = 100;
     private player: Player;
-    private followThreshold = 5;
     private attackRange = 50;
     private ghostDebug = true;
     private movements: any = {};
@@ -25,8 +24,7 @@ export default class Ghost extends PhysicsObject {
     private start_anim_time: number = 0;
     public moving: boolean = false;
     private scene: Scene;
-    private speed: number = 75;
-    private launch_delay_start = 0;
+    private speed: number = 85;
     private scale: number = 1;
     private width: number = 128 * this.scale;
     private height: number = 128 * this.scale;
@@ -36,16 +34,31 @@ export default class Ghost extends PhysicsObject {
     private isAttacking = false;
     private isDying = false;
     private fullyDead = false;
+    private flashUntil = 0;
+    private lastStrikeTime = 0;
+    private strikeCooldown = 1000;
+    private strikeDistance = 25;
+    private readonly TILE_SIZE = 32;
+    private readonly MAX_TRAIL = 3;
+    private trail: { col: number; row: number }[] = [];
+    private crumbPtr = 0;
+    private lastRecorded?: { col: number; row: number };
+    private gameOver = false;
+    private flashInterval?: Timer;
 
     private in_range: boolean = false;
     private collider_timeout: any;
 
     constructor(scene: Scene, player: Player) {
-        super({ width: 0, height: 0, mass: 16 * 16, });
+        super({ width: 80, height: 80, mass: Infinity, });
+        this.overlaps = true;
         this.scene = scene;
         this.player = player;
         this.direction = { x: 0, y: 0, };
+        addEventListener('time-up', () => { this.gameOver = true; });
     }
+
+
 
     async preload(): Promise<void> {
         await new Promise((resolve, reject) => {
@@ -55,17 +68,48 @@ export default class Ghost extends PhysicsObject {
         })
     }
 
+    public flashRed(duration = 150) {
+        this.flashUntil = this.scene.p5.millis() + duration;
+    }
+
+    drawFlashOverlay() {
+        if (this.scene.p5.millis() >= this.flashUntil) return;
+
+        this.scene.p5.push();
+        this.scene.p5.resetMatrix();
+        this.scene.p5.noStroke();
+        this.scene.p5.fill(255, 0, 0, 160);
+        this.scene.p5.rectMode(this.scene.p5.CENTER);
+        this.scene.p5.rect(0, 0, this.scene.p5.width, this.scene.p5.height);
+    }
+
     setup(): void {
         this.#setup_frames(this.spritesheet);
+        let timeout: Timer;
         this.onCollide = (other: RigidBody) => {
             if (other == this.player.body) {
                 clearTimeout(this.collider_timeout);
                 if (!this.in_range) {
                     this.in_range = true;
+                    this.speed = 120;
+                    this.flashInterval = setInterval(() => {
+                        this.flashRed(150);
+                        this.speed = 0;
+                        timeout = setTimeout(() => {
+                            this.speed = 85
+                        }, 100);
+                    }, 1500);
+                    this.scene.scene_manager.deductTime?.(10);
+                    this.isAttacking = true;
+                    this.anim_index = 0;
+                    this.lastStrikeTime = this.scene.p5.millis();
                     console.log("ghost enter collide");
                 }
                 this.collider_timeout = setTimeout(() => {
                     console.log("ghost exit collide");
+                    clearInterval(this.flashInterval);
+                    this.anim_index = 0;
+                    this.isAttacking = false;
                     this.in_range = false;
                 }, 100);
             }
@@ -142,51 +186,73 @@ export default class Ghost extends PhysicsObject {
         this.direction.y = 0;
     }
 
+    private toTile(x: number, y: number) {
+        return {
+            col: Math.floor(x / this.TILE_SIZE),
+            row: Math.floor(y / this.TILE_SIZE),
+        };
+    }
+
+    private recordPlayerStep(): void {
+        const tile = this.toTile(this.player.body.x, this.player.body.y);
+        if (!this.lastRecorded || this.lastRecorded.col !== tile.col || this.lastRecorded.row !== tile.row) {
+            this.trail.push(tile);
+            if (this.trail.length > this.MAX_TRAIL) {
+                this.trail.shift();
+                if (this.crumbPtr > 0) this.crumbPtr--;
+            }
+            this.lastRecorded = tile;
+        }
+    }
+
+    private reachedTile(col: number, row: number): boolean {
+        const here = this.toTile(this.body.x, this.body.y);
+        return here.col === col && here.row === row;
+    }
+
+    private setDirectionTowards(col: number, row: number): void {
+        const px = col * this.TILE_SIZE + this.TILE_SIZE / 2;
+        const py = row * this.TILE_SIZE + this.TILE_SIZE / 2;
+        const dx = px - this.body.x;
+        const dy = py - this.body.y;
+        const mag = Math.hypot(dx, dy) || 1;
+        this.direction.x = dx / mag;
+        this.direction.y = dy / mag;
+        this.syncMovementFlags();
+    }
+
+    private syncMovementFlags(): void {
+        this.movements[0] = this.movements[1] = this.movements[2] = this.movements[3] = false;
+
+        if (this.direction.x === 0 && this.direction.y === 0) return;
+
+        if (Math.abs(this.direction.y) >= Math.abs(this.direction.x)) {
+            if (this.direction.y > 0) this.movements[0] = true;
+            else this.movements[1] = true;
+        } else {
+            if (this.direction.x > 0) this.movements[3] = true;
+            else this.movements[2] = true;
+        }
+    }
+
     private autoFollowPlayer(): void {
-        const dx = this.player.body.x - this.body.x;
-        const dy = this.player.body.y - this.body.y;
+        this.recordPlayerStep();
 
-        if (Math.abs(dx) > this.followThreshold) {
-            if (dx > 0) {
-                if (!this.movements[3]) {
-                    this.startMoveRight();
-                }
-                if (this.movements[2]) {
-                    this.endMoveLeft();
-                }
-            } else {
-                if (!this.movements[2]) {
-                    this.startMoveLeft();
-                }
-                if (this.movements[3]) {
-                    this.endMoveRight();
-                }
-            }
-        } else {
-            if (this.movements[2]) this.endMoveLeft();
-            if (this.movements[3]) this.endMoveRight();
+        if (this.crumbPtr >= this.trail.length) {
+            this.direction.x = this.direction.y = 0;
+            return;
         }
 
-        if (Math.abs(dy) > this.followThreshold) {
-            if (dy > 0) {
-                if (!this.movements[0]) {
-                    this.startMoveDown();
-                }
-                if (this.movements[1]) {
-                    this.endMoveUp();
-                }
-            } else {
-                if (!this.movements[1]) {
-                    this.startMoveUp();
-                }
-                if (this.movements[0]) {
-                    this.endMoveDown();
-                }
+        const target = this.trail[this.crumbPtr];
+        if (this.reachedTile(target.col, target.row)) {
+            this.crumbPtr++;
+            if (this.crumbPtr >= this.trail.length) {
+                this.direction.x = this.direction.y = 0;
+                return;
             }
-        } else {
-            if (this.movements[0]) this.endMoveDown();
-            if (this.movements[1]) this.endMoveUp();
         }
+
+        this.setDirectionTowards(target.col, target.row);
     }
 
     startMoveDown(): void {
@@ -230,9 +296,9 @@ export default class Ghost extends PhysicsObject {
     }
 
     draw(): void {
-        if (this.fullyDead) {
-            return;
-        }
+        if (this.fullyDead) { return; }
+        if (this.gameOver) { return; }
+
         this.autoFollowPlayer()
 
         this.scene.p5.push();
@@ -244,8 +310,6 @@ export default class Ghost extends PhysicsObject {
         const dist = Math.sqrt(dx * dx + dy * dy);
 
         if (!this.isAttacking && dist < this.attackRange) {
-            this.isAttacking = true;
-            this.anim_index = 0;
         }
 
         if (this.frames.length > 0 && this.frames[0].length > 0) {
@@ -272,7 +336,6 @@ export default class Ghost extends PhysicsObject {
                 this.anim_index++;
                 if (this.anim_index >= this.attackAnimation) {
                     this.anim_index = 0;
-                    this.isAttacking = false;
                 }
             } else {
                 if (this.moving) {
@@ -314,6 +377,9 @@ export default class Ghost extends PhysicsObject {
                     this.height
                 );
         }
+
+        this.drawFlashOverlay();
+
         this.scene.p5.pop()
     }
 }
