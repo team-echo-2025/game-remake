@@ -130,10 +130,10 @@ export default class MenuPage extends Page {
             },
             imageKey: "test"
         })
-        this.credits.x = -300
-        this.credits.y = 300
+        this.credits.x = 0;
+        this.credits.y = 200;
 
-        
+
         // this.KDbutton = this.scene.add_new.img_button({
         //     label: "KD DEV",
         //     font_key: "jersey",

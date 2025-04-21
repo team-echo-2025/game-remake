@@ -14,7 +14,7 @@ export default class ImageButton extends ButtonTest {
     setup(): void {
         super.setup()
         this.asset = this.scene.get_asset(this.imageKey); //returns asset
-        this._height = this._scene.p5.textAscent() + this._scene.p5.textDescent() + this.padding_y;
+        this.height = this.asset.height - this.padding_y;
     }
     protected _draw() {
         this._scene.p5.push();
@@ -29,7 +29,7 @@ export default class ImageButton extends ButtonTest {
         if (this.mouseDown)
             this.scene.p5.scale(current);
         // this._scene.p5.rect(0, 0, this._width, this._height, 10);
-        this.scene.p5.image(this.asset, 0 - this.width / 2 - 10, 0 - this.asset.height / 2, this.width + 20, this.asset.height);
+        this.scene.p5.image(this.asset, - this.width / 2 - 10, - this.asset.height / 2, this.width + 20, this.asset.height);
         this._scene.p5.fill(255);
         this._scene.p5.text(this._label, 0, 0 - this.font_size / 6);
         if (this.mouseDown) {

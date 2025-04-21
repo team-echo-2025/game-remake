@@ -2,9 +2,9 @@ import Page from "../lib/Page";
 import ButtonTest from "../lib/ui/ButtonTest";
 
 export default class PausePage extends Page {
-    backButton!: ButtonTest;
-    quitButton!: ButtonTest; 
-    helpButton!: ButtonTest;
+    backButton?: ButtonTest;
+    quitButton?: ButtonTest;
+    helpButton?: ButtonTest;
     private keybinds: Record<string, string> = {
         forward: localStorage.getItem("forward") || "w",
         left: localStorage.getItem("left") || "a",
@@ -12,7 +12,6 @@ export default class PausePage extends Page {
         right: localStorage.getItem("right") || "d"
     };
     isDisplayingInstructions = false;
-    hidden = true; 
 
     constructor() {
         super("pause-page")
@@ -23,9 +22,12 @@ export default class PausePage extends Page {
     }
 
     cleanup() {
-        this.scene.remove(this.backButton);
-        this.scene.remove(this.quitButton);
-        this.scene.remove(this.helpButton);
+        this.scene.remove(this.backButton!);
+        this.scene.remove(this.quitButton!);
+        this.scene.remove(this.helpButton!);
+        this.backButton = undefined;
+        this.helpButton = undefined;
+        this.quitButton = undefined;
         this.isDisplayingInstructions = false;
         this.scene.scene_manager.enableTimer();
         this.scene.scene_manager.paused = false;
@@ -63,35 +65,32 @@ export default class PausePage extends Page {
                 this.scene.start("menu-scene");
             },
             imageKey: "test"
-        }) 
+        })
         this.quitButton.x = 200;
         this.quitButton.y = -150;
-        this.hidden = false; 
         this.scene.scene_manager.disableTimer();
         this.scene.scene_manager.paused = true;
     }
 
-    postDraw(): void { 
-        if (!this.hidden) {
-            // Background
-            let rectWidth = 700;
-            let rectHeight = 300;
-            let rectX = 0;
-            let rectY = -200;
-            this.scene.p5.push()
-            this.scene.p5.fill(255, 255, 255, 150);
-            this.scene.p5.rect(rectX, rectY, rectWidth, rectHeight);
+    postDraw(): void {
+        // Background
+        let rectWidth = 700;
+        let rectHeight = 300;
+        let rectX = 0;
+        let rectY = -200;
+        this.scene.p5.push()
+        this.scene.p5.fill(255, 255, 255, 150);
+        this.scene.p5.rect(rectX, rectY, rectWidth, rectHeight);
 
-            // Title
-            this.scene.p5.fill(0);
-            this.scene.p5.textAlign(this.scene.p5.CENTER, this.scene.p5.CENTER);
-            this.scene.p5.textSize(75);
-            this.scene.p5.text('Game Paused', 0, -300);
-            this.scene.p5.pop();
+        // Title
+        this.scene.p5.fill(0);
+        this.scene.p5.textAlign(this.scene.p5.CENTER, this.scene.p5.CENTER);
+        this.scene.p5.textSize(75);
+        this.scene.p5.text('Game Paused', 0, -300);
+        this.scene.p5.pop();
 
-            // Instructions
-            this.instructionDraw();
-        }
+        // Instructions
+        this.instructionDraw();
     }
 
     instructionDraw(): void {
@@ -112,10 +111,10 @@ export default class PausePage extends Page {
             this.scene.p5.text('How to Play', 0, -25);
             this.scene.p5.textSize(25);
             this.scene.p5.text("Move up, left, down, and right with '" +
-                                this.keybinds.forward.toUpperCase() + "', '" +
-                                this.keybinds.left.toUpperCase() + "', '" +
-                                this.keybinds.down.toUpperCase() + "', and '" +
-                                this.keybinds.right.toUpperCase() + "'.", 0, 40);
+                this.keybinds.forward.toUpperCase() + "', '" +
+                this.keybinds.left.toUpperCase() + "', '" +
+                this.keybinds.down.toUpperCase() + "', and '" +
+                this.keybinds.right.toUpperCase() + "'.", 0, 40);
             this.scene.p5.text('Interact with objects by pressing \'E\'.', 0, 70);
             this.scene.p5.text('Exit puzzle screens by pressing \'Escape\'.', 0, 100);
             this.scene.p5.text('Stuck on a puzzle? Click its "How to Play" button in the bottom-right corner.', 0, 160);
@@ -123,6 +122,9 @@ export default class PausePage extends Page {
             this.scene.p5.text('Return to the main menu and visit Settings or Character Customization!', 0, 250);
             this.scene.p5.text('Be sure to read dialogue for more hints and instructions.', 0, 310);
             this.scene.p5.pop();
-        } 
+        }
+    }
+    onDestroy(): void {
+        this.cleanup()
     }
 }
