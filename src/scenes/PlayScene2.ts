@@ -11,9 +11,9 @@ import Dialogue from "../lib/ui/Dialogue";
 import InteractiveComputer from "./BoatToFloat/lib/interactiveComputer";
 import CrossyRoad from "../puzzles/CrossyRoad/CrossyRoad";
 import Key from "../puzzles/CrossyRoad/Key";
-import Lock from "../puzzles/CrossyRoad/Lock";
-import Tasks, { Task } from "../lib/Tasks";
-import Switches from "../puzzles/GameSwitch/Switches";
+import Lock from "../puzzles/CrossyRoad/Lock"; 
+import Tasks, { Task, TaskState } from "../lib/Tasks"; 
+import Switches from "../puzzles/GameSwitch/Switches"; 
 
 type StartArgs = Readonly<{
     starting_pos: Vector2D;
@@ -51,9 +51,9 @@ export default class Dungeon1 extends Scene {
     completed_BTF: boolean = false;
 
     onStart(args?: StartArgs): void {
-        this.task1 = new Task(this, "Cross the sewers.");
-        this.task2 = new Task(this, "Fill the hole.");
-        this.task3 = new Task(this, "Find the last key.");
+        this.task1 = this.task1 ?? new Task(this, "Cross the sewers.");
+        this.task2 = this.task2 ?? new Task(this, "Fill the hole.");
+        this.task3 = this.task3 ?? new Task(this, "Find the last key.");
         this.camera.zoom = 3;
         this.completed_BTF = args?.completed_BTF ?? this.completed_BTF;
         this.player = new Player(this);
@@ -64,11 +64,11 @@ export default class Dungeon1 extends Scene {
         this.crossyRoad = new CrossyRoad(this, this.player);
         this.crossyRoad.onCompleted = () => {
             this.camera.follow();
-            this.camera.x = this.lock3!.x;
-            this.camera.y = this.lock3!.y;
+            this.camera.x = this.lock1!.x;
+            this.camera.y = this.lock1!.y;
             this.player!.disabled = true;
-            this.lock3?.unlock();
-            this.lock3!.onComplete = () => {
+            this.lock1?.unlock();
+            this.lock1!.onComplete = () => {
                 this.task1?.completeTask("Cross the sewers.");
                 this.camera.follow(this.player!.body);
                 this.player!.disabled = false;
@@ -108,12 +108,12 @@ export default class Dungeon1 extends Scene {
             if (!collided2 && other == this.player!.body) {
                 collided2 = true;
                 this.camera.follow();
-                this.camera.x = this.lock1!.x;
-                this.camera.y = this.lock1!.y;
+                this.camera.x = this.lock3!.x;
+                this.camera.y = this.lock3!.y;
                 this.player!.disabled = true;
                 this.player?.collectKey(this.key3!);
-                this.lock1?.unlock();
-                this.lock1!.onComplete = () => {
+                this.lock3?.unlock();
+                this.lock3!.onComplete = () => {
                     this.task3?.completeTask("Find the last key.");
                     this.camera.follow(this.player!.body);
                     this.player!.disabled = false;
@@ -141,8 +141,21 @@ export default class Dungeon1 extends Scene {
         this.lock3.y = lock_y;
         this.lock3.zIndex = lock_z;
 
+        if (this.task1?.state == TaskState.Completed) {
+            this.lock1.unlock();
+            this.crossyRoad.forceSolve();
+        }
+        if (this.task2?.state == TaskState.Completed) {
+            this.lock2.unlock();
+            this.player.collectKey(this.key2);
+        }
+        if (this.task3?.state == TaskState.Completed) {
+            this.lock3.unlock();
+            this.player.collectKey(this.key3);
+        }
+
         if (!this.solved) {
-            this.tasks = new Tasks(this, this.task1, this.task2, this.task3);
+            this.tasks = new Tasks(this, this.task1!, this.task2!, this.task3!);
             this.add(this.tasks);
         } else {
             this.tasks = new Tasks(this);
@@ -307,5 +320,8 @@ export default class Dungeon1 extends Scene {
     reset() {
         this.solved = false;
         this.completed_BTF = false;
+        this.task1 = undefined;
+        this.task2 = undefined;
+        this.task3 = undefined;
     }
 }
