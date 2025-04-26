@@ -7,6 +7,7 @@ import Lever from "../puzzles/Dungeon/Lever";
 import MagicCircle from "../puzzles/Dungeon/MagicCircle";
 import Ghost from "../puzzles/Dungeon/Ghost";
 import Tilemap from "../lib/tilemap/Tilemap";
+import Dialogue from "../lib/ui/Dialogue";
 type StartArgs = Readonly<{
     starting_pos: Vector2D
 }>
@@ -30,6 +31,7 @@ export default class PlayScene4 extends Scene {
     magicCircleY: number = -120;
     magicCircleBounds: number = 15
     ghost?: Ghost;
+    dialogue!: Dialogue;
     ghostAlive: boolean = true;
 
 
@@ -86,6 +88,10 @@ export default class PlayScene4 extends Scene {
         // this.secondLever.flipped = true;
         // this.thirdLever.flipped = true;
         // this.fourthLever.flipped = true;
+        this.dialogue = new Dialogue(this, this.player!);
+        this.dialogue.addDialogue(-300, -500, "Flip the switches");
+        this.dialogue.addDialogue(-100, -400, "Then lead the ghost through the portal to kill him");
+        this.dialogue.setup();
     }
 
     keyPressed = (e: KeyboardEvent) => {
@@ -131,6 +137,7 @@ export default class PlayScene4 extends Scene {
             if (this.ghostAlive)
                 this.ghostKillCheck();
         }
+        this.dialogue.draw();
     }
 
     leverCheck(): boolean {

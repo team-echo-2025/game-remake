@@ -23,32 +23,35 @@ export default class CreditsPage extends Page {
     setup(): void {
         this.scene.p5.createCanvas(this.scene.p5.windowWidth, this.scene.p5.windowHeight);
         this.scene.p5.rectMode(this.scene.p5.CENTER);
-        this.backButton = this.scene.add_new.button({
+        this.backButton = this.scene.add_new.img_button({
             label: "Back",
             font_key: 'jersey',
             callback: () => {
                 this.cleanup()
                 this.set_page('menu-page')
-            }
+            },
+            imageKey: "test"
         })
         this.backButton.x = 0;
         this.backButton.y = 300;
-        this.p5Button = this.scene.add_new.button({
+        this.p5Button = this.scene.add_new.img_button({
             label: "p5.js",
             font_key: 'jersey',
             callback: () => {
                 window.location.href = "https://p5js.org/";
-            }
+            },
+            imageKey: "test"
         })
         this.p5Button.x = -100;
         this.p5Button.y = 200;
-        this.howlButton = this.scene.add_new.button({
+        this.howlButton = this.scene.add_new.img_button({
             label: "howler.js",
             font_key: 'jersey',
             callback: () => {
                 this.cleanup()
                 window.location.href = "https://howlerjs.com/";
-            }
+            },
+            imageKey: "test"
         })
         this.howlButton.x = 100;
         this.howlButton.y = 200;
