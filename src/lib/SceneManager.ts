@@ -23,6 +23,8 @@ export default class SceneManager implements GameObject {
         return this._page_manager;
     }
 
+    get time_paused() { return this.timer_paused; }
+
     get time_remaining(): number {
         return this._time_remaining;
     }
