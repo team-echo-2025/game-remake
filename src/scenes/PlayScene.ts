@@ -214,7 +214,7 @@ export default class PlayScene extends Scene {
         }
         this.physics.addObject(portal1);
         this.dialogue = new Dialogue(this, this.player!);
-        this.dialogue.addDialogue(-425, 218, "Are you safe from SQL injection?");
+        // this.dialogue.addDialogue(-425, 218, "Are you safe from SQL injection?");
         this.dialogue.addDialogue(-329, 168, "Find a way to open the door");
         this.dialogue.addDialogue(-331, -19, "Follow the path and you'll find your way eventually");
         this.dialogue.addDialogue(170, -237, "Is there something up there?");

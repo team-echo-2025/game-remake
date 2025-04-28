@@ -26,10 +26,10 @@ export default class SplashText implements GameObject{
         "Delozier looks like Mark Hamill",
         "The ice cream truck song is racist",
         // "How's it racist if it's true"
-        "Eli: Garbage Collector",
-        "Konnor: Widget Boy",
-        "James: Wreck-It-Ralph",
-        "Christian: Prometheus",
+        "Eli: \nGarbage Collector",
+        "Konnor: \nWidget Boy",
+        "James: \nWreck-It-Ralph",
+        "Christian: \nPrometheus",
 
     ]
 
