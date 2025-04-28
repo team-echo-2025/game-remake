@@ -86,32 +86,40 @@ export default class Ghost extends PhysicsObject {
     setup(): void {
         this.#setup_frames(this.spritesheet);
         let timeout: Timer;
-        this.onCollide = (other: RigidBody) => {
-            if (other == this.player.body) {
-                clearTimeout(this.collider_timeout);
-                if (!this.in_range) {
-                    this.in_range = true;
-                    this.speed = 120;
-                    this.flashInterval = setInterval(() => {
-                        this.flashRed(150);
-                        this.speed = 0;
-                        this.scene.scene_manager.deductTime?.(100);
-                        timeout = setTimeout(() => {
-                            this.speed = 85
-                        }, 100);
-                    }, 1500);
-                    this.isAttacking = true;
-                    this.anim_index = 0;
-                    this.lastStrikeTime = this.scene.p5.millis();
-                    console.log("ghost enter collide");
+        this.onCollide = (other: RigidBody) =>
+        {
+            if(!this.scene.scene_manager.time_paused){
+                if (other == this.player.body)
+                {
+                    clearTimeout(this.collider_timeout);
+                    if (!this.in_range)
+                    {
+                        this.in_range = true;
+                        this.speed = 120;
+                        this.flashInterval = setInterval(() =>
+                        {
+                            this.flashRed(150);
+                            this.speed = 0;
+                            this.scene.scene_manager.deductTime?.(100);
+                            timeout = setTimeout(() =>
+                            {
+                                this.speed = 85
+                            }, 100);
+                        }, 1500);
+                        this.isAttacking = true;
+                        this.anim_index = 0;
+                        this.lastStrikeTime = this.scene.p5.millis();
+                        console.log("ghost enter collide");
+                    }
+                    this.collider_timeout = setTimeout(() =>
+                    {
+                        console.log("ghost exit collide");
+                        clearInterval(this.flashInterval);
+                        this.anim_index = 0;
+                        this.isAttacking = false;
+                        this.in_range = false;
+                    }, 100);
                 }
-                this.collider_timeout = setTimeout(() => {
-                    console.log("ghost exit collide");
-                    clearInterval(this.flashInterval);
-                    this.anim_index = 0;
-                    this.isAttacking = false;
-                    this.in_range = false;
-                }, 100);
             }
         }
     }
@@ -317,6 +325,14 @@ export default class Ghost extends PhysicsObject {
 
         if (this.frames.length > 0 && this.frames[0].length > 0) {
             this.scene.p5.image(this.frames[this.anim_row][this.anim_index], this.body.x - this.width / 2, this.body.y - this.height / 1.8, this.width, this.height);
+        }
+
+        if(this.scene.scene_manager.time_paused)
+        {
+            this.body.velocity.x = 0;
+            this.body.velocity.y = 0;
+            this.scene.p5.pop();
+            return;
         }
 
         const now = this.scene.p5.millis();
