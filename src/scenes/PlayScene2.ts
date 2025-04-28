@@ -240,6 +240,9 @@ export default class Dungeon1 extends Scene {
         this.dialogue.addDialogue(-859, 11, "Keep going and you'll find the graveyard", 100, 100);
         this.dialogue.addDialogue(-318, 710, "Cross the sewers on the ice to get the key. Don't fall in!", 100, 100);
         this.dialogue.addDialogue(-73, 449, "Need more time? Play on the computer. Beware! You could lose time too", 100, 100);
+        this.dialogue.addDialogue(-782, -478, "There seems to be switches behind the graveyard stones!", 100, 100);
+        this.dialogue.addDialogue(-931, -713, "There should be a switch right next to switch thats on", 100, 100);
+        
 
         this.dialogue.setup();
         // Initialize the background music using Sound and SoundManager

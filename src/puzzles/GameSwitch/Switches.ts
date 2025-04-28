@@ -5,6 +5,7 @@ import Scene from "../../lib/Scene";
 import Puzzle, { PuzzleState } from "../../lib/Puzzle";
 import Dialogue from "../../lib/ui/Dialogue";
 import interactiveSwitch from "./interactiveSwitches";
+import instructPage from "./instructPage";
 
 export default class Switches extends Puzzle {
     player?: Player;
@@ -84,9 +85,6 @@ export default class Switches extends Puzzle {
     //pretty much handles all game logic
     keyPressed = (e: KeyboardEvent) => {
 
-        // if (e.key.toLowerCase() === "g" && this.player?.body.x && this.player.body.y) {
-
-        // }
 
         if (e.key.toLowerCase() === "e" && this.playSwitch) {
             for (let i = 0; i < this.playSwitch.highlight_states.length; i++) {
