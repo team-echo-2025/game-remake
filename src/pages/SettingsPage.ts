@@ -44,18 +44,18 @@ export default class SettingPage extends Page {
         }
         this.bgm_manager = this.scene.add_new.soundmanager(bgm_props);
         this.sfx_manager = this.scene.add_new.soundmanager(sfx_props);
-        this.mute = this.scene.add_new.img_button({
-            label: "Mute",
-            font_key: 'jersey',
-            callback: () => {
-                this.button_sfx.play();
-                //this.cleanup();
-                this.handleMute();
-            },
-            imageKey: "test"
-        })
-        this.mute.x = 0;
-        this.mute.y = 0;
+        // this.mute = this.scene.add_new.img_button({
+        //     label: "Mute",
+        //     font_key: 'jersey',
+        //     callback: () => {
+        //         this.button_sfx.play();
+        //         //this.cleanup();
+        //         this.handleMute();
+        //     },
+        //     imageKey: "test"
+        // })
+        // this.mute.x = 0;
+        // this.mute.y = 0;
         this.keybinds = this.scene.add_new.img_button({
             label: "Keybinds",
             font_key: 'jersey',
@@ -67,7 +67,7 @@ export default class SettingPage extends Page {
             imageKey: "test"
         })
         this.keybinds.x = 0;
-        this.keybinds.y = 100;
+        this.keybinds.y = 0;
         this.back = this.scene.add_new.img_button({
             label: "Back",
             font_key: 'jersey',
@@ -79,7 +79,7 @@ export default class SettingPage extends Page {
             imageKey: "test"
         })
         this.back.x = 0;
-        this.back.y = 200;
+        this.back.y = 100;
         this.bgm_slider = this.scene.add_new.slider({
             scene: this.scene,
             key: "BGM",
