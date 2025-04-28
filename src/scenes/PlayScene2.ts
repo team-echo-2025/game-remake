@@ -11,9 +11,9 @@ import Dialogue from "../lib/ui/Dialogue";
 import InteractiveComputer from "./BoatToFloat/lib/interactiveComputer";
 import CrossyRoad from "../puzzles/CrossyRoad/CrossyRoad";
 import Key from "../puzzles/CrossyRoad/Key";
-import Lock from "../puzzles/CrossyRoad/Lock"; 
-import Tasks, { Task, TaskState } from "../lib/Tasks"; 
-import Switches from "../puzzles/GameSwitch/Switches"; 
+import Lock from "../puzzles/CrossyRoad/Lock";
+import Tasks, { Task, TaskState } from "../lib/Tasks";
+import Switches from "../puzzles/GameSwitch/Switches";
 
 type StartArgs = Readonly<{
     starting_pos: Vector2D;
@@ -82,6 +82,7 @@ export default class Dungeon1 extends Scene {
         this.switches = new Switches(this, this.player);
         this.switches.onCompleted = () => {
             this.key2!.hidden = false;
+            this.key2!.asset!.hidden = false;
         }
         let collided = false;
         this.key2.onCollide = (other: RigidBody) => {
@@ -242,7 +243,7 @@ export default class Dungeon1 extends Scene {
         this.dialogue.addDialogue(-73, 449, "Need more time? Play on the computer. Beware! You could lose time too", 100, 100);
         this.dialogue.addDialogue(-782, -478, "There seems to be switches behind the graveyard stones!", 100, 100);
         this.dialogue.addDialogue(-931, -713, "There should be a switch right next to switch thats on", 100, 100);
-        
+
 
         this.dialogue.setup();
         // Initialize the background music using Sound and SoundManager
@@ -267,6 +268,9 @@ export default class Dungeon1 extends Scene {
             this.crossyRoad?.forceSolve();
         }
         //this.start("Switches")
+    }
+    postSetup(): void {
+        this.key2!.asset!.hidden = true;
     }
 
     keyPressed = (e: KeyboardEvent) => {
