@@ -5,6 +5,7 @@ export default class instructPage extends Page {
     backButton!: ButtonTest;
     exitButton!: ButtonTest;
     hidden = true;
+    isDisplayingInstructions = false;
 
     constructor() {
         super("instruct-page")
@@ -18,6 +19,7 @@ export default class instructPage extends Page {
         this.scene.remove(this.backButton);
         this.scene.scene_manager.enableTimer();
         this.scene.scene_manager.paused = false;
+        this.isDisplayingInstructions = false;
     }
 
     setup(): void {
@@ -37,9 +39,8 @@ export default class instructPage extends Page {
     }
     postDraw(): void {
         if(!this.hidden) {
-            let rectWidth = 400;
-            let rectHeight = 600;
-            
+            let rectWidth = 700;
+            let rectHeight = 400;            
             let rectX = 0;
             let rectY = -50;
             this.scene.p5.push()
@@ -51,7 +52,32 @@ export default class instructPage extends Page {
             this.scene.p5.textSize(50);
             this.scene.p5.text('There seems to be switches behind the stones find them', 0 , -150);
             this.scene.p5.pop()
+
+            
         }
+    }
+    instructionDraw(): void {
+        if(this.isDisplayingInstructions) {
+            // Background
+            let rectWidth = 700;
+            let rectHeight = 400;
+            let rectX = 0;
+            let rectY = 150;
+            this.scene.p5.push()
+            this.scene.p5.fill(255, 255, 255, 150);
+            this.scene.p5.rect(rectX, rectY, rectWidth, rectHeight);
+
+            this.scene.p5.fill(0);
+            this.scene.p5.textAlign(this.scene.p5.CENTER, this.scene.p5.CENTER);
+            this.scene.p5.textSize(50);
+            this.scene.p5.text('How to Play', 0, -25)
+            this.scene.p5.textSize(25);
+            this.scene.p5.text("There are switches behind the graveyards", 0, 40);
+            this.scene.p5.text("To interact with the switches press \'E\'", 0, 70);
+        }
+    }
+    onDestroy(): void {
+        this.cleanup();
     }
 }
 
