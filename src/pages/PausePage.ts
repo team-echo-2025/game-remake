@@ -45,7 +45,7 @@ export default class PausePage extends Page {
             imageKey: "test"
         })
         this.backButton.x = -200;
-        this.backButton.y = -50;
+        this.backButton.y = -150;
         this.helpButton = this.scene.add_new.img_button({
             label: "How to Play",
             font_key: 'jersey',
@@ -55,7 +55,7 @@ export default class PausePage extends Page {
             imageKey: "test"
         })
         this.helpButton.x = 0;
-        this.helpButton.y = -50;
+        this.helpButton.y = -150;
         this.scene.scene_manager.disableTimer();
         this.scene.scene_manager.paused = true;
         this.quitButton = this.scene.add_new.img_button({
@@ -67,7 +67,7 @@ export default class PausePage extends Page {
             imageKey: "test"
         })
         this.quitButton.x = 200;
-        this.quitButton.y = -50;
+        this.quitButton.y = -150;
         this.scene.scene_manager.disableTimer();
         this.scene.scene_manager.paused = true;
     }
@@ -77,7 +77,7 @@ export default class PausePage extends Page {
         let rectWidth = 700;
         let rectHeight = 300;
         let rectX = 0;
-        let rectY = -100;
+        let rectY = -200;
         this.scene.p5.push()
         this.scene.p5.fill(255, 255, 255, 150);
         this.scene.p5.rect(rectX, rectY, rectWidth, rectHeight);
@@ -86,7 +86,7 @@ export default class PausePage extends Page {
         this.scene.p5.fill(0);
         this.scene.p5.textAlign(this.scene.p5.CENTER, this.scene.p5.CENTER);
         this.scene.p5.textSize(75);
-        this.scene.p5.text('Game Paused', 0, -200);
+        this.scene.p5.text('Game Paused', 0, -300);
         this.scene.p5.pop();
 
         // Instructions
