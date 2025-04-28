@@ -26,10 +26,10 @@ export default class SplashText implements GameObject{
         "Delozier looks like Mark Hamill",
         "[removed]",
         // "[removed]"
-        "Eli: Garbage Collector",
-        "Konnor: Widget Boy",
-        "James: Wreck-It-Ralph",
-        "Christian: Prometheus",
+        "Eli: \nGarbage Collector",
+        "Konnor: \nWidget Boy",
+        "James: \nWreck-It-Ralph",
+        "Christian: \nPrometheus",
 
     ]
 
