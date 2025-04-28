@@ -297,8 +297,8 @@ export default class LightsOn extends Puzzle {
           p.textWrap(p.WORD);      
     
           const instr =
-            'Click on a tile to rotate it.\n\n There may be multiple paths connecting the green and red tiles.\n\n ' +
-            'When a wrong path is found it will highlight in red. When the correct path is found, it will highlight in green';
+            'Clicking on a tile will flip either the entire row or the entire columns color.\n\n You cannot click the same tile twice in a row. \n\n  ' +
+            'The goal is to make all the tiles turn white in order to turn on the lights.';
     
          
           p.text(
