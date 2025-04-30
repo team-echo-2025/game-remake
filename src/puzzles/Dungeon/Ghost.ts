@@ -109,11 +109,9 @@ export default class Ghost extends PhysicsObject {
                         this.isAttacking = true;
                         this.anim_index = 0;
                         this.lastStrikeTime = this.scene.p5.millis();
-                        console.log("ghost enter collide");
                     }
                     this.collider_timeout = setTimeout(() =>
                     {
-                        console.log("ghost exit collide");
                         clearInterval(this.flashInterval);
                         this.anim_index = 0;
                         this.isAttacking = false;

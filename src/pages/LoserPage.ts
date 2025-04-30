@@ -19,7 +19,7 @@ export default class LoserPage extends Page {
     }
     preload(): any {
         // Load the background music file
-        this.scene.loadSound("dontlisten", "assets/funSounds/background_music4.mp3");
+        this.scene.loadSound("lost", "assets/funSounds/loser.mp3");
         this.scene.loadFont("jersey", "assets/fonts/jersey.ttf");
         this.scene.loadImage('test', "assets/buttonImages/mossy.png");
     }
@@ -60,7 +60,7 @@ export default class LoserPage extends Page {
         this.mainMenu.y = this.scene.p5.windowHeight / 5;
         this.mainMenu.zIndex = 301;
         //
-        this.background_music = this.scene.add_new.sound("dontlisten");
+        this.background_music = this.scene.add_new.sound("lost");
         // const bgm_props: SoundManagerProps = {
         //     group: "BGM",
         //     sounds: [this.background_music]
