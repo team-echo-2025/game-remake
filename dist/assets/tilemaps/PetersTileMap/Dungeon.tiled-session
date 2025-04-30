@@ -21,10 +21,10 @@
         },
         "Dungeon.tmx": {
             "scale": 1,
-            "selectedLayer": 7,
+            "selectedLayer": 10,
             "viewCenter": {
                 "x": -1122.5,
-                "y": -566
+                "y": -302
             }
         },
         "DungeonSmaller.tmx": {
