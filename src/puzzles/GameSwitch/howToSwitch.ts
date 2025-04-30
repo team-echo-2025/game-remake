@@ -23,7 +23,7 @@ export default class howToSwitch extends Puzzle {
         this.player = player;
     }
 
-    async preload(): Promise<void> { }
+    preload(): any { }
 
     setup(): void {
         const body = new PhysicsObject({
@@ -48,7 +48,7 @@ export default class howToSwitch extends Puzzle {
                 clearTimeout(this.collider_timeout);
                 if (!this.highlight) {
                     this.highlight = true;
-                    this.asset.change_asset("computer-highlight");
+                    this.asset.change_asset("scroll-highlight");
                 }
                 this.collider_timeout = setTimeout(() => {
                     this.highlight = false;
@@ -57,10 +57,10 @@ export default class howToSwitch extends Puzzle {
             }
         }
         this.asset = this.scene.add_new.sprite(this.asset_key);
-        this.asset.x = this.x - this.asset.width / 2;
-        this.asset.y = this.y - this.asset.height / 2;
         this.asset.width = 32;
         this.asset.height = 32;
+        this.asset.x = this.x - this.asset.width / 2;
+        this.asset.y = this.y - this.asset.height / 2;
     }
 
 

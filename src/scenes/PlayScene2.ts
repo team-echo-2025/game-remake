@@ -65,7 +65,7 @@ export default class Dungeon1 extends Scene {
         this.player.body.y = args?.starting_pos?.y ?? 880;
         this.physics.addObject(this.player);
         this.computer = new InteractiveComputer(this, 'computer', this.player!)
-        this.howToSwitch = new howToSwitch(this, 'computer', this.player!) //breaks for whatever reason if i go to switch asset
+        this.howToSwitch = new howToSwitch(this, 'scroll', this.player!) //breaks for whatever reason if i go to switch asset
         this.crossyRoad = new CrossyRoad(this, this.player);
         this.crossyRoad.onCompleted = () => {
             this.camera.follow();
@@ -177,6 +177,7 @@ export default class Dungeon1 extends Scene {
         this.loadImage("computer", "assets/puzzleImages/retroIBM.png");
         this.loadImage("computer-highlight", "assets/puzzleImages/retroIBM-Highlighted.png");
         this.loadImage("scroll", "assets/puzzleImages/scroll.png");
+        this.loadImage("scroll-highlight", "assets/puzzleImages/scroll-highlight.png");
         this.loadImage("broken-puzzle", "assets/puzzleImages/access_circuit_broken.png");
         this.loadImage("success-puzzle", "assets/puzzleImages/access_circuit_success.png");
         // Load the background music file
@@ -257,7 +258,7 @@ export default class Dungeon1 extends Scene {
         this.dialogue.addDialogue(-859, 11, "Keep going and you'll find the graveyard", 100, 100);
         this.dialogue.addDialogue(-318, 710, "Cross the sewers on the ice to get the key. Don't fall in!", 100, 100);
         this.dialogue.addDialogue(-73, 449, "Need more time? Play on the computer. Beware! You could lose time too", 100, 100);
-        this.dialogue.addDialogue(-800, -557, "Go to the scroll to learn how to play (Hit 'H')", 500, 30);
+        this.dialogue.addDialogue(-800, -557, "Go to the scroll to learn how to play (Hit 'E')", 500, 30);
         
 
         this.dialogue.setup();
@@ -297,7 +298,7 @@ export default class Dungeon1 extends Scene {
         if (e.key === "e" && this.computer?.highlight == true) {
             this.start("boat-to-float")
         }
-        if (e.key === "h") {
+        if (e.key === "e") {
             if (this.howToSwitch?.highlight) {
                 this.scene_manager.page_manager?.set_page("switch-page");
             }
