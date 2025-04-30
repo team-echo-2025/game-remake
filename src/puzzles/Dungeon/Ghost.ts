@@ -100,7 +100,7 @@ export default class Ghost extends PhysicsObject {
                         {
                             this.flashRed(150);
                             this.speed = 0;
-                            this.scene.scene_manager.deductTime?.(100);
+                            this.scene.scene_manager.deductTime?.(50);
                             timeout = setTimeout(() =>
                             {
                                 this.speed = 85
