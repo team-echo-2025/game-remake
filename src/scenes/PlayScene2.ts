@@ -287,7 +287,9 @@ export default class Dungeon1 extends Scene {
         //this.start("Switches")
     }
     postSetup(): void {
-        this.key2!.asset!.hidden = true;
+        if (this.key2 && this.key2.asset) {
+            this.key2.asset.hidden = true;
+        }
     }
 
     keyPressed = (e: KeyboardEvent) => {
