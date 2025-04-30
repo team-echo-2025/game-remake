@@ -19,7 +19,7 @@ export default class WinnerPage extends Page {
     }
     preload(): any {
         // Load the background music file
-        this.scene.loadSound("dontlisten", "assets/funSounds/background_music4.mp3");
+        this.scene.loadSound("dontlisten", "assets/funSounds/winner.mp3");
         this.scene.loadFont("jersey", "assets/fonts/jersey.ttf");
         this.scene.loadImage('test', "assets/buttonImages/mossy.png");
     }

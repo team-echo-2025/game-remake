@@ -106,13 +106,13 @@ export default class Puzzle implements GameObject {
         Puzzle.difficulty = difficulty;
         switch (difficulty) {
             case "easy":
-                SceneManager.DURATION = 500;
+                SceneManager.DURATION = 700;
                 break;
             case "normal":
-                SceneManager.DURATION = 600;
+                SceneManager.DURATION = 800;
                 break;
             case "hard":
-                SceneManager.DURATION = 700;
+                SceneManager.DURATION = 900;
                 break;
 
         }
