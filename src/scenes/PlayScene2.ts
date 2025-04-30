@@ -87,6 +87,7 @@ export default class Dungeon1 extends Scene {
         this.switches = new Switches(this, this.player);
         this.switches.onCompleted = () => {
             this.key2!.hidden = false;
+            this.key2!.asset!.hidden = false;
         }
         let collided = false;
         this.key2.onCollide = (other: RigidBody) => {
@@ -284,6 +285,11 @@ export default class Dungeon1 extends Scene {
             this.crossyRoad?.forceSolve();
         }
         //this.start("Switches")
+    }
+    postSetup(): void {
+        if (this.key2 && this.key2.asset) {
+            this.key2.asset.hidden = true;
+        }
     }
 
     keyPressed = (e: KeyboardEvent) => {
