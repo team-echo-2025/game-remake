@@ -30,13 +30,10 @@ export default class interactiveSwitch extends Puzzle {
 
             const physics_object = new PhysicsObject({
                 width: 50,
-                height: 50,
+                height: 55,
                 mass: Infinity
             });
 
-            physics_object.overlaps = true;
-            physics_object.body.x = x;
-            physics_object.body.y = y;
 
             const index = i;
             this.highlight_states.push(false);
@@ -70,6 +67,9 @@ export default class interactiveSwitch extends Puzzle {
             asset.y = y;
             asset.width = 24;
             asset.height = 48;
+            physics_object.overlaps = true;
+            physics_object.body.x = x+asset.width/2;
+            physics_object.body.y = y+asset.height/2;
             this.assets.push(asset);
         }
     }
