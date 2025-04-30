@@ -8,6 +8,8 @@ import MagicCircle from "../puzzles/Dungeon/MagicCircle";
 import Ghost from "../puzzles/Dungeon/Ghost";
 import Tilemap from "../lib/tilemap/Tilemap";
 import Dialogue from "../lib/ui/Dialogue";
+import Sound from "../lib/Sound";
+import SoundManager, { SoundManagerProps } from "../lib/SoundManager";
 type StartArgs = Readonly<{
     starting_pos: Vector2D
 }>
@@ -34,6 +36,10 @@ export default class PlayScene4 extends Scene {
     dialogue!: Dialogue;
     ghostAlive: boolean = true;
 
+    // Background music fields (sound-related changes)
+    public background_music?: Sound;
+    public backgroundMusicManager?: SoundManager;
+
 
     constructor() {
         super("playscene-4");
@@ -58,9 +64,28 @@ export default class PlayScene4 extends Scene {
         this.loadImage("blue_lever", "assets/puzzleImages/blue.png");
         this.loadImage("magic_circle", "assets/effects/magic_circle.png");
         this.loadImage("highlightedLever", "assets/puzzleImages/highlightedLever.png");
+        this.loadSound("background7", "assets/backgorund7.mp3");
     }
 
     setup(): void {
+        this.background_music = this.add_new.sound("background7")!;
+        this.background_music.loop();
+        const audioEl = (this.background_music as any).audio as HTMLAudioElement | undefined;
+        if (audioEl) {
+            audioEl.addEventListener("ended", () => {
+                audioEl.currentTime = 0;
+                audioEl.play();
+            });
+        }
+        // Wrap the background music in a SoundManager with the grouping variable set to "SFX"
+        const bgmProps: SoundManagerProps = {
+            group: "SFX",
+            sounds: [this.background_music]
+        };
+        this.backgroundMusicManager = this.add_new.soundmanager(bgmProps);
+        this.backgroundMusicManager.play();
+
+        // -----------------------
         this.tilemap = this.add_new.tilemap({ tilemap_key: 'tilemap' });
         this.bounds = new BoxCollider({ w: this.tilemap.width, h: this.tilemap.height, x: 0, y: 0 });
 
