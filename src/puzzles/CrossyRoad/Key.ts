@@ -23,6 +23,10 @@ export default class Key extends PhysicsObject {
         this._y = num;
     }
 
+    get asset() {
+        return this.key_spritesheet;
+    }
+
     constructor(scene: Scene) {
         super({ width: 15, height: 25, mass: Infinity });
         this.overlaps = true;
