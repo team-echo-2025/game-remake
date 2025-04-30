@@ -30,6 +30,7 @@ export default class SplashText implements GameObject{
         "Konnor: \nWidget Boy",
         "James: \nWreck-It-Ralph",
         "Christian: \nPrometheus",
+        "The James Effect"
 
     ]
 

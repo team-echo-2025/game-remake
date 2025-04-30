@@ -2,10 +2,9 @@ import PhysicsObject from "../../lib/physics/PhysicsObject";
 import Player from "../../lib/Player";
 import Tilemap from "../../lib/tilemap/Tilemap";
 import Scene from "../../lib/Scene";
-import Puzzle, { PuzzleState } from "../../lib/Puzzle";
+import Puzzle from "../../lib/Puzzle";
 import Dialogue from "../../lib/ui/Dialogue";
 import interactiveSwitch from "./interactiveSwitches";
-import instructPage from "./instructPage";
 
 export default class Switches extends Puzzle {
     player?: Player;

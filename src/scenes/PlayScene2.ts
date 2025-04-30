@@ -14,6 +14,8 @@ import Key from "../puzzles/CrossyRoad/Key";
 import Lock from "../puzzles/CrossyRoad/Lock"; 
 import Tasks, { Task, TaskState } from "../lib/Tasks"; 
 import Switches from "../puzzles/GameSwitch/Switches"; 
+import howToSwitch from "../puzzles/GameSwitch/howToSwitch";
+import InstructPage from "../puzzles/GameSwitch/instructPage";
 
 type StartArgs = Readonly<{
     starting_pos: Vector2D;
@@ -27,6 +29,8 @@ export default class Dungeon1 extends Scene {
     background_music?: Sound;
     backgroundMusicManager?: SoundManager;
     switches?: Switches;
+    howToSwitch? : howToSwitch;
+    instructPage?: InstructPage
     computer?: InteractiveComputer;
     crossyRoad?: CrossyRoad;
     key2?: Key;
@@ -52,7 +56,7 @@ export default class Dungeon1 extends Scene {
 
     onStart(args?: StartArgs): void {
         this.task1 = this.task1 ?? new Task(this, "Cross the sewers.");
-        this.task2 = this.task2 ?? new Task(this, "Fill the hole.");
+        this.task2 = this.task2 ?? new Task(this, "Solve The Graveyard.");
         this.task3 = this.task3 ?? new Task(this, "Find the last key.");
         this.camera.zoom = 3;
         this.completed_BTF = args?.completed_BTF ?? this.completed_BTF;
@@ -61,6 +65,7 @@ export default class Dungeon1 extends Scene {
         this.player.body.y = args?.starting_pos?.y ?? 880;
         this.physics.addObject(this.player);
         this.computer = new InteractiveComputer(this, 'computer', this.player!)
+        this.howToSwitch = new howToSwitch(this, 'scroll', this.player!) //breaks for whatever reason if i go to switch asset
         this.crossyRoad = new CrossyRoad(this, this.player);
         this.crossyRoad.onCompleted = () => {
             this.camera.follow();
@@ -94,7 +99,7 @@ export default class Dungeon1 extends Scene {
                 this.player?.collectKey(this.key2!);
                 this.lock2?.unlock();
                 this.lock2!.onComplete = () => {
-                    this.task2?.completeTask("Fill the hole");
+                    this.task2?.completeTask("Solve the Graveyard");
                     this.camera.follow(this.player!.body);
                     this.player!.disabled = false;
                 }
@@ -161,6 +166,7 @@ export default class Dungeon1 extends Scene {
             this.tasks = new Tasks(this);
             this.add(this.tasks);
         }
+        
     }
 
     preload(): any {
@@ -170,6 +176,8 @@ export default class Dungeon1 extends Scene {
         this.loadImage("puzzle", "assets/puzzleImages/access_circuit.png");
         this.loadImage("computer", "assets/puzzleImages/retroIBM.png");
         this.loadImage("computer-highlight", "assets/puzzleImages/retroIBM-Highlighted.png");
+        this.loadImage("scroll", "assets/puzzleImages/scroll.png");
+        this.loadImage("scroll-highlight", "assets/puzzleImages/scroll-highlight.png");
         this.loadImage("broken-puzzle", "assets/puzzleImages/access_circuit_broken.png");
         this.loadImage("success-puzzle", "assets/puzzleImages/access_circuit_success.png");
         // Load the background music file
@@ -189,6 +197,10 @@ export default class Dungeon1 extends Scene {
         this.tilemap = this.add_new.tilemap({
             tilemap_key: "tilemap",
         })
+        if (this.instructPage) {
+            this.instructPage.setup();
+            this.add(this.instructPage);
+        }
 
         this.bounds = new BoxCollider({ x: this.tilemap.x, y: this.tilemap.y, w: this.tilemap.width, h: this.tilemap.height });
         const object = new PhysicsObject({
@@ -234,14 +246,19 @@ export default class Dungeon1 extends Scene {
         this.computer.asset.zIndex = 49;
         this.computer.disable = this.completed_BTF;
 
+        if (!this.howToSwitch) { return }
+        this.howToSwitch.x = -945;
+        this.howToSwitch.y = -584;
+        this.howToSwitch.setup();
+        this.howToSwitch.asset.zIndex = 49;
+
         this.dialogue = new Dialogue(this, this.player!);
         this.dialogue.addDialogue(-967, 836, "Find the keys to escape to the maze", 100, 100);
         this.dialogue.addDialogue(-945, 694, "There might be something in the city eastward", 500, 45);
         this.dialogue.addDialogue(-859, 11, "Keep going and you'll find the graveyard", 100, 100);
         this.dialogue.addDialogue(-318, 710, "Cross the sewers on the ice to get the key. Don't fall in!", 100, 100);
         this.dialogue.addDialogue(-73, 449, "Need more time? Play on the computer. Beware! You could lose time too", 100, 100);
-        this.dialogue.addDialogue(-782, -478, "There seems to be switches behind the graveyard stones!", 100, 100);
-        this.dialogue.addDialogue(-931, -713, "There should be a switch right next to switch thats on", 100, 100);
+        this.dialogue.addDialogue(-800, -557, "Go to the scroll to learn how to play (Hit 'E')", 500, 30);
         
 
         this.dialogue.setup();
@@ -281,6 +298,11 @@ export default class Dungeon1 extends Scene {
         if (e.key === "e" && this.computer?.highlight == true) {
             this.start("boat-to-float")
         }
+        if (e.key === "e") {
+            if (this.howToSwitch?.highlight) {
+                this.scene_manager.page_manager?.set_page("switch-page");
+            }
+        }
     };
     checkSolved = () => {
         if (this.solved) return true;
@@ -297,6 +319,7 @@ export default class Dungeon1 extends Scene {
         this.dialogue = undefined;
         this.backgroundMusicManager = undefined;
         this.computer = undefined;
+        this.howToSwitch = undefined;
         this.switches = undefined;
         this.crossyRoad = undefined;
         this.key2 = undefined;
