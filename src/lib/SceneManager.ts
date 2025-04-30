@@ -6,6 +6,8 @@ import LoserPage from "../pages/LoserPage";
 import WinnerPage from "../pages/WinnerPage";
 import PausePage from "../pages/PausePage";
 import LoadingScene from "../scenes/LoadingScene";
+import instructPage from "../puzzles/GameSwitch/instructPage";
+import InstructPage from "../puzzles/GameSwitch/instructPage";
 
 export default class SceneManager implements GameObject {
     static DURATION = 500;
@@ -89,7 +91,7 @@ export default class SceneManager implements GameObject {
         new_scene.onStart_objects(args);
         new_scene.onStart(args);
         this.loading_scene.loading_progress = 20;
-        this._page_manager = new PageManager([new LoserPage(), new WinnerPage(), new PausePage()], new_scene);
+        this._page_manager = new PageManager([new LoserPage(), new WinnerPage(), new PausePage(), new InstructPage()], new_scene);
         new_scene.add(this._page_manager);
         await new_scene.preload()
         this.loading_scene.loading_progress = 30;
