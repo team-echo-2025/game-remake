@@ -18,7 +18,7 @@ export default class LoserScene extends Scene {
     }
     preload(): any {
         // Load the background music file
-        this.loadSound("dontlisten", "assets/funSounds/background_music4.mp3");
+        this.loadSound("lost", "assets/funSounds/loser.mp3");
         this.loadFont("jersey", "assets/fonts/jersey.ttf");
         this.loadImage('test', "assets/buttonImages/mossy.png");
     }
@@ -56,7 +56,7 @@ export default class LoserScene extends Scene {
         this.mainMenu.y = this.p5.windowHeight / 5;
         this.mainMenu.zIndex = 101;
         //
-        this.background_music = this.add_new.sound("dontlisten");
+        this.background_music = this.add_new.sound("lost");
         // const bgm_props: SoundManagerProps = {
         //     group: "BGM",
         //     sounds: [this.background_music]

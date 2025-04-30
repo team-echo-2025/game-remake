@@ -55,10 +55,8 @@ export default class MagicCircle implements GameObject {
                 clearTimeout(this.collider_timeout);
                 if (!this.in_range) {
                     this.in_range = true;
-                    console.log("in range of circle");
                 }
                 this.collider_timeout = setTimeout(() => {
-                    console.log("outa range of circle");
                     this.in_range = false;
                 }, 100);
             }
@@ -74,21 +72,7 @@ export default class MagicCircle implements GameObject {
     }
     activateCircle(): void {
         this.asset!.hidden = false;
-        //this.collider.onCollide = (other: RigidBody) => {
-        //    if (other == this.player.body) {
-        //        clearTimeout(this.collider_timeout);
-        //        if (!this.in_range) {
-        //            this.in_range = true;
-        //            console.log("in range of active circle");
-        //        }
-        //        this.collider_timeout = setTimeout(() => {
-        //            console.log("outa range of active circle");
-        //            this.in_range = false;
-        //        }, 100);
-        //    }
-        //}
     }
     onDestroy(): void {
-        console.log("Hreitnasoier");
     }
 }

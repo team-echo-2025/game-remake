@@ -18,7 +18,7 @@ export default class NonLoser extends Scene {
     }
     preload(): any {
         // Load the background music file
-        this.loadSound("dontlisten", "assets/funSounds/background_music4.mp3");
+        this.loadSound("dontlisten", "assets/funSounds/winner.mp3");
         this.loadFont("jersey", "assets/fonts/jersey.ttf");
         this.loadImage('test', "assets/buttonImages/mossy.png");
     }
