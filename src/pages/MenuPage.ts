@@ -1,7 +1,6 @@
 import Page from "../lib/Page";
 import Sound from "../lib/Sound";
 import ButtonTest, { ButtonTestProps } from "../lib/ui/ButtonTest";
-import DropdownMenu from "../lib/ui/DropdownMenu";
 import SplashText, { SplashTextProps } from "../lib/ui/SplashText";
 
 export default class MenuPage extends Page {
@@ -14,7 +13,6 @@ export default class MenuPage extends Page {
     physicsTest2!: ButtonTest;
     puzzleTest!: ButtonTest;
     button_sfx!: Sound;
-    dropdown!: DropdownMenu;
     splashtext!: SplashText;
 
     constructor() {
@@ -32,8 +30,6 @@ export default class MenuPage extends Page {
         this.scene.remove(this.physicsTest);
         this.scene.remove(this.puzzleTest);
         this.scene.remove(this.button_sfx);
-        this.dropdown.onDestroy();
-        this.scene.remove(this.dropdown);
         this.scene.remove(this.splashtext);
         this.scene.remove(this.physicsTest2);
     }
