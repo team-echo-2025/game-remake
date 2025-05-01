@@ -1,5 +1,5 @@
 import Collider, { ColliderProps } from "./Collider";
-import { Vector2D } from "../types/Physics"; // Or define your own {x:number;y:number;} type.
+import { Vector2D } from "../types/Physics";
 
 
 type Point2D = { x: number; y: number };
