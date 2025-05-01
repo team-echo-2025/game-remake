@@ -39,50 +39,50 @@ export default class MenuPage extends Page {
     }
     setup() {
         this.button_sfx = this.scene.add_new.sound("button_sfx")
-        const button1: ButtonTestProps = {
-            label: "Scene 1",
-            font_key: "jersey",
-            callback: () => { this.scene.start("play-scene") },
-        };
-        const button2: ButtonTestProps = {
-            ...button1,
-            callback: () => { this.scene.start("playscene-2") },
-            label: "Scene 2"
-        }
-        const button3: ButtonTestProps = {
-            ...button1,
-            label: "Scene 3",
-            callback: () => { this.scene.start("playscene-3") },
-        }
-        const button4: ButtonTestProps = {
-            ...button1,
-            label: "Scene 4",
-            callback: () => { this.scene.start("boat-to-float") },
-        }
-        const button5: ButtonTestProps = {
-            ...button1,
-            label: "Scene 5",
-            callback: () => { this.scene.start("playscene-4") },
-        }
+        // const button1: ButtonTestProps = {
+        //     label: "Scene 1",
+        //     font_key: "jersey",
+        //     callback: () => { this.scene.start("play-scene") },
+        // };
+        // const button2: ButtonTestProps = {
+        //     ...button1,
+        //     callback: () => { this.scene.start("playscene-2") },
+        //     label: "Scene 2"
+        // }
+        // const button3: ButtonTestProps = {
+        //     ...button1,
+        //     label: "Scene 3",
+        //     callback: () => { this.scene.start("playscene-3") },
+        // }
+        // const button4: ButtonTestProps = {
+        //     ...button1,
+        //     label: "Scene 4",
+        //     callback: () => { this.scene.start("boat-to-float") },
+        // }
+        // const button5: ButtonTestProps = {
+        //     ...button1,
+        //     label: "Scene 5",
+        //     callback: () => { this.scene.start("playscene-4") },
+        // }
         // const button6: ButtonTestProps = {
         //     ...button1,
         //     label: "Switches",
         //     callback: () => { this.scene.start("Switches") },
         // }
-        this.dropdown = this.scene.add_new.dropdown_menu({
-            label: "Show Dev Scenes",
-            font_key: "jersey",
-            buttons: [
-                button1,
-                button2,
-                button3,
-                button4,
-                button5,
-                // button6,
-            ]
-        })
-        this.dropdown.y = -200
-        this.dropdown.x = -200
+        // this.dropdown = this.scene.add_new.dropdown_menu({
+        //     label: "Show Dev Scenes",
+        //     font_key: "jersey",
+        //     buttons: [
+        //         button1,
+        //         button2,
+        //         button3,
+        //         button4,
+        //         button5,
+        //         // button6,
+        //     ]
+        // })
+        // this.dropdown.y = -200
+        // this.dropdown.x = -200
         this.play = this.scene.add_new.img_button({
             label: "Play!",
             font_key: 'jersey',
