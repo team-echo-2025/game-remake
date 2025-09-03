@@ -9,23 +9,19 @@ export type SplashTextProps = Readonly<{
 }>;
 export default class SplashText implements GameObject{
 
-    static quotes:string[] = [    "I don't know how happen but happen did",
-        // "[removed]",
+    static quotes:string[] = [    
+        "I don't know how happen but happen did", 
         "This week is just a continuation of the last",
         "whatever boats ur float",
-        // "they actually try, \nthey're just not as good as y'all",
-        "feels good.. I like it.\nWhy arent more people like this",
+        // "they actually try, \nthey're just not as good as y'all", 
         "Hail Developer, Philosopher, King Eli",
         "This feature was made by Konnor Duncan",
         "Inspired by Minecraft",
         "James broke everything",
         "Eli leaks everything",
-        "Now with a blue shield bar!",
-        "[removed]",
+        "Now with a blue shield bar!", 
         "Brought to you by Team Echo!",
-        "Delozier looks like Mark Hamill",
-        "[removed]",
-        // "[removed]"
+        "Delozier looks like Mark Hamill",  
         "Eli: \nGarbage Collector",
         "Konnor: \nWidget Boy",
         "James: \nWreck-It-Ralph",
